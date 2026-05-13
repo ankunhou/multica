@@ -50,6 +50,7 @@ import { EmojiPicker } from "@multica/ui/components/common/emoji-picker";
 import { ContentEditor, type ContentEditorRef, TitleEditor } from "../editor";
 import { PriorityIcon } from "../issues/components/priority-icon";
 import { ActorAvatar } from "../common/actor-avatar";
+import { ProjectIcon } from "../projects/components/project-icon";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
 import {
@@ -268,10 +269,10 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
               render={
                 <button
                   type="button"
-                  className="text-2xl cursor-pointer rounded-lg p-1 -ml-1 hover:bg-accent/60 transition-colors"
+                  className="inline-flex size-8 cursor-pointer items-center justify-center rounded-lg -ml-1 hover:bg-accent/60 transition-colors"
                   title={t(($) => $.create_project.icon_tooltip)}
                 >
-                  {icon || "📁"}
+                  <ProjectIcon project={icon ? { icon } : null} size="lg" />
                 </button>
               }
             />
