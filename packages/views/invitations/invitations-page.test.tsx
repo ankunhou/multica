@@ -96,6 +96,7 @@ const mkWs = (id: string, slug: string) => ({
   context: null,
   settings: {},
   repos: [],
+  logo_url: null,
   issue_prefix: slug.toUpperCase(),
   created_at: "",
   updated_at: "",

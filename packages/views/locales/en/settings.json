@@ -110,6 +110,13 @@
   },
   "workspace": {
     "section_general": "General",
+    "logo_label": "Logo",
+    "logo_hint": "Upload a square image used in the sidebar and workspace switcher.",
+    "logo_alt": "{{name}} logo",
+    "logo_remove": "Remove",
+    "toast_logo_updated": "Workspace logo updated",
+    "toast_logo_removed": "Workspace logo removed",
+    "toast_logo_failed": "Failed to update workspace logo",
     "name_label": "Name",
     "description_label": "Description",
     "description_placeholder": "What does this workspace focus on?",

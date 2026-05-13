@@ -133,6 +133,7 @@ describe("CallbackPage", () => {
         context: null,
         settings: {},
         repos: [],
+        logo_url: null,
         issue_prefix: "ACME",
         created_at: "",
         updated_at: "",
