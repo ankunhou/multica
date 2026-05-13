@@ -9,6 +9,12 @@
     "dev:desktop": "turbo dev --filter=@multica/desktop",
     "dev:desktop:staging": "turbo dev:staging --filter=@multica/desktop",
     "build": "turbo build",
+    "format": "pnpm format:biome && pnpm format:go",
+    "format:check": "node scripts/just.mjs format-check",
+    "format:biome": "biome format --write .",
+    "format:biome:check": "biome format .",
+    "format:go": "node scripts/just.mjs format-go",
+    "format:go:check": "node scripts/just.mjs format-go-check",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "lint": "turbo lint",
@@ -29,6 +35,7 @@
     }
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@playwright/test": "^1.58.2",
     "@types/node": "catalog:",
     "@types/pg": "^8.20.0",

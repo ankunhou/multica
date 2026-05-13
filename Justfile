@@ -56,6 +56,14 @@ desktop:
 build:
     node scripts/just.mjs build
 
+# 格式化 TypeScript、JavaScript、JSON、CSS 和 Go 代码。
+format:
+    node scripts/just.mjs format
+
+# 检查 TypeScript、JavaScript、JSON、CSS 和 Go 代码格式。
+format-check:
+    node scripts/just.mjs format-check
+
 # 构建本地 CLI，并重启 local profile 的守护进程。
 daemon: build
     node scripts/just.mjs daemon restart --profile local

@@ -64,6 +64,61 @@ function runWithRetry(command, args = [], options = {}, attempts = 2) {
   }
 }
 
+function formatGo() {
+  run("gofmt", ["-w", "."], { cwd: SERVER_DIR });
+}
+
+function gofmtCheckOutput() {
+  return run("gofmt", ["-l", "."], {
+    cwd: SERVER_DIR,
+    stdio: ["ignore", "pipe", "inherit"],
+  }).trim();
+}
+
+function printGoFormatFailure(output) {
+  console.error("Go files need formatting:");
+  console.error(output);
+  console.error("Run `pnpm format:go` or `just format`.");
+}
+
+function formatGoCheck() {
+  const output = gofmtCheckOutput();
+  if (!output) {
+    return;
+  }
+
+  printGoFormatFailure(output);
+  process.exit(1);
+}
+
+function formatCheck() {
+  let status = 0;
+  const biome = runResult(exe("pnpm"), ["format:biome:check"], { allowFailure: true });
+  if (biome.status !== 0) {
+    status = biome.status ?? 1;
+  }
+
+  const gofmtOutput = gofmtCheckOutput();
+  if (gofmtOutput) {
+    if (status === 0) status = 1;
+    printGoFormatFailure(gofmtOutput);
+  }
+
+  if (status !== 0) {
+    process.exit(status);
+  }
+}
+
+function format() {
+  run(exe("pnpm"), ["format:biome"]);
+  formatGo();
+}
+
+function exitUnknownCommand(command) {
+  console.error(`Unknown just helper command: ${command ?? ""}`);
+  process.exit(2);
+}
+
 function capture(command, args = [], options = {}) {
   const result = spawnSync(command, args, {
     cwd: options.cwd ?? ROOT,
@@ -681,6 +736,18 @@ async function main() {
     case "desktop":
       await waitForChild(spawnDesktopDev());
       break;
+    case "format":
+      format();
+      break;
+    case "format-check":
+      formatCheck();
+      break;
+    case "format-go":
+      formatGo();
+      break;
+    case "format-go-check":
+      formatGoCheck();
+      break;
     case "ensure-db":
       await ensureDb();
       break;
@@ -741,8 +808,7 @@ async function main() {
       await waitForChild(spawnWebDev());
       break;
     default:
-      console.error(`Unknown just helper command: ${command ?? ""}`);
-      process.exit(2);
+      exitUnknownCommand(command);
   }
 }
 
