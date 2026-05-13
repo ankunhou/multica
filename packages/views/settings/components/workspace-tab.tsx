@@ -7,6 +7,7 @@ import { Textarea } from "@multica/ui/components/ui/textarea";
 import { Label } from "@multica/ui/components/ui/label";
 import { Button } from "@multica/ui/components/ui/button";
 import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { ImageCropDialog } from "@multica/ui/components/common/image-crop-dialog";
 import {
   AlertDialog,
   AlertDialogContent,
@@ -101,6 +102,7 @@ export function WorkspaceTab() {
   const [context, setContext] = useState(workspace?.context ?? "");
   const [logoUrl, setLogoUrl] = useState(workspace?.logo_url ?? "");
   const [saving, setSaving] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
   const { upload, uploading } = useFileUpload(api);
   const [actionId, setActionId] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
@@ -139,6 +141,11 @@ export function WorkspaceTab() {
     const file = event.target.files?.[0];
     if (!workspace || !file) return;
     event.target.value = "";
+    setLogoFile(file);
+  };
+
+  const handleLogoCrop = async (file: File) => {
+    if (!workspace) return;
     try {
       const result = await upload(file);
       if (!result) return;
@@ -420,6 +427,20 @@ export function WorkspaceTab() {
           setDeleteDialogOpen(open);
         }}
         onConfirm={handleConfirmDelete}
+      />
+      <ImageCropDialog
+        file={logoFile}
+        open={logoFile !== null}
+        title={t(($) => $.workspace.logo_crop_title)}
+        zoomLabel={t(($) => $.workspace.logo_crop_zoom)}
+        cancelLabel={t(($) => $.workspace.logo_crop_cancel)}
+        confirmLabel={t(($) => $.workspace.logo_crop_confirm)}
+        previewAlt={t(($) => $.workspace.logo_crop_preview_alt)}
+        previewClassName="rounded-md"
+        onOpenChange={(open) => {
+          if (!open) setLogoFile(null);
+        }}
+        onCrop={handleLogoCrop}
       />
     </div>
   );

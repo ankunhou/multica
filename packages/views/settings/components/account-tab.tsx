@@ -6,6 +6,7 @@ import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { Button } from "@multica/ui/components/ui/button";
 import { Card, CardContent } from "@multica/ui/components/ui/card";
+import { ImageCropDialog } from "@multica/ui/components/common/image-crop-dialog";
 import { toast } from "sonner";
 import { useAuthStore } from "@multica/core/auth";
 import { api } from "@multica/core/api";
@@ -19,6 +20,7 @@ export function AccountTab() {
 
   const [profileName, setProfileName] = useState(user?.name ?? "");
   const [profileSaving, setProfileSaving] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const { upload, uploading } = useFileUpload(api);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -38,6 +40,10 @@ export function AccountTab() {
     if (!file) return;
     // Reset input so the same file can be re-selected
     e.target.value = "";
+    setAvatarFile(file);
+  };
+
+  const handleAvatarCrop = async (file: File) => {
     try {
       const result = await upload(file);
       if (!result) return;
@@ -130,6 +136,20 @@ export function AccountTab() {
           </CardContent>
         </Card>
       </section>
+      <ImageCropDialog
+        file={avatarFile}
+        open={avatarFile !== null}
+        title={t(($) => $.account.avatar_crop_title)}
+        zoomLabel={t(($) => $.account.avatar_crop_zoom)}
+        cancelLabel={t(($) => $.account.avatar_crop_cancel)}
+        confirmLabel={t(($) => $.account.avatar_crop_confirm)}
+        previewAlt={t(($) => $.account.avatar_crop_preview_alt)}
+        previewClassName="rounded-full"
+        onOpenChange={(open) => {
+          if (!open) setAvatarFile(null);
+        }}
+        onCrop={handleAvatarCrop}
+      />
     </div>
   );
 }

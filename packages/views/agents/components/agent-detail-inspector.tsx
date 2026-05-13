@@ -21,6 +21,7 @@ import { api } from "@multica/core/api";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import { isImeComposing } from "@multica/core/utils";
 import { Button } from "@multica/ui/components/ui/button";
+import { ImageCropDialog } from "@multica/ui/components/common/image-crop-dialog";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { Input } from "@multica/ui/components/ui/input";
 import {
@@ -238,6 +239,7 @@ function AvatarEditor({
 }) {
   const { t } = useT("agents");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const { upload, uploading } = useFileUpload(api);
 
   if (!canEdit) {
@@ -257,6 +259,10 @@ function AvatarEditor({
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = "";
+    setAvatarFile(file);
+  };
+
+  const handleAvatarCrop = async (file: File) => {
     try {
       const result = await upload(file);
       if (!result) return;
@@ -298,6 +304,20 @@ function AvatarEditor({
         accept="image/*"
         className="hidden"
         onChange={handleFile}
+      />
+      <ImageCropDialog
+        file={avatarFile}
+        open={avatarFile !== null}
+        title={t(($) => $.inspector.avatar_crop_title)}
+        zoomLabel={t(($) => $.inspector.avatar_crop_zoom)}
+        cancelLabel={t(($) => $.inspector.avatar_crop_cancel)}
+        confirmLabel={t(($) => $.inspector.avatar_crop_confirm)}
+        previewAlt={t(($) => $.inspector.avatar_crop_preview_alt)}
+        previewClassName="rounded-lg"
+        onOpenChange={(open) => {
+          if (!open) setAvatarFile(null);
+        }}
+        onCrop={handleAvatarCrop}
       />
     </>
   );
