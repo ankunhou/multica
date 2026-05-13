@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Plus, FolderKanban, UserMinus, Check, LayoutGrid, List } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { projectListOptions } from "@multica/core/projects/queries";
@@ -15,7 +15,7 @@ import { useWorkspaceId } from "@multica/core/hooks";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
 import { useModalStore } from "@multica/core/modals";
-import { AppLink } from "../../navigation";
+import { AppLink, useNavigation } from "../../navigation";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { useActorName } from "@multica/core/workspace/hooks";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
@@ -45,6 +45,127 @@ import {
 } from "./labels";
 
 type ProjectViewMode = "list" | "grid";
+
+const PROJECT_VIEW_MODE_STORAGE_KEY = "multica:projects:view-mode";
+
+function isProjectViewMode(value: string | null): value is ProjectViewMode {
+  return value === "list" || value === "grid";
+}
+
+function readProjectViewModePreference(): ProjectViewMode | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const stored = window.localStorage.getItem(PROJECT_VIEW_MODE_STORAGE_KEY);
+    return isProjectViewMode(stored) ? stored : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeProjectViewModePreference(mode: ProjectViewMode) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(PROJECT_VIEW_MODE_STORAGE_KEY, mode);
+  } catch {
+    // Ignore storage failures; the view toggle should keep working in memory.
+  }
+}
+
+function useProjectViewModePreference() {
+  const [viewMode, setViewModeState] = useState<ProjectViewMode>("list");
+
+  useEffect(() => {
+    const stored = readProjectViewModePreference();
+    if (stored) setViewModeState(stored);
+  }, []);
+
+  const setViewMode = useCallback((mode: ProjectViewMode) => {
+    setViewModeState(mode);
+    writeProjectViewModePreference(mode);
+  }, []);
+
+  return [viewMode, setViewMode] as const;
+}
+
+function ProjectSurface({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "rounded-3xl border border-border/50 bg-card/70 ring-1 ring-border/25",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+function ProjectInteractiveRegion({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const stop = (event: React.SyntheticEvent) => {
+    event.stopPropagation();
+  };
+
+  return (
+    <div
+      className={className}
+      onClick={stop}
+      onMouseDown={stop}
+      onPointerDown={stop}
+      onKeyDown={stop}
+    >
+      {children}
+    </div>
+  );
+}
+
+function ProjectViewToggle({
+  value,
+  onChange,
+}: {
+  value: ProjectViewMode;
+  onChange: (mode: ProjectViewMode) => void;
+}) {
+  const { t } = useT("projects");
+
+  return (
+    <div className="inline-flex rounded-full border border-border/50 bg-card/70 p-1 text-muted-foreground ring-1 ring-border/25">
+      <button
+        type="button"
+        aria-label={t(($) => $.page.view_list)}
+        aria-pressed={value === "list"}
+        title={t(($) => $.page.view_list)}
+        onClick={() => onChange("list")}
+        className={cn(
+          "flex size-7 items-center justify-center rounded-full transition-colors",
+          value === "list" ? "bg-background text-foreground ring-1 ring-border/50" : "hover:bg-background/60 hover:text-foreground",
+        )}
+      >
+        <List className="h-3.5 w-3.5" />
+      </button>
+      <button
+        type="button"
+        aria-label={t(($) => $.page.view_grid)}
+        aria-pressed={value === "grid"}
+        title={t(($) => $.page.view_grid)}
+        onClick={() => onChange("grid")}
+        className={cn(
+          "flex size-7 items-center justify-center rounded-full transition-colors",
+          value === "grid" ? "bg-background text-foreground ring-1 ring-border/50" : "hover:bg-background/60 hover:text-foreground",
+        )}
+      >
+        <LayoutGrid className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
 
 function ProjectPriorityControl({
   project,
@@ -291,8 +412,10 @@ function ProjectRow({ project }: { project: Project }) {
 function ProjectCard({ project }: { project: Project }) {
   const { t } = useT("projects");
   const wsPaths = useWorkspacePaths();
+  const router = useNavigation();
   const formatRelativeDate = useFormatRelativeDate();
   const updateProject = useUpdateProject();
+  const href = wsPaths.projectDetail(project.id);
   const progress = project.issue_count > 0
     ? Math.round((project.done_count / project.issue_count) * 100)
     : 0;
@@ -304,13 +427,38 @@ function ProjectCard({ project }: { project: Project }) {
     [project.id, updateProject],
   );
 
+  const handleOpen = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented) return;
+      if ((event.metaKey || event.ctrlKey || event.shiftKey) && router.openInNewTab) {
+        router.openInNewTab(href);
+        return;
+      }
+      router.push(href);
+    },
+    [href, router],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      router.push(href);
+    },
+    [href, router],
+  );
+
   return (
-    <div className="flex min-h-48 flex-col rounded-3xl border border-border/55 bg-card/75 p-4 shadow-sm ring-1 ring-black/[0.02] transition-colors hover:bg-accent/25">
+    <ProjectSurface
+      role="link"
+      tabIndex={0}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
+      className="flex min-h-48 cursor-pointer flex-col p-4 transition-colors hover:bg-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+    >
       <div className="flex items-start justify-between gap-3">
-        <AppLink
-          href={wsPaths.projectDetail(project.id)}
-          className="flex min-w-0 flex-1 items-start gap-3"
-        >
+        <div className="flex min-w-0 flex-1 items-start gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-muted/70 text-muted-foreground">
             <ProjectIcon project={project} size="md" />
           </span>
@@ -320,14 +468,16 @@ function ProjectCard({ project }: { project: Project }) {
               {formatRelativeDate(project.created_at)}
             </span>
           </span>
-        </AppLink>
-        <ProjectLeadPicker project={project} onUpdate={handleUpdate} />
+        </div>
+        <ProjectInteractiveRegion>
+          <ProjectLeadPicker project={project} onUpdate={handleUpdate} />
+        </ProjectInteractiveRegion>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2">
+      <ProjectInteractiveRegion className="mt-4 flex flex-wrap gap-2">
         <ProjectPriorityControl project={project} onUpdate={handleUpdate} className="w-auto bg-muted/45 px-2.5" />
         <ProjectStatusControl project={project} onUpdate={handleUpdate} className="w-auto px-2.5" />
-      </div>
+      </ProjectInteractiveRegion>
 
       <div className="mt-auto pt-6">
         <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
@@ -343,7 +493,7 @@ function ProjectCard({ project }: { project: Project }) {
           />
         </div>
       </div>
-    </div>
+    </ProjectSurface>
   );
 }
 
@@ -352,7 +502,7 @@ export function ProjectsPage() {
   const wsId = useWorkspaceId();
   const { data: projects = [], isLoading } = useQuery(projectListOptions(wsId));
   const openCreateProject = () => useModalStore.getState().open("create-project");
-  const [viewMode, setViewMode] = useState<ProjectViewMode>("list");
+  const [viewMode, setViewMode] = useProjectViewModePreference();
 
   return (
     <div className="flex h-full flex-col">
@@ -368,35 +518,8 @@ export function ProjectsPage() {
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <div className="inline-flex rounded-full bg-muted/70 p-1 text-muted-foreground">
-            <button
-              type="button"
-              aria-label={t(($) => $.page.view_list)}
-              aria-pressed={viewMode === "list"}
-              title={t(($) => $.page.view_list)}
-              onClick={() => setViewMode("list")}
-              className={cn(
-                "flex size-7 items-center justify-center rounded-full transition-colors",
-                viewMode === "list" ? "bg-background text-foreground shadow-sm" : "hover:text-foreground",
-              )}
-            >
-              <List className="h-3.5 w-3.5" />
-            </button>
-            <button
-              type="button"
-              aria-label={t(($) => $.page.view_grid)}
-              aria-pressed={viewMode === "grid"}
-              title={t(($) => $.page.view_grid)}
-              onClick={() => setViewMode("grid")}
-              className={cn(
-                "flex size-7 items-center justify-center rounded-full transition-colors",
-                viewMode === "grid" ? "bg-background text-foreground shadow-sm" : "hover:text-foreground",
-              )}
-            >
-              <LayoutGrid className="h-3.5 w-3.5" />
-            </button>
-          </div>
-          <Button size="sm" variant="outline" className="rounded-full border-border/60 bg-card/80 px-3 shadow-sm" onClick={openCreateProject}>
+          <ProjectViewToggle value={viewMode} onChange={setViewMode} />
+          <Button size="sm" variant="outline" className="rounded-full border-border/60 bg-card/80 px-3 shadow-none" onClick={openCreateProject}>
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t(($) => $.page.new_project)}
           </Button>
@@ -406,7 +529,7 @@ export function ProjectsPage() {
       {/* Table */}
       <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
         {isLoading ? (
-          <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-border/55 bg-card/75 p-2 shadow-sm ring-1 ring-black/[0.02]">
+          <ProjectSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
             <div className="flex h-9 items-center gap-2 px-3">
               <span className="shrink-0 w-[24px]" />
               <Skeleton className="h-3 w-12 flex-1 max-w-[48px]" />
@@ -421,7 +544,7 @@ export function ProjectsPage() {
                 <Skeleton key={i} className="h-14 w-full rounded-2xl" />
               ))}
             </div>
-          </div>
+          </ProjectSurface>
         ) : projects.length === 0 ? (
           <div className="mx-auto flex min-h-[520px] max-w-3xl flex-col items-center justify-center pb-16 text-muted-foreground">
             <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-muted/60">
@@ -434,7 +557,7 @@ export function ProjectsPage() {
           </div>
         ) : (
           viewMode === "list" ? (
-            <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-border/55 bg-card/75 p-2 shadow-sm ring-1 ring-black/[0.02]">
+            <ProjectSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
               {/* Column headers */}
               <div className="flex h-9 items-center gap-2 px-3 text-xs font-medium text-muted-foreground">
                 {/* Icon spacer + Name */}
@@ -450,7 +573,7 @@ export function ProjectsPage() {
               {projects.map((project) => (
                 <ProjectRow key={project.id} project={project} />
               ))}
-            </div>
+            </ProjectSurface>
           ) : (
             <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {projects.map((project) => (
