@@ -55,7 +55,7 @@ describe("agent state badges", () => {
       />,
     );
 
-    expect(screen.getByText("Queued")).toHaveClass("text-warning");
+    expect(screen.getByText("Queued")).toHaveClass("text-agent-queued");
   });
 
   it("keeps compact availability accessible with a combined title", () => {
@@ -67,5 +67,15 @@ describe("agent state badges", () => {
     );
 
     expect(screen.getByTitle("Online · Working")).toBeInTheDocument();
+  });
+
+  it("uses agent semantic tokens for availability", () => {
+    renderWithI18n(
+      <AgentAvailabilityBadge
+        detail={presence({ availability: "online" })}
+      />,
+    );
+
+    expect(screen.getByText("Online")).toHaveClass("text-agent-available");
   });
 });

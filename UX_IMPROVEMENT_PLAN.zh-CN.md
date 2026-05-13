@@ -233,18 +233,13 @@ Multica 的目标用户会长时间停留在工作台中。界面应默认高效
 
 现有 token 已有 `brand`、`success`、`warning`、`info`。建议增加更贴近产品语义的 token，而不是在组件里硬编码状态色。
 
-建议新增：
+已落地：
 
-- `--agent-running`
-- `--agent-running-foreground`
-- `--agent-queued`
-- `--agent-queued-foreground`
-- `--agent-blocked`
-- `--agent-blocked-foreground`
-- `--agent-failed`
-- `--agent-failed-foreground`
-- `--agent-completed`
-- `--agent-completed-foreground`
+- 基础 agent 状态 token：`--agent-available`、`--agent-running`、`--agent-queued`、`--agent-blocked`、`--agent-failed`、`--agent-completed`。
+- 对应 `-foreground` 变量：用于后续实心状态 pill、批量操作按钮或恢复流 CTA。
+
+建议后续新增：
+
 - `--surface-subtle`
 - `--surface-raised`
 - `--surface-selected`

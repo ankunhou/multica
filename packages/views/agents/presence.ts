@@ -14,19 +14,19 @@ import type { AgentAvailability, Workload } from "@multica/core/agents";
 // dot reads only from availabilityConfig, the workload chip reads only
 // from workloadConfig.
 //
-// Color tokens map to project semantic tokens (no hardcoded Tailwind colors):
+// Color tokens map to product semantic tokens (no hardcoded Tailwind colors):
 //
 //   AVAILABILITY (drives the dot everywhere a dot appears):
-//     online    → success         (green)
-//     unstable  → warning         (amber) — pairs with the runtime card's amber
+//     online    → agent-available (green)
+//     unstable  → agent-blocked   (amber) — pairs with the runtime card's amber
 //     offline   → muted-foreground (gray)
 //
 //   WORKLOAD (drives the optional workload chip on focused surfaces):
-//     working   → brand           (blue)  has activity
-//     queued    → warning         (amber) anomaly: nothing running but tasks
-//                                          waiting (typically stuck on offline
-//                                          runtime; brief flash on online is
-//                                          a harmless race)
+//     working   → agent-running   (blue) has activity
+//     queued    → agent-queued    (amber) anomaly: nothing running but tasks
+//                                         waiting (typically stuck on offline
+//                                         runtime; brief flash on online is
+//                                         a harmless race)
 //     idle      → muted           (gray)  nothing on the plate
 //
 // `failed` / `completed` / `cancelled` deliberately have no top-level visual
@@ -46,14 +46,14 @@ export interface AvailabilityVisual {
 export const availabilityConfig: Record<AgentAvailability, AvailabilityVisual> = {
   online: {
     label: "Online",
-    dotClass: "bg-success",
-    textClass: "text-success",
+    dotClass: "bg-agent-available",
+    textClass: "text-agent-available",
     icon: CircleDot,
   },
   unstable: {
     label: "Unstable",
-    dotClass: "bg-warning",
-    textClass: "text-warning",
+    dotClass: "bg-agent-blocked",
+    textClass: "text-agent-blocked",
     icon: PlugZap,
   },
   offline: {
@@ -83,7 +83,7 @@ export interface WorkloadVisual {
 export const workloadConfig: Record<Workload, WorkloadVisual> = {
   working: {
     label: "Working",
-    textClass: "text-brand",
+    textClass: "text-agent-running",
     icon: Loader2,
   },
   queued: {
@@ -91,7 +91,7 @@ export const workloadConfig: Record<Workload, WorkloadVisual> = {
     // this is the "stuck" signal we explicitly surface (replacing the old
     // misleading "Running 0/N +Mq" copy).
     label: "Queued",
-    textClass: "text-warning",
+    textClass: "text-agent-queued",
     icon: Clock,
   },
   idle: {

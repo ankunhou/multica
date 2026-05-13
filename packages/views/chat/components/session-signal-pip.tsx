@@ -21,7 +21,7 @@ export function ChatSessionSignalPip({
       title={label}
       className={cn(
         "size-1.5 shrink-0 rounded-full",
-        signal === "running" && "bg-warning animate-pulse",
+        signal === "running" && "bg-agent-running animate-pulse",
         signal === "unread" && "bg-brand",
         className,
       )}
