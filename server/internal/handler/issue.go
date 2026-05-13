@@ -945,7 +945,7 @@ func (h *Handler) QuickCreateIssue(w http.ResponseWriter, r *http.Request) {
 	// screenshot URLs; fail closed before enqueuing rather than surface
 	// the breakage as an inbox failure twenty seconds later. Dev-built
 	// daemons (git-describe shape) are exempted inside CheckMinCLIVersion
-	// so `make daemon` works without weakening staging or production.
+	// so `just daemon` works without weakening staging or production.
 	if status, payload := h.checkQuickCreateDaemonVersion(r.Context(), agent.RuntimeID); status != 0 {
 		writeJSON(w, status, payload)
 		return

@@ -37,11 +37,16 @@ Go backend + monorepo frontend (pnpm workspaces + Turborepo) with shared package
 ### Commands
 
 ```bash
-make dev              # Auto-setup + start everything
+just dev              # Auto-setup + start everything
 pnpm typecheck        # TypeScript check
 pnpm test             # TS unit tests (Vitest)
-make test             # Go tests
-make check            # Full verification pipeline
+just test-go             # Go tests
+just check            # Full verification pipeline
 ```
 
 See CLAUDE.md for the complete command reference.
+
+### Task Completion
+
+- After each completed task, create a git commit for the finished changes.
+- Commit messages must be written in Chinese, include a clear summary and detailed change description, and follow common industry conventions.

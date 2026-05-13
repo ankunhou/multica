@@ -98,7 +98,7 @@ multica setup          # Connect to Multica Cloud, log in, start daemon
 > ```
 >
 > This pulls the official Multica images from GHCR (latest stable by default). Requires Docker. See the [Self-Hosting Guide](SELF_HOSTING.md) for details.
-> If the selected GHCR tag has not been published yet, fall back to `make selfhost-build` from a checkout.
+> If the selected GHCR tag has not been published yet, fall back to `just selfhost-build` from a checkout.
 
 ---
 
@@ -191,9 +191,9 @@ For contributors working on the Multica codebase, see the [Contributing Guide](C
 **Prerequisites:** [Node.js](https://nodejs.org/) v20+, [pnpm](https://pnpm.io/) v10.28+, [Go](https://go.dev/) v1.26+, [Docker](https://www.docker.com/)
 
 ```bash
-make dev
+just dev
 ```
 
-`make dev` auto-detects your environment (main checkout or worktree), creates the env file, installs dependencies, sets up the database, runs migrations, and starts all services.
+`just dev` installs dependencies, starts the local database when needed, runs migrations, and starts the development services.
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, worktree support, testing, and troubleshooting.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the full development workflow, testing, and troubleshooting.

@@ -130,7 +130,7 @@ Restart the API after setting the env vars.
 The integration ships its tables in migration `079_github_integration`. If you're upgrading an older deployment:
 
 ```bash
-make migrate-up
+just migrate-up
 ```
 
 Three tables get created: `github_installation`, `github_pull_request`, `issue_pull_request`. They cascade-delete with their workspace, so removing a workspace cleans them up automatically.

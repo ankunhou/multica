@@ -30,7 +30,7 @@ Wait for the server output `✓ Multica server is running and CLI is ready!` bef
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 brew install multica-ai/tap/multica
 multica setup self-host
 ```
@@ -57,7 +57,7 @@ multica daemon stop
 
 # Stop all Docker services
 cd multica
-make selfhost-stop
+just selfhost-stop
 ```
 
 ## Custom Ports
@@ -65,7 +65,7 @@ make selfhost-stop
 If the default ports (8080/3000) are in use:
 
 1. Edit `.env` and change `PORT` and `FRONTEND_PORT`
-2. Run `make selfhost`
+2. Run `just selfhost`
 3. Run `multica setup self-host --port <PORT> --frontend-port <FRONTEND_PORT>`
 
 ## Troubleshooting

@@ -908,7 +908,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Chat session history panel for archived conversations",
           "Minimum CLI version check in daemon for Claude Code and Codex",
           "OpenClaw and OpenCode added to landing page",
-          "`make dev` one-command local development setup",
+          "`just dev` one-command local development setup",
         ],
         improvements: [
           "Sidebar redesign — Personal / Workspace grouping, user profile footer, ⌘K search input",

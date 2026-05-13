@@ -21,10 +21,10 @@ Agent **execution** still relies on the [daemon](/daemon-runtimes) you run local
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 ```
 
-`make selfhost` will:
+`just selfhost` will:
 
 1. Generate a `.env` from `.env.example` if missing, with a **random JWT_SECRET**
 2. Pull the official Docker images (PostgreSQL, Multica backend, Multica frontend)
@@ -37,7 +37,7 @@ check to fail on database or migration problems.
 The backend container **runs database migrations automatically** on startup (`docker/entrypoint.sh` runs `./migrate up` before the server starts) — you'll see the migration output in the backend logs. Version upgrades are handled the same way.
 
 <Callout type="info">
-**Image not published yet?** If `make selfhost` fails to pull images, you may be on an unreleased version tag. Switch to a stable release, or build from source: `make selfhost-build`.
+**Image not published yet?** If `just selfhost` fails to pull images, you may be on an unreleased version tag. Switch to a stable release, or build from source: `just selfhost-build`.
 </Callout>
 
 Once it's up:

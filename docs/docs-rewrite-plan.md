@@ -116,7 +116,7 @@ Multica = **人 + AI agent 在同一个看板上协作的任务管理平台**。
 | 篇目 | 必讲的 critical warning |
 |---|---|
 | Overview | 决策树（哪种部署模式适合你） |
-| Docker Compose deployment | `make selfhost` vs `make selfhost-build` |
+| Docker Compose deployment | `just selfhost` vs `just selfhost-build` |
 | Environment variables reference | 完整 env 表 |
 | Authentication setup | **🚨 固定测试验证码必须显式设置 `MULTICA_DEV_VERIFICATION_CODE`，生产保持为空**；Google OAuth 配置；signup 白名单 |
 | Storage | S3 / CloudFront / 本地磁盘 |

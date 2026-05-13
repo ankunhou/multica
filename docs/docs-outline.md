@@ -263,11 +263,11 @@ multica issue assign <issue-id> --agent <agent-slug>
 
 ### 1.4 Quickstart (Self-Host) — ⬜ Not started [v1]
 
-- **Source files**: `Makefile`（selfhost target）, `docker-compose.selfhost.yml`, `.env.example`, `server/cmd/multica/cmd_setup.go`
+- **Source files**: `Justfile`（selfhost recipe）, `docker-compose.selfhost.yml`, `.env.example`, `server/cmd/multica/cmd_setup.go`
 - **目标读者**: P0 self-host 评估者
 - **叙事位置**: Cloud Quickstart 的姐妹篇。
 - **写什么**（800-1200 字）:
-  - `make selfhost` vs `make selfhost-build` 差异
+  - `just selfhost` vs `just selfhost-build` 差异
   - 自动生成 JWT_SECRET
   - Migration 启动自动执行（**zero-touch upgrade** 是卖点）
   - 第一次启动后 `multica setup self-host`

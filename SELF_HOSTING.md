@@ -49,14 +49,14 @@ If you prefer to run each step manually:
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 ```
 
-`make selfhost` automatically creates `.env` from the example, generates a random `JWT_SECRET`, and starts all services via Docker Compose.
+`just selfhost` automatically creates `.env` from the example, generates a random `JWT_SECRET`, and starts all services via Docker Compose.
 
-By default it pulls the latest stable release images from GHCR. To build the backend/web from your current checkout instead, run `make selfhost-build`.
-If the selected GHCR tag has not been published yet, `make selfhost` now tells you to fall back to `make selfhost-build`.
-`make selfhost-build` uses local `multica-backend:dev` / `multica-web:dev` tags, so it does not overwrite the pulled `:latest` images.
+By default it pulls the latest stable release images from GHCR. To build the backend/web from your current checkout instead, run `just selfhost-build`.
+If the selected GHCR tag has not been published yet, `just selfhost` now tells you to fall back to `just selfhost-build`.
+`just selfhost-build` uses local `multica-backend:dev` / `multica-web:dev` tags, so it does not overwrite the pulled `:latest` images.
 
 Once ready:
 
@@ -147,7 +147,7 @@ If you cloned the repo manually:
 
 ```bash
 # Stop the Docker Compose services (backend, frontend, database)
-make selfhost-stop
+just selfhost-stop
 
 # Stop the local daemon
 multica daemon stop
@@ -173,13 +173,13 @@ docker compose -f docker-compose.selfhost.yml up -d
 ```
 
 Pin `MULTICA_IMAGE_TAG` in `.env` to an exact version like `v0.2.4` if you want to stay on a specific release. Migrations run automatically on backend startup.
-If the selected GHCR tag has not been published yet, fall back to `make selfhost-build` or `docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build`.
+If the selected GHCR tag has not been published yet, fall back to `just selfhost-build` or `docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build`.
 
 ---
 
 ## Manual Docker Compose Setup
 
-If you prefer running Docker Compose steps manually instead of `make selfhost`:
+If you prefer running Docker Compose steps manually instead of `just selfhost`:
 
 ```bash
 git clone https://github.com/multica-ai/multica.git

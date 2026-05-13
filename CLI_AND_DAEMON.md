@@ -15,7 +15,7 @@ brew install multica-ai/tap/multica
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make build
+just build
 cp server/bin/multica /usr/local/bin/multica
 ```
 

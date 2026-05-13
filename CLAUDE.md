@@ -73,32 +73,38 @@ The architecture relies on a strict split between server state and client state.
 
 ```bash
 # One-command dev (auto-setup + start everything)
-make dev              # Auto-creates env, installs deps, starts DB, migrates, launches app
+just dev              # Auto-creates env, installs deps, starts DB, migrates, launches app
 
 # Explicit setup & run (if you prefer separate steps)
-make setup            # First-time: ensure shared DB, create app DB, migrate
-make start            # Start backend + frontend together
-make stop             # Stop app processes for the current checkout
-make db-down          # Stop the shared PostgreSQL container
+just setup            # First-time: ensure shared DB, create app DB, migrate
+just start            # Start backend + frontend together
+just stop             # Stop app processes for the current checkout
+just db-down          # Stop the shared PostgreSQL container
+
+# Parallel worktree development
+just init-worktree-env # Generate .env.worktree with isolated DB name and ports
+just setup-worktree    # Install deps, create the worktree DB, and migrate it
+just start-worktree    # Start backend + frontend using .env.worktree
+just stop-worktree     # Stop the worktree backend + frontend
 
 # Frontend (all commands go through Turborepo)
 pnpm install
 pnpm dev:web          # Next.js dev server (port 3000)
-pnpm dev:desktop      # Electron dev (electron-vite, HMR)
+just desktop          # Electron dev (electron-vite, HMR)
 pnpm build            # Build all frontend apps
 pnpm typecheck        # TypeScript check (all packages + apps via turbo)
 pnpm lint             # ESLint
 pnpm test             # TS tests (Vitest, all packages + apps via turbo)
 
 # Backend (Go)
-make server           # Run Go server only (port 8080)
-make daemon           # Run local daemon
-make build            # Build server + CLI binaries to server/bin/
-make cli ARGS="..."   # Run multica CLI (e.g. make cli ARGS="config")
-make test             # Go tests
-make sqlc             # Regenerate sqlc code after editing SQL in server/pkg/db/queries/
-make migrate-up       # Run database migrations
-make migrate-down     # Rollback migrations
+just server           # Run Go server only (port 8080)
+just daemon           # Run local daemon
+just build            # Build server + CLI binaries to server/bin/
+just cli ...          # Run multica CLI (e.g. just cli config)
+just test-go          # Go tests
+just sqlc             # Regenerate sqlc code after editing SQL in server/pkg/db/queries/
+just migrate-up       # Run database migrations
+just migrate-down     # Rollback migrations
 
 # Run a single TS test (works for any package with a test script)
 pnpm --filter @multica/views exec vitest run auth/login-page.test.tsx
@@ -119,26 +125,35 @@ pnpm --filter @multica/desktop package    # Package into .app/.dmg/.exe (current
 pnpm ui:add badge                # Adds component to packages/ui/components/ui/
 
 # Infrastructure
-make db-up            # Start shared PostgreSQL (pgvector/pg17 image)
-make db-down          # Stop shared PostgreSQL
-make db-reset         # Drop + recreate current env's DB, then re-run migrations (local only; stop backend first)
+just db-up            # Start shared PostgreSQL (pgvector/pg17 image)
+just db-down          # Stop shared PostgreSQL
+just db-reset         # Drop + recreate current env's DB, then re-run migrations (local only; stop backend first)
+```
+
+### Just Command Runner
+
+Use `just` for local development. Keep `Justfile` as the thin command index and
+put cross-platform workflow logic in `scripts/just.mjs`.
+
+```bash
+just --list           # Show available just recipes
+just build            # Build server/CLI/migrate binaries with git version metadata
+just daemon           # Build the CLI, then restart the local daemon profile
+just daemon-fg        # Build the CLI, then run the daemon in the foreground
+just cli version      # Run the built multica CLI
+just init-worktree-env # Generate per-worktree local dev config
+just setup-worktree    # Set up the current worktree using .env.worktree
+just start-worktree    # Start services using .env.worktree
+just stop-worktree     # Stop services using .env.worktree
+just typecheck        # TypeScript check
+just test-ts          # TS unit tests
+just test-go          # Go tests
+just check            # Full verification pipeline
 ```
 
 ### CI Requirements
 
 CI runs on Node 22 and Go 1.26.1 with a `pgvector/pgvector:pg17` PostgreSQL service. See `.github/workflows/ci.yml`.
-
-### Worktree Support
-
-All checkouts share one PostgreSQL container. Isolation is at the database level — each worktree gets its own DB name and unique ports via `.env.worktree`. Main checkouts use `.env`.
-
-`make dev` auto-detects worktrees and handles everything. For explicit control:
-
-```bash
-make worktree-env       # Generate .env.worktree with unique DB/ports
-make setup-worktree     # Setup using .env.worktree
-make start-worktree     # Start using .env.worktree
-```
 
 ## Coding Rules
 
@@ -341,7 +356,7 @@ test("example", async ({ page }) => {
 ## Minimum Pre-Push Checks
 
 ```bash
-make check    # Runs all checks: typecheck, unit tests, Go tests, E2E
+just check    # Runs all checks: typecheck, unit tests, Go tests, E2E
 ```
 
 Run verification only when the user explicitly asks for it.
@@ -350,7 +365,7 @@ For targeted checks when requested:
 ```bash
 pnpm typecheck        # TypeScript type errors only
 pnpm test             # TS unit tests only (Vitest, all packages)
-make test             # Go tests only
+just test-go             # Go tests only
 pnpm exec playwright test   # E2E only (requires backend + frontend running)
 ```
 
@@ -359,17 +374,17 @@ pnpm exec playwright test   # E2E only (requires backend + frontend running)
 After writing or modifying code, always run the full verification pipeline:
 
 ```bash
-make check
+just check
 ```
 
 **Workflow:**
 - Write code to satisfy the requirement
-- Run `make check`
+- Run `just check`
 - If any step fails, read the error output, fix the code, and re-run
 - Repeat until all checks pass
 - Only then consider the task complete
 
-**Quick iteration:** If you know only TypeScript or Go is affected, run individual checks first for faster feedback, then finish with a full `make check` before marking work complete.
+**Quick iteration:** If you know only TypeScript or Go is affected, run individual checks first for faster feedback, then finish with a full `just check` before marking work complete.
 
 ## CLI Release
 

@@ -908,7 +908,7 @@ export function createZhDict(allowSignup: boolean): LandingDict {
           "聊天会话历史面板，查看已归档对话",
           "Daemon 新增 Claude Code 和 Codex 最低版本检查",
           "官网新增 OpenClaw 和 OpenCode 展示",
-          "`make dev` 一键本地开发环境搭建",
+          "`just dev` 一键本地开发环境搭建",
         ],
         improvements: [
           "侧边栏重新设计——个人/工作区分组、用户档案底栏、⌘K 搜索入口",

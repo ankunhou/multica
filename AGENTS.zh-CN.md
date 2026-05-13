@@ -37,11 +37,16 @@ Go 后端 + monorepo 前端（pnpm workspaces + Turborepo）+ 共享包。
 ### 常用命令
 
 ```bash
-make dev
+just dev
 pnpm typecheck
 pnpm test
-make test
-make check
+just test-go
+just check
 ```
 
 完整命令参考见 [CLAUDE.md](CLAUDE.md)。
+
+### 任务收尾
+
+- 每次任务完成后，都要为已完成的变更创建 git 提交。
+- 提交信息必须使用中文，包含清晰摘要和详细变更说明，并符合常见行业规范。

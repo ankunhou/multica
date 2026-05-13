@@ -46,15 +46,15 @@ multica setup self-host
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 ```
 
-`make selfhost` 会自动创建 `.env`、生成随机 `JWT_SECRET`，并通过 Docker Compose 启动所有服务。
+`just selfhost` 会自动创建 `.env`、生成随机 `JWT_SECRET`，并通过 Docker Compose 启动所有服务。
 
 默认会拉取 GHCR 上最新稳定镜像。如果想从当前 checkout 构建 backend / web，运行：
 
 ```bash
-make selfhost-build
+just selfhost-build
 ```
 
 启动完成后：
@@ -148,7 +148,7 @@ multica daemon start
 ## 停止服务
 
 ```bash
-make selfhost-stop
+just selfhost-stop
 multica daemon stop
 ```
 
@@ -178,7 +178,7 @@ docker compose -f docker-compose.selfhost.yml up -d
 如果选中的 GHCR tag 尚未发布，可以回退到本地构建：
 
 ```bash
-make selfhost-build
+just selfhost-build
 # 或
 docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build
 ```
@@ -273,7 +273,7 @@ cd server && go run ./cmd/migrate up
 前置要求：Go 1.26+、Node.js 20+、pnpm 10.28+、PostgreSQL 17 + pgvector。
 
 ```bash
-make build
+just build
 DATABASE_URL="your-database-url" ./server/bin/migrate up
 DATABASE_URL="your-database-url" PORT=8080 JWT_SECRET="your-secret" ./server/bin/server
 ```

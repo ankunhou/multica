@@ -21,10 +21,10 @@ import { Callout } from "fumadocs-ui/components/callout";
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 ```
 
-`make selfhost` 会：
+`just selfhost` 会：
 
 1. 如果没有 `.env` 文件，从 `.env.example` 自动生成一份并**生成随机 JWT_SECRET**
 2. 拉取官方 Docker 镜像（PostgreSQL、Multica backend、Multica frontend）
@@ -36,7 +36,7 @@ make selfhost
 后端容器启动时会**自动跑数据库 migration**（`docker/entrypoint.sh` 在启动 server 前执行 `./migrate up`）——你会在 backend 日志里看到 migration 输出。升级版本时同样自动处理。
 
 <Callout type="info">
-**镜像还没发布？** 如果 `make selfhost` 报拉不到镜像，可能是你在某个未发布的版本标签上。切到稳定版本或直接从源码构建：`make selfhost-build`。
+**镜像还没发布？** 如果 `just selfhost` 报拉不到镜像，可能是你在某个未发布的版本标签上。切到稳定版本或直接从源码构建：`just selfhost-build`。
 </Callout>
 
 启动完成后：

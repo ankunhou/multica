@@ -26,15 +26,15 @@ multica setup self-host
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-make selfhost
+just selfhost
 ```
 
-`make selfhost` 会创建 `.env`、生成随机 `JWT_SECRET`，并用 Docker Compose 启动后端、前端和数据库。
+`just selfhost` 会创建 `.env`、生成随机 `JWT_SECRET`，并用 Docker Compose 启动后端、前端和数据库。
 
 默认拉取 GHCR 上的稳定镜像。如果要从当前源码构建：
 
 ```bash
-make selfhost-build
+just selfhost-build
 ```
 
 ## 登录
@@ -87,7 +87,7 @@ MULTICA_IMAGE_TAG=v0.2.4
 ## 停止
 
 ```bash
-make selfhost-stop
+just selfhost-stop
 multica daemon stop
 ```
 

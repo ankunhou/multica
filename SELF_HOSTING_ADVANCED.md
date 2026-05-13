@@ -160,7 +160,7 @@ If you prefer to build and run services manually:
 # Start your PostgreSQL (or use: docker compose up -d postgres)
 
 # Build the backend
-make build
+just build
 
 # Run database migrations
 DATABASE_URL="your-database-url" ./server/bin/migrate up

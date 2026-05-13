@@ -6,7 +6,7 @@
 // source — no more stale binary surprises. Go's build cache makes the
 // no-op case (nothing changed) effectively free.
 //
-// ldflags mirror `make build` so `multica --version` reports a meaningful
+// ldflags mirror `just build` so `multica --version` reports a meaningful
 // version / commit / date.
 //
 // Graceful: if `go` is not installed (e.g. frontend-only contributor), we
@@ -123,6 +123,42 @@ async function goBuildEnv() {
   return env;
 }
 
+async function resetDestDir() {
+  if (process.platform === "win32") {
+    stopWindowsDestProcess();
+  }
+
+  try {
+    await rm(destDir, { recursive: true, force: true });
+    return;
+  } catch (error) {
+    if (process.platform !== "win32" || error?.code !== "EPERM") {
+      throw error;
+    }
+  }
+
+  stopWindowsDestProcess();
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  await rm(destDir, { recursive: true, force: true });
+}
+
+function stopWindowsDestProcess() {
+  const script = `
+    $target = ${JSON.stringify(destBinary)}
+    Get-Process | Where-Object { $_.Path -eq $target } | Stop-Process -Force
+    $deadline = (Get-Date).AddSeconds(5)
+    while ((Get-Date) -lt $deadline) {
+      if (-not (Get-Process | Where-Object { $_.Path -eq $target })) { break }
+      Start-Sleep -Milliseconds 100
+    }
+  `;
+  execFileSync(
+    "powershell.exe",
+    ["-NoLogo", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script],
+    { stdio: "ignore" },
+  );
+}
+
 if (hasGo()) {
   const version = sh("git describe --tags --always --dirty") || "dev";
   const commit = sh("git rev-parse --short HEAD") || "unknown";
@@ -162,11 +198,11 @@ if (!(await exists(srcBinary))) {
     `[bundle-cli] ${srcBinary} not present — Desktop will fall back to ` +
       `auto-installing the latest release at runtime.`,
   );
-  await rm(destDir, { recursive: true, force: true });
+  await resetDestDir();
   process.exit(0);
 }
 
-await rm(destDir, { recursive: true, force: true });
+await resetDestDir();
 await mkdir(destDir, { recursive: true });
 await copyFile(srcBinary, destBinary);
 await chmod(destBinary, 0o755);

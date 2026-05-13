@@ -130,7 +130,7 @@ GITHUB_WEBHOOK_SECRET=<你刚生成的 webhook secret>
 集成的表在 migration `079_github_integration` 里。如果是升级既有部署：
 
 ```bash
-make migrate-up
+just migrate-up
 ```
 
 会创建三张表：`github_installation`、`github_pull_request`、`issue_pull_request`。三张表都 cascade 跟随 workspace——删工作区会自动清理。
