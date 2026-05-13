@@ -132,8 +132,8 @@ export function ExecutionLogSection({ issueId }: ExecutionLogSectionProps) {
           }`}
         />
         {activeTasks.length > 0 && (
-          <span className="ml-auto inline-flex items-center gap-1 text-info">
-            <span className="h-1.5 w-1.5 rounded-full bg-info animate-pulse" />
+          <span className="ml-auto inline-flex items-center gap-1 text-agent-running">
+            <span className="h-1.5 w-1.5 rounded-full bg-agent-running animate-pulse" />
             <span className="font-mono tabular-nums">{activeTasks.length}</span>
           </span>
         )}
@@ -198,11 +198,11 @@ export function ExecutionLogSection({ issueId }: ExecutionLogSectionProps) {
 // ─── Row visual config ─────────────────────────────────────────────────────
 
 const STATUS_TONE: Record<AgentTask["status"], string> = {
-  queued: "text-warning",
-  dispatched: "text-warning",
-  running: "text-info",
-  completed: "text-success",
-  failed: "text-destructive",
+  queued: "text-agent-queued",
+  dispatched: "text-agent-running",
+  running: "text-agent-running",
+  completed: "text-agent-completed",
+  failed: "text-agent-failed",
   cancelled: "text-muted-foreground",
 };
 

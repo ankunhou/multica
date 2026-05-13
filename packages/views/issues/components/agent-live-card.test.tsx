@@ -245,6 +245,10 @@ describe("AgentLiveCard queued rendering", () => {
     await waitFor(() => {
       expect(screen.getByText(/is queued/)).toBeTruthy();
     });
+    expect(screen.getByText(/is queued/).closest(".rounded-lg")).toHaveClass(
+      "border-agent-queued/25",
+      "bg-agent-queued/5",
+    );
     // No execution transcript while queued — no log to show yet.
     expect(screen.queryByTestId("transcript-button")).toBeNull();
     // Cancel button is still available so users can drop a queued task.
@@ -261,6 +265,10 @@ describe("AgentLiveCard queued rendering", () => {
     await waitFor(() => {
       expect(screen.getByText("Stop")).toBeTruthy();
     });
+    expect(screen.getByText(/is working/).closest(".rounded-lg")).toHaveClass(
+      "border-agent-running/20",
+      "bg-agent-running/5",
+    );
 
     // First click should not hit the API — it only opens the confirm.
     await act(async () => {
