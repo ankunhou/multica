@@ -1,4 +1,8 @@
 {
   "title": "Developers",
-  "pages": ["contributing", "architecture", "conventions"]
+  "pages": [
+    "contributing",
+    "architecture",
+    "conventions"
+  ]
 }

@@ -3,7 +3,7 @@ title: CLI 参考
 description: Multica CLI 与 agent daemon 的完整命令参考。
 ---
 
-`multica` CLI 用来把你的本机连接到 Multica。它负责登录、workspace 管理、issue 操作，并运行本地 agent daemon 来执行 AI task。
+`multica` CLI 用来把你的本机连接到 Multica。它负责登录、workspace 管理、议题操作，并运行本地 agent daemon 来执行 AI task。
 
 ## 登录
 
@@ -221,9 +221,9 @@ CTX
 
 可编辑字段：`--name`、`--description` / `--description-stdin`、`--context` / `--context-stdin`、`--issue-prefix`。`slug` 创建后只读。
 
-## Issue
+## 议题
 
-### 列出 issue
+### 列出议题
 
 ```bash
 multica issue list
@@ -234,9 +234,9 @@ multica issue list --full-id
 multica issue list --limit 20 --output json
 ```
 
-表格输出默认显示可复制的 issue key，例如 `MUL-123`。需要完整 UUID 时使用 `--full-id`。可用过滤器：`--status`、`--priority`、`--assignee` / `--assignee-id`、`--project`、`--limit`。
+表格输出默认显示可复制的议题 key，例如 `MUL-123`。需要完整 UUID 时使用 `--full-id`。可用过滤器：`--status`、`--priority`、`--assignee` / `--assignee-id`、`--project`、`--limit`。
 
-### 查看 issue
+### 查看议题
 
 ```bash
 multica issue get MUL-123
@@ -244,9 +244,9 @@ multica issue get <uuid>
 multica issue get <id> --output json
 ```
 
-`<id>` 同时接受 issue key 和完整 UUID。下面的 `update`、`assign`、`status`、`comment`、`subscriber`、`runs` 等命令也遵守同样规则。
+`<id>` 同时接受议题 key 和完整 UUID。下面的 `update`、`assign`、`status`、`comment`、`subscriber`、`runs` 等命令也遵守同样规则。
 
-### 创建 issue
+### 创建议题
 
 ```bash
 multica issue create --title "Fix login bug" --description "..." --priority high --assignee "Lambda"
@@ -255,13 +255,13 @@ multica issue create --title "Fix login bug" --assignee-id 5fb87ac7-23b5-4a7a-81
 
 常用 flags：`--title`（必填）、`--description`、`--status`、`--priority`、`--assignee` / `--assignee-id`、`--parent`、`--project`、`--due-date`。
 
-### 更新 issue
+### 更新议题
 
 ```bash
 multica issue update <id> --title "New title" --priority urgent
 ```
 
-### 分配 issue
+### 分配议题
 
 ```bash
 multica issue assign <id> --to "Lambda"
@@ -305,7 +305,7 @@ multica issue run-messages <task-id> --since 42 --output json
 
 ## Project
 
-Project 用来组织相关 issue，例如 sprint、epic 或工作流。
+Project 用来组织相关议题，例如 sprint、epic 或工作流。
 
 ```bash
 multica project list
@@ -319,7 +319,7 @@ multica project delete <id>
 
 有效状态：`planned`、`in_progress`、`paused`、`completed`、`cancelled`。
 
-用 `--project` 可以在创建 / 更新 / 列表过滤 issue 时关联 project：
+用 `--project` 可以在创建 / 更新 / 列表过滤议题时关联 project：
 
 ```bash
 multica issue create --title "Login bug" --project <project-id>
@@ -355,3 +355,5 @@ multica agent list
 multica issue list --output json
 multica daemon status --output json
 ```
+
+

@@ -38,7 +38,7 @@ multica agent create
 **系统指令**（`instructions`）会被拼在每次任务最前面，告诉这个智能体它扮演什么角色、遵守什么规则：
 
 ```text
-你是一个前端代码审查智能体。拿到 issue 先读 diff，只关注：
+你是一个前端代码审查智能体。拿到议题先读 diff，只关注：
 - 样式问题（tailwind 类名、盒模型）
 - 可访问性（a11y）
 不改代码，只在评论里给建议。
@@ -124,4 +124,5 @@ claude --model <model> --max-turns 100 --append-system-prompt "always respond in
 
 - [Skills](/skills) —— 给智能体挂专业知识包
 - [AI 编程工具对照](/providers) —— 11 款工具的完整能力差别
-- [把 issue 分配给智能体](/assigning-issues) —— 创建完之后怎么用起来
+- [把议题分配给智能体](/assigning-issues) —— 创建完之后怎么用起来
+

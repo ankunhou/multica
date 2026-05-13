@@ -20,9 +20,9 @@
       "ordered_list": "有序列表"
     },
     "sub_issue": {
-      "tooltip": "用选中内容创建子 issue",
+      "tooltip": "用选中内容创建子议题",
       "created": "已创建 {{identifier}}",
-      "create_failed": "创建子 issue 失败"
+      "create_failed": "创建子议题失败"
     }
   },
   "image": {
@@ -44,7 +44,7 @@
   },
   "mention": {
     "group_users": "用户",
-    "group_issues": "issue",
+    "group_issues": "议题",
     "all_members": "所有成员",
     "agent_badge": "智能体",
     "searching": "搜索中...",

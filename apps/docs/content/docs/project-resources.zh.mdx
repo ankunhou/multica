@@ -3,9 +3,9 @@ title: 项目资源
 description: 给项目挂上类型化资源指针（目前是 Git repo，之后可扩展到更多类型），让智能体自动获得项目上下文。
 ---
 
-**项目资源**是一种挂在 [项目](/workspaces) 上的类型化指针：今天可以是 Git repo URL，之后也可以是 Notion 页面、文档链接或其他外部资源。当 [智能体](/agents) 执行该项目下 issue 的 task 时，daemon 会把项目资源列表写入智能体工作目录，并注入到 [meta-skill](/skills) prompt 中。
+**项目资源**是一种挂在 [项目](/workspaces) 上的类型化指针：今天可以是 Git repo URL，之后也可以是 Notion 页面、文档链接或其他外部资源。当 [智能体](/agents) 执行该项目下议题的 task 时，daemon 会把项目资源列表写入智能体工作目录，并注入到 [meta-skill](/skills) prompt 中。
 
-效果是：智能体知道该 checkout 哪个 repo、哪些文档是这个项目的主要参考，不需要用户把上下文手动复制进 issue 描述。
+效果是：智能体知道该 checkout 哪个 repo、哪些文档是这个项目的主要参考，不需要用户把上下文手动复制进议题描述。
 
 ## 心智模型
 
@@ -61,7 +61,7 @@ multica project resource add <project-id> \
 
 ## 智能体运行时看到什么
 
-当 daemon 为项目内 issue 启动智能体时，会做两件事。
+当 daemon 为项目内议题启动智能体时，会做两件事。
 
 ### 1. `.multica/project/resources.json`
 
@@ -93,7 +93,7 @@ skill、辅助脚本或智能体本身需要精确资源集合时，可以解析
 ```text
 ## Project Context
 
-这个 issue 属于 **Agent UX 2026**。
+这个议题属于 **Agent UX 2026**。
 
 项目资源（也会写入 `.multica/project/resources.json`）：
 
@@ -126,8 +126,8 @@ skill、辅助脚本或智能体本身需要精确资源集合时，可以解析
 
 daemon claim handler 会按下面优先级决定给智能体展示哪些 repo（即 `CLAUDE.md` / `AGENTS.md` 里的 `## Repositories` 块）：
 
-- **项目至少有一个 `github_repo` 资源**：只展示这些 repo。workspace 绑定 repo 会被隐藏，避免智能体猜这个 issue 应该用哪个 repo。
-- **项目没有 `github_repo` 资源，或 issue 不属于项目**：回退到 workspace repo 列表。
+- **项目至少有一个 `github_repo` 资源**：只展示这些 repo。workspace 绑定 repo 会被隐藏，避免智能体猜这个议题应该用哪个 repo。
+- **项目没有 `github_repo` 资源，或议题不属于项目**：回退到 workspace repo 列表。
 
 这样能让智能体的工作集保持很小：当项目明确声明 repo 时，这就是权威答案。结构化资源列表 `.multica/project/resources.json` 始终包含完整资源集合，所以想检查全部资源的 skill 仍然可以做到。
 
@@ -140,3 +140,4 @@ checkout 侧也遵循同样逻辑：task 到达时，如果包含 project-scoped
 - **缓存 / 同步文档正文**：`github_repo` 只是 metadata，checkout 仍通过 `multica repo checkout` 按需发生。Notion / Google Docs 的文档正文缓存会随对应类型一起进入。
 
 这些都是有意暂缓。第一版目标是用最少移动部件验证这个抽象是否成立。
+

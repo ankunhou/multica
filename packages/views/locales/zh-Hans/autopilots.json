@@ -22,7 +22,7 @@
     "archived": "已归档"
   },
   "execution_mode": {
-    "create_issue": "创建 issue",
+    "create_issue": "创建议题",
     "run_only": "仅运行"
   },
   "relative_date": {
@@ -35,22 +35,22 @@
     "daily_news": {
       "title": "每日新闻摘要",
       "summary": "搜索并汇总今天的新闻给团队",
-      "prompt": "1. 搜索今天发布的新闻和公告（严格限定为今天）\n2. 筛选与团队和行业相关的主题\n3. 为每条信息写一段简短摘要，包含：标题、来源、关键结论\n4. 汇总成一篇摘要\n5. 将摘要作为评论发布到这个 issue，并 @ 提及所有工作区成员"
+      "prompt": "1. 搜索今天发布的新闻和公告（严格限定为今天）\n2. 筛选与团队和行业相关的主题\n3. 为每条信息写一段简短摘要，包含：标题、来源、关键结论\n4. 汇总成一篇摘要\n5. 将摘要作为评论发布到这个议题，并 @ 提及所有工作区成员"
     },
     "pr_review": {
       "title": "PR review 提醒",
       "summary": "标记需要 review 的滞留 pull request",
-      "prompt": "1. 列出代码仓库中所有打开的 pull request\n2. 找出打开超过 24 小时且还没有 review 的 PR\n3. 对每个滞留 PR，记录作者、停留时间，以及一行变更摘要\n4. 在这个 issue 下发布评论，列出所有滞留 PR 及其链接\n5. @ 提及团队，提醒大家 review"
+      "prompt": "1. 列出代码仓库中所有打开的 pull request\n2. 找出打开超过 24 小时且还没有 review 的 PR\n3. 对每个滞留 PR，记录作者、停留时间，以及一行变更摘要\n4. 在这个议题下发布评论，列出所有滞留 PR 及其链接\n5. @ 提及团队，提醒大家 review"
     },
     "bug_triage": {
       "title": "Bug 分诊",
       "summary": "评估并安排新提交的 bug",
-      "prompt": "1. 列出所有状态为 \"triage\" 或 \"backlog\" 且尚未确定优先级的 issue\n2. 阅读每个 issue 的描述，以及附带的日志或截图\n3. 根据用户影响和影响范围评估严重程度（critical / high / medium / low）\n4. 相应设置 issue 的优先级字段\n5. 添加评论说明你的评估和建议的下一步"
+      "prompt": "1. 列出所有状态为 \"triage\" 或 \"backlog\" 且尚未确定优先级的议题\n2. 阅读每个议题的描述，以及附带的日志或截图\n3. 根据用户影响和影响范围评估严重程度（critical / high / medium / low）\n4. 相应设置议题的优先级字段\n5. 添加评论说明你的评估和建议的下一步"
     },
     "weekly_progress": {
       "title": "每周进度报告",
       "summary": "汇总团队本周进展",
-      "prompt": "1. 收集过去 7 天内已完成（状态为 \"done\"）的所有 issue\n2. 收集当前正在进行的所有 issue\n3. 找出被阻塞的 issue 及其阻塞原因\n4. 计算关键指标：关闭的 issue、创建的 issue、净变化\n5. 写一份结构化周报，包含：已完成、进行中、阻塞、指标\n6. 将报告作为评论发布到这个 issue"
+      "prompt": "1. 收集过去 7 天内已完成（状态为 \"done\"）的所有议题\n2. 收集当前正在进行的所有议题\n3. 找出被阻塞的议题及其阻塞原因\n4. 计算关键指标：关闭的议题、创建的议题、净变化\n5. 写一份结构化周报，包含：已完成、进行中、阻塞、指标\n6. 将报告作为评论发布到这个议题"
     },
     "dependency_audit": {
       "title": "依赖审计",
@@ -60,7 +60,7 @@
     "documentation_check": {
       "title": "文档检查",
       "summary": "检查近期改动是否缺失文档",
-      "prompt": "1. 列出过去 7 天合并的所有代码改动（通过 git log）\n2. 对每个重要改动，检查相关文档是否已更新\n3. 找出缺失文档的新 API、配置项或功能\n4. 整理文档缺口清单，包含文件路径和建议内容\n5. 将检查结果作为评论发布到这个 issue"
+      "prompt": "1. 列出过去 7 天合并的所有代码改动（通过 git log）\n2. 对每个重要改动，检查相关文档是否已更新\n3. 找出缺失文档的新 API、配置项或功能\n4. 整理文档缺口清单，包含文件路径和建议内容\n5. 将检查结果作为评论发布到这个议题"
     }
   },
   "detail": {
@@ -94,13 +94,13 @@
     }
   },
   "run_status": {
-    "issue_created": "已创建 issue",
+    "issue_created": "已创建议题",
     "running": "运行中",
     "completed": "已完成",
     "failed": "失败"
   },
   "run": {
-    "issue_linked": "已关联 issue",
+    "issue_linked": "已关联议题",
     "view_log": "查看执行日志"
   },
   "trigger_row": {
@@ -159,12 +159,12 @@
     "next_run_date_locale": "zh-CN",
     "output_modes": {
       "create_issue": {
-        "label": "创建 issue",
-        "description": "每次运行都创建一个可追踪的 issue"
+        "label": "创建议题",
+        "description": "每次运行都创建一个可追踪的议题"
       },
       "run_only": {
         "label": "仅运行",
-        "description": "静默运行，不创建 issue"
+        "description": "静默运行，不创建议题"
       }
     },
     "frequency_long": {

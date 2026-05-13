@@ -37,7 +37,7 @@ Multica 是一个 Go 后端 + monorepo 前端项目，前端使用 pnpm workspac
 ## 后端结构
 
 - **入口**（`cmd/`）：`server`（HTTP API）、`multica`（CLI + daemon）、`migrate`
-- **Handlers**（`internal/handler/`）：按领域拆分，例如 issue、comment、agent、auth、daemon
+- **Handlers**（`internal/handler/`）：按领域拆分，例如议题、comment、agent、auth、daemon
 - **实时层**（`internal/realtime/`）：Hub 管理 WebSocket client，并广播事件
 - **认证**（`internal/auth/` + `internal/middleware/`）：JWT（HS256），middleware 注入 `X-User-ID` 和 `X-User-Email`
 - **Task 生命周期**（`internal/service/task.go`）：enqueue → claim → start → complete/fail
@@ -59,7 +59,7 @@ Multica 是一个 Go 后端 + monorepo 前端项目，前端使用 pnpm workspac
 
 ### 状态管理
 
-- **TanStack Query** 管理所有服务端状态：issue、user、workspace 等。
+- **TanStack Query** 管理所有服务端状态：议题、user、workspace 等。
 - **Zustand** 管理客户端状态：选择项、过滤器、草稿等。
 - **React Context** 只用于跨层平台管道，例如 `WorkspaceIdProvider`、`NavigationProvider`。
 
@@ -73,3 +73,5 @@ Browser ← WSClient (shared/api) ← WebSocket ← Hub.Broadcast() ← Handlers
 ## 多租户
 
 所有查询都按 `workspace_id` 过滤，并通过成员关系检查控制访问。`X-Workspace-ID` header 用来把请求路由到正确 workspace。
+
+

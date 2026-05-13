@@ -42,24 +42,24 @@
   },
   "notifications": {
     "title": "收件箱通知",
-    "description": "控制哪些事件会产生收件箱通知。被静默的事件类型仍然存在——可以直接到 issue 页面查看。",
+    "description": "控制哪些事件会产生收件箱通知。被静默的事件类型仍然存在——可以直接到议题页面查看。",
     "toast_failed": "更新通知设置失败",
     "groups": {
       "assignments": {
         "label": "分配",
-        "description": "你被分配或取消分配某个 issue 时"
+        "description": "你被分配或取消分配某个议题时"
       },
       "status_changes": {
         "label": "状态变更",
-        "description": "你订阅的 issue 状态变化时（例如 todo、in progress、done）"
+        "description": "你订阅的议题状态变化时（例如 todo、in progress、done）"
       },
       "comments": {
         "label": "评论与提及",
-        "description": "你订阅的 issue 有新评论，或有人 @ 你时"
+        "description": "你订阅的议题有新评论，或有人 @ 你时"
       },
       "updates": {
         "label": "优先级与截止日期",
-        "description": "你订阅的 issue 优先级或截止日期变更时"
+        "description": "你订阅的议题优先级或截止日期变更时"
       },
       "agent_activity": {
         "label": "智能体活动",
@@ -141,7 +141,7 @@
   },
   "delete_workspace_dialog": {
     "title": "删除工作区",
-    "description": "此操作不可撤销。所有 issue、智能体和数据都将被永久删除。",
+    "description": "此操作不可撤销。所有议题、智能体和数据都将被永久删除。",
     "type_to_confirm_prefix": "确认请输入",
     "type_to_confirm_suffix": "。",
     "cancel": "取消",
@@ -158,8 +158,8 @@
   "integrations": {
     "section_title": "集成",
     "github_title": "GitHub",
-    "github_description_prefix": "自动把 issue 关联到 Pull Request。当 PR 的分支、标题或正文中包含",
-    "github_description_suffix": "并被合并时，对应的 issue 会自动转为",
+    "github_description_prefix": "自动把议题关联到 Pull Request。当 PR 的分支、标题或正文中包含",
+    "github_description_suffix": "并被合并时，对应的议题会自动转为",
     "github_description_done": "已完成",
     "github_identifier_example": "MUL-123",
     "connect_github": "连接 GitHub",
@@ -222,7 +222,7 @@
       },
       "member": {
         "label": "成员",
-        "description": "创建并处理 issue"
+        "description": "创建并处理议题"
       }
     }
   }

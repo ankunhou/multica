@@ -1,4 +1,7 @@
 {
   "title": "CLI & Daemon",
-  "pages": ["installation", "reference"]
+  "pages": [
+    "installation",
+    "reference"
+  ]
 }

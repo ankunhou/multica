@@ -1,11 +1,11 @@
 {
   "routes": {
-    "issues": "issue",
-    "issue": "issue",
+    "issues": "议题",
+    "issue": "议题",
     "projects": "项目",
     "project": "项目",
     "autopilots": "自动化",
-    "my_issues": "我的 issue",
+    "my_issues": "我的议题",
     "runtimes": "运行时",
     "runtime": "运行时",
     "skills": "skill",

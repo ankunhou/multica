@@ -1,20 +1,20 @@
 ---
 title: 对话
-description: 和智能体一对一独立聊天——完全沙盒，智能体看不到 issue、改不了 issue，也没人能看到你的对话。
+description: 和智能体一对一独立聊天——完全沙盒，智能体看不到议题、改不了议题，也没人能看到你的对话。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-**对话（Chat）是你和 [智能体](/agents) 的一对一独立沟通**——跳出 [issue](/issues) 看板，智能体看不到任何 issue、也改不了 issue，整段对话**完全私人**（[工作区](/workspaces) 里其他人、包括 admin 都看不到）。适合和智能体讨论方案、做 brainstorming、问一个不属于任何 issue 的问题。
+**对话（Chat）是你和 [智能体](/agents) 的一对一独立沟通**——跳出 [议题](/issues) 看板，智能体看不到任何议题、也改不了议题，整段对话**完全私人**（[工作区](/workspaces) 里其他人、包括 admin 都看不到）。适合和智能体讨论方案、做 brainstorming、问一个不属于任何议题的问题。
 
 ## 为什么不用 @ 智能体就够
 
-[@ 提及](/mentioning-agents) 把智能体**拉进** issue 的上下文——它会读 issue 的描述和所有历史评论，也能改 issue。对话反过来：**把你拉出** issue——智能体只看得到这一次对话，不知道 issue 存在，也没有修改 issue 的入口。
+[@ 提及](/mentioning-agents) 把智能体**拉进** 议题的上下文——它会读议题的描述和所有历史评论，也能改议题。对话反过来：**把你拉出** 议题——智能体只看得到这一次对话，不知道议题存在，也没有修改议题的入口。
 
 两条判据：
 
-- 要智能体基于某个具体 issue 的上下文给反馈 → [@ 提及](/mentioning-agents)
-- 要和智能体聊一个不属于任何 issue 的话题（或不想让任何人看到讨论）→ 对话
+- 要智能体基于某个具体议题的上下文给反馈 → [@ 提及](/mentioning-agents)
+- 要和智能体聊一个不属于任何议题的话题（或不想让任何人看到讨论）→ 对话
 
 ## 开始一次对话
 
@@ -29,12 +29,12 @@ import { Callout } from "fumadocs-ui/components/callout";
 - 回答你当前消息里提的问题
 - 使用自己配置的 [skill](/skills) 和 MCP
 - 在自己的工作目录里读写文件
-- 调用不需要 issue 上下文的 `multica` CLI 命令（比如查询工作区基本信息）
+- 调用不需要议题上下文的 `multica` CLI 命令（比如查询工作区基本信息）
 
 **不能做的**：
 
-- **看到任何 issue**——智能体收到的提示里没有 issue ID，`multica issue list` 之类命令对它返回空
-- **改任何 issue**——没有 issue 上下文，API 调用会被权限 check 拦截
+- **看到任何议题**——智能体收到的提示里没有议题 ID，`multica issue list` 之类命令对它返回空
+- **改任何议题**——没有议题上下文，API 调用会被权限 check 拦截
 - **看到别的对话**——对话之间完全隔离
 - **@ 任何人或智能体**——对话是私人空间，没有通知别人的路径
 
@@ -60,4 +60,6 @@ import { Callout } from "fumadocs-ui/components/callout";
 ## 下一步
 
 - [**Autopilots**](/autopilots) —— 让智能体定时自动开工
-- [**分配 issue 给智能体**](/assigning-issues) —— 把话题放回 issue 看板上
+- [**分配议题给智能体**](/assigning-issues) —— 把话题放回议题看板上
+
+
