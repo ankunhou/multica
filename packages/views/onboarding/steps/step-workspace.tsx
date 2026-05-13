@@ -218,8 +218,8 @@ export function StepWorkspace({
         >
           {t(($) => $.step_workspace.url_label)}
         </Label>
-        <div className="flex items-center rounded-md border bg-muted transition-colors focus-within:border-foreground">
-          <span className="select-none pl-3 font-mono text-sm text-muted-foreground">
+        <div className="flex h-9 items-center overflow-hidden rounded-xl border border-input bg-background/70 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
+          <span className="flex h-full select-none items-center border-r border-input/50 bg-muted/35 px-3 font-mono text-sm text-muted-foreground">
             {"multica.ai/"}
           </span>
           <Input
@@ -228,7 +228,7 @@ export function StepWorkspace({
             value={slug}
             onChange={(e) => handleSlugChange(e.target.value)}
             placeholder={t(($) => $.step_workspace.slug_placeholder)}
-            className="border-0 bg-transparent font-mono shadow-none focus-visible:ring-0"
+            className="h-full rounded-none border-0 bg-transparent font-mono shadow-none focus-visible:border-transparent focus-visible:ring-0"
             onKeyDown={(e) => {
               if (isImeComposing(e)) return;
               if (e.key === "Enter") handleCreate();
