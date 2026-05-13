@@ -127,9 +127,10 @@ func TestRecordHeartbeat_NoopStoreAlwaysWritesDB(t *testing.T) {
 	testHandler.LivenessStore = NewNoopLivenessStore()
 	t.Cleanup(func() { testHandler.LivenessStore = orig })
 
-	// Pin last_seen_at to "just now" to ensure the DB-flush condition is not
-	// what's driving the write.
-	setRuntimeLastSeenAt(t, runtimeID, time.Now())
+	// Pin last_seen_at inside the DB-flush window, but far enough behind the
+	// database clock that PostgreSQL now() will still compare as newer on hosts
+	// where the test process and Docker database clocks differ slightly.
+	setRuntimeLastSeenAt(t, runtimeID, time.Now().Add(-5*time.Second))
 	rt := loadRuntime(t, runtimeID)
 	before := rt.LastSeenAt.Time
 
@@ -159,8 +160,8 @@ func TestRecordHeartbeat_RedisAvailableSkipsDBWithinFlushWindow(t *testing.T) {
 	testHandler.LivenessStore = fake
 	t.Cleanup(func() { testHandler.LivenessStore = orig })
 
-	// Pin last_seen_at to "just now" so we are inside the flush window.
-	setRuntimeLastSeenAt(t, runtimeID, time.Now())
+	// Pin last_seen_at inside the DB-flush window.
+	setRuntimeLastSeenAt(t, runtimeID, time.Now().Add(-5*time.Second))
 	rt := loadRuntime(t, runtimeID)
 	before := rt.LastSeenAt.Time
 
@@ -223,7 +224,7 @@ func TestRecordHeartbeat_OfflineToOnlineForcesDBWrite(t *testing.T) {
 	setRuntimeStatus(t, runtimeID, "offline")
 	// Keep last_seen_at fresh so the DB-flush condition is not what's
 	// driving the write — only the offline→online transition is.
-	setRuntimeLastSeenAt(t, runtimeID, time.Now())
+	setRuntimeLastSeenAt(t, runtimeID, time.Now().Add(-5*time.Second))
 	rt := loadRuntime(t, runtimeID)
 	if rt.Status != "offline" {
 		t.Fatalf("setup: status = %q, want offline", rt.Status)
@@ -256,7 +257,7 @@ func TestRecordHeartbeat_TouchErrorFallsBackToDB(t *testing.T) {
 	testHandler.LivenessStore = fake
 	t.Cleanup(func() { testHandler.LivenessStore = orig })
 
-	setRuntimeLastSeenAt(t, runtimeID, time.Now())
+	setRuntimeLastSeenAt(t, runtimeID, time.Now().Add(-5*time.Second))
 	rt := loadRuntime(t, runtimeID)
 	before := rt.LastSeenAt.Time
 

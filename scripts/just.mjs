@@ -502,7 +502,7 @@ async function check() {
       started.push(spawnWebDev());
       await waitForHttp(`http://localhost:${webPort}`, "frontend", 120_000);
     }
-    run(exe("pnpm"), ["exec", "playwright", "test"], {
+    run(exe("pnpm"), ["exec", "playwright", "test", "--workers=1"], {
       env: {
         ...process.env,
         PLAYWRIGHT_BASE_URL: process.env.PLAYWRIGHT_BASE_URL || `http://localhost:${webPort}`,

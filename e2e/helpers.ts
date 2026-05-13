@@ -21,12 +21,12 @@ export async function loginAsDefault(page: Page): Promise<string> {
   );
 
   const token = api.getToken();
-  await page.goto("/login");
-  await page.evaluate((t) => {
+  await page.addInitScript((t) => {
     localStorage.setItem("multica_token", t);
   }, token);
   await page.goto(`/${workspace.slug}/issues`);
   await page.waitForURL("**/issues", { timeout: 10000 });
+  await dismissStarterContentDialog(page);
   return workspace.slug;
 }
 
@@ -46,4 +46,13 @@ export async function openWorkspaceMenu(page: Page) {
   await page.locator("aside button").first().click();
   // Wait for dropdown to appear
   await page.locator('[class*="popover"]').waitFor({ state: "visible" });
+}
+
+async function dismissStarterContentDialog(page: Page) {
+  const startBlank = page.getByRole("button", { name: "Start blank workspace" });
+  try {
+    await startBlank.click({ timeout: 1500 });
+  } catch {
+    // The dialog is only shown for fresh workspaces.
+  }
 }
