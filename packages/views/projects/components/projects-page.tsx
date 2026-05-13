@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Plus, FolderKanban, UserMinus, Check } from "lucide-react";
+import { Plus, FolderKanban, UserMinus, Check, LayoutGrid, List } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { projectListOptions } from "@multica/core/projects/queries";
 import { useUpdateProject } from "@multica/core/projects/mutations";
@@ -44,25 +44,209 @@ import {
   useFormatRelativeDate,
 } from "./labels";
 
-function ProjectRow({ project }: { project: Project }) {
+type ProjectViewMode = "list" | "grid";
+
+function ProjectPriorityControl({
+  project,
+  onUpdate,
+  className,
+}: {
+  project: Project;
+  onUpdate: (data: UpdateProjectRequest) => void;
+  className?: string;
+}) {
+  const priorityLabels = useProjectPriorityLabels();
+  const priorityCfg = PROJECT_PRIORITY_CONFIG[project.priority];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            className={cn(
+              "flex w-24 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2 py-1 transition-colors hover:bg-background/80",
+              className,
+            )}
+          >
+            <PriorityIcon priority={project.priority} />
+            <span className={cn("text-xs", priorityCfg.color)}>{priorityLabels[project.priority]}</span>
+          </button>
+        }
+      />
+      <DropdownMenuContent align="start" className="w-44">
+        {PROJECT_PRIORITY_ORDER.map((p) => (
+          <DropdownMenuItem key={p} onClick={() => onUpdate({ priority: p as ProjectPriority })}>
+            <PriorityIcon priority={p} />
+            <span>{priorityLabels[p]}</span>
+            {p === project.priority && <Check className="ml-auto h-3.5 w-3.5" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function ProjectStatusControl({
+  project,
+  onUpdate,
+  className,
+}: {
+  project: Project;
+  onUpdate: (data: UpdateProjectRequest) => void;
+  className?: string;
+}) {
+  const statusLabels = useProjectStatusLabels();
+  const statusCfg = PROJECT_STATUS_CONFIG[project.status];
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        render={
+          <button
+            type="button"
+            className={cn(
+              "inline-flex w-28 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-opacity hover:opacity-80",
+              statusCfg.badgeBg,
+              statusCfg.badgeText,
+              className,
+            )}
+          >
+            {statusLabels[project.status]}
+          </button>
+        }
+      />
+      <DropdownMenuContent align="start" className="w-44">
+        {PROJECT_STATUS_ORDER.map((s) => (
+          <DropdownMenuItem key={s} onClick={() => onUpdate({ status: s as ProjectStatus })}>
+            <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[s].dotColor)} />
+            <span>{statusLabels[s]}</span>
+            {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
+function ProjectProgressInline({ project }: { project: Project }) {
+  if (project.issue_count === 0) {
+    return <span className="text-xs text-muted-foreground">--</span>;
+  }
+
+  return (
+    <>
+      <span className="relative h-1.5 w-12 overflow-hidden rounded-full bg-muted">
+        <span
+          className="absolute inset-y-0 left-0 rounded-full bg-emerald-500 transition-all"
+          style={{ width: `${Math.round((project.done_count / project.issue_count) * 100)}%` }}
+        />
+      </span>
+      <span className="text-xs text-muted-foreground tabular-nums">
+        {project.done_count}/{project.issue_count}
+      </span>
+    </>
+  );
+}
+
+function ProjectLeadPicker({
+  project,
+  onUpdate,
+}: {
+  project: Project;
+  onUpdate: (data: UpdateProjectRequest) => void;
+}) {
   const { t } = useT("projects");
   const wsId = useWorkspaceId();
-  const wsPaths = useWorkspacePaths();
-  const statusLabels = useProjectStatusLabels();
-  const priorityLabels = useProjectPriorityLabels();
-  const formatRelativeDate = useFormatRelativeDate();
-  const statusCfg = PROJECT_STATUS_CONFIG[project.status];
-  const priorityCfg = PROJECT_PRIORITY_CONFIG[project.priority];
-  const updateProject = useUpdateProject();
   const { data: members = [] } = useQuery(memberListOptions(wsId));
   const { data: agents = [] } = useQuery(agentListOptions(wsId));
   const { getActorName } = useActorName();
-
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadFilter, setLeadFilter] = useState("");
   const leadQuery = leadFilter.toLowerCase();
   const filteredMembers = members.filter((m) => m.name.toLowerCase().includes(leadQuery));
   const filteredAgents = agents.filter((a) => !a.archived_at && a.name.toLowerCase().includes(leadQuery));
+
+  return (
+    <Popover open={leadOpen} onOpenChange={(v) => { setLeadOpen(v); if (!v) setLeadFilter(""); }}>
+      <PopoverTrigger
+        render={
+          <button type="button" className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all hover:bg-background/80">
+            {project.lead_type && project.lead_id ? (
+              <Tooltip>
+                <TooltipTrigger render={<span><ActorAvatar actorType={project.lead_type} actorId={project.lead_id} size={22} enableHoverCard /></span>} />
+                <TooltipContent side="bottom">{getActorName(project.lead_type, project.lead_id)}</TooltipContent>
+              </Tooltip>
+            ) : (
+              <span className="h-[22px] w-[22px] rounded-full border border-dashed border-muted-foreground/25 bg-muted/40" />
+            )}
+          </button>
+        }
+      />
+      <PopoverContent align="start" className="w-52 p-0">
+        <div className="px-2 py-1.5 border-b">
+          <input
+            type="text"
+            value={leadFilter}
+            onChange={(e) => setLeadFilter(e.target.value)}
+            placeholder={t(($) => $.lead.assign_placeholder)}
+            className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
+          />
+        </div>
+        <div className="p-1 max-h-60 overflow-y-auto">
+          <button
+            type="button"
+            onClick={() => { onUpdate({ lead_type: null, lead_id: null }); setLeadOpen(false); }}
+            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+          >
+            <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
+            <span className="text-muted-foreground">{t(($) => $.lead.no_lead)}</span>
+          </button>
+          {filteredMembers.length > 0 && (
+            <>
+              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.members_group)}</div>
+              {filteredMembers.map((m) => (
+                <button
+                  type="button"
+                  key={m.user_id}
+                  onClick={() => { onUpdate({ lead_type: "member", lead_id: m.user_id }); setLeadOpen(false); }}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                >
+                  <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
+                  <span>{m.name}</span>
+                </button>
+              ))}
+            </>
+          )}
+          {filteredAgents.length > 0 && (
+            <>
+              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.agents_group)}</div>
+              {filteredAgents.map((a) => (
+                <button
+                  type="button"
+                  key={a.id}
+                  onClick={() => { onUpdate({ lead_type: "agent", lead_id: a.id }); setLeadOpen(false); }}
+                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                >
+                  <ActorAvatar actorType="agent" actorId={a.id} size={16} showStatusDot />
+                  <span>{a.name}</span>
+                </button>
+              ))}
+            </>
+          )}
+          {filteredMembers.length === 0 && filteredAgents.length === 0 && leadFilter && (
+            <div className="px-2 py-3 text-center text-sm text-muted-foreground">{t(($) => $.lead.no_results)}</div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+function ProjectRow({ project }: { project: Project }) {
+  const wsPaths = useWorkspacePaths();
+  const formatRelativeDate = useFormatRelativeDate();
+  const updateProject = useUpdateProject();
 
   const handleUpdate = useCallback(
     (data: UpdateProjectRequest) => {
@@ -72,7 +256,7 @@ function ProjectRow({ project }: { project: Project }) {
   );
 
   return (
-    <div className="group/row flex h-11 items-center gap-2 px-5 text-sm transition-colors hover:bg-accent/40">
+    <div className="group/row flex min-h-14 items-center gap-2 rounded-2xl px-3 text-sm transition-colors hover:bg-accent/45">
       {/* Icon + Name (navigates to detail) */}
       <AppLink
         href={wsPaths.projectDetail(project.id)}
@@ -83,141 +267,18 @@ function ProjectRow({ project }: { project: Project }) {
       </AppLink>
 
       {/* Priority — dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <button type="button" className="flex w-24 items-center justify-center gap-1 shrink-0 rounded px-1 py-0.5 hover:bg-accent/60 transition-colors cursor-pointer">
-              <PriorityIcon priority={project.priority} />
-              <span className={cn("text-xs", priorityCfg.color)}>{priorityLabels[project.priority]}</span>
-            </button>
-          }
-        />
-        <DropdownMenuContent align="start" className="w-44">
-          {PROJECT_PRIORITY_ORDER.map((p) => (
-            <DropdownMenuItem key={p} onClick={() => handleUpdate({ priority: p as ProjectPriority })}>
-              <PriorityIcon priority={p} />
-              <span>{priorityLabels[p]}</span>
-              {p === project.priority && <Check className="ml-auto h-3.5 w-3.5" />}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <ProjectPriorityControl project={project} onUpdate={handleUpdate} />
 
       {/* Status — dropdown */}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <button type="button" className={cn(
-              "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium shrink-0 w-28 justify-center cursor-pointer hover:opacity-80 transition-opacity",
-              statusCfg.badgeBg, statusCfg.badgeText,
-            )}>
-              {statusLabels[project.status]}
-            </button>
-          }
-        />
-        <DropdownMenuContent align="start" className="w-44">
-          {PROJECT_STATUS_ORDER.map((s) => (
-            <DropdownMenuItem key={s} onClick={() => handleUpdate({ status: s as ProjectStatus })}>
-              <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[s].dotColor)} />
-              <span>{statusLabels[s]}</span>
-              {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
-            </DropdownMenuItem>
-          ))}
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <ProjectStatusControl project={project} onUpdate={handleUpdate} />
 
       {/* Progress (read-only) */}
       <span className="flex w-24 items-center justify-center gap-1.5 shrink-0">
-        {project.issue_count > 0 ? (
-          <>
-            <span className="relative h-1.5 w-12 rounded-full bg-muted overflow-hidden">
-              <span
-                className="absolute inset-y-0 left-0 rounded-full bg-emerald-500 transition-all"
-                style={{ width: `${Math.round((project.done_count / project.issue_count) * 100)}%` }}
-              />
-            </span>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {project.done_count}/{project.issue_count}
-            </span>
-          </>
-        ) : (
-          <span className="text-xs text-muted-foreground">--</span>
-        )}
+        <ProjectProgressInline project={project} />
       </span>
 
       {/* Lead — popover */}
-      <Popover open={leadOpen} onOpenChange={(v) => { setLeadOpen(v); if (!v) setLeadFilter(""); }}>
-        <PopoverTrigger
-          render={
-            <button type="button" className="flex w-10 items-center justify-center shrink-0 rounded-full hover:ring-2 hover:ring-accent transition-all cursor-pointer">
-              {project.lead_type && project.lead_id ? (
-                <Tooltip>
-                  <TooltipTrigger render={<span><ActorAvatar actorType={project.lead_type} actorId={project.lead_id} size={22} enableHoverCard /></span>} />
-                  <TooltipContent side="bottom">{getActorName(project.lead_type, project.lead_id)}</TooltipContent>
-                </Tooltip>
-              ) : (
-                <span className="h-[22px] w-[22px] rounded-full border border-dashed border-muted-foreground/30" />
-              )}
-            </button>
-          }
-        />
-        <PopoverContent align="start" className="w-52 p-0">
-          <div className="px-2 py-1.5 border-b">
-            <input
-              type="text"
-              value={leadFilter}
-              onChange={(e) => setLeadFilter(e.target.value)}
-              placeholder={t(($) => $.lead.assign_placeholder)}
-              className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
-            />
-          </div>
-          <div className="p-1 max-h-60 overflow-y-auto">
-            <button
-              type="button"
-              onClick={() => { handleUpdate({ lead_type: null, lead_id: null }); setLeadOpen(false); }}
-              className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-            >
-              <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">{t(($) => $.lead.no_lead)}</span>
-            </button>
-            {filteredMembers.length > 0 && (
-              <>
-                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.members_group)}</div>
-                {filteredMembers.map((m) => (
-                  <button
-                    type="button"
-                    key={m.user_id}
-                    onClick={() => { handleUpdate({ lead_type: "member", lead_id: m.user_id }); setLeadOpen(false); }}
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-                  >
-                    <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
-                    <span>{m.name}</span>
-                  </button>
-                ))}
-              </>
-            )}
-            {filteredAgents.length > 0 && (
-              <>
-                <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.agents_group)}</div>
-                {filteredAgents.map((a) => (
-                  <button
-                    type="button"
-                    key={a.id}
-                    onClick={() => { handleUpdate({ lead_type: "agent", lead_id: a.id }); setLeadOpen(false); }}
-                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-                  >
-                    <ActorAvatar actorType="agent" actorId={a.id} size={16} showStatusDot />
-                    <span>{a.name}</span>
-                  </button>
-                ))}
-              </>
-            )}
-            {filteredMembers.length === 0 && filteredAgents.length === 0 && leadFilter && (
-              <div className="px-2 py-3 text-center text-sm text-muted-foreground">{t(($) => $.lead.no_results)}</div>
-            )}
-          </div>
-        </PopoverContent>
-      </Popover>
+      <ProjectLeadPicker project={project} onUpdate={handleUpdate} />
 
       {/* Created */}
       <span className="w-20 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
@@ -227,35 +288,126 @@ function ProjectRow({ project }: { project: Project }) {
   );
 }
 
+function ProjectCard({ project }: { project: Project }) {
+  const { t } = useT("projects");
+  const wsPaths = useWorkspacePaths();
+  const formatRelativeDate = useFormatRelativeDate();
+  const updateProject = useUpdateProject();
+  const progress = project.issue_count > 0
+    ? Math.round((project.done_count / project.issue_count) * 100)
+    : 0;
+
+  const handleUpdate = useCallback(
+    (data: UpdateProjectRequest) => {
+      updateProject.mutate({ id: project.id, ...data });
+    },
+    [project.id, updateProject],
+  );
+
+  return (
+    <div className="flex min-h-48 flex-col rounded-3xl border border-border/55 bg-card/75 p-4 shadow-sm ring-1 ring-black/[0.02] transition-colors hover:bg-accent/25">
+      <div className="flex items-start justify-between gap-3">
+        <AppLink
+          href={wsPaths.projectDetail(project.id)}
+          className="flex min-w-0 flex-1 items-start gap-3"
+        >
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-muted/70 text-muted-foreground">
+            <ProjectIcon project={project} size="md" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-medium">{project.title}</span>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {formatRelativeDate(project.created_at)}
+            </span>
+          </span>
+        </AppLink>
+        <ProjectLeadPicker project={project} onUpdate={handleUpdate} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <ProjectPriorityControl project={project} onUpdate={handleUpdate} className="w-auto bg-muted/45 px-2.5" />
+        <ProjectStatusControl project={project} onUpdate={handleUpdate} className="w-auto px-2.5" />
+      </div>
+
+      <div className="mt-auto pt-6">
+        <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
+          <span>{t(($) => $.table.progress)}</span>
+          <span className="tabular-nums">
+            {project.issue_count > 0 ? `${project.done_count}/${project.issue_count}` : "--"}
+          </span>
+        </div>
+        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+          <div
+            className="h-full rounded-full bg-emerald-500 transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function ProjectsPage() {
   const { t } = useT("projects");
   const wsId = useWorkspaceId();
   const { data: projects = [], isLoading } = useQuery(projectListOptions(wsId));
   const openCreateProject = () => useModalStore.getState().open("create-project");
+  const [viewMode, setViewMode] = useState<ProjectViewMode>("list");
 
   return (
     <div className="flex h-full flex-col">
       {/* Header bar */}
-      <PageHeader className="justify-between px-5">
-        <div className="flex items-center gap-2">
-          <FolderKanban className="h-4 w-4 text-muted-foreground" />
-          <h1 className="text-sm font-medium">{t(($) => $.page.title)}</h1>
+      <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+            <FolderKanban className="h-3.5 w-3.5" />
+          </span>
+          <h1 className="truncate text-2xl font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
           {!isLoading && projects.length > 0 && (
-            <span className="text-xs text-muted-foreground tabular-nums">{projects.length}</span>
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">{projects.length}</span>
           )}
         </div>
-        <Button size="sm" variant="outline" onClick={openCreateProject}>
-          <Plus className="h-3.5 w-3.5 mr-1" />
-          {t(($) => $.page.new_project)}
-        </Button>
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="inline-flex rounded-full bg-muted/70 p-1 text-muted-foreground">
+            <button
+              type="button"
+              aria-label={t(($) => $.page.view_list)}
+              aria-pressed={viewMode === "list"}
+              title={t(($) => $.page.view_list)}
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "flex size-7 items-center justify-center rounded-full transition-colors",
+                viewMode === "list" ? "bg-background text-foreground shadow-sm" : "hover:text-foreground",
+              )}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              aria-label={t(($) => $.page.view_grid)}
+              aria-pressed={viewMode === "grid"}
+              title={t(($) => $.page.view_grid)}
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "flex size-7 items-center justify-center rounded-full transition-colors",
+                viewMode === "grid" ? "bg-background text-foreground shadow-sm" : "hover:text-foreground",
+              )}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+          <Button size="sm" variant="outline" className="rounded-full border-border/60 bg-card/80 px-3 shadow-sm" onClick={openCreateProject}>
+            <Plus className="h-3.5 w-3.5 mr-1" />
+            {t(($) => $.page.new_project)}
+          </Button>
+        </div>
       </PageHeader>
 
       {/* Table */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
         {isLoading ? (
-          <>
-            <div className="sticky top-0 z-[1] flex h-8 items-center gap-2 border-b bg-muted/30 px-5">
+          <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-border/55 bg-card/75 p-2 shadow-sm ring-1 ring-black/[0.02]">
+            <div className="flex h-9 items-center gap-2 px-3">
               <span className="shrink-0 w-[24px]" />
               <Skeleton className="h-3 w-12 flex-1 max-w-[48px]" />
               <Skeleton className="h-3 w-12 shrink-0" />
@@ -264,38 +416,48 @@ export function ProjectsPage() {
               <Skeleton className="h-3 w-8 shrink-0" />
               <Skeleton className="h-3 w-12 shrink-0" />
             </div>
-            <div className="p-5 pt-1 space-y-1">
+            <div className="space-y-1">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-11 w-full" />
+                <Skeleton key={i} className="h-14 w-full rounded-2xl" />
               ))}
             </div>
-          </>
+          </div>
         ) : projects.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-muted-foreground">
-            <FolderKanban className="h-10 w-10 mb-3 opacity-30" />
-            <p className="text-sm">{t(($) => $.page.empty)}</p>
-            <Button size="sm" variant="outline" className="mt-3" onClick={openCreateProject}>
+          <div className="mx-auto flex min-h-[520px] max-w-3xl flex-col items-center justify-center pb-16 text-muted-foreground">
+            <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-muted/60">
+              <FolderKanban className="h-5 w-5" />
+            </span>
+            <p className="text-sm text-foreground">{t(($) => $.page.empty)}</p>
+            <Button size="sm" variant="outline" className="mt-3 rounded-full" onClick={openCreateProject}>
               {t(($) => $.page.create_first)}
             </Button>
           </div>
         ) : (
-          <>
-            {/* Column headers */}
-            <div className="sticky top-0 z-[1] flex h-8 items-center gap-2 border-b bg-muted/30 px-5 text-xs font-medium text-muted-foreground">
-              {/* Icon spacer + Name */}
-              <span className="shrink-0 w-[24px]" />
-              <span className="min-w-0 flex-1">{t(($) => $.table.name)}</span>
-              <span className="w-24 text-center shrink-0">{t(($) => $.table.priority)}</span>
-              <span className="w-28 text-center shrink-0">{t(($) => $.table.status)}</span>
-              <span className="w-24 text-center shrink-0">{t(($) => $.table.progress)}</span>
-              <span className="w-10 text-center shrink-0">{t(($) => $.table.lead)}</span>
-              <span className="w-20 text-right shrink-0">{t(($) => $.table.created)}</span>
+          viewMode === "list" ? (
+            <div className="mx-auto w-full max-w-6xl overflow-hidden rounded-3xl border border-border/55 bg-card/75 p-2 shadow-sm ring-1 ring-black/[0.02]">
+              {/* Column headers */}
+              <div className="flex h-9 items-center gap-2 px-3 text-xs font-medium text-muted-foreground">
+                {/* Icon spacer + Name */}
+                <span className="shrink-0 w-[24px]" />
+                <span className="min-w-0 flex-1">{t(($) => $.table.name)}</span>
+                <span className="w-24 text-center shrink-0">{t(($) => $.table.priority)}</span>
+                <span className="w-28 text-center shrink-0">{t(($) => $.table.status)}</span>
+                <span className="w-24 text-center shrink-0">{t(($) => $.table.progress)}</span>
+                <span className="w-10 text-center shrink-0">{t(($) => $.table.lead)}</span>
+                <span className="w-20 text-right shrink-0">{t(($) => $.table.created)}</span>
+              </div>
+              {/* Rows */}
+              {projects.map((project) => (
+                <ProjectRow key={project.id} project={project} />
+              ))}
             </div>
-            {/* Rows */}
-            {projects.map((project) => (
-              <ProjectRow key={project.id} project={project} />
-            ))}
-          </>
+          ) : (
+            <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+              {projects.map((project) => (
+                <ProjectCard key={project.id} project={project} />
+              ))}
+            </div>
+          )
         )}
       </div>
     </div>

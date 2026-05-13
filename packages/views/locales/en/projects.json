@@ -2,6 +2,8 @@
   "page": {
     "title": "Projects",
     "new_project": "New project",
+    "view_list": "List view",
+    "view_grid": "Card view",
     "empty": "No projects yet",
     "create_first": "Create your first project"
   },

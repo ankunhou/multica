@@ -2,6 +2,8 @@
   "page": {
     "title": "项目",
     "new_project": "新建项目",
+    "view_list": "列表视图",
+    "view_grid": "卡片视图",
     "empty": "还没有项目",
     "create_first": "创建第一个项目"
   },
