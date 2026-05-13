@@ -41,7 +41,7 @@ export interface ChatMessage {
    * FailTask fallback (mirrors the issue path's failure system comment).
    * `content` carries the raw daemon-reported errMsg; the front-end maps
    * `failure_reason` (an enum like "agent_error" / "connection_error" /
-   * "timeout") to a user-facing label and renders a destructive bubble.
+   * "timeout") to a user-facing label and renders an agent-failed note.
    * Null on success messages and on user messages.
    */
   failure_reason?: string | null;

@@ -185,7 +185,7 @@ function AssistantMessage({
   const timeline: ChatTimelineItem[] = (taskMessages ?? []).map(toTimelineItem);
 
   // Failure bubble path: when the server's FailTask wrote a failure
-  // chat_message (failure_reason set), render a destructive bubble with the
+  // chat_message (failure_reason set), render an agent-failed note with the
   // human-readable reason label + collapsible raw errMsg + the same timeline
   // so the user can see exactly where the run broke.
   if (message.failure_reason) {
@@ -344,12 +344,12 @@ function FailureBubble({
       {/* Failure read as an inline, low-key note — not a destructive
        *  alert. Intentionally borderless / no background tint: a chat
        *  failure is informational ("this didn't work"), not a system
-       *  error. The icon + muted destructive text are signal enough,
+       *  error. The icon + muted agent-failed text are signal enough,
        *  the rest stays in the normal reply rhythm. */}
       <div className="flex items-start gap-1.5 text-sm">
-        <AlertTriangle className="size-3.5 shrink-0 text-destructive/80 mt-0.5" />
+        <AlertTriangle className="size-3.5 shrink-0 text-agent-failed/80 mt-0.5" />
         <div className="flex-1 min-w-0">
-          <div className="text-destructive/90">{label}</div>
+          <div className="text-agent-failed/90">{label}</div>
           {rawError.trim() && (
             <Collapsible open={open} onOpenChange={setOpen}>
               <CollapsibleTrigger className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
@@ -598,8 +598,8 @@ function ThinkingRow({ item }: { item: ChatTimelineItem }) {
 function ErrorRow({ item }: { item: ChatTimelineItem }) {
   return (
     <div className="flex items-start gap-1.5 px-1 -mx-1 py-0.5 text-xs">
-      <AlertCircle className="h-3 w-3 shrink-0 text-destructive mt-0.5" />
-      <span className="text-destructive">{item.content}</span>
+      <AlertCircle className="h-3 w-3 shrink-0 text-agent-failed mt-0.5" />
+      <span className="text-agent-failed">{item.content}</span>
     </div>
   );
 }
