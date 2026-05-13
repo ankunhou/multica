@@ -6,6 +6,42 @@ import { cn } from "@multica/ui/lib/utils";
 
 export type ResourceViewMode = "list" | "grid";
 
+export const resourceHeaderIconClassName =
+  "flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/60 text-muted-foreground";
+
+export const resourceActionButtonClassName =
+  "rounded-full border-border/50 bg-card/75 px-3 shadow-none hover:bg-background/80";
+
+export const resourceSearchInputClassName =
+  "h-8 w-64 rounded-full border-border/50 bg-card/75 pl-8 text-sm shadow-none";
+
+export const resourceSegmentClassName =
+  "flex items-center gap-0.5 rounded-full bg-muted/60 p-0.5";
+
+export function resourceSegmentItemClassName(active: boolean) {
+  return cn(
+    "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+    active
+      ? "bg-background text-foreground ring-1 ring-border/40"
+      : "text-muted-foreground hover:bg-background/45 hover:text-foreground",
+  );
+}
+
+export function ResourcePageBody({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function ResourceSurface({
   className,
   ...props
@@ -13,7 +49,22 @@ export function ResourceSurface({
   return (
     <div
       className={cn(
-        "rounded-3xl border border-border/50 bg-card/70 ring-1 ring-border/25",
+        "rounded-3xl border border-border/45 bg-card/75 shadow-none",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function ResourceToolbarRow({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex min-h-12 shrink-0 items-center border-b border-border/35 px-4",
         className,
       )}
       {...props}
@@ -61,7 +112,7 @@ export function ResourceViewToggle({
   return (
     <div
       className={cn(
-        "inline-flex rounded-full border border-border/50 bg-card/70 p-1 text-muted-foreground ring-1 ring-border/25",
+        "inline-flex rounded-full border border-border/45 bg-card/75 p-1 text-muted-foreground",
         className,
       )}
     >
@@ -74,7 +125,7 @@ export function ResourceViewToggle({
         className={cn(
           "flex size-7 items-center justify-center rounded-full transition-colors",
           value === "list"
-            ? "bg-background text-foreground ring-1 ring-border/50"
+            ? "bg-background text-foreground ring-1 ring-border/40"
             : "hover:bg-background/60 hover:text-foreground",
         )}
       >
@@ -89,7 +140,7 @@ export function ResourceViewToggle({
         className={cn(
           "flex size-7 items-center justify-center rounded-full transition-colors",
           value === "grid"
-            ? "bg-background text-foreground ring-1 ring-border/50"
+            ? "bg-background text-foreground ring-1 ring-border/40"
             : "hover:bg-background/60 hover:text-foreground",
         )}
       >

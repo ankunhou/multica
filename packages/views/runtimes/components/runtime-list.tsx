@@ -198,6 +198,7 @@ export function RuntimeList({
 
   return (
     <DataTable
+      variant="resource"
       table={table}
       onRowClick={(row) => {
         if (!slug) return;

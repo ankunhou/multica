@@ -36,9 +36,12 @@ import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/
 import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@multica/core/types";
 import { PageHeader } from "../../layout/page-header";
 import {
+  ResourcePageBody,
   ResourceInteractiveRegion,
   ResourceSurface,
   ResourceViewToggle,
+  resourceActionButtonClassName,
+  resourceHeaderIconClassName,
 } from "../../common/resource-view";
 import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { PriorityIcon } from "../../issues/components/priority-icon";
@@ -344,7 +347,7 @@ function ProjectCard({ project }: { project: Project }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-1 items-start gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-muted/70 text-muted-foreground">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-muted/60 text-muted-foreground">
             <ProjectIcon project={project} size="md" />
           </span>
           <span className="min-w-0">
@@ -396,7 +399,7 @@ export function ProjectsPage() {
       {/* Header bar */}
       <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+          <span className={resourceHeaderIconClassName}>
             <FolderKanban className="h-3.5 w-3.5" />
           </span>
           <h1 className="truncate text-2xl font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
@@ -411,7 +414,7 @@ export function ProjectsPage() {
             listLabel={t(($) => $.page.view_list)}
             gridLabel={t(($) => $.page.view_grid)}
           />
-          <Button size="sm" variant="outline" className="rounded-full border-border/60 bg-card/80 px-3 shadow-none" onClick={openCreateProject}>
+          <Button size="sm" variant="outline" className={resourceActionButtonClassName} onClick={openCreateProject}>
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t(($) => $.page.new_project)}
           </Button>
@@ -419,7 +422,7 @@ export function ProjectsPage() {
       </PageHeader>
 
       {/* Table */}
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+      <ResourcePageBody>
         {isLoading ? (
           <ResourceSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
             <div className="flex h-9 items-center gap-2 px-3">
@@ -474,7 +477,7 @@ export function ProjectsPage() {
             </div>
           )
         )}
-      </div>
+      </ResourcePageBody>
     </div>
   );
 }

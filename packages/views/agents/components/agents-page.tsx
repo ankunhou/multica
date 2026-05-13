@@ -50,8 +50,15 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import {
   type ResourceViewMode,
   ResourceInteractiveRegion,
+  ResourcePageBody,
   ResourceSurface,
+  ResourceToolbarRow,
   ResourceViewToggle,
+  resourceActionButtonClassName,
+  resourceHeaderIconClassName,
+  resourceSearchInputClassName,
+  resourceSegmentClassName,
+  resourceSegmentItemClassName,
 } from "../../common/resource-view";
 import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { availabilityConfig, availabilityOrder } from "../presence";
@@ -397,24 +404,24 @@ export function AgentsPage() {
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />
-        <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+        <ResourcePageBody>
           <ResourceSurface className="mx-auto flex min-h-[520px] w-full max-w-7xl flex-col overflow-hidden">
-            <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border/45 px-4">
+            <ResourceToolbarRow className="gap-2">
               <Skeleton className="h-7 w-32 rounded-md" />
               <Skeleton className="h-7 w-32 rounded-md" />
-            </div>
-            <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/45 px-4">
+            </ResourceToolbarRow>
+            <ResourceToolbarRow className="min-h-11 gap-2">
               <Skeleton className="h-6 w-16 rounded-full" />
               <Skeleton className="h-6 w-24 rounded-full" />
               <Skeleton className="h-6 w-20 rounded-full" />
-            </div>
+            </ResourceToolbarRow>
             <div className="space-y-2 p-4">
               {Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="h-14 w-full rounded-md" />
               ))}
             </div>
           </ResourceSurface>
-        </div>
+        </ResourcePageBody>
       </div>
     );
   }
@@ -435,7 +442,7 @@ export function AgentsPage() {
         onViewModeChange={setViewMode}
       />
 
-      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+      <ResourcePageBody>
         {showEmpty ? (
           <div className="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center">
             <EmptyState onCreate={() => setShowCreate(true)} />
@@ -484,6 +491,7 @@ export function AgentsPage() {
                 <NoMatches view={view} search={search} scope={scope} />
               ) : viewMode === "list" ? (
                 <DataTable
+                  variant="resource"
                   table={table}
                   onRowClick={(row) =>
                     navigation.push(paths.agentDetail(row.original.agent.id))
@@ -499,7 +507,7 @@ export function AgentsPage() {
             )}
           </div>
         )}
-      </div>
+      </ResourcePageBody>
 
       {showCreate && (
         <CreateAgentDialog
@@ -538,7 +546,7 @@ function PageHeaderBar({
   return (
     <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
       <div className="flex min-w-0 items-center gap-2">
-        <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+        <span className={resourceHeaderIconClassName}>
           <Bot className="h-3.5 w-3.5" />
         </span>
         <h1 className="truncate text-2xl font-semibold tracking-tight">
@@ -575,7 +583,7 @@ function PageHeaderBar({
           size="sm"
           variant="outline"
           onClick={onCreate}
-          className="rounded-full border-border/60 bg-card/80 px-3 shadow-none"
+          className={resourceActionButtonClassName}
         >
           <Plus className="mr-1 h-3.5 w-3.5" />
           {t(($) => $.page.new_agent)}
@@ -652,14 +660,14 @@ function ActiveToolbarRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border/45 px-4">
+    <ResourceToolbarRow className="gap-3">
       <div className="relative">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t(($) => $.page.search_placeholder)}
-          className="h-8 w-64 rounded-full border-border/60 bg-background/70 pl-8 text-sm shadow-none"
+          className={resourceSearchInputClassName}
         />
       </div>
       <ScopeSegment scope={scope} setScope={setScope} counts={scopeCounts} />
@@ -678,7 +686,7 @@ function ActiveToolbarRow({
         </span>
         <SortDropdown sort={sort} setSort={setSort} />
       </div>
-    </div>
+    </ResourceToolbarRow>
   );
 }
 
@@ -693,7 +701,7 @@ function ScopeSegment({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex items-center gap-0.5 rounded-full bg-muted/70 p-0.5">
+    <div className={resourceSegmentClassName}>
       <ScopeButton
         active={scope === "mine"}
         label={t(($) => $.scope.mine)}
@@ -725,11 +733,7 @@ function ScopeButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-        active
-          ? "bg-background text-foreground ring-1 ring-border/50"
-          : "text-muted-foreground hover:text-foreground"
-      }`}
+      className={resourceSegmentItemClassName(active)}
     >
       <span>{label}</span>
       <span
@@ -758,7 +762,7 @@ function SortDropdown({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 rounded-full px-2.5 text-xs text-muted-foreground hover:bg-background/70 hover:text-foreground"
+            className="h-8 rounded-full px-2.5 text-xs text-muted-foreground hover:bg-background/60 hover:text-foreground"
           />
         }
       >
@@ -798,7 +802,7 @@ function AvailabilityFilterRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/45 px-4">
+    <ResourceToolbarRow className="min-h-11 gap-2">
       <AvailabilityChip
         active={value === "all"}
         onClick={() => onChange("all")}
@@ -818,7 +822,7 @@ function AvailabilityFilterRow({
           />
         );
       })}
-    </div>
+    </ResourceToolbarRow>
   );
 }
 
@@ -873,7 +877,7 @@ function ArchivedToolbarRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border/45 px-4">
+    <ResourceToolbarRow className="gap-3">
       <button
         type="button"
         onClick={onBack}
@@ -890,7 +894,7 @@ function ArchivedToolbarRow({
       <div className="ml-auto">
         <SortDropdown sort={sort} setSort={setSort} />
       </div>
-    </div>
+    </ResourceToolbarRow>
   );
 }
 

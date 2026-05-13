@@ -38,6 +38,7 @@ interface DataTableProps<TData> extends React.ComponentProps<"div"> {
   // a detail page on row click without nesting an <a> around <tr>,
   // which is invalid HTML.
   onRowClick?: (row: Row<TData>) => void;
+  variant?: "default" | "resource";
 }
 
 // Headless data-table shell — adapted from Dice UI's data-table
@@ -62,9 +63,11 @@ export function DataTable<TData>({
   actionBar,
   emptyMessage = "No results.",
   onRowClick,
+  variant = "default",
   className,
   ...props
 }: DataTableProps<TData>) {
+  const resourceVariant = variant === "resource";
   const [resizingColumnId, setResizingColumnId] = React.useState<string | null>(
     null,
   );
@@ -162,12 +165,24 @@ export function DataTable<TData>({
       className={cn("flex min-h-0 flex-1 flex-col", className)}
       {...props}
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-auto bg-background">
+      <div
+        className={cn(
+          "flex min-h-0 flex-1 flex-col overflow-auto",
+          resourceVariant ? "bg-transparent" : "bg-background",
+        )}
+      >
         <table
           className="w-full table-fixed caption-bottom text-sm"
           style={{ minWidth: `${table.getTotalSize()}px` }}
         >
-          <TableHeader className="sticky top-0 z-10 bg-muted/30 backdrop-blur">
+          <TableHeader
+            className={cn(
+              "sticky top-0 z-10 backdrop-blur",
+              resourceVariant
+                ? "bg-card/70 [&_tr]:border-border/30"
+                : "bg-muted/30",
+            )}
+          >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => {
@@ -198,11 +213,17 @@ export function DataTable<TData>({
                       // into the header strip rather than appearing as
                       // a white block under sticky scroll.
                       className={cn(
-                        "relative h-8 overflow-hidden px-4 py-2 text-xs uppercase tracking-wider text-muted-foreground",
-                        isPinned && "bg-muted/30 backdrop-blur",
+                        "relative h-8 overflow-hidden px-4 py-2 text-xs text-muted-foreground",
+                        resourceVariant
+                          ? "font-medium normal-case"
+                          : "uppercase tracking-wider",
+                        isPinned &&
+                          (resourceVariant
+                            ? "bg-card/80 backdrop-blur"
+                            : "bg-muted/30 backdrop-blur"),
                       )}
                       style={getCellStyle(header.column, {
-                        withBorder: true,
+                        withBorder: !resourceVariant,
                         hasExplicitSize: columnHasExplicitSize,
                       })}
                     >
@@ -260,6 +281,8 @@ export function DataTable<TData>({
                   // scrolling beneath them).
                   className={cn(
                     "group",
+                    resourceVariant &&
+                      "border-border/30 hover:bg-accent/25",
                     onRowClick && "cursor-pointer",
                   )}
                 >
@@ -282,10 +305,12 @@ export function DataTable<TData>({
                         className={cn(
                           "overflow-hidden px-4 py-2",
                           isPinned &&
-                            "bg-background group-hover:bg-muted/50",
+                            (resourceVariant
+                              ? "bg-card/80 group-hover:bg-accent/25"
+                              : "bg-background group-hover:bg-muted/50"),
                         )}
                         style={getCellStyle(cell.column, {
-                          withBorder: true,
+                          withBorder: !resourceVariant,
                           hasExplicitSize: columnHasExplicitSize,
                         })}
                       >
