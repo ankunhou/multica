@@ -22,6 +22,7 @@ import { decideVersionAction } from "./version-decision";
 
 const DEFAULT_HEALTH_PORT = 19514;
 const POLL_INTERVAL_MS = 5_000;
+const STARTUP_GRACE_MS = 15_000;
 const PREFS_PATH = join(homedir(), ".multica", "desktop_prefs.json");
 const LOG_TAIL_RETRY_MS = 2_000;
 const LOG_TAIL_MAX_RETRIES = 5;
@@ -36,6 +37,7 @@ interface ActiveProfile {
 let statusPollTimer: ReturnType<typeof setInterval> | null = null;
 let logTailWatcher: { path: string; listener: StatsListener } | null = null;
 let currentState: DaemonStatus["state"] = "installing_cli";
+let startupDeadlineAt: number | null = null;
 let getMainWindow: () => BrowserWindow | null = () => null;
 let operationInProgress = false;
 let cachedCliBinary: string | null | undefined = undefined;
@@ -249,11 +251,25 @@ async function fetchHealth(): Promise<DaemonStatus> {
   const data = await fetchHealthAtPort(active.port);
 
   if (!data || data.status !== "running") {
+    if (currentState === "starting") {
+      if (startupDeadlineAt !== null && Date.now() < startupDeadlineAt) {
+        return {
+          state: "starting",
+          profile: active.name,
+        };
+      }
+      console.warn(
+        "[daemon] startup did not expose /health before timeout; marking daemon stopped",
+      );
+      currentState = "stopped";
+      startupDeadlineAt = null;
+    }
     return {
-      state: currentState === "starting" ? "starting" : "stopped",
+      state: "stopped",
       profile: active.name,
     };
   }
+  startupDeadlineAt = null;
 
   // Safety: if we have a target URL and the daemon on our port reports a
   // different server_url, it's not "our" daemon — drop it and re-resolve.
@@ -652,11 +668,13 @@ async function startDaemon(): Promise<{ success: boolean; error?: string }> {
   const active = await ensureActiveProfile();
   const existing = await fetchHealthAtPort(active.port);
   if (existing?.status === "running") {
+    startupDeadlineAt = null;
     pollOnce();
     return { success: true };
   }
 
   currentState = "starting";
+  startupDeadlineAt = Date.now() + STARTUP_GRACE_MS;
   sendStatus({ state: "starting" });
 
   const args = ["daemon", "start", ...profileArgs(active)];
@@ -669,6 +687,7 @@ async function startDaemon(): Promise<{ success: boolean; error?: string }> {
       (err) => {
         if (err) {
           currentState = "stopped";
+          startupDeadlineAt = null;
           sendStatus({ state: "stopped" });
           resolve({ success: false, error: err.message });
           return;
@@ -688,6 +707,7 @@ async function stopDaemon(): Promise<{ success: boolean; error?: string }> {
   if (!bin) return { success: false, error: "multica CLI is not installed" };
 
   const active = await ensureActiveProfile();
+  startupDeadlineAt = null;
   currentState = "stopping";
   sendStatus({ state: "stopping" });
 
@@ -737,10 +757,12 @@ async function bootstrapCli(): Promise<void> {
   const bin = await resolveCliBinary();
   if (!bin) {
     currentState = "cli_not_found";
+    startupDeadlineAt = null;
     sendStatus({ state: "cli_not_found" });
     return;
   }
   currentState = "stopped";
+  startupDeadlineAt = null;
   sendStatus({ state: "stopped" });
   startPolling();
 }

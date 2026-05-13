@@ -48,6 +48,12 @@ if (process.platform !== "win32") {
     "/usr/local/bin",
     join(homedir(), ".local/bin"),
   ];
+  if (process.platform === "darwin") {
+    fallbackPaths.push(
+      "/Applications/Codex.app/Contents/Resources",
+      join(homedir(), "Applications", "Codex.app", "Contents", "Resources"),
+    );
+  }
   process.env.PATH = `${fallbackPaths.join(":")}:${process.env.PATH ?? ""}`;
 }
 
