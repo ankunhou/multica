@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { Plus, FolderKanban, UserMinus, Check, LayoutGrid, List } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Plus, FolderKanban, UserMinus, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { projectListOptions } from "@multica/core/projects/queries";
 import { useUpdateProject } from "@multica/core/projects/mutations";
@@ -35,6 +35,12 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@multica/core/types";
 import { PageHeader } from "../../layout/page-header";
+import {
+  ResourceInteractiveRegion,
+  ResourceSurface,
+  ResourceViewToggle,
+} from "../../common/resource-view";
+import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectIcon } from "./project-icon";
 import { useT } from "../../i18n";
@@ -44,128 +50,7 @@ import {
   useFormatRelativeDate,
 } from "./labels";
 
-type ProjectViewMode = "list" | "grid";
-
 const PROJECT_VIEW_MODE_STORAGE_KEY = "multica:projects:view-mode";
-
-function isProjectViewMode(value: string | null): value is ProjectViewMode {
-  return value === "list" || value === "grid";
-}
-
-function readProjectViewModePreference(): ProjectViewMode | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const stored = window.localStorage.getItem(PROJECT_VIEW_MODE_STORAGE_KEY);
-    return isProjectViewMode(stored) ? stored : null;
-  } catch {
-    return null;
-  }
-}
-
-function writeProjectViewModePreference(mode: ProjectViewMode) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(PROJECT_VIEW_MODE_STORAGE_KEY, mode);
-  } catch {
-    // Ignore storage failures; the view toggle should keep working in memory.
-  }
-}
-
-function useProjectViewModePreference() {
-  const [viewMode, setViewModeState] = useState<ProjectViewMode>("list");
-
-  useEffect(() => {
-    const stored = readProjectViewModePreference();
-    if (stored) setViewModeState(stored);
-  }, []);
-
-  const setViewMode = useCallback((mode: ProjectViewMode) => {
-    setViewModeState(mode);
-    writeProjectViewModePreference(mode);
-  }, []);
-
-  return [viewMode, setViewMode] as const;
-}
-
-function ProjectSurface({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "rounded-3xl border border-border/50 bg-card/70 ring-1 ring-border/25",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-function ProjectInteractiveRegion({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  const stop = (event: React.SyntheticEvent) => {
-    event.stopPropagation();
-  };
-
-  return (
-    <div
-      className={className}
-      onClick={stop}
-      onMouseDown={stop}
-      onPointerDown={stop}
-      onKeyDown={stop}
-    >
-      {children}
-    </div>
-  );
-}
-
-function ProjectViewToggle({
-  value,
-  onChange,
-}: {
-  value: ProjectViewMode;
-  onChange: (mode: ProjectViewMode) => void;
-}) {
-  const { t } = useT("projects");
-
-  return (
-    <div className="inline-flex rounded-full border border-border/50 bg-card/70 p-1 text-muted-foreground ring-1 ring-border/25">
-      <button
-        type="button"
-        aria-label={t(($) => $.page.view_list)}
-        aria-pressed={value === "list"}
-        title={t(($) => $.page.view_list)}
-        onClick={() => onChange("list")}
-        className={cn(
-          "flex size-7 items-center justify-center rounded-full transition-colors",
-          value === "list" ? "bg-background text-foreground ring-1 ring-border/50" : "hover:bg-background/60 hover:text-foreground",
-        )}
-      >
-        <List className="h-3.5 w-3.5" />
-      </button>
-      <button
-        type="button"
-        aria-label={t(($) => $.page.view_grid)}
-        aria-pressed={value === "grid"}
-        title={t(($) => $.page.view_grid)}
-        onClick={() => onChange("grid")}
-        className={cn(
-          "flex size-7 items-center justify-center rounded-full transition-colors",
-          value === "grid" ? "bg-background text-foreground ring-1 ring-border/50" : "hover:bg-background/60 hover:text-foreground",
-        )}
-      >
-        <LayoutGrid className="h-3.5 w-3.5" />
-      </button>
-    </div>
-  );
-}
 
 function ProjectPriorityControl({
   project,
@@ -450,7 +335,7 @@ function ProjectCard({ project }: { project: Project }) {
   );
 
   return (
-    <ProjectSurface
+    <ResourceSurface
       role="link"
       tabIndex={0}
       onClick={handleOpen}
@@ -469,15 +354,15 @@ function ProjectCard({ project }: { project: Project }) {
             </span>
           </span>
         </div>
-        <ProjectInteractiveRegion>
+        <ResourceInteractiveRegion>
           <ProjectLeadPicker project={project} onUpdate={handleUpdate} />
-        </ProjectInteractiveRegion>
+        </ResourceInteractiveRegion>
       </div>
 
-      <ProjectInteractiveRegion className="mt-4 flex flex-wrap gap-2">
+      <ResourceInteractiveRegion className="mt-4 flex flex-wrap gap-2">
         <ProjectPriorityControl project={project} onUpdate={handleUpdate} className="w-auto bg-muted/45 px-2.5" />
         <ProjectStatusControl project={project} onUpdate={handleUpdate} className="w-auto px-2.5" />
-      </ProjectInteractiveRegion>
+      </ResourceInteractiveRegion>
 
       <div className="mt-auto pt-6">
         <div className="mb-2 flex items-center justify-between text-xs text-muted-foreground">
@@ -493,7 +378,7 @@ function ProjectCard({ project }: { project: Project }) {
           />
         </div>
       </div>
-    </ProjectSurface>
+    </ResourceSurface>
   );
 }
 
@@ -502,7 +387,9 @@ export function ProjectsPage() {
   const wsId = useWorkspaceId();
   const { data: projects = [], isLoading } = useQuery(projectListOptions(wsId));
   const openCreateProject = () => useModalStore.getState().open("create-project");
-  const [viewMode, setViewMode] = useProjectViewModePreference();
+  const [viewMode, setViewMode] = useResourceViewModePreference(
+    PROJECT_VIEW_MODE_STORAGE_KEY,
+  );
 
   return (
     <div className="flex h-full flex-col">
@@ -518,7 +405,12 @@ export function ProjectsPage() {
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <ProjectViewToggle value={viewMode} onChange={setViewMode} />
+          <ResourceViewToggle
+            value={viewMode}
+            onChange={setViewMode}
+            listLabel={t(($) => $.page.view_list)}
+            gridLabel={t(($) => $.page.view_grid)}
+          />
           <Button size="sm" variant="outline" className="rounded-full border-border/60 bg-card/80 px-3 shadow-none" onClick={openCreateProject}>
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t(($) => $.page.new_project)}
@@ -529,7 +421,7 @@ export function ProjectsPage() {
       {/* Table */}
       <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
         {isLoading ? (
-          <ProjectSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
+          <ResourceSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
             <div className="flex h-9 items-center gap-2 px-3">
               <span className="shrink-0 w-[24px]" />
               <Skeleton className="h-3 w-12 flex-1 max-w-[48px]" />
@@ -544,7 +436,7 @@ export function ProjectsPage() {
                 <Skeleton key={i} className="h-14 w-full rounded-2xl" />
               ))}
             </div>
-          </ProjectSurface>
+          </ResourceSurface>
         ) : projects.length === 0 ? (
           <div className="mx-auto flex min-h-[520px] max-w-3xl flex-col items-center justify-center pb-16 text-muted-foreground">
             <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-muted/60">
@@ -557,7 +449,7 @@ export function ProjectsPage() {
           </div>
         ) : (
           viewMode === "list" ? (
-            <ProjectSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
+            <ResourceSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
               {/* Column headers */}
               <div className="flex h-9 items-center gap-2 px-3 text-xs font-medium text-muted-foreground">
                 {/* Icon spacer + Name */}
@@ -573,7 +465,7 @@ export function ProjectsPage() {
               {projects.map((project) => (
                 <ProjectRow key={project.id} project={project} />
               ))}
-            </ProjectSurface>
+            </ResourceSurface>
           ) : (
             <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
               {projects.map((project) => (

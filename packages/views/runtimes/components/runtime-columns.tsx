@@ -193,7 +193,7 @@ export function createRuntimeColumns({
           className="flex justify-end"
           onClick={(e) => e.stopPropagation()}
         >
-          <RowMenu
+          <RuntimeRowActions
             runtime={row.original.runtime}
             wsId={wsId}
             canDelete={row.original.canDelete}
@@ -513,7 +513,7 @@ function AgentStack({ agentIds }: { agentIds: string[] }) {
   );
 }
 
-function RowMenu({
+export function RuntimeRowActions({
   runtime,
   wsId,
   canDelete,

@@ -6,6 +6,9 @@ import {
   ArrowLeft,
   ArrowUpDown,
   Bot,
+  Cloud,
+  Lock,
+  Monitor,
   Plus,
   Search,
 } from "lucide-react";
@@ -31,6 +34,7 @@ import {
 } from "@multica/core/workspace/queries";
 import { runtimeListOptions } from "@multica/core/runtimes";
 import { Button } from "@multica/ui/components/ui/button";
+import { cn } from "@multica/ui/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -42,9 +46,20 @@ import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { DataTable } from "@multica/ui/components/ui/data-table";
 import { useNavigation } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
+import { ActorAvatar } from "../../common/actor-avatar";
+import {
+  type ResourceViewMode,
+  ResourceInteractiveRegion,
+  ResourceSurface,
+  ResourceViewToggle,
+} from "../../common/resource-view";
+import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { availabilityConfig, availabilityOrder } from "../presence";
 import { CreateAgentDialog } from "./create-agent-dialog";
 import { type AgentRow, createAgentColumns } from "./agent-columns";
+import { AgentRowActions } from "./agent-row-actions";
+import { AgentAvailabilityBadge, AgentWorkloadBadge } from "./agent-state-badges";
+import { Sparkline } from "./sparkline";
 import { useT } from "../../i18n";
 
 // Filter axes:
@@ -70,6 +85,8 @@ const SORT_LABEL_KEY: Record<SortKey, "label_recent" | "label_name" | "label_run
   runs: "label_runs",
   created: "label_created",
 };
+
+const AGENT_VIEW_MODE_STORAGE_KEY = "multica:agents:view-mode";
 
 export function AgentsPage() {
   const { t } = useT("agents");
@@ -107,6 +124,9 @@ export function AgentsPage() {
     useState<AvailabilityFilter>("all");
   const [sort, setSort] = useState<SortKey>("recent");
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useResourceViewModePreference(
+    AGENT_VIEW_MODE_STORAGE_KEY,
+  );
   const [showCreate, setShowCreate] = useState(false);
   // When set, the Create dialog opens pre-populated with this agent's
   // config — driven by the row-level "Duplicate" action. We keep this
@@ -371,14 +391,19 @@ export function AgentsPage() {
   if (isLoading) {
     return (
       <div className="flex flex-1 min-h-0 flex-col">
-        <PageHeaderBar totalCount={0} onCreate={() => setShowCreate(true)} />
-        <div className="flex flex-1 min-h-0 flex-col gap-4 p-6">
-          <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-lg border">
-            <div className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+        <PageHeaderBar
+          totalCount={0}
+          onCreate={() => setShowCreate(true)}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
+        <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+          <ResourceSurface className="mx-auto flex min-h-[520px] w-full max-w-7xl flex-col overflow-hidden">
+            <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border/45 px-4">
               <Skeleton className="h-7 w-32 rounded-md" />
               <Skeleton className="h-7 w-32 rounded-md" />
             </div>
-            <div className="flex h-11 shrink-0 items-center gap-2 border-b px-4">
+            <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/45 px-4">
               <Skeleton className="h-6 w-16 rounded-full" />
               <Skeleton className="h-6 w-24 rounded-full" />
               <Skeleton className="h-6 w-20 rounded-full" />
@@ -388,7 +413,7 @@ export function AgentsPage() {
                 <Skeleton key={i} className="h-14 w-full rounded-md" />
               ))}
             </div>
-          </div>
+          </ResourceSurface>
         </div>
       </div>
     );
@@ -406,54 +431,70 @@ export function AgentsPage() {
       <PageHeaderBar
         totalCount={totalActiveCount}
         onCreate={() => setShowCreate(true)}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
-      <div className="flex flex-1 min-h-0 flex-col gap-4 p-6">
+      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
         {showEmpty ? (
-          <div className="flex flex-1 items-center justify-center">
+          <div className="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center">
             <EmptyState onCreate={() => setShowCreate(true)} />
           </div>
         ) : (
-          <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-lg border bg-background">
-            {view === "active" ? (
-              <>
-                <ActiveToolbarRow
-                  scope={scope}
-                  setScope={setScope}
-                  scopeCounts={scopeCounts}
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
+            <ResourceSurface
+              className={cn(
+                "flex flex-col overflow-hidden",
+                (viewMode === "list" || sortedAgents.length === 0) &&
+                  "min-h-[560px]",
+              )}
+            >
+              {view === "active" ? (
+                <>
+                  <ActiveToolbarRow
+                    scope={scope}
+                    setScope={setScope}
+                    scopeCounts={scopeCounts}
+                    sort={sort}
+                    setSort={setSort}
+                    search={search}
+                    setSearch={setSearch}
+                    visibleCount={sortedAgents.length}
+                    totalCount={inScope.length}
+                    archivedCount={archivedCount}
+                    onShowArchived={() => setView("archived")}
+                  />
+                  <AvailabilityFilterRow
+                    value={availabilityFilter}
+                    onChange={setAvailabilityFilter}
+                    counts={availabilityCounts}
+                    totalCount={inScope.length}
+                  />
+                </>
+              ) : (
+                <ArchivedToolbarRow
+                  onBack={() => setView("active")}
+                  archivedCount={archivedCount}
                   sort={sort}
                   setSort={setSort}
-                  search={search}
-                  setSearch={setSearch}
-                  visibleCount={sortedAgents.length}
-                  totalCount={inScope.length}
-                  archivedCount={archivedCount}
-                  onShowArchived={() => setView("archived")}
                 />
-                <AvailabilityFilterRow
-                  value={availabilityFilter}
-                  onChange={setAvailabilityFilter}
-                  counts={availabilityCounts}
-                  totalCount={inScope.length}
-                />
-              </>
-            ) : (
-              <ArchivedToolbarRow
-                onBack={() => setView("active")}
-                archivedCount={archivedCount}
-                sort={sort}
-                setSort={setSort}
-              />
-            )}
+              )}
 
-            {sortedAgents.length === 0 ? (
-              <NoMatches view={view} search={search} scope={scope} />
-            ) : (
-              <DataTable
-                table={table}
-                onRowClick={(row) =>
-                  navigation.push(paths.agentDetail(row.original.agent.id))
-                }
+              {sortedAgents.length === 0 ? (
+                <NoMatches view={view} search={search} scope={scope} />
+              ) : viewMode === "list" ? (
+                <DataTable
+                  table={table}
+                  onRowClick={(row) =>
+                    navigation.push(paths.agentDetail(row.original.agent.id))
+                  }
+                />
+              ) : null}
+            </ResourceSurface>
+            {sortedAgents.length > 0 && viewMode === "grid" && (
+              <AgentCardGrid
+                rows={agentRows}
+                onDuplicate={handleDuplicate}
               />
             )}
           </div>
@@ -485,23 +526,30 @@ export function AgentsPage() {
 function PageHeaderBar({
   totalCount,
   onCreate,
+  viewMode,
+  onViewModeChange,
 }: {
   totalCount: number;
   onCreate: () => void;
+  viewMode?: ResourceViewMode;
+  onViewModeChange?: (mode: ResourceViewMode) => void;
 }) {
   const { t } = useT("agents");
   return (
-    <PageHeader className="justify-between px-5">
-      <div className="flex items-center gap-2">
-        <Bot className="h-4 w-4 text-muted-foreground" />
-        <h1 className="text-sm font-medium">{t(($) => $.page.title)}</h1>
+    <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+          <Bot className="h-3.5 w-3.5" />
+        </span>
+        <h1 className="truncate text-2xl font-semibold tracking-tight">
+          {t(($) => $.page.title)}
+        </h1>
         {totalCount > 0 && (
-          <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
             {totalCount}
           </span>
         )}
-        {/* Tagline next to the title — mirrors Runtimes / Skills. */}
-        <p className="ml-2 hidden text-xs text-muted-foreground md:block">
+        <p className="ml-2 hidden min-w-0 truncate text-xs text-muted-foreground lg:block">
           {t(($) => $.page.tagline)}{" "}
           <a
             href="https://multica.ai/docs/agents"
@@ -513,10 +561,26 @@ function PageHeaderBar({
           </a>
         </p>
       </div>
-      <Button type="button" size="sm" onClick={onCreate}>
-        <Plus className="h-3 w-3" />
-        {t(($) => $.page.new_agent)}
-      </Button>
+      <div className="flex shrink-0 items-center gap-2">
+        {viewMode && onViewModeChange && (
+          <ResourceViewToggle
+            value={viewMode}
+            onChange={onViewModeChange}
+            listLabel={t(($) => $.page.view_list)}
+            gridLabel={t(($) => $.page.view_grid)}
+          />
+        )}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={onCreate}
+          className="rounded-full border-border/60 bg-card/80 px-3 shadow-none"
+        >
+          <Plus className="mr-1 h-3.5 w-3.5" />
+          {t(($) => $.page.new_agent)}
+        </Button>
+      </div>
     </PageHeader>
   );
 }
@@ -588,14 +652,14 @@ function ActiveToolbarRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
+    <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border/45 px-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t(($) => $.page.search_placeholder)}
-          className="h-8 w-64 pl-8 text-sm"
+          className="h-8 w-64 rounded-full border-border/60 bg-background/70 pl-8 text-sm shadow-none"
         />
       </div>
       <ScopeSegment scope={scope} setScope={setScope} counts={scopeCounts} />
@@ -629,7 +693,7 @@ function ScopeSegment({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
+    <div className="flex items-center gap-0.5 rounded-full bg-muted/70 p-0.5">
       <ScopeButton
         active={scope === "mine"}
         label={t(($) => $.scope.mine)}
@@ -661,9 +725,9 @@ function ScopeButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
         active
-          ? "bg-background text-foreground shadow-sm"
+          ? "bg-background text-foreground ring-1 ring-border/50"
           : "text-muted-foreground hover:text-foreground"
       }`}
     >
@@ -694,7 +758,7 @@ function SortDropdown({
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            className="h-8 rounded-full px-2.5 text-xs text-muted-foreground hover:bg-background/70 hover:text-foreground"
           />
         }
       >
@@ -734,7 +798,7 @@ function AvailabilityFilterRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-11 shrink-0 items-center gap-2 border-b px-4">
+    <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/45 px-4">
       <AvailabilityChip
         active={value === "all"}
         onClick={() => onChange("all")}
@@ -778,8 +842,8 @@ function AvailabilityChip({
       onClick={onClick}
       className={
         active
-          ? "bg-accent text-accent-foreground hover:bg-accent/80"
-          : "text-muted-foreground"
+          ? "rounded-full bg-accent text-accent-foreground shadow-none hover:bg-accent/80"
+          : "rounded-full text-muted-foreground shadow-none"
       }
     >
       {dotClass && <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />}
@@ -809,7 +873,7 @@ function ArchivedToolbarRow({
 }) {
   const { t } = useT("agents");
   return (
-    <div className="flex h-12 shrink-0 items-center gap-3 border-b px-4">
+    <div className="flex h-12 shrink-0 items-center gap-3 border-b border-border/45 px-4">
       <button
         type="button"
         onClick={onBack}
@@ -827,6 +891,193 @@ function ArchivedToolbarRow({
         <SortDropdown sort={sort} setSort={setSort} />
       </div>
     </div>
+  );
+}
+
+function AgentCardGrid({
+  rows,
+  onDuplicate,
+}: {
+  rows: AgentRow[];
+  onDuplicate: (agent: Agent) => void;
+}) {
+  return (
+    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      {rows.map((row) => (
+        <AgentCard
+          key={row.agent.id}
+          row={row}
+          onDuplicate={onDuplicate}
+        />
+      ))}
+    </div>
+  );
+}
+
+function AgentCard({
+  row,
+  onDuplicate,
+}: {
+  row: AgentRow;
+  onDuplicate: (agent: Agent) => void;
+}) {
+  const { t } = useT("agents");
+  const paths = useWorkspacePaths();
+  const navigation = useNavigation();
+  const href = paths.agentDetail(row.agent.id);
+  const isArchived = !!row.agent.archived_at;
+  const isPrivate = row.agent.visibility === "private";
+  const isCloud = row.agent.runtime_mode === "cloud";
+  const RuntimeIcon = isCloud ? Cloud : Monitor;
+  const runtimeLabel =
+    row.runtime?.name ??
+    (isCloud
+      ? t(($) => $.row.fallback_runtime_cloud)
+      : t(($) => $.row.fallback_runtime_local));
+  const activitySummary = row.activity
+    ? summarizeActivityWindow(row.activity, 7)
+    : null;
+
+  const handleOpen = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented) return;
+      if (
+        (event.metaKey || event.ctrlKey || event.shiftKey) &&
+        navigation.openInNewTab
+      ) {
+        navigation.openInNewTab(href);
+        return;
+      }
+      navigation.push(href);
+    },
+    [href, navigation],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      navigation.push(href);
+    },
+    [href, navigation],
+  );
+
+  return (
+    <ResourceSurface
+      role="link"
+      tabIndex={0}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
+      className="flex min-h-52 cursor-pointer flex-col p-4 transition-colors hover:bg-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <ActorAvatar
+            actorType="agent"
+            actorId={row.agent.id}
+            size={36}
+            className={cn(
+              "shrink-0 rounded-2xl",
+              isArchived && "opacity-50 grayscale",
+            )}
+            showStatusDot={!isArchived}
+          />
+          <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <span
+                className={cn(
+                  "truncate text-sm font-medium",
+                  isArchived && "text-muted-foreground",
+                )}
+              >
+                {row.agent.name}
+              </span>
+              {isPrivate && !isArchived && (
+                <Lock className="h-3 w-3 shrink-0 text-muted-foreground/60" />
+              )}
+              {row.isOwnedByMe && !row.ownerIdToShow && (
+                <span className="shrink-0 rounded bg-muted px-1 text-[10px] font-medium text-muted-foreground">
+                  {t(($) => $.row.you)}
+                </span>
+              )}
+              {row.ownerIdToShow && (
+                <ActorAvatar
+                  actorType="member"
+                  actorId={row.ownerIdToShow}
+                  size={14}
+                />
+              )}
+            </div>
+            <p
+              className={cn(
+                "mt-1 line-clamp-2 text-xs",
+                row.agent.description
+                  ? "text-muted-foreground"
+                  : "italic text-muted-foreground/50",
+              )}
+            >
+              {row.agent.description || t(($) => $.row.no_description)}
+            </p>
+          </div>
+        </div>
+        <ResourceInteractiveRegion>
+          <AgentRowActions
+            agent={row.agent}
+            presence={row.presence}
+            canManage={row.canManage}
+            onDuplicate={onDuplicate}
+          />
+        </ResourceInteractiveRegion>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        {isArchived ? (
+          <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            {t(($) => $.row.archived)}
+          </span>
+        ) : (
+          <>
+            <AgentAvailabilityBadge detail={row.presence} />
+            <AgentWorkloadBadge detail={row.presence} countStyle="inline" />
+          </>
+        )}
+      </div>
+
+      <div className="mt-4 flex min-w-0 items-center gap-1.5 rounded-full bg-muted/45 px-2.5 py-1 text-xs text-muted-foreground">
+        <RuntimeIcon className="h-3 w-3 shrink-0" />
+        <span className="truncate">{runtimeLabel}</span>
+      </div>
+
+      <div className="mt-auto flex items-end justify-between gap-3 pt-6">
+        <div className="min-w-0">
+          <div className="text-xs text-muted-foreground">
+            {t(($) => $.columns.activity_7d)}
+          </div>
+          <div className="mt-1 h-5">
+            {isArchived ? (
+              <span className="text-xs text-muted-foreground/50">—</span>
+            ) : activitySummary ? (
+              <Sparkline
+                buckets={activitySummary.buckets}
+                width={64}
+                height={20}
+              />
+            ) : (
+              <span className="inline-block h-5 w-16 animate-pulse rounded bg-muted/60" />
+            )}
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-xs text-muted-foreground">
+            {t(($) => $.columns.runs)}
+          </div>
+          <div className="mt-1 font-mono text-sm tabular-nums">
+            {row.runCount.toLocaleString()}
+          </div>
+        </div>
+      </div>
+    </ResourceSurface>
   );
 }
 

@@ -5,6 +5,8 @@
     "learn_more": "Learn more →",
     "new_agent": "New agent",
     "search_placeholder": "Search agents…",
+    "view_list": "List view",
+    "view_grid": "Card view",
     "show_archived": "Show archived ({{count}}) →",
     "of_total": "{{visible}} of {{total}}",
     "list_load_failed": "Couldn't load agents",

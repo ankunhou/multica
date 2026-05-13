@@ -12,12 +12,19 @@ import { useWSEvent } from "@multica/core/realtime";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
+import { cn } from "@multica/ui/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@multica/ui/components/ui/tooltip";
 import { PageHeader } from "../../layout/page-header";
+import {
+  type ResourceViewMode,
+  ResourceSurface,
+  ResourceViewToggle,
+} from "../../common/resource-view";
+import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { ConnectRemoteDialog } from "./connect-remote-dialog";
 import { RuntimeList } from "./runtime-list";
 import { useT } from "../../i18n";
@@ -40,6 +47,8 @@ const HEALTH_DOT: Record<Exclude<HealthFilter, "all">, string> = {
   offline: "bg-muted-foreground/40",
   about_to_gc: "bg-destructive",
 };
+
+const RUNTIME_VIEW_MODE_STORAGE_KEY = "multica:runtimes:view-mode";
 
 interface RuntimesPageProps {
   /** Desktop-only slot rendered above the runtimes table (e.g. local daemon card) */
@@ -71,6 +80,9 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
   const [scope, setScope] = useState<RuntimeFilter>("mine");
   const [healthFilter, setHealthFilter] = useState<HealthFilter>("all");
   const [search, setSearch] = useState("");
+  const [viewMode, setViewMode] = useResourceViewModePreference(
+    RUNTIME_VIEW_MODE_STORAGE_KEY,
+  );
   const [showConnectDialog, setShowConnectDialog] = useState(false);
 
   // One unified cache per workspace: scope (Mine/All) is a view filter, not
@@ -137,36 +149,55 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
       <PageHeaderBar
         totalCount={totalCount}
         onConnectRemote={() => setShowConnectDialog(true)}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
-      <div className="flex flex-1 min-h-0 flex-col gap-4 p-6">
-        {topSlot}
+      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+        {topSlot && <div className="mb-4">{topSlot}</div>}
 
         {showEmpty ? (
-          <div className="flex flex-1 items-center justify-center">
+          <div className="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center">
             <EmptyState onConnectRemote={() => setShowConnectDialog(true)} />
           </div>
         ) : (
-          <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-lg border bg-background">
-            <CardToolbar
-              search={search}
-              setSearch={setSearch}
-              scope={scope}
-              setScope={setScope}
-            />
-            <FilterChipsRow
-              healthFilter={healthFilter}
-              setHealthFilter={setHealthFilter}
-              healthCounts={healthCounts}
-              total={scopedTotal}
-            />
-            {filtered.length === 0 ? (
-              <NoMatchesState search={search} healthFilter={healthFilter} scope={scope} bootstrapping={bootstrapping} />
-            ) : (
+          <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
+            <ResourceSurface
+              className={cn(
+                "flex flex-col overflow-hidden",
+                (viewMode === "list" || filtered.length === 0) &&
+                  "min-h-[560px]",
+              )}
+            >
+              <CardToolbar
+                search={search}
+                setSearch={setSearch}
+                scope={scope}
+                setScope={setScope}
+              />
+              <FilterChipsRow
+                healthFilter={healthFilter}
+                setHealthFilter={setHealthFilter}
+                healthCounts={healthCounts}
+                total={scopedTotal}
+              />
+              {filtered.length === 0 ? (
+                <NoMatchesState search={search} healthFilter={healthFilter} scope={scope} bootstrapping={bootstrapping} />
+              ) : viewMode === "list" ? (
+                <RuntimeList
+                  runtimes={filtered}
+                  updatableIds={updatableIds}
+                  now={now}
+                  viewMode={viewMode}
+                />
+              ) : null}
+            </ResourceSurface>
+            {filtered.length > 0 && viewMode === "grid" && (
               <RuntimeList
                 runtimes={filtered}
                 updatableIds={updatableIds}
                 now={now}
+                viewMode={viewMode}
               />
             )}
           </div>
@@ -188,22 +219,30 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
 function PageHeaderBar({
   totalCount,
   onConnectRemote,
+  viewMode,
+  onViewModeChange,
 }: {
   totalCount: number;
   onConnectRemote: () => void;
+  viewMode?: ResourceViewMode;
+  onViewModeChange?: (mode: ResourceViewMode) => void;
 }) {
   const { t } = useT("runtimes");
   return (
-    <PageHeader className="justify-between px-5">
-      <div className="flex items-center gap-2">
-        <Server className="h-4 w-4 text-muted-foreground" />
-        <h1 className="text-sm font-medium">{t(($) => $.page.title)}</h1>
+    <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+          <Server className="h-3.5 w-3.5" />
+        </span>
+        <h1 className="truncate text-2xl font-semibold tracking-tight">
+          {t(($) => $.page.title)}
+        </h1>
         {totalCount > 0 && (
-          <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
+          <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
             {totalCount}
           </span>
         )}
-        <p className="ml-2 hidden text-xs text-muted-foreground md:block">
+        <p className="ml-2 hidden min-w-0 truncate text-xs text-muted-foreground lg:block">
           {t(($) => $.page.tagline)}{" "}
           <a
             href="https://multica.ai/docs/daemon-runtimes"
@@ -215,10 +254,26 @@ function PageHeaderBar({
           </a>
         </p>
       </div>
-      <Button type="button" size="sm" onClick={onConnectRemote}>
-        <Plus className="h-3 w-3" />
-        {t(($) => $.page.connect_remote)}
-      </Button>
+      <div className="flex shrink-0 items-center gap-2">
+        {viewMode && onViewModeChange && (
+          <ResourceViewToggle
+            value={viewMode}
+            onChange={onViewModeChange}
+            listLabel={t(($) => $.page.view_list)}
+            gridLabel={t(($) => $.page.view_grid)}
+          />
+        )}
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={onConnectRemote}
+          className="rounded-full border-border/60 bg-card/80 px-3 shadow-none"
+        >
+          <Plus className="mr-1 h-3.5 w-3.5" />
+          {t(($) => $.page.connect_remote)}
+        </Button>
+      </div>
     </PageHeader>
   );
 }
@@ -249,14 +304,14 @@ function CardToolbar({
 }) {
   const { t } = useT("runtimes");
   return (
-    <div className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+    <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border/45 px-4">
       <div className="relative">
         <Search className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t(($) => $.page.search_placeholder)}
-          className="h-8 w-64 pl-8 text-sm"
+          className="h-8 w-64 rounded-full border-border/60 bg-background/70 pl-8 text-sm shadow-none"
         />
       </div>
       <ScopeSegment value={scope} onChange={setScope} />
@@ -289,12 +344,12 @@ function ScopeSegment({
 }) {
   const { t } = useT("runtimes");
   return (
-    <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
+    <div className="flex items-center gap-0.5 rounded-full bg-muted/70 p-0.5">
       <button
         onClick={() => onChange("mine")}
-        className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+        className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
           value === "mine"
-            ? "bg-background text-foreground shadow-sm"
+            ? "bg-background text-foreground ring-1 ring-border/50"
             : "text-muted-foreground hover:text-foreground"
         }`}
       >
@@ -302,9 +357,9 @@ function ScopeSegment({
       </button>
       <button
         onClick={() => onChange("all")}
-        className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${
+        className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
           value === "all"
-            ? "bg-background text-foreground shadow-sm"
+            ? "bg-background text-foreground ring-1 ring-border/50"
             : "text-muted-foreground hover:text-foreground"
         }`}
       >
@@ -333,7 +388,7 @@ function FilterChipsRow({
 }) {
   const { t } = useT("runtimes");
   return (
-    <div className="flex shrink-0 items-center gap-2 border-b px-4 py-2.5">
+    <div className="flex shrink-0 items-center gap-2 border-b border-border/45 px-4 py-2.5">
       {HEALTH_ORDER.map((key) => {
         const count = key === "all" ? total : healthCounts[key];
         const label =
@@ -389,8 +444,8 @@ function HealthChip({
             onClick={onClick}
             className={
               active
-                ? "bg-accent text-accent-foreground hover:bg-accent/80"
-                : "text-muted-foreground"
+                ? "rounded-full bg-accent text-accent-foreground shadow-none hover:bg-accent/80"
+                : "rounded-full text-muted-foreground shadow-none"
             }
           >
             {dotClass && (
@@ -494,25 +549,26 @@ function NoMatchesState({
 function RuntimesPageSkeleton() {
   return (
     <div className="flex flex-1 min-h-0 flex-col">
-      <PageHeader className="justify-between px-5">
+      <PageHeader className="h-auto justify-between border-b-0 px-6 py-6 md:px-10 md:py-8">
         <Skeleton className="h-4 w-24" />
       </PageHeader>
-      <div className="flex flex-1 min-h-0 flex-col gap-4 p-6">
-        <div className="space-y-3 pl-4">
-          <Skeleton className="h-5 w-full max-w-2xl rounded-md" />
-          <Skeleton className="h-14 w-full max-w-3xl rounded-md" />
-        </div>
-        <div className="flex flex-1 min-h-0 flex-col overflow-hidden rounded-lg border">
-          <div className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10">
+        <ResourceSurface className="mx-auto flex min-h-[520px] w-full max-w-7xl flex-col overflow-hidden">
+          <div className="flex h-12 shrink-0 items-center gap-2 border-b border-border/45 px-4">
             <Skeleton className="h-8 w-64 rounded-md" />
             <Skeleton className="h-7 w-20 rounded-md" />
+          </div>
+          <div className="flex h-11 shrink-0 items-center gap-2 border-b border-border/45 px-4">
+            <Skeleton className="h-6 w-16 rounded-full" />
+            <Skeleton className="h-6 w-24 rounded-full" />
+            <Skeleton className="h-6 w-20 rounded-full" />
           </div>
           <div className="space-y-2 p-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <Skeleton key={i} className="h-14 w-full rounded-md" />
             ))}
           </div>
-        </div>
+        </ResourceSurface>
       </div>
     </div>
   );

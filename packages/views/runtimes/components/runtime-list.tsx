@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import type {
@@ -15,12 +15,30 @@ import {
   agentListOptions,
   memberListOptions,
 } from "@multica/core/workspace/queries";
-import { latestCliVersionOptions } from "@multica/core/runtimes";
-import { agentTaskSnapshotOptions } from "@multica/core/agents";
+import {
+  deriveRuntimeHealth,
+  latestCliVersionOptions,
+} from "@multica/core/runtimes";
+import { agentTaskSnapshotOptions, deriveWorkload } from "@multica/core/agents";
 import { paths, useWorkspaceSlug } from "@multica/core/paths";
 import { DataTable } from "@multica/ui/components/ui/data-table";
+import {
+  ResourceInteractiveRegion,
+  ResourceSurface,
+  type ResourceViewMode,
+} from "../../common/resource-view";
 import { useNavigation } from "../../navigation";
-import { type RuntimeRow, createRuntimeColumns } from "./runtime-columns";
+import { ActorAvatar } from "../../common/actor-avatar";
+import { workloadConfig } from "../../agents/presence";
+import { ProviderLogo } from "./provider-logo";
+import { HealthIcon, useHealthLabel } from "./shared";
+import {
+  RuntimeRowActions,
+  splitRuntimeName,
+  type RuntimeRow,
+  createRuntimeColumns,
+} from "./runtime-columns";
+import { formatLastSeen, isVersionNewer } from "../utils";
 import { useT } from "../../i18n";
 
 interface RuntimeWorkload {
@@ -74,6 +92,7 @@ export function RuntimeList({
   runtimes,
   updatableIds,
   now,
+  viewMode = "list",
 }: {
   runtimes: AgentRuntime[];
   // Kept on the API surface for callers — the CLI column re-derives
@@ -82,6 +101,7 @@ export function RuntimeList({
   // page-level wrapper that still computes the set.
   updatableIds?: Set<string>;
   now: number;
+  viewMode?: ResourceViewMode;
 }) {
   void updatableIds;
 
@@ -158,6 +178,24 @@ export function RuntimeList({
     initialState: { columnPinning: { right: ["actions"] } },
   });
 
+  if (viewMode === "grid") {
+    return (
+      <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+        {rows.map((row) => (
+          <RuntimeCard
+            key={row.runtime.id}
+            row={row}
+            wsId={wsId}
+            slug={slug}
+            now={now}
+            latestCliVersion={latestCliVersion}
+            showOwner={showOwner}
+          />
+        ))}
+      </div>
+    );
+  }
+
   return (
     <DataTable
       table={table}
@@ -168,5 +206,210 @@ export function RuntimeList({
         );
       }}
     />
+  );
+}
+
+function RuntimeCard({
+  row,
+  wsId,
+  slug,
+  now,
+  latestCliVersion,
+  showOwner,
+}: {
+  row: RuntimeRow;
+  wsId: string;
+  slug: string | null;
+  now: number;
+  latestCliVersion: string | null;
+  showOwner: boolean;
+}) {
+  const { t } = useT("runtimes");
+  const { t: tAgents } = useT("agents");
+  const navigation = useNavigation();
+  const labelOf = useHealthLabel();
+  const href = slug
+    ? paths.workspace(slug).runtimeDetail(row.runtime.id)
+    : null;
+  const { base: baseName, hostname } = splitRuntimeName(row.runtime.name);
+  const health = deriveRuntimeHealth(row.runtime, now);
+  const lastSeen = formatLastSeen(row.runtime.last_seen_at);
+  const offline = health === "offline" || health === "about_to_gc";
+  const workload = deriveWorkload({
+    runningCount: row.workload.runningCount,
+    queuedCount: row.workload.queuedCount,
+  });
+  const workloadVisual = workloadConfig[workload];
+  const WorkloadIcon = workloadVisual.icon;
+  const meta = row.runtime.metadata as Record<string, unknown> | null;
+  const cliVersion =
+    meta && typeof meta.cli_version === "string" ? meta.cli_version : null;
+  const launchedBy =
+    meta && typeof meta.launched_by === "string" ? meta.launched_by : null;
+  const hasCliUpdate =
+    launchedBy !== "desktop" &&
+    !!latestCliVersion &&
+    !!cliVersion &&
+    isVersionNewer(latestCliVersion, cliVersion);
+
+  const handleOpen = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented || !href) return;
+      if (
+        (event.metaKey || event.ctrlKey || event.shiftKey) &&
+        navigation.openInNewTab
+      ) {
+        navigation.openInNewTab(href);
+        return;
+      }
+      navigation.push(href);
+    },
+    [href, navigation],
+  );
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.defaultPrevented || !href) return;
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      navigation.push(href);
+    },
+    [href, navigation],
+  );
+
+  return (
+    <ResourceSurface
+      role={href ? "link" : undefined}
+      tabIndex={href ? 0 : undefined}
+      onClick={handleOpen}
+      onKeyDown={handleKeyDown}
+      className="flex min-h-52 cursor-pointer flex-col p-4 transition-colors hover:bg-accent/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/35"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-start gap-3">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-2xl bg-muted/65">
+            <ProviderLogo provider={row.runtime.provider} className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <div className="flex min-w-0 items-center gap-1.5">
+              <span className="truncate text-sm font-medium">{baseName}</span>
+              <span className="shrink-0 rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium capitalize text-muted-foreground">
+                {row.runtime.visibility === "public"
+                  ? t(($) => $.detail.visibility_label.public)
+                  : t(($) => $.detail.visibility_label.private)}
+              </span>
+            </div>
+            {hostname && (
+              <p className="mt-1 truncate text-xs text-muted-foreground">
+                {hostname}
+              </p>
+            )}
+          </div>
+        </div>
+        <ResourceInteractiveRegion>
+          <RuntimeRowActions
+            runtime={row.runtime}
+            wsId={wsId}
+            canDelete={row.canDelete}
+          />
+        </ResourceInteractiveRegion>
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-2">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/45 px-2.5 py-1 text-xs">
+          <HealthIcon health={health} />
+          <span>{labelOf(health)}</span>
+          {health !== "online" && row.runtime.last_seen_at && (
+            <span className="text-muted-foreground">· {lastSeen}</span>
+          )}
+        </span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/45 px-2.5 py-1 text-xs text-muted-foreground">
+          {offline ? (
+            <span>—</span>
+          ) : (
+            <>
+              {workload !== "idle" && (
+                <WorkloadIcon
+                  className={`h-3 w-3 shrink-0 ${workloadVisual.textClass} ${
+                    workload === "working" ? "animate-spin" : ""
+                  }`}
+                />
+              )}
+              <span className={workloadVisual.textClass}>
+                {tAgents(($) => $.workload[workload])}
+              </span>
+              {workload === "working" && (
+                <span className="font-mono tabular-nums">
+                  {row.workload.runningCount}
+                </span>
+              )}
+              {workload === "queued" && (
+                <span className="font-mono tabular-nums">
+                  {row.workload.queuedCount}
+                </span>
+              )}
+            </>
+          )}
+        </span>
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-3 text-xs">
+        <div className="min-w-0 rounded-2xl bg-muted/35 px-3 py-2">
+          <div className="text-muted-foreground">{t(($) => $.list.col_agents)}</div>
+          <RuntimeCardAgentStack agentIds={row.workload.agentIds} />
+        </div>
+        <div className="min-w-0 rounded-2xl bg-muted/35 px-3 py-2">
+          <div className="text-muted-foreground">{t(($) => $.list.col_cli)}</div>
+          <div
+            className={`mt-2 truncate font-mono text-xs ${
+              hasCliUpdate ? "text-warning" : "text-foreground"
+            }`}
+          >
+            {cliVersion ?? "—"}
+          </div>
+        </div>
+      </div>
+
+      {showOwner && row.ownerMember && (
+        <div className="mt-auto flex min-w-0 items-center gap-2 pt-5 text-xs text-muted-foreground">
+          <ActorAvatar
+            actorType="member"
+            actorId={row.ownerMember.user_id}
+            size={18}
+          />
+          <span className="truncate">{row.ownerMember.name}</span>
+        </div>
+      )}
+    </ResourceSurface>
+  );
+}
+
+function RuntimeCardAgentStack({ agentIds }: { agentIds: string[] }) {
+  if (agentIds.length === 0) {
+    return <div className="mt-2 text-xs text-muted-foreground/50">—</div>;
+  }
+  const visible = agentIds.slice(0, 3);
+  const extra = agentIds.length - visible.length;
+  return (
+    <div className="mt-2 flex items-center -space-x-1.5">
+      {visible.map((id) => (
+        <span
+          key={id}
+          className="inline-flex rounded-full ring-2 ring-background"
+        >
+          <ActorAvatar
+            actorType="agent"
+            actorId={id}
+            size={22}
+            enableHoverCard
+          />
+        </span>
+      ))}
+      {extra > 0 && (
+        <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-background text-xs font-medium text-muted-foreground ring-2 ring-background">
+          +{extra}
+        </span>
+      )}
+    </div>
   );
 }
