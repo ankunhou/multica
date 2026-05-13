@@ -11,6 +11,7 @@ import {
   Monitor,
   Plus,
   Search,
+  Sparkles,
 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
@@ -63,6 +64,7 @@ import {
 import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { availabilityConfig, availabilityOrder } from "../presence";
 import { CreateAgentDialog } from "./create-agent-dialog";
+import { QuickCreateAgentDialog } from "./quick-create-agent-dialog";
 import { type AgentRow, createAgentColumns } from "./agent-columns";
 import { AgentRowActions } from "./agent-row-actions";
 import { AgentAvailabilityBadge, AgentWorkloadBadge } from "./agent-state-badges";
@@ -135,6 +137,7 @@ export function AgentsPage() {
     AGENT_VIEW_MODE_STORAGE_KEY,
   );
   const [showCreate, setShowCreate] = useState(false);
+  const [showQuickCreate, setShowQuickCreate] = useState(false);
   // When set, the Create dialog opens pre-populated with this agent's
   // config — driven by the row-level "Duplicate" action. We keep this
   // separate from `showCreate` so a stray null-template doesn't open the
@@ -333,6 +336,7 @@ export function AgentsPage() {
         : [...current, cachedAgent];
     });
     setShowCreate(false);
+    setShowQuickCreate(false);
     setDuplicateTemplate(null);
     navigation.push(paths.agentDetail(agent.id));
     qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
@@ -401,6 +405,7 @@ export function AgentsPage() {
         <PageHeaderBar
           totalCount={0}
           onCreate={() => setShowCreate(true)}
+          onQuickCreate={() => setShowQuickCreate(true)}
           viewMode={viewMode}
           onViewModeChange={setViewMode}
         />
@@ -428,7 +433,14 @@ export function AgentsPage() {
 
   // ---- List request error ----
   if (listError) {
-    return <ListError onCreate={() => setShowCreate(true)} listError={listError} onRetry={refetchList} />;
+    return (
+      <ListError
+        onCreate={() => setShowCreate(true)}
+        onQuickCreate={() => setShowQuickCreate(true)}
+        listError={listError}
+        onRetry={refetchList}
+      />
+    );
   }
 
   const showEmpty = totalActiveCount === 0 && archivedCount === 0;
@@ -438,6 +450,7 @@ export function AgentsPage() {
       <PageHeaderBar
         totalCount={totalActiveCount}
         onCreate={() => setShowCreate(true)}
+        onQuickCreate={() => setShowQuickCreate(true)}
         viewMode={viewMode}
         onViewModeChange={setViewMode}
       />
@@ -445,7 +458,10 @@ export function AgentsPage() {
       <ResourcePageBody>
         {showEmpty ? (
           <div className="mx-auto flex min-h-[560px] max-w-3xl items-center justify-center">
-            <EmptyState onCreate={() => setShowCreate(true)} />
+            <EmptyState
+              onCreate={() => setShowCreate(true)}
+              onQuickCreate={() => setShowQuickCreate(true)}
+            />
           </div>
         ) : (
           <div className="mx-auto flex w-full max-w-7xl flex-col gap-3">
@@ -523,6 +539,16 @@ export function AgentsPage() {
           onCreate={handleCreate}
         />
       )}
+      {showQuickCreate && (
+        <QuickCreateAgentDialog
+          agents={agents}
+          runtimes={runtimes}
+          runtimesLoading={runtimesLoading}
+          currentUserId={currentUser?.id ?? null}
+          onClose={() => setShowQuickCreate(false)}
+          onCreate={handleCreate}
+        />
+      )}
     </div>
   );
 }
@@ -534,11 +560,13 @@ export function AgentsPage() {
 function PageHeaderBar({
   totalCount,
   onCreate,
+  onQuickCreate,
   viewMode,
   onViewModeChange,
 }: {
   totalCount: number;
   onCreate: () => void;
+  onQuickCreate: () => void;
   viewMode?: ResourceViewMode;
   onViewModeChange?: (mode: ResourceViewMode) => void;
 }) {
@@ -582,6 +610,16 @@ function PageHeaderBar({
           type="button"
           size="sm"
           variant="outline"
+          onClick={onQuickCreate}
+          className={resourceActionButtonClassName}
+        >
+          <Sparkles className="mr-1 h-3.5 w-3.5" />
+          {t(($) => $.page.quick_create_agent)}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
           onClick={onCreate}
           className={resourceActionButtonClassName}
         >
@@ -595,17 +633,23 @@ function PageHeaderBar({
 
 function ListError({
   onCreate,
+  onQuickCreate,
   listError,
   onRetry,
 }: {
   onCreate: () => void;
+  onQuickCreate: () => void;
   listError: unknown;
   onRetry: () => void;
 }) {
   const { t } = useT("agents");
   return (
     <div className="flex flex-1 min-h-0 flex-col">
-      <PageHeaderBar totalCount={0} onCreate={onCreate} />
+      <PageHeaderBar
+        totalCount={0}
+        onCreate={onCreate}
+        onQuickCreate={onQuickCreate}
+      />
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
         <AlertCircle className="h-8 w-8 text-destructive" />
         <div>
@@ -1089,7 +1133,13 @@ function AgentCard({
 // Empty / no-matches states
 // ---------------------------------------------------------------------------
 
-function EmptyState({ onCreate }: { onCreate: () => void }) {
+function EmptyState({
+  onCreate,
+  onQuickCreate,
+}: {
+  onCreate: () => void;
+  onQuickCreate: () => void;
+}) {
   const { t } = useT("agents");
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
@@ -1100,16 +1150,27 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
         {t(($) => $.empty.description)}
       </p>
-      <Button
-        type="button"
-        onClick={onCreate}
-        size="sm"
-        variant="outline"
-        className={cn("mt-5", resourceActionButtonClassName)}
-      >
-        <Plus className="h-3 w-3" />
-        {t(($) => $.page.new_agent)}
-      </Button>
+      <div className="mt-5 flex flex-wrap justify-center gap-2">
+        <Button
+          type="button"
+          onClick={onQuickCreate}
+          size="sm"
+          className="rounded-full px-3 shadow-none"
+        >
+          <Sparkles className="h-3 w-3" />
+          {t(($) => $.page.quick_create_agent)}
+        </Button>
+        <Button
+          type="button"
+          onClick={onCreate}
+          size="sm"
+          variant="outline"
+          className={resourceActionButtonClassName}
+        >
+          <Plus className="h-3 w-3" />
+          {t(($) => $.page.new_agent)}
+        </Button>
+      </div>
     </div>
   );
 }
