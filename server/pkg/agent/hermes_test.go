@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"sync"
 	"testing"
@@ -1137,6 +1138,9 @@ func TestHermesProviderErrorSnifferTerminalNonRetryable(t *testing.T) {
 // gated on `finalOutput == ""`, so the run silently completed.
 func TestHermesBackendPromotesProviderErrorWithNonEmptyOutput(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake hermes fixture is a POSIX shell script")
+	}
 
 	fakePath := filepath.Join(t.TempDir(), "hermes")
 	writeTestExecutable(t, fakePath, []byte(fakeHermesACPRateLimitScript()))
@@ -1219,6 +1223,9 @@ done
 // → fail" rule would have wrongly marked this run as failed.
 func TestHermesBackendDoesNotPromoteOnTransientRetry(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake hermes fixture is a POSIX shell script")
+	}
 
 	fakePath := filepath.Join(t.TempDir(), "hermes")
 	writeTestExecutable(t, fakePath, []byte(fakeHermesACPTransientRetryScript()))

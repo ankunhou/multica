@@ -5,6 +5,7 @@ package redact
 import (
 	"os"
 	"os/user"
+	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -89,8 +90,13 @@ func Text(s string) string {
 
 	// Redact home directory paths (e.g. /Users/john/ → /Users/****/).
 	if homeDir != "" && username != "" {
-		masked := strings.Replace(homeDir, username, "****", 1)
+		homeUser := filepath.Base(homeDir)
+		masked := strings.Replace(homeDir, homeUser, "****", 1)
+		if masked == homeDir {
+			masked = strings.Replace(homeDir, username, "****", 1)
+		}
 		s = strings.ReplaceAll(s, homeDir, masked)
+		s = strings.ReplaceAll(s, filepath.ToSlash(homeDir), filepath.ToSlash(masked))
 	}
 
 	return s

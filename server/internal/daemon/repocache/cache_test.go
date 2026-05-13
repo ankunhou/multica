@@ -191,6 +191,22 @@ func TestBareDirNameDistinctsHostPortFromDashedHostname(t *testing.T) {
 	}
 }
 
+func TestBareDirNameLocalWindowsPathIsShortAndFlat(t *testing.T) {
+	t.Parallel()
+
+	input := `C:\Users\tester\AppData\Local\Temp\TestLongLocalRepoPath123456789\001`
+	got := bareDirName(input)
+	if strings.ContainsAny(got, `\/`) {
+		t.Fatalf("bareDirName(%q) contains a path separator: %q", input, got)
+	}
+	if !strings.HasPrefix(got, "local+001-") || !strings.HasSuffix(got, ".git") {
+		t.Fatalf("bareDirName(%q) = %q, want local+001-<hash>.git", input, got)
+	}
+	if len(got) > 96 {
+		t.Fatalf("bareDirName(%q) = %q, length %d exceeds short cache name budget", input, got, len(got))
+	}
+}
+
 func TestIsBareRepo(t *testing.T) {
 	t.Parallel()
 
@@ -854,7 +870,7 @@ func TestEnsureRemoteTrackingLayoutMigratesLegacyCache(t *testing.T) {
 	}
 	// Wipe any refs/remotes/origin/* that may have been populated by the initial clone.
 	_ = exec.Command("git", "-C", barePath, "update-ref", "-d", "refs/remotes/origin/HEAD").Run()
-	if err := exec.Command("sh", "-c", "rm -rf '"+filepath.Join(barePath, "refs", "remotes")+"'").Run(); err != nil {
+	if err := os.RemoveAll(filepath.Join(barePath, "refs", "remotes")); err != nil {
 		t.Fatalf("wipe refs/remotes: %v", err)
 	}
 
@@ -993,7 +1009,7 @@ func TestGetRemoteDefaultBranchFallsBackToBareHead(t *testing.T) {
 	// post-migration backfill fetch failed":
 	//   - bare HEAD still points at refs/heads/<default>
 	//   - refs/remotes/origin/* is empty
-	if err := exec.Command("sh", "-c", "rm -rf '"+filepath.Join(barePath, "refs", "remotes")+"'").Run(); err != nil {
+	if err := os.RemoveAll(filepath.Join(barePath, "refs", "remotes")); err != nil {
 		t.Fatalf("wipe refs/remotes: %v", err)
 	}
 
