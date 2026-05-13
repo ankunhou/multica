@@ -185,12 +185,12 @@ multica daemon status
 
 Confirm:
 1. Status is `running`
-2. At least one agent is listed (e.g. `claude`, `codex`, `copilot`, `opencode`, `openclaw`, `hermes`, `gemini`, `pi`, or `cursor-agent`)
-3. At least one workspace is being watched
+2. At least one agent is listed (e.g. `claude`, `codex`, `copilot`, `opencode`, `openclaw`, `hermes`, `gemini`, `pi`, `cursor-agent`, `kimi`, or `kiro-cli`)
+3. At least one workspace is being tracked
 
 If the agents list is empty, tell the user:
 
-> "The Multica daemon is running but no AI agent CLIs were detected. Please install at least one supported CLI (`claude`, `codex`, `copilot`, `opencode`, `openclaw`, `hermes`, `gemini`, `pi`, or `cursor-agent`), then restart the daemon with `multica daemon stop && multica daemon start`."
+> "The Multica daemon is running but no AI agent CLIs were detected. Please install at least one supported CLI (`claude`, `codex`, `copilot`, `opencode`, `openclaw`, `hermes`, `gemini`, `pi`, `cursor-agent`, `kimi`, or `kiro-cli`), then restart the daemon with `multica daemon stop && multica daemon start`."
 
 ---
 

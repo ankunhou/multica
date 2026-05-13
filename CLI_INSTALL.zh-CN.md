@@ -50,7 +50,7 @@ multica daemon start
 multica daemon status
 ```
 
-确认状态是 `running`，至少检测到一个 agent CLI，例如 `claude`、`codex`、`gemini`、`opencode`、`openclaw`、`hermes`、`kimi`、`kiro-cli` 或 `pi`。
+确认状态是 `running`，至少检测到一个 agent CLI，例如 `claude`、`codex`、`copilot`、`opencode`、`openclaw`、`hermes`、`gemini`、`pi`、`cursor-agent`、`kimi` 或 `kiro-cli`。
 
 如果 agent 列表为空，先安装至少一个支持的 AI coding CLI，然后重启 daemon：
 

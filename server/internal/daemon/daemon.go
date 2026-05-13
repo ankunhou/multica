@@ -438,7 +438,7 @@ func (w *runtimeSetWatcher) notify() {
 // "fresh enough" to suppress the HTTP heartbeat for that runtime. The window
 // is 2× HeartbeatInterval so a single dropped WS ack still keeps HTTP
 // suppressed, but two missed acks (~30s of WS silence) re-enable HTTP — well
-// inside the server-side 45s offline threshold.
+// inside the server-side 150s stale threshold.
 func (d *Daemon) wsHeartbeatFreshness() time.Duration {
 	if d.cfg.HeartbeatInterval <= 0 {
 		return 30 * time.Second
@@ -574,7 +574,7 @@ func (d *Daemon) resolveAuth() error {
 	return nil
 }
 
-// allRuntimeIDs returns all runtime IDs across all watched workspaces.
+// allRuntimeIDs returns all runtime IDs across all tracked workspaces.
 func (d *Daemon) allRuntimeIDs() []string {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -870,7 +870,7 @@ func (d *Daemon) ensureRepoReady(ctx context.Context, workspaceID, repoURL strin
 	ws, ok := d.workspaces[workspaceID]
 	d.mu.Unlock()
 	if !ok {
-		return fmt.Errorf("workspace is not watched by this daemon: %s", workspaceID)
+		return fmt.Errorf("workspace is not tracked by this daemon: %s", workspaceID)
 	}
 
 	if d.workspaceRepoAllowed(workspaceID, repoURL) && d.repoCache.Lookup(workspaceID, repoURL) != "" {
@@ -1623,7 +1623,7 @@ func (d *Daemon) pollLoop(ctx context.Context, taskWakeups <-chan struct{}) erro
 // server-side `queued` state (which has no timeout) rather than entering
 // `dispatched` and racing the sweeper.
 //
-// pollerCtx is cancelled when this runtime is removed from the watched set
+// pollerCtx is cancelled when this runtime is removed from the tracked set
 // (e.g. workspace de-registered). parentCtx is the daemon's root ctx and is
 // passed to handleTask so an in-flight task is not killed just because the
 // runtime set changed mid-flight — the task continues to run until the

@@ -82,10 +82,10 @@ Multica = **人 + AI agent 在同一个看板上协作的任务管理平台**。
 | 4 | **Projects** | issue 容器；lead 可以是 agent | 非常薄（9 个字段）；删除 project 只是把 issue.project_id 设 NULL |
 | 5 | **Agents** | AI 工作者身份；provider/instructions/custom_env/custom_args/model 分别影响什么 | **`custom_env` 在 DB 里明文存储，无加密**——醒目警告；archive 用 `archived_at` 软删除；API 响应对非 owner 做 redact |
 | 6 | **Runtimes** | 一台机器 × 一个 provider 一行；注册/在线/离线生命周期 | **唯一约束 (workspace_id, daemon_id, provider)**——同一台机器同一 provider 不会有重复 runtime；daemon 重启复用旧 runtime 行 |
-| 7 | **The Daemon** | 分布式执行的灵魂；poll + heartbeat + concurrent execution | 每 30s heartbeat；75s 无心跳 → 离线；启动时调 `recover-orphans` 回收孤儿任务；max_concurrent_tasks 有双层（daemon + agent） |
+| 7 | **The Daemon** | 分布式执行的灵魂；poll + heartbeat + concurrent execution | 每 15s heartbeat；150s 无有效心跳 → 离线，sweeper 每 30s 巡检（最坏约 3 分钟）；启动时调 `recover-orphans` 回收孤儿任务；max_concurrent_tasks 有双层（daemon + agent） |
 | 8 | **Tasks** | 任务是什么；生命周期 queued→dispatched→running→completed/failed | **session_id mid-flight pinning**（agent 首条 system message 一到就持久化，不等完成）；失败自动重试只对 issue-sourced 任务（max_attempts=3），chat 和 autopilot 不自动重试 |
 | 9 | **Triggers & Entry Points** ← **独立页** | 5 种让 task 产生的入口：Assignment / Comment @mention / Chat / Autopilot / Rerun；每种的行为对比 | 每种的 FK 字段不同（trigger_comment_id / chat_session_id / autopilot_run_id）；**对比表**：哪种有 session resume / 自动重试 / priority 来源 / dedup |
-| 10 | **Skills** | 工作区 skill + 本地 skill；按 provider 的注入路径 | 8 种 provider 有不同 skill 根路径（Claude=`.claude/skills/`、Codex=`$CODEX_HOME/skills/`、Pi=`.pi/skills/`、etc）；skill 不参与执行，只参与上下文注入 |
+| 10 | **Skills** | 工作区 skill + 本地 skill；按 provider 的注入路径 | 不同 provider 有不同 skill 根路径（Claude=`.claude/skills/`、Codex=`$CODEX_HOME/skills/`、Copilot=`.github/skills/`、Kiro=`.kiro/skills/`、etc）；skill 不参与执行，只参与上下文注入 |
 | 11 | **MCP** | 独立协议；怎么给 agent 配 MCP server；和 skill 的区别 | **目前只 Claude Code 真用**——其他 provider 收到 McpConfig 但 CLI 没对应 flag；JSONB 明文存储，非 owner redact |
 | 12 | **Autopilots** | 让 agent 自动开工的调度器；两种执行模式；三种触发；并发策略 | **Webhook trigger 字段有但没接路由**——第一版不文档化；concurrency policy 只对 `run_only` 模式生效；`create_issue` 模式由 issue FSM 自然 gate |
 | 13 | **Chat** | 和 issue comment 的区别；session 复用 | **完全沙盒**——chat 里的 agent 不能发 comment 到 issue；session_id 用 COALESCE 持久化，agent crash 不会抹掉 |
@@ -100,7 +100,7 @@ Multica = **人 + AI agent 在同一个看板上协作的任务管理平台**。
 |---|---|
 | Assign an issue to an agent | UI + CLI 两种方式 |
 | Create and configure an agent | provider、instructions、custom_env、mcp、skills |
-| Connect a runtime (local daemon) | daemon install → login → start → 出现在 Runtimes 页 |
+| Connect a runtime (local daemon) | install CLI → `multica login` → `multica daemon start` → 出现在 Runtimes 页 |
 | Write and share a skill | 新建 / 编辑 / 挂载到 agent |
 | Import a skill from GitHub / ClawHub | import URL 的流程 |
 | Import a local skill from your machine | 通过 daemon 扫描本机 skill 目录并上传 |

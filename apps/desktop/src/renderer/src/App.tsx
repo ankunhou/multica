@@ -112,7 +112,7 @@ function AppContent() {
 
   // Bridge local daemon IPC status into the runtimes cache so this user's
   // own daemon flips to offline/online sub-second instead of waiting on the
-  // server's 75s sweeper. Resolves wsId from the active tab so workspace
+  // server's roughly 3-minute sweeper path. Resolves wsId from the active tab so workspace
   // switches automatically rebind the subscription.
   const activeWorkspaceSlug = useTabStore((s) => s.activeWorkspaceSlug);
   const activeWsId = activeWorkspaceSlug

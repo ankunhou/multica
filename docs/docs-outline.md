@@ -16,7 +16,7 @@
 1. **源码优先**：每一条事实陈述必须能在源码里找到对应位置。不能从"产品宣传册"、"直觉"、"上一版本的文档"或"记忆"出发。
 2. **代码里没有的功能一律不写**。即使 UI 疑似有、DB 有字段、handler 有接口但 service 层无真实读写逻辑，都视为"未实装"。遇到边界不确定的情况，标 ⚠️ 让 reviewer 再看一眼，不要硬写。
 3. **下笔前先读源码验证本文件里的"写什么"清单**。这个清单是指引，不是真相。可能已过时、可能当时调研就不准。
-4. **跨篇共通事实集中写**（例如 10 provider 矩阵写在 §4.3 Providers Matrix，其他篇 cross-link 过去），避免同一事实分散在多篇里。
+4. **跨篇共通事实集中写**（例如 11 provider 矩阵写在 §4.3 Providers Matrix，其他篇 cross-link 过去），避免同一事实分散在多篇里。
 5. **服务于产品定位**：Multica 的核心差异化是 **"BYO-agent 的 Linear—— agent 跑在你自己的机器，你掌控计算和 provider 选择"**。每篇的语气和深度都应该为这个叙事服务。
 6. **为目标读者写**。不同读者期待不同深度。P0 新用户不关心 SQL 字段，P1 开发者愿意看架构图，P2 agent 读者需要命令自包含能复制。
 7. **v1 认领优先**：先把 v1 的 25 篇 ship 出去，再开 v2。
@@ -210,7 +210,7 @@ multica issue assign <issue-id> --agent <agent-slug>
   - 三段展开：
     1. Agent 是 first-class（能被分配 / 评论 / 改状态 / 作为 project lead）
     2. Agent 跑在你自己的 daemon 上——你掌控计算和 API key
-    3. Provider-agnostic：支持 Claude Code / Codex / Cursor CLI / Copilot 等 10 种
+    3. Provider-agnostic：支持 Claude Code / Codex / Cursor Agent / Copilot 等 11 种
   - 一句借势："Speaks MCP natively. Compatible with Anthropic Agent Skills."
   - 3 种部署形态导航（Cloud / Self-Host / Desktop）
 - **不写**:
@@ -434,14 +434,14 @@ multica issue assign <issue-id> --agent <agent-slug>
   - 来源：workspace skill（云端）vs local skill（daemon 扫描本机）
   - 导入：新建 / GitHub / ClawHub / 本机目录
   - 挂载到 agent（junction table `agent_skill`）
-  - **10 provider 注入路径矩阵**（或 cross-link §4.3）
+  - **provider 注入路径矩阵**（或 cross-link §4.3）
   - Skill 在 task dispatch 时同步
   - **⚠️ ClawHavoc 警示**：2026-2 曝过 "ClawHavoc" 恶意包事件。ClawHub 已集成 VirusTotal 扫描，但安装第三方 skill 前务必检查 SKILL.md 和附带脚本。
   - **末尾一段"Skills vs MCP"**（v2 再开 MCP 独立页）:
     > MCP（Model Context Protocol）是另一层概念——让 agent 连外部工具（数据库、文件系统、第三方 API）。Multica 支持 `mcp_config` 字段，但目前**仅 Claude Code 真实消费**，其他 provider 接收但未传递。详见 v2 的 MCP 专页（开发中）。
 - **不写**: skill 内部 DSL（不存在）、MCP 深入（v2）
 - **写前要验证**:
-  - 10 provider 路径是否还都对（execenv/context.go 最新值）
+  - provider 路径是否还都对（execenv/context.go 最新值）
   - Skill 大小限制（1 MB/file？）
   - path traversal 检查
 - **⚠️ 动笔前必读**:
@@ -467,13 +467,13 @@ multica issue assign <issue-id> --agent <agent-slug>
 - **写什么**（1500-2000 字）:
   - **Daemon 部分**:
     - Daemon = 本地 worker，poll + 执行 + 汇报
-    - **Heartbeat 15s** / **45s offline**（⚠️ 旧 plan 写错过，必须代码核实）
+    - **Heartbeat 15s** / **150s offline threshold** / **30s sweeper interval**（最坏约 3 分钟离线发现）
     - Poll 频率 30s
     - max_concurrent_tasks（daemon 20 + agent 1，双层 gate）
     - Recover-orphans（启动时把 dispatched/running 转 failed）
     - Legacy daemon_id migration（hostname → UUID 自动迁移）
     - 配置优先级（CLI flag > config file > env）
-    - CLI：`multica daemon install/login/start/stop/status/logs`
+    - CLI：`multica login` + `multica daemon start/stop/status/restart/logs/disk-usage`
   - **Runtime 部分**:
     - Runtime = daemon × provider
     - 唯一约束 `(workspace_id, daemon_id, provider)`
@@ -482,7 +482,7 @@ multica issue assign <issue-id> --agent <agent-slug>
 - **不写**: provider 执行细节（§4.3）、task 状态机（§4.2）
 - **写前要验证**:
   - ⚠️ Heartbeat 是 15s 不是 30s
-  - ⚠️ Offline 阈值是 45s 不是 75s
+  - ⚠️ Offline 阈值是 150s，不是旧 plan 里的 75s；sweeper 每 30s 巡检
   - Sweeper 间隔 + 自动删除阈值
 - **⚠️ 动笔前必读**:
   - 旧 plan 的 heartbeat / offline 数字是错的，认领者必须代码级核实
@@ -521,9 +521,9 @@ multica issue assign <issue-id> --agent <agent-slug>
 
 ### 4.3 Providers Matrix — ⬜ Not started [v1]
 
-- **Source files**: `server/pkg/agent/*.go`（10 个 provider 文件）, `server/internal/daemon/execenv/context.go`（skill 路径）
+- **Source files**: `server/pkg/agent/*.go`（11 个 provider 实现）, `server/internal/daemon/execenv/context.go`（skill 路径）
 - **目标读者**: P1 重度用户（选 provider）
-- **叙事位置**: 板块 4 最后一篇。10 provider 能力大表。
+- **叙事位置**: 板块 4 最后一篇。11 provider 能力大表。
 - **写什么**（1500-2500 字）:
   - **分组列出**（不按字母序）:
     - **新手首选**：Claude Code（feature-complete）/ Codex（主流替代）
@@ -790,8 +790,8 @@ multica issue assign <issue-id> --agent <agent-slug>
     - **Skill**：`skill list / get / create / update / delete / import` + 嵌套 `skill files`
     - **Autopilot**（命令名保留，文档里叫 Routines）：`autopilot list / get / create / update / delete / runs` + 嵌套 `autopilot trigger`
     - **Repo**：`repo checkout`
-    - **Daemon**：`daemon install / login / start / stop / status / logs`
-    - **Runtime**：`runtime list / usage / activity / ping / update`
+    - **Daemon**：`daemon start / stop / status / restart / logs / disk-usage`
+    - **Runtime**：`runtime list / usage / activity / update`
     - **Misc**：`config / version / update / attachment download`
   - 每条命令：1 行描述 + 最常用 flag
   - 末尾指引："完整 flag / exit code / examples 见 v2 详细 CLI reference（开发中）"
@@ -821,7 +821,7 @@ multica issue assign <issue-id> --agent <agent-slug>
     | `WS /ws` | ✓（cookie）| ✓（首条消息）| - |
   - 登录 flow（email + code / OAuth）
   - PAT 创建 / 撤销 / 管理（UI 在 Settings，CLI 通过 `multica login`）
-  - Daemon token 生成时机（`multica daemon login`）
+  - Daemon token 生成时机（`multica login` / `multica setup`）
   - Logout（删本地 token，不撤销 server session）
 - **不写**: self-host 时的 auth setup（§7.2）、CLI 具体命令（§8.1）
 - **写前要验证**: Daemon Token 在 WS 的行为；JWT 过期后重连

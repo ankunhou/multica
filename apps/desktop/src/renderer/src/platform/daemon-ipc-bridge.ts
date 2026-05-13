@@ -22,7 +22,7 @@ interface DaemonStatusLike {
  * (starting / stopping / installing_cli / cli_not_found) so the cache
  * doesn't flap during boot — if the daemon is in such a state, the runtime
  * is effectively offline anyway, and the server-side sweeper will mark it
- * within 75s.
+ * within roughly 3 minutes.
  */
 function mergeDaemonStatus(rt: AgentRuntime, status: DaemonStatusLike): AgentRuntime {
   if (status.state === "stopped" || status.state === "stopping") {
@@ -42,9 +42,9 @@ function mergeDaemonStatus(rt: AgentRuntime, status: DaemonStatusLike): AgentRun
  * Subscribes to local daemon status changes via Electron IPC and writes them
  * into the runtimes Query cache for the active workspace.
  *
- * Why: the server-side runtime sweeper takes up to 75s to flip a runtime to
- * offline (heartbeat timeout 45s + sweep interval 30s). On the desktop app
- * we know about local daemon state instantly via IPC, so we use it to
+ * Why: the server-side runtime sweeper can take up to roughly 3 minutes to
+ * flip a runtime offline (150s stale threshold + 30s sweep interval). On the
+ * desktop app we know about local daemon state instantly via IPC, so we use it to
  * pre-populate the cache and give users a sub-second feedback loop. Web and
  * "looking at someone else's daemon" still go through the server path.
  *
