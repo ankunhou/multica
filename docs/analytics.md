@@ -34,7 +34,7 @@ defaults guarantee this:
 - Operators who want their own analytics can set `POSTHOG_API_KEY` and
   `POSTHOG_HOST` to point at their own PostHog project (Cloud or
   self-hosted PostHog).
-- The frontend receives the key via `/api/config` (planned for PR 2), so
+- The frontend receives the key via `/api/config`, so
   self-hosts' blank server config also disables frontend event shipping
   automatically — no separate frontend opt-out plumbing required.
 

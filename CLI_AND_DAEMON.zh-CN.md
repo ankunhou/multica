@@ -50,13 +50,11 @@ multica setup self-host --server-url https://api.example.com --app-url https://a
 
 ```bash
 multica workspace list
-multica workspace watch <workspace-id>
-multica workspace unwatch <workspace-id>
 multica workspace get <workspace-id>
 multica workspace members <workspace-id>
 ```
 
-daemon 只处理 watched workspace 的 task。
+daemon 会自动跟踪你所属的 workspace。使用 `multica config set workspace_id <workspace-id>` 设置 CLI 命令默认工作区。
 
 ## Issue
 

@@ -351,7 +351,7 @@ aria-invalid:border-destructive aria-invalid:ring-destructive/20
 
 所有 UI 组件优先使用已安装的 shadcn 组件（55 个可用）。新增 UI 需求时：
 
-1. 先查 shadcn 是否有对应组件 → `npx shadcn add <component>`
+1. 先查 shadcn 是否有对应组件 → `pnpm ui:add <component>`
 2. 需要变体 → 用 CVA 在现有组件上扩展
 3. 确实没有 → 自建组件，但必须遵循本规范的 token / 交互状态
 

@@ -188,7 +188,7 @@ See the [CLI and Daemon Guide](CLI_AND_DAEMON.md) for the full command reference
 
 For contributors working on the Multica codebase, see the [Contributing Guide](CONTRIBUTING.md).
 
-**Prerequisites:** [Node.js](https://nodejs.org/) v20+, [pnpm](https://pnpm.io/) v10.28+, [Go](https://go.dev/) v1.26+, [Docker](https://www.docker.com/)
+**Prerequisites:** [Node.js](https://nodejs.org/) v22+, [pnpm](https://pnpm.io/) v10.28+, [Go](https://go.dev/) v1.26.1+, [Docker](https://www.docker.com/)
 
 ```bash
 just dev

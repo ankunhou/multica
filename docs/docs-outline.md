@@ -468,7 +468,7 @@ multica issue assign <issue-id> --agent <agent-slug>
   - **Daemon 部分**:
     - Daemon = 本地 worker，poll + 执行 + 汇报
     - **Heartbeat 15s** / **45s offline**（⚠️ 旧 plan 写错过，必须代码核实）
-    - Poll 频率 3s
+    - Poll 频率 30s
     - max_concurrent_tasks（daemon 20 + agent 1，双层 gate）
     - Recover-orphans（启动时把 dispatched/running 转 failed）
     - Legacy daemon_id migration（hostname → UUID 自动迁移）
