@@ -15,7 +15,7 @@ import { ActorAvatar as ActorAvatarBase } from "@multica/ui/components/common/ac
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { AppLink } from "../../navigation";
 import { HealthIcon } from "../../runtimes/components/shared";
-import { availabilityConfig } from "../presence";
+import { AgentAvailabilityBadge } from "./agent-state-badges";
 import { VisibilityBadge } from "./visibility-badge";
 import { useT } from "../../i18n";
 
@@ -137,18 +137,11 @@ function AgentAvailabilityLine({
   wsId: string | undefined;
   agentId: string;
 }) {
-  const { t } = useT("agents");
   const detail = useAgentPresenceDetail(wsId, agentId);
   if (detail === "loading") {
     return <Skeleton className="mt-0.5 h-3 w-16" />;
   }
-  const av = availabilityConfig[detail.availability];
-  return (
-    <div className="mt-0.5 inline-flex items-center gap-1.5">
-      <span className={`h-1.5 w-1.5 rounded-full ${av.dotClass}`} />
-      <span className={`text-xs ${av.textClass}`}>{t(($) => $.availability[detail.availability])}</span>
-    </div>
-  );
+  return <AgentAvailabilityBadge detail={detail} className="mt-0.5" />;
 }
 
 // Compact runtime row — wifi-style health icon + runtime name. The icon

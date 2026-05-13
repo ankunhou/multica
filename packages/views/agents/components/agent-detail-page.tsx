@@ -45,8 +45,8 @@ import {
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { AppLink, useNavigation } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
-import { availabilityConfig } from "../presence";
 import { AgentDetailInspector } from "./agent-detail-inspector";
+import { AgentAvailabilityBadge } from "./agent-state-badges";
 import { AgentOverviewPane } from "./agent-overview-pane";
 import { useT } from "../../i18n";
 
@@ -326,9 +326,6 @@ function DetailHeader({
 }) {
   const { t } = useT("agents");
   const isArchived = !!agent.archived_at;
-  const av = presence
-    ? { ...availabilityConfig[presence.availability], label: t(($) => $.availability[presence.availability]) }
-    : null;
   // Last-task state is intentionally not surfaced in the header — the
   // Recent work section on this page already shows the same information
   // (and richer: titles, timestamps, error messages). Showing "Completed"
@@ -346,13 +343,11 @@ function DetailHeader({
         </AppLink>
         <span className="text-muted-foreground/40">/</span>
         <h1 className="truncate text-sm font-medium">{agent.name}</h1>
-        {!isArchived && av && presence && (
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-xs ${av.textClass}`}
-          >
-            <span className={`h-1.5 w-1.5 rounded-full ${av.dotClass}`} />
-            {av.label}
-          </span>
+        {!isArchived && presence && (
+          <AgentAvailabilityBadge
+            detail={presence}
+            className="rounded-md border px-1.5 py-0.5"
+          />
         )}
       </div>
 

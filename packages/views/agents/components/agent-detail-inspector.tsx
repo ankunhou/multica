@@ -36,7 +36,7 @@ import {
   PopoverTrigger,
 } from "@multica/ui/components/ui/popover";
 import { PropRow } from "../../common/prop-row";
-import { availabilityConfig } from "../presence";
+import { AgentAvailabilityBadge } from "./agent-state-badges";
 import { CharCounter } from "./char-counter";
 import { useT } from "../../i18n";
 import { useDateTimeFormatters } from "../../i18n/date-time";
@@ -640,21 +640,17 @@ function PresenceBadge({
 }: {
   presence: AgentPresenceDetail | null | undefined;
 }) {
-  const { t } = useT("agents");
   if (!presence) {
     return (
       <span className="inline-flex h-5 w-20 animate-pulse rounded-md bg-muted" />
     );
   }
-  const av = availabilityConfig[presence.availability];
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <span
-        className={`inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-xs ${av.textClass}`}
-      >
-        <span className={`h-1.5 w-1.5 rounded-full ${av.dotClass}`} />
-        {t(($) => $.availability[presence.availability])}
-      </span>
+      <AgentAvailabilityBadge
+        detail={presence}
+        className="rounded-md border px-1.5 py-0.5"
+      />
     </div>
   );
 }
