@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -208,14 +209,30 @@ func bareDirName(rawURL string) string {
 }
 
 func isLocalFilesystemPath(rawURL string) bool {
-	return filepath.IsAbs(rawURL) || strings.HasPrefix(rawURL, `\\`) || strings.HasPrefix(rawURL, `//`)
+	return filepath.IsAbs(rawURL) || isWindowsAbsPath(rawURL) || strings.HasPrefix(rawURL, `\\`) || strings.HasPrefix(rawURL, `//`)
+}
+
+func isWindowsAbsPath(rawPath string) bool {
+	if len(rawPath) < 3 || rawPath[1] != ':' {
+		return false
+	}
+	drive := rawPath[0]
+	if !((drive >= 'A' && drive <= 'Z') || (drive >= 'a' && drive <= 'z')) {
+		return false
+	}
+	return rawPath[2] == '\\' || rawPath[2] == '/'
 }
 
 func localBareDirName(rawPath string) string {
-	base := strings.TrimSuffix(filepath.Base(rawPath), ".git")
+	cleanPath := cleanLocalCachePath(rawPath)
+	base := strings.TrimSuffix(path.Base(cleanPath), ".git")
 	base = sanitizeCachePathSegment(base)
-	sum := sha256.Sum256([]byte(filepath.Clean(rawPath)))
+	sum := sha256.Sum256([]byte(cleanPath))
 	return fmt.Sprintf("local+%s-%x.git", base, sum[:8])
+}
+
+func cleanLocalCachePath(rawPath string) string {
+	return path.Clean(strings.ReplaceAll(rawPath, `\`, "/"))
 }
 
 func shortenBareDirName(name, rawURL string) string {

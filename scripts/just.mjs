@@ -24,7 +24,7 @@ function exe(name) {
   return IS_WIN ? `${name}.cmd` : name;
 }
 
-function run(command, args = [], options = {}) {
+function runResult(command, args = [], options = {}) {
   let actualCommand = command;
   let actualArgs = args;
   if (IS_WIN && /\.(cmd|bat)$/i.test(command)) {
@@ -41,10 +41,27 @@ function run(command, args = [], options = {}) {
   if (result.error) {
     throw result.error;
   }
+  return result;
+}
+
+function run(command, args = [], options = {}) {
+  const result = runResult(command, args, options);
   if (result.status !== 0 && !options.allowFailure) {
     process.exit(result.status ?? 1);
   }
   return result.stdout ?? "";
+}
+
+function runWithRetry(command, args = [], options = {}, attempts = 2) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const result = runResult(command, args, { ...options, allowFailure: true });
+    if (result.status === 0) return;
+    if (attempt < attempts) {
+      console.warn(`${command} ${args.join(" ")} failed; retrying (${attempt + 1}/${attempts})...`);
+      continue;
+    }
+    process.exit(result.status ?? 1);
+  }
 }
 
 function capture(command, args = [], options = {}) {
@@ -340,7 +357,7 @@ function waitForChild(child) {
 }
 
 async function setup() {
-  run(exe("pnpm"), ["install"]);
+  runWithRetry(exe("pnpm"), ["install"]);
   await ensureDb();
   runMigrate("up");
 }

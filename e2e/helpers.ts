@@ -21,12 +21,22 @@ export async function loginAsDefault(page: Page): Promise<string> {
   );
 
   const token = api.getToken();
-  await page.goto("/login");
-  await page.evaluate((t) => {
+  await page.addInitScript((t) => {
     localStorage.setItem("multica_token", t);
   }, token);
   await page.goto(`/${workspace.slug}/issues`);
-  await page.waitForURL("**/issues", { timeout: 10000 });
+  await page.waitForURL(/\/issues$/, { timeout: 25000 });
+
+  const starterDialog = page.getByRole("dialog", {
+    name: /Welcome.*add starter tasks/,
+  });
+  await starterDialog
+    .waitFor({ state: "visible", timeout: 3000 })
+    .then(async () => {
+      await page.getByRole("button", { name: "Start blank workspace" }).click();
+      await starterDialog.waitFor({ state: "hidden", timeout: 10000 });
+    })
+    .catch(() => {});
   return workspace.slug;
 }
 
@@ -41,9 +51,23 @@ export async function createTestApi(): Promise<TestApiClient> {
   return api;
 }
 
+export function workspaceSwitcherButton(page: Page) {
+  return page
+    .getByRole("button", { name: /Workspace|Renamed WS|Multica/ })
+    .first();
+}
+
 export async function openWorkspaceMenu(page: Page) {
-  // Click the workspace switcher button (has ChevronDown icon)
-  await page.locator("aside button").first().click();
-  // Wait for dropdown to appear
-  await page.locator('[class*="popover"]').waitFor({ state: "visible" });
+  await workspaceSwitcherButton(page).click();
+  await page.locator('[data-slot="dropdown-menu-content"]').waitFor({
+    state: "visible",
+  });
+}
+
+export async function minimizeChatIfOpen(page: Page) {
+  const minimizeButton = page.getByRole("button", { name: "Minimize" }).first();
+  await minimizeButton
+    .waitFor({ state: "visible", timeout: 1000 })
+    .then(() => minimizeButton.click())
+    .catch(() => {});
 }

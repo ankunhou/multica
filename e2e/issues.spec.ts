@@ -33,7 +33,7 @@ test.describe("Issues", () => {
     await expect(page.locator("text=Backlog")).toBeVisible();
 
     // Switch to list view
-    await page.click("text=List");
+    await page.getByRole("button", { name: "List" }).click();
     await expect(page.getByText(title)).toBeVisible();
   });
 
@@ -41,6 +41,7 @@ test.describe("Issues", () => {
     const newIssueButton = page.getByRole("button", { name: "New Issue" });
     await expect(newIssueButton).toBeVisible();
     await newIssueButton.click();
+    await page.getByRole("button", { name: "Switch to Manual" }).click();
 
     const title = "E2E Created " + Date.now();
     const titleInput = page.getByRole("textbox", { name: "Issue title" });
@@ -84,6 +85,7 @@ test.describe("Issues", () => {
 
   test("can dismiss issue creation", async ({ page }) => {
     await page.getByRole("button", { name: "New Issue" }).click();
+    await page.getByRole("button", { name: "Switch to Manual" }).click();
 
     const titleInput = page.getByRole("textbox", { name: "Issue title" });
     await expect(titleInput).toBeVisible();
