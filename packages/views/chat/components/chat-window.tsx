@@ -50,6 +50,7 @@ import {
 import { useChatStore } from "@multica/core/chat";
 import { ChatMessageList, ChatMessageSkeleton } from "./chat-message-list";
 import { ChatInput } from "./chat-input";
+import { ChatSessionSignalPip } from "./session-signal-pip";
 import {
   ContextAnchorButton,
   ContextAnchorCard,
@@ -786,17 +787,9 @@ function SessionDropdown({
          *  finished). Same pip shape as unread for visual rhythm,
          *  amber + pulse to read as activity. */}
         {isRunning ? (
-          <span
-            aria-label={t(($) => $.window.running)}
-            title={t(($) => $.window.running)}
-            className="size-1.5 shrink-0 rounded-full bg-amber-500 animate-pulse"
-          />
+          <ChatSessionSignalPip signal="running" label={t(($) => $.window.running)} />
         ) : session.has_unread ? (
-          <span
-            aria-label={t(($) => $.window.unread)}
-            title={t(($) => $.window.unread)}
-            className="size-1.5 shrink-0 rounded-full bg-brand"
-          />
+          <ChatSessionSignalPip signal="unread" label={t(($) => $.window.unread)} />
         ) : null}
         {isCurrent && <Check className="size-3.5 text-muted-foreground shrink-0" />}
         <button
@@ -830,16 +823,14 @@ function SessionDropdown({
           )}
           <span className="truncate text-sm font-medium">{title}</span>
           {otherSessionRunning ? (
-            <span
-              aria-label={t(($) => $.window.another_running)}
-              title={t(($) => $.window.another_running)}
-              className="size-1.5 shrink-0 rounded-full bg-amber-500 animate-pulse"
+            <ChatSessionSignalPip
+              signal="running"
+              label={t(($) => $.window.another_running)}
             />
           ) : otherSessionUnread ? (
-            <span
-              aria-label={t(($) => $.window.another_unread)}
-              title={t(($) => $.window.another_unread)}
-              className="size-1.5 shrink-0 rounded-full bg-brand"
+            <ChatSessionSignalPip
+              signal="unread"
+              label={t(($) => $.window.another_unread)}
             />
           ) : null}
           <ChevronDown className="size-3 text-muted-foreground shrink-0" />
