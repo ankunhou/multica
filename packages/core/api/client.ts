@@ -122,6 +122,10 @@ export interface ApiClientOptions {
   identity?: ApiClientIdentity;
 }
 
+export interface FetchOptions {
+  suppressErrorLog?: boolean;
+}
+
 export interface LoginResponse {
   token: string;
   user: User;
@@ -279,7 +283,7 @@ export class ApiClient {
     }
   }
 
-  private async fetch<T>(path: string, init?: RequestInit): Promise<T> {
+  private async fetch<T>(path: string, init?: RequestInit, options?: FetchOptions): Promise<T> {
     const rid = createRequestId();
     const start = Date.now();
     const method = init?.method ?? "GET";
@@ -302,8 +306,10 @@ export class ApiClient {
     if (!res.ok) {
       if (res.status === 401) this.handleUnauthorized();
       const { message, body } = await this.parseErrorBody(res, `API error: ${res.status} ${res.statusText}`);
-      const logLevel = res.status === 404 ? "warn" : "error";
-      this.logger[logLevel](`← ${res.status} ${path}`, { rid, duration: `${Date.now() - start}ms`, error: message });
+      if (!options?.suppressErrorLog) {
+        const logLevel = res.status === 404 ? "warn" : "error";
+        this.logger[logLevel](`← ${res.status} ${path}`, { rid, duration: `${Date.now() - start}ms`, error: message });
+      }
       throw new ApiError(message, res.status, res.statusText, body);
     }
 
@@ -348,8 +354,8 @@ export class ApiClient {
     return this.fetch("/api/cli-token", { method: "POST" });
   }
 
-  async getMe(): Promise<User> {
-    return this.fetch("/api/me");
+  async getMe(options?: FetchOptions): Promise<User> {
+    return this.fetch("/api/me", undefined, options);
   }
 
   async markOnboardingComplete(payload?: {
@@ -884,12 +890,12 @@ export class ApiClient {
     posthog_host?: string;
     analytics_environment?: string;
   }> {
-    return this.fetch("/api/config");
+    return this.fetch("/api/config", undefined, { suppressErrorLog: true });
   }
 
   // Workspaces
-  async listWorkspaces(): Promise<Workspace[]> {
-    return this.fetch("/api/workspaces");
+  async listWorkspaces(options?: FetchOptions): Promise<Workspace[]> {
+    return this.fetch("/api/workspaces", undefined, options);
   }
 
   async getWorkspace(id: string): Promise<Workspace> {

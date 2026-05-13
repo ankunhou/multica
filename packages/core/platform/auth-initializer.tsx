@@ -13,6 +13,7 @@ import {
 import { configStore } from "../config";
 import { workspaceKeys } from "../workspace/queries";
 import { createLogger } from "../logger";
+import { ApiError } from "../api/client";
 import { defaultStorage } from "./storage";
 import { setCurrentWorkspace } from "./workspace-storage";
 import type { ClientIdentity } from "./types";
@@ -27,6 +28,7 @@ export function AuthInitializer({
   onLogout,
   storage = defaultStorage,
   cookieAuth,
+  hasAuthSession,
   identity,
 }: {
   children: ReactNode;
@@ -34,6 +36,7 @@ export function AuthInitializer({
   onLogout?: () => void;
   storage?: StorageAdapter;
   cookieAuth?: boolean;
+  hasAuthSession?: () => boolean;
   identity?: ClientIdentity;
 }) {
   const qc = useQueryClient();
@@ -80,6 +83,13 @@ export function AuthInitializer({
     };
 
     if (cookieAuth) {
+      if (hasAuthSession && !hasAuthSession()) {
+        onLogout?.();
+        resetAnalytics();
+        useAuthStore.setState({ user: null, isLoading: false });
+        return;
+      }
+
       // Cookie mode: the HttpOnly cookie is sent automatically by the browser.
       // Call the API to check if the session is still valid.
       //
@@ -87,13 +97,18 @@ export function AuthInitializer({
       // resolve the slug without a second fetch. The active workspace itself
       // is derived from the URL by [workspaceSlug]/layout.tsx — no imperative
       // selection here.
-      Promise.all([api.getMe(), api.listWorkspaces()])
+      Promise.all([
+        api.getMe({ suppressErrorLog: true }),
+        api.listWorkspaces({ suppressErrorLog: true }),
+      ])
         .then(([user, wsList]) => {
           onAuthSuccess(user);
           qc.setQueryData(workspaceKeys.list(), wsList);
         })
         .catch((err) => {
-          logger.error("cookie auth init failed", err);
+          if (!(err instanceof ApiError && err.status === 401)) {
+            logger.error("cookie auth init failed", err);
+          }
           onAuthFailure();
         });
       return;

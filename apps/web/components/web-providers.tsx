@@ -7,6 +7,7 @@ import type { LocaleResources, SupportedLocale } from "@multica/core/i18n";
 import packageJson from "../package.json";
 import { WebNavigationProvider } from "@/platform/navigation";
 import {
+  hasLoggedInCookie,
   setLoggedInCookie,
   clearLoggedInCookie,
 } from "@/features/auth/auth-cookie";
@@ -65,6 +66,7 @@ export function WebProviders({
       apiBaseUrl={process.env.NEXT_PUBLIC_API_URL}
       wsUrl={deriveWsUrl()}
       cookieAuth={cookieAuth}
+      hasAuthSession={hasLoggedInCookie}
       onLogin={setLoggedInCookie}
       onLogout={clearLoggedInCookie}
       identity={identity}

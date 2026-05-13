@@ -33,6 +33,33 @@ describe("ApiClient", () => {
     }
   });
 
+  it("does not emit an error log when optional config bootstrap fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue(
+        new Response(JSON.stringify({ error: "backend warming up" }), {
+          status: 500,
+          statusText: "Internal Server Error",
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+    const logger = {
+      debug: vi.fn(),
+      info: vi.fn(),
+      warn: vi.fn(),
+      error: vi.fn(),
+    };
+
+    const client = new ApiClient("https://api.example.test", { logger });
+
+    await expect(client.getConfig()).rejects.toMatchObject({
+      message: "backend warming up",
+      status: 500,
+    });
+    expect(logger.error).not.toHaveBeenCalled();
+  });
+
   it("uses the expected HTTP contract for autopilot endpoints", async () => {
     const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(
       new Response(JSON.stringify({ autopilots: [], runs: [], total: 0 }), {

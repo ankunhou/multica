@@ -68,6 +68,7 @@ export function CoreProvider({
   wsUrl = "ws://localhost:8080/ws",
   storage = defaultStorage,
   cookieAuth,
+  hasAuthSession,
   onLogin,
   onLogout,
   identity,
@@ -90,6 +91,7 @@ export function CoreProvider({
         onLogout={onLogout}
         storage={storage}
         cookieAuth={cookieAuth}
+        hasAuthSession={hasAuthSession}
         identity={identity}
       >
         <WSProvider
