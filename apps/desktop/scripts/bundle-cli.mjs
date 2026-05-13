@@ -143,12 +143,16 @@ async function resetDestDir() {
 }
 
 function stopWindowsDestProcess() {
+  const quotedTarget = `'${destBinary.replaceAll("'", "''")}'`;
   const script = `
-    $target = ${JSON.stringify(destBinary)}
-    Get-Process | Where-Object { $_.Path -eq $target } | Stop-Process -Force
+    $target = ${quotedTarget}
+    $processes = Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -eq $target }
+    foreach ($process in $processes) {
+      & taskkill.exe /PID $($process.ProcessId) /T /F | Out-Null
+    }
     $deadline = (Get-Date).AddSeconds(5)
     while ((Get-Date) -lt $deadline) {
-      if (-not (Get-Process | Where-Object { $_.Path -eq $target })) { break }
+      if (-not (Get-CimInstance Win32_Process | Where-Object { $_.ExecutablePath -eq $target })) { break }
       Start-Sleep -Milliseconds 100
     }
   `;
