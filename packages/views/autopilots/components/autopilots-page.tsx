@@ -155,24 +155,28 @@ export function AutopilotsPage() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <PageHeader className="h-auto items-start justify-between border-b-0 px-6 py-8 md:px-12 md:py-12">
+      <PageHeader className="h-auto items-center justify-between border-b-0 px-6 py-6 md:px-12 md:py-8">
         <div className="min-w-0">
-          <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
-            <Zap className="h-4 w-4" />
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
+              <Zap className="h-3.5 w-3.5" />
+            </span>
+            <h1 className="truncate text-2xl font-semibold tracking-tight md:text-3xl">{t(($) => $.page.title)}</h1>
             {!isLoading && autopilots.length > 0 && (
-              <span className="tabular-nums">{autopilots.length}</span>
+              <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+                {autopilots.length}
+              </span>
             )}
           </div>
-          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{t(($) => $.page.title)}</h1>
         </div>
-        <Button size="lg" onClick={() => openCreate()} className="rounded-2xl px-4">
+        <Button onClick={() => openCreate()} className="rounded-full px-4 shadow-sm">
           <Plus className="h-3.5 w-3.5 mr-1" />
           {t(($) => $.page.new_autopilot)}
         </Button>
       </PageHeader>
 
       {/* Table */}
-      <div className="flex-1 overflow-y-auto px-5 pb-8 md:px-12">
+      <div className="flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-12">
         {isLoading ? (
           <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-card shadow-sm">
             <div className="sticky top-0 z-[1] hidden h-10 items-center gap-2 border-b bg-muted/25 px-5 sm:flex">
@@ -190,23 +194,27 @@ export function AutopilotsPage() {
             </div>
           </div>
         ) : autopilots.length === 0 ? (
-          <div className="mx-auto flex max-w-5xl flex-col items-center px-2 py-4 md:py-8">
-            <Zap className="h-10 w-10 mb-3 text-muted-foreground opacity-30" />
+          <div className="mx-auto flex min-h-[520px] w-full max-w-3xl flex-col items-center justify-center px-2 pb-16">
+            <span className="mb-3 flex size-11 items-center justify-center rounded-2xl bg-muted/60 text-muted-foreground">
+              <Zap className="h-5 w-5" />
+            </span>
             <p className="text-base font-medium">{t(($) => $.page.empty.title)}</p>
-            <p className="text-sm text-muted-foreground mt-1 mb-8">
+            <p className="mt-1 max-w-md text-center text-sm text-muted-foreground">
               {t(($) => $.page.empty.hint)}
             </p>
-            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-7 grid w-full grid-cols-1 gap-1 rounded-3xl border border-border/55 bg-card/70 p-2 shadow-sm ring-1 ring-black/[0.02] sm:grid-cols-2">
               {TEMPLATES.map((tpl) => {
                 const Icon = tpl.icon;
                 return (
                   <button
                     key={tpl.id}
                     type="button"
-                    className="flex min-h-36 items-start gap-3 rounded-2xl border bg-card p-4 text-left shadow-sm transition-colors hover:bg-accent/35"
+                    className="group flex min-h-16 items-center gap-3 rounded-2xl px-3 py-3 text-left transition-colors hover:bg-accent/45"
                     onClick={() => openCreate(tpl)}
                   >
-                    <Icon className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-muted/60 text-muted-foreground transition-colors group-hover:bg-background group-hover:text-foreground">
+                      <Icon className="h-4 w-4" />
+                    </span>
                     <div className="min-w-0">
                       <div className="text-sm font-medium">
                         {t(($) => $.templates[tpl.id].title)}
@@ -219,7 +227,7 @@ export function AutopilotsPage() {
                 );
               })}
             </div>
-            <Button size="sm" variant="outline" className="mt-5 rounded-xl" onClick={() => openCreate()}>
+            <Button size="sm" variant="ghost" className="mt-4 rounded-full px-3" onClick={() => openCreate()}>
               <Plus className="h-3.5 w-3.5 mr-1" />
               {t(($) => $.page.start_blank)}
             </Button>
