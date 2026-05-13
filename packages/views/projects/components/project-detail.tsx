@@ -31,6 +31,7 @@ import { TitleEditor, ContentEditor, type ContentEditorRef } from "../../editor"
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectResourcesSection } from "./project-resources-section";
 import { ProjectIcon } from "./project-icon";
+import { ProjectProgressMeter } from "./project-progress-meter";
 import { IssuesHeader } from "../../issues/components/issues-header";
 import { BoardView } from "../../issues/components/board-view";
 import { ListView } from "../../issues/components/list-view";
@@ -471,31 +472,27 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       </div>
 
       {/* Progress */}
-      {issueMetrics.totalCount > 0 && (() => {
-        const pct = Math.round((issueMetrics.completedCount / issueMetrics.totalCount) * 100);
-        return (
-          <div>
-            <button
-              className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${progressOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-              onClick={() => setProgressOpen(!progressOpen)}
-            >
-              {t(($) => $.detail.section_progress)}
-              <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${progressOpen ? "rotate-90" : ""}`} />
-            </button>
-            {progressOpen && <div className="pl-2 flex items-center gap-3">
-              <div className="relative h-2 flex-1 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full bg-emerald-500 transition-all"
-                  style={{ width: `${pct}%` }}
-                />
-              </div>
-              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-                {issueMetrics.completedCount}/{issueMetrics.totalCount}
-              </span>
-            </div>}
-          </div>
-        );
-      })()}
+      {issueMetrics.totalCount > 0 && (
+        <div>
+          <button
+            className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${progressOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
+            onClick={() => setProgressOpen(!progressOpen)}
+          >
+            {t(($) => $.detail.section_progress)}
+            <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${progressOpen ? "rotate-90" : ""}`} />
+          </button>
+          {progressOpen && <div className="pl-2 flex items-center gap-3">
+            <ProjectProgressMeter
+              done={issueMetrics.completedCount}
+              total={issueMetrics.totalCount}
+              className="h-2 flex-1"
+            />
+            <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+              {issueMetrics.completedCount}/{issueMetrics.totalCount}
+            </span>
+          </div>}
+        </div>
+      )}
 
       {/* Description */}
       <div>

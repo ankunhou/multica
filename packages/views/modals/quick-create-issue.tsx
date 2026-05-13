@@ -5,6 +5,7 @@ import { ArrowLeftRight, Check, ChevronRight, Maximize2, Minimize2, X as XIcon }
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { DialogTitle } from "@multica/ui/components/ui/dialog";
+import { Notice } from "@multica/ui/components/ui/notice";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -396,14 +397,14 @@ export function AgentCreatePanel({
         </div>
 
         {selectedAgent && versionBlocked && (
-          <div className="mx-7 mb-3 shrink-0 rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+          <Notice variant="warning" className="mx-7 mb-3 w-auto shrink-0 rounded-xl">
             {versionCheck.state === "missing"
               ? t(($) => $.create_issue.agent.version_missing, { min: versionCheck.min })
               : t(($) => $.create_issue.agent.version_below, {
                   current: versionCheck.current,
                   min: versionCheck.min,
                 })}
-          </div>
+          </Notice>
         )}
 
         {/* Prompt — same rich editor Advanced uses, so paste/drop images,
@@ -460,7 +461,7 @@ export function AgentCreatePanel({
               onSelect={(file) => editorRef.current?.uploadFile(file)}
             />
             {keepOpen && sentCount > 0 && (
-              <span className="text-xs text-emerald-600 dark:text-emerald-400">
+              <span className="text-xs text-success">
                 {t(($) => $.create_issue.agent.sent_count, { count: sentCount })}
               </span>
             )}
@@ -492,7 +493,7 @@ export function AgentCreatePanel({
                   ? t(($) => $.create_issue.agent.version_blocked_tooltip, { min: versionCheck.min })
                   : undefined
               }
-              className={justSent ? "min-w-28 !bg-emerald-600 !text-white" : "min-w-28"}
+              className={justSent ? "min-w-28 !bg-success !text-success-foreground" : "min-w-28"}
             >
               {submitting ? t(($) => $.create_issue.agent.sending) : uploading ? t(($) => $.create_issue.agent.uploading) : justSent ? (
                 <span className="flex items-center gap-1"><Check className="size-3.5" />{t(($) => $.create_issue.agent.sent_label)}</span>

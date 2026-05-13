@@ -24,6 +24,7 @@ import {
 } from "@multica/ui/components/ui/dialog";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { Button } from "@multica/ui/components/ui/button";
+import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
 import {
   Select,
   SelectTrigger,
@@ -501,10 +502,14 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
 
         {/* Footer */}
         <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-border/70 shrink-0 bg-background/80">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
-            <Zap className="size-3.5 text-amber-500 shrink-0" />
+          <StatusIndicator
+            tone="warning"
+            icon={Zap}
+            iconClassName="size-3.5 text-warning"
+            className="min-w-0 text-muted-foreground"
+          >
             <span className="truncate">{t(($) => $.dialog.auto_run_hint)}</span>
-          </div>
+          </StatusIndicator>
           <div className="flex items-center gap-2 shrink-0">
             <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
               {t(($) => $.dialog.cancel)}

@@ -20,6 +20,7 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { Button } from "@multica/ui/components/ui/button";
 import { Switch } from "@multica/ui/components/ui/switch";
+import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
 import { cn } from "@multica/ui/lib/utils";
 import { toast } from "sonner";
 import {
@@ -53,11 +54,11 @@ import { useDateTimeFormatters } from "../../i18n/date-time";
 
 type RunStatus = "issue_created" | "running" | "completed" | "failed";
 
-const RUN_VISUAL: Record<RunStatus, { color: string; icon: typeof CheckCircle2; spin?: boolean }> = {
-  issue_created: { color: "text-blue-500", icon: Clock },
-  running: { color: "text-blue-500", icon: Loader2, spin: true },
-  completed: { color: "text-emerald-500", icon: CheckCircle2 },
-  failed: { color: "text-destructive", icon: XCircle },
+const RUN_VISUAL: Record<RunStatus, { tone: "info" | "success" | "destructive"; icon: typeof CheckCircle2; spin?: boolean }> = {
+  issue_created: { tone: "info", icon: Clock },
+  running: { tone: "info", icon: Loader2, spin: true },
+  completed: { tone: "success", icon: CheckCircle2 },
+  failed: { tone: "destructive", icon: XCircle },
 };
 
 function RunRow({ run, agentId, agentName }: { run: AutopilotRun; agentId: string; agentName: string }) {
@@ -93,10 +94,15 @@ function RunRow({ run, agentId, agentName }: { run: AutopilotRun; agentId: strin
 
   const content = (
     <>
-      <StatusIcon className={cn("h-4 w-4 shrink-0", visual.color, visual.spin && "animate-spin")} />
-      <span className={cn("w-24 shrink-0 text-xs font-medium", visual.color)}>
+      <StatusIndicator
+        tone={visual.tone}
+        icon={StatusIcon}
+        spin={visual.spin}
+        iconClassName="h-4 w-4"
+        className="w-32 shrink-0 gap-2"
+      >
         {t(($) => $.run_status[status])}
-      </span>
+      </StatusIndicator>
       <span className="w-16 shrink-0 text-xs text-muted-foreground capitalize">{run.source}</span>
       <span className="flex-1 min-w-0 text-xs text-muted-foreground truncate">
         {run.issue_id ? (
@@ -399,14 +405,17 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
                   : t(($) => $.detail.activate_aria)
               }
             />
-            <span className={cn(
-              "text-xs font-medium",
-              autopilot.status === "active" ? "text-emerald-500" :
-              autopilot.status === "paused" ? "text-amber-500" :
-              "text-muted-foreground",
-            )}>
+            <StatusIndicator
+              tone={
+                autopilot.status === "active"
+                  ? "success"
+                  : autopilot.status === "paused"
+                    ? "warning"
+                    : "muted"
+              }
+            >
               {t(($) => $.status[autopilot.status])}
-            </span>
+            </StatusIndicator>
           </div>
         </div>
         <div className="flex items-center gap-2">

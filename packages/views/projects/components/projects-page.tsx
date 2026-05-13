@@ -46,6 +46,7 @@ import {
 import { useResourceViewModePreference } from "../../common/use-resource-view-mode";
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectIcon } from "./project-icon";
+import { ProjectProgressMeter, getProjectProgressPercent } from "./project-progress-meter";
 import { useT } from "../../i18n";
 import {
   useProjectStatusLabels,
@@ -145,12 +146,11 @@ function ProjectProgressInline({ project }: { project: Project }) {
 
   return (
     <>
-      <span className="relative h-1.5 w-12 overflow-hidden rounded-full bg-muted">
-        <span
-          className="absolute inset-y-0 left-0 rounded-full bg-emerald-500 transition-all"
-          style={{ width: `${Math.round((project.done_count / project.issue_count) * 100)}%` }}
-        />
-      </span>
+      <ProjectProgressMeter
+        done={project.done_count}
+        total={project.issue_count}
+        className="w-12"
+      />
       <span className="text-xs text-muted-foreground tabular-nums">
         {project.done_count}/{project.issue_count}
       </span>
@@ -304,9 +304,7 @@ function ProjectCard({ project }: { project: Project }) {
   const formatRelativeDate = useFormatRelativeDate();
   const updateProject = useUpdateProject();
   const href = wsPaths.projectDetail(project.id);
-  const progress = project.issue_count > 0
-    ? Math.round((project.done_count / project.issue_count) * 100)
-    : 0;
+  const progress = getProjectProgressPercent(project.done_count, project.issue_count);
 
   const handleUpdate = useCallback(
     (data: UpdateProjectRequest) => {
@@ -374,12 +372,12 @@ function ProjectCard({ project }: { project: Project }) {
             {project.issue_count > 0 ? `${project.done_count}/${project.issue_count}` : "--"}
           </span>
         </div>
-        <div className="h-1.5 overflow-hidden rounded-full bg-muted">
-          <div
-            className="h-full rounded-full bg-emerald-500 transition-all"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <ProjectProgressMeter
+          done={project.done_count}
+          total={project.issue_count}
+          className="h-1.5"
+          aria-label={`${progress}%`}
+        />
       </div>
     </ResourceSurface>
   );

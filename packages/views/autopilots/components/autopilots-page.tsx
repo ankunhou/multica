@@ -12,7 +12,7 @@ import { ActorAvatar } from "../../common/actor-avatar";
 import { PageHeader } from "../../layout/page-header";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { Button } from "@multica/ui/components/ui/button";
-import { cn } from "@multica/ui/lib/utils";
+import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
 import { AutopilotDialog } from "./autopilot-dialog";
 import type { Autopilot, AutopilotStatus, AutopilotExecutionMode } from "@multica/core/types";
 import type { TriggerFrequency } from "./trigger-config";
@@ -87,10 +87,10 @@ function useFormatRelativeDate(): (date: string) => string {
   };
 }
 
-const STATUS_VISUAL: Record<AutopilotStatus, { color: string; icon: typeof Zap }> = {
-  active: { color: "text-emerald-500", icon: Play },
-  paused: { color: "text-amber-500", icon: Pause },
-  archived: { color: "text-muted-foreground", icon: AlertCircle },
+const STATUS_VISUAL: Record<AutopilotStatus, { tone: "success" | "warning" | "muted"; icon: typeof Zap }> = {
+  active: { tone: "success", icon: Play },
+  paused: { tone: "warning", icon: Pause },
+  archived: { tone: "muted", icon: AlertCircle },
 };
 
 function AutopilotRow({ autopilot }: { autopilot: Autopilot }) {
@@ -126,10 +126,13 @@ function AutopilotRow({ autopilot }: { autopilot: Autopilot }) {
         </span>
 
         {/* Status */}
-        <span className={cn("flex items-center gap-1 sm:w-20 sm:shrink-0 sm:justify-center", visual.color)}>
-          <StatusIcon className="h-3 w-3" />
+        <StatusIndicator
+          tone={visual.tone}
+          icon={StatusIcon}
+          className="sm:w-20 sm:shrink-0 sm:justify-center"
+        >
           {t(($) => $.status[autopilot.status as AutopilotStatus])}
-        </span>
+        </StatusIndicator>
 
         {/* Last run */}
         <span className="text-muted-foreground tabular-nums sm:w-20 sm:shrink-0 sm:text-right">

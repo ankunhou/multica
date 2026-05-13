@@ -10,17 +10,17 @@ import {
 } from "lucide-react";
 import { issuePullRequestsOptions } from "@multica/core/github/queries";
 import type { GitHubPullRequest, GitHubPullRequestState } from "@multica/core/types";
-import { cn } from "@multica/ui/lib/utils";
+import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
 import { useT } from "../../i18n";
 
 const STATE_ICON: Record<
   GitHubPullRequestState,
-  { icon: React.ComponentType<{ className?: string }>; className: string }
+  { icon: React.ComponentType<{ className?: string }>; tone: "success" | "muted" | "brand" | "destructive" }
 > = {
-  open: { icon: GitPullRequestArrow, className: "text-emerald-600 dark:text-emerald-400" },
-  draft: { icon: GitPullRequestDraft, className: "text-muted-foreground" },
-  merged: { icon: GitMerge, className: "text-violet-600 dark:text-violet-400" },
-  closed: { icon: GitPullRequestClosed, className: "text-rose-600 dark:text-rose-400" },
+  open: { icon: GitPullRequestArrow, tone: "success" },
+  draft: { icon: GitPullRequestDraft, tone: "muted" },
+  merged: { icon: GitMerge, tone: "brand" },
+  closed: { icon: GitPullRequestClosed, tone: "destructive" },
 };
 
 export function PullRequestList({ issueId }: { issueId: string }) {
@@ -50,7 +50,7 @@ export function PullRequestList({ issueId }: { issueId: string }) {
 
 function PullRequestRow({ pr }: { pr: GitHubPullRequest }) {
   const { t } = useT("issues");
-  const cfg = STATE_ICON[pr.state] ?? { icon: GitPullRequest, className: "" };
+  const cfg = STATE_ICON[pr.state] ?? { icon: GitPullRequest, tone: "muted" as const };
   const Icon = cfg.icon;
   const label =
     pr.state === "open"
@@ -69,7 +69,13 @@ function PullRequestRow({ pr }: { pr: GitHubPullRequest }) {
       rel="noreferrer noopener"
       className="flex items-start gap-2 rounded-md px-2 py-1.5 -mx-2 hover:bg-accent/50 transition-colors group"
     >
-      <Icon className={cn("h-3.5 w-3.5 mt-0.5 shrink-0", cfg.className)} />
+      <StatusIndicator
+        tone={cfg.tone}
+        icon={Icon}
+        iconClassName="h-3.5 w-3.5"
+        className="mt-0.5"
+        aria-hidden
+      />
       <div className="min-w-0 flex-1">
         <p className="text-xs font-medium truncate group-hover:text-foreground">{pr.title}</p>
         <p className="text-[11px] text-muted-foreground truncate">

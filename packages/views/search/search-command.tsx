@@ -50,6 +50,7 @@ import {
   DialogDescription,
 } from "@multica/ui/components/ui/dialog";
 import { useTheme } from "@multica/ui/components/common/theme-provider";
+import { Highlight } from "@multica/ui/components/ui/highlight";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
 import { useSearchStore } from "./search-store";
@@ -79,9 +80,9 @@ function HighlightText({ text, query }: { text: string; query: string }) {
     <>
       {parts.map((part, i) =>
         part.highlight ? (
-          <mark key={i} className="bg-yellow-200 dark:bg-yellow-900/60 text-inherit rounded-sm">
+          <Highlight key={i}>
             {part.text}
-          </mark>
+          </Highlight>
         ) : (
           part.text
         ),
