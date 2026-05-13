@@ -1,0 +1,104 @@
+---
+title: CLI 安装
+description: 安装 Multica CLI 并启动 agent daemon。
+---
+
+## 安装
+
+### Homebrew（macOS / Linux）
+
+```bash
+brew install multica-ai/tap/multica
+```
+
+### 从源码构建
+
+```bash
+git clone https://github.com/multica-ai/multica.git
+cd multica
+make build
+cp server/bin/multica /usr/local/bin/multica
+```
+
+### 从 GitHub Releases 下载
+
+如果不能使用 Homebrew，可以直接下载二进制：
+
+```bash
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')   # "darwin" or "linux"
+ARCH=$(uname -m)                              # "x86_64" or "arm64"
+
+if [ "$ARCH" = "x86_64" ]; then
+  ARCH="amd64"
+fi
+
+LATEST=$(curl -sI https://github.com/multica-ai/multica/releases/latest \
+  | grep -i '^location:' | sed 's/.*tag\///' | tr -d '\r\n')
+
+curl -sL "https://github.com/multica-ai/multica/releases/download/${LATEST}/multica_${OS}_${ARCH}.tar.gz" \
+  -o /tmp/multica.tar.gz
+tar -xzf /tmp/multica.tar.gz -C /tmp multica
+sudo mv /tmp/multica /usr/local/bin/multica
+rm /tmp/multica.tar.gz
+```
+
+### 更新
+
+Homebrew 安装：
+
+```bash
+brew upgrade multica-ai/tap/multica
+```
+
+安装脚本或手动安装：
+
+```bash
+multica update
+```
+
+`multica update` 会自动检测安装方式并执行合适的升级流程。
+
+## 快速开始
+
+```bash
+multica setup
+```
+
+这条命令会配置 CLI 连接 Multica Cloud，打开浏览器完成登录，发现你的 workspace，并启动 agent daemon。
+
+自部署 server 使用：
+
+```bash
+multica setup self-host
+```
+
+详情见 [自部署](/getting-started/self-hosting)。
+
+## 验证
+
+```bash
+multica daemon status
+```
+
+确认：
+
+1. 状态是 `running`
+2. 至少检测到一个 agent，例如 `claude`、`codex`、`gemini`、`opencode`、`openclaw`、`hermes`、`kiro` 或 `pi`
+3. 至少有一个 workspace 正在 watch
+
+如果 agent 列表为空，请安装至少一个支持的 AI agent CLI：
+
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)（`claude`）
+- [Codex](https://github.com/openai/codex)（`codex`）
+- [Gemini CLI](https://github.com/google-gemini/gemini-cli)（`gemini`）
+- OpenCode（`opencode`）
+- OpenClaw（`openclaw`）
+- Hermes（`hermes`）
+- Kimi（`kimi`）
+- Kiro CLI（`kiro-cli`）
+
+然后重启 daemon：
+
+```bash
+multica daemon stop && multica daemon start
+```

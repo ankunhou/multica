@@ -1,0 +1,75 @@
+---
+title: 架构
+description: Multica 平台的技术架构。
+---
+
+## 概览
+
+Multica 是一个 Go 后端 + monorepo 前端项目，前端使用 pnpm workspaces 和 Turborepo，并通过共享包复用核心逻辑。
+
+```text
+┌──────────────┐     ┌──────────────┐     ┌──────────────────┐
+│   Next.js    │────>│  Go Backend  │────>│   PostgreSQL     │
+│   Frontend   │<────│  (Chi + WS)  │<────│   (pgvector)     │
+└──────────────┘     └──────┬───────┘     └──────────────────┘
+                            │
+                     ┌──────┴───────┐
+                     │ Agent Daemon  │  (runs on your machine)
+                     │Claude/Codex/  │
+                     │OpenClaw/Code  │
+                     └──────────────┘
+```
+
+## 项目结构
+
+| 目录 | 用途 | 技术 |
+|---|---|---|
+| `server/` | Go 后端 | Chi router、sqlc、gorilla/websocket |
+| `apps/web/` | Next.js 前端 | App Router |
+| `apps/desktop/` | Electron 桌面 app | electron-vite |
+| `apps/docs/` | 文档站点 | Fumadocs |
+| `packages/core/` | headless 业务逻辑 | 无 react-dom，跨平台复用 |
+| `packages/ui/` | 原子 UI 组件 | 无业务逻辑，基于 shadcn |
+| `packages/views/` | 共享业务页面 | 无 `next/*`，无 `react-router-dom` |
+| `packages/tsconfig/` | 共享 TypeScript 配置 | - |
+| `packages/eslint-config/` | 共享 ESLint 配置 | - |
+
+## 后端结构
+
+- **入口**（`cmd/`）：`server`（HTTP API）、`multica`（CLI + daemon）、`migrate`
+- **Handlers**（`internal/handler/`）：按领域拆分，例如 issue、comment、agent、auth、daemon
+- **实时层**（`internal/realtime/`）：Hub 管理 WebSocket client，并广播事件
+- **认证**（`internal/auth/` + `internal/middleware/`）：JWT（HS256），middleware 注入 `X-User-ID` 和 `X-User-Email`
+- **Task 生命周期**（`internal/service/task.go`）：enqueue → claim → start → complete/fail
+- **Agent SDK**（`pkg/agent/`）：统一的 `Backend` 接口，用于通过 Claude Code、Codex 等执行 prompt
+- **Daemon**（`internal/daemon/`）：自动检测 CLI、注册运行时、轮询 task
+- **数据库**：PostgreSQL 17 + pgvector，sqlc 从 `pkg/db/queries/` 的 SQL 生成 Go 代码
+
+## 前端架构
+
+### Internal Packages 模式
+
+所有共享包都直接导出原始 `.ts` / `.tsx` 文件，不预编译。消费方 app 的 bundler 会直接编译这些文件，从而获得零配置 HMR 和即时跳转定义。
+
+### 包边界
+
+- `packages/core/`：无 react-dom、无 localStorage、无 UI 库。所有 Zustand store 放这里。
+- `packages/ui/`：纯 UI 组件，无业务逻辑。
+- `packages/views/`：无 `next/*`、无 `react-router-dom`，路由通过 `NavigationAdapter` 注入。
+
+### 状态管理
+
+- **TanStack Query** 管理所有服务端状态：issue、user、workspace 等。
+- **Zustand** 管理客户端状态：选择项、过滤器、草稿等。
+- **React Context** 只用于跨层平台管道，例如 `WorkspaceIdProvider`、`NavigationProvider`。
+
+### 数据流
+
+```text
+Browser → ApiClient (shared/api) → REST API (Chi handlers) → sqlc queries → PostgreSQL
+Browser ← WSClient (shared/api) ← WebSocket ← Hub.Broadcast() ← Handlers/TaskService
+```
+
+## 多租户
+
+所有查询都按 `workspace_id` 过滤，并通过成员关系检查控制访问。`X-Workspace-ID` header 用来把请求路由到正确 workspace。

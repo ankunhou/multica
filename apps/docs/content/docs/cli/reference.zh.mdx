@@ -1,0 +1,357 @@
+---
+title: CLI 参考
+description: Multica CLI 与 agent daemon 的完整命令参考。
+---
+
+`multica` CLI 用来把你的本机连接到 Multica。它负责登录、workspace 管理、issue 操作，并运行本地 agent daemon 来执行 AI task。
+
+## 登录
+
+### 浏览器登录
+
+```bash
+multica login
+```
+
+打开浏览器完成 OAuth 登录，创建 90 天有效的 Personal Access Token，并自动配置 workspace。
+
+### Token 登录
+
+```bash
+multica login --token <mul_...>
+```
+
+直接使用 Personal Access Token 登录，适合 CI 或无浏览器环境。传 `--token=` 空值时会进入交互式输入，避免 token 进入 shell history。
+
+### 查看状态
+
+```bash
+multica auth status
+```
+
+显示当前 server、用户和 token 有效状态。
+
+### 退出登录
+
+```bash
+multica auth logout
+```
+
+删除本地保存的登录 token。
+
+## Agent daemon
+
+daemon 是本地 agent runtime。它会检测机器上的 AI CLI，向 Multica server 注册运行时，并在智能体被分配 task 时执行工作。
+
+### 启动
+
+```bash
+multica daemon start
+```
+
+默认在后台运行，日志写入 `~/.multica/daemon.log`。
+
+前台运行便于调试：
+
+```bash
+multica daemon start --foreground
+```
+
+### 停止
+
+```bash
+multica daemon stop
+```
+
+### 状态
+
+```bash
+multica daemon status
+multica daemon status --output json
+```
+
+显示 PID、运行时长、检测到的 agent，以及正在 watch 的 workspace。
+
+### 日志
+
+```bash
+multica daemon logs              # 最近 50 行
+multica daemon logs -f           # 持续跟随
+multica daemon logs -n 100       # 最近 100 行
+```
+
+### 支持的 agent
+
+daemon 会自动检测 `PATH` 上的这些 AI CLI：
+
+| CLI | 命令 | 说明 |
+|-----|------|------|
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | `claude` | Anthropic coding agent |
+| [Codex](https://github.com/openai/codex) | `codex` | OpenAI coding agent |
+| [Gemini CLI](https://github.com/google-gemini/gemini-cli) | `gemini` | Google coding agent |
+| OpenCode | `opencode` | 开源 coding agent |
+| OpenClaw | `openclaw` | 开源 coding agent |
+| Hermes | `hermes` | Nous Research coding agent |
+| Kimi | `kimi` | Moonshot coding agent |
+| Kiro CLI | `kiro-cli` | Kiro ACP coding agent |
+| Pi | `pi` | Inflection coding agent |
+| Cursor Agent | `cursor-agent` | Cursor coding agent |
+
+至少需要安装其中一个。daemon 会把每个检测到的 CLI 注册为可用运行时。
+
+### 工作机制
+
+1. 启动时检测已安装的 agent CLI，并为每个 watched workspace 注册运行时
+2. 按轮询间隔从 server 拉取已领取 task
+3. task 到达后创建隔离 workspace 目录，启动 agent CLI，并流式回传结果
+4. 按心跳间隔上报存活状态
+5. 关闭时注销所有运行时
+
+### 配置
+
+daemon 行为可通过 flag 或环境变量配置：
+
+| 设置 | Flag | 环境变量 | 默认值 |
+|------|------|----------|--------|
+| 轮询间隔 | `--poll-interval` | `MULTICA_DAEMON_POLL_INTERVAL` | `3s` |
+| 心跳间隔 | `--heartbeat-interval` | `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` |
+| agent 超时 | `--agent-timeout` | `MULTICA_AGENT_TIMEOUT` | `2h` |
+| 最大并发 task | `--max-concurrent-tasks` | `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` | `20` |
+| daemon ID | `--daemon-id` | `MULTICA_DAEMON_ID` | 持久化 UUID |
+| 设备名 | `--device-name` | `MULTICA_DAEMON_DEVICE_NAME` | hostname |
+| 运行时名 | `--runtime-name` | `MULTICA_AGENT_RUNTIME_NAME` | `Local Agent` |
+| workspace 根目录 | - | `MULTICA_WORKSPACES_ROOT` | `~/multica_workspaces` |
+
+Agent 专用覆盖项：
+
+| 环境变量 | 说明 |
+|----------|------|
+| `MULTICA_CLAUDE_PATH` / `MULTICA_CLAUDE_MODEL` | Claude CLI 路径 / 默认模型 |
+| `MULTICA_CODEX_PATH` / `MULTICA_CODEX_MODEL` | Codex CLI 路径 / 默认模型 |
+| `MULTICA_COPILOT_PATH` / `MULTICA_COPILOT_MODEL` | Copilot CLI 路径 / 默认模型 |
+| `MULTICA_OPENCODE_PATH` / `MULTICA_OPENCODE_MODEL` | OpenCode CLI 路径 / 默认模型 |
+| `MULTICA_OPENCLAW_PATH` / `MULTICA_OPENCLAW_MODEL` | OpenClaw CLI 路径 / 默认模型 |
+| `MULTICA_HERMES_PATH` / `MULTICA_HERMES_MODEL` | Hermes CLI 路径 / 默认模型 |
+| `MULTICA_GEMINI_PATH` / `MULTICA_GEMINI_MODEL` | Gemini CLI 路径 / 默认模型 |
+| `MULTICA_PI_PATH` / `MULTICA_PI_MODEL` | Pi CLI 路径 / 默认模型 |
+| `MULTICA_CURSOR_PATH` / `MULTICA_CURSOR_MODEL` | Cursor Agent 路径 / 默认模型 |
+| `MULTICA_KIMI_PATH` / `MULTICA_KIMI_MODEL` | Kimi CLI 路径 / 默认模型 |
+| `MULTICA_KIRO_PATH` / `MULTICA_KIRO_MODEL` | Kiro CLI 路径 / 默认模型 |
+
+## 连接 self-host server
+
+连接自部署 Multica 时，先把 CLI 指向你的 server：
+
+```bash
+export MULTICA_APP_URL=https://app.example.com
+export MULTICA_SERVER_URL=wss://api.example.com/ws
+
+multica login
+multica daemon start
+```
+
+也可以持久化配置：
+
+```bash
+multica config set app_url https://app.example.com
+multica config set server_url wss://api.example.com/ws
+```
+
+## Profile
+
+Profile 允许同一台机器运行多个 daemon，例如一个连生产、一个连 staging。
+
+```bash
+multica setup self-host --profile staging --server-url https://api-staging.example.com --app-url https://staging.example.com
+multica daemon start --profile staging
+multica daemon start
+```
+
+每个 profile 都有独立配置目录（`~/.multica/profiles/<name>/`）、daemon 状态、健康检查端口和 workspace 根目录。
+
+## Workspace
+
+### 列出 workspace
+
+```bash
+multica workspace list
+```
+
+被 watch 的 workspace 会标记为 `*`。daemon 只处理 watched workspace 的 task。
+
+### Watch / unwatch
+
+```bash
+multica workspace watch <workspace-id>
+multica workspace unwatch <workspace-id>
+```
+
+### 查看详情
+
+```bash
+multica workspace get <workspace-id>
+multica workspace get <workspace-id> --output json
+```
+
+### 列出成员
+
+```bash
+multica workspace members <workspace-id>
+```
+
+### 更新 workspace
+
+需要 admin 或 owner 权限。所有字段都是部分更新（PATCH 语义）：未传的字段保持不变。
+
+```bash
+multica workspace update <workspace-id> --name "Acme Eng"
+multica workspace update <workspace-id> \
+  --description "Engineering team workspace" \
+  --issue-prefix ENG
+```
+
+长文本走 stdin：
+
+```bash
+cat <<'CTX' | multica workspace update <workspace-id> --context-stdin
+我们是一支 5 人 AI-native 团队。
+工作语言：中文 + 英文混合。
+CTX
+```
+
+可编辑字段：`--name`、`--description` / `--description-stdin`、`--context` / `--context-stdin`、`--issue-prefix`。`slug` 创建后只读。
+
+## Issue
+
+### 列出 issue
+
+```bash
+multica issue list
+multica issue list --status in_progress
+multica issue list --priority urgent --assignee "Agent Name"
+multica issue list --assignee-id 5fb87ac7-23b5-4a7a-81fa-ed295a54545d
+multica issue list --full-id
+multica issue list --limit 20 --output json
+```
+
+表格输出默认显示可复制的 issue key，例如 `MUL-123`。需要完整 UUID 时使用 `--full-id`。可用过滤器：`--status`、`--priority`、`--assignee` / `--assignee-id`、`--project`、`--limit`。
+
+### 查看 issue
+
+```bash
+multica issue get MUL-123
+multica issue get <uuid>
+multica issue get <id> --output json
+```
+
+`<id>` 同时接受 issue key 和完整 UUID。下面的 `update`、`assign`、`status`、`comment`、`subscriber`、`runs` 等命令也遵守同样规则。
+
+### 创建 issue
+
+```bash
+multica issue create --title "Fix login bug" --description "..." --priority high --assignee "Lambda"
+multica issue create --title "Fix login bug" --assignee-id 5fb87ac7-23b5-4a7a-81fa-ed295a54545d
+```
+
+常用 flags：`--title`（必填）、`--description`、`--status`、`--priority`、`--assignee` / `--assignee-id`、`--parent`、`--project`、`--due-date`。
+
+### 更新 issue
+
+```bash
+multica issue update <id> --title "New title" --priority urgent
+```
+
+### 分配 issue
+
+```bash
+multica issue assign <id> --to "Lambda"
+multica issue assign <id> --to-id 5fb87ac7-23b5-4a7a-81fa-ed295a54545d
+multica issue assign <id> --unassign
+```
+
+`--to-id <uuid>` 与 `--to` 互斥，适合重名 workspace 下的脚本化场景。
+
+### 改状态
+
+```bash
+multica issue status <id> in_progress
+```
+
+有效状态：`backlog`、`todo`、`in_progress`、`in_review`、`done`、`blocked`、`cancelled`。
+
+### 评论
+
+```bash
+multica issue comment list <issue-id>
+multica issue comment add <issue-id> --content "看起来没问题，可以合并"
+multica issue comment add <issue-id> --parent <comment-id> --content "谢谢！"
+multica issue comment delete <comment-id>
+```
+
+### 执行历史
+
+```bash
+multica issue runs <issue-id>
+multica issue runs <issue-id> --full-id
+multica issue runs <issue-id> --output json
+
+multica issue run-messages <task-id>
+multica issue run-messages <short-task-id> --issue <issue-id>
+multica issue run-messages <task-id> --output json
+multica issue run-messages <task-id> --since 42 --output json
+```
+
+`runs` 表格默认显示 task UUID 短前缀；需要完整 task UUID 时使用 `--full-id`。从表格复制短前缀给 `run-messages` 时，需要同时传 `--issue <issue-id>`。
+
+## Project
+
+Project 用来组织相关 issue，例如 sprint、epic 或工作流。
+
+```bash
+multica project list
+multica project list --status in_progress
+multica project get <id>
+multica project create --title "2026 Week 16 Sprint" --icon "🏃" --lead "Lambda"
+multica project update <id> --title "New title" --status in_progress
+multica project status <id> in_progress
+multica project delete <id>
+```
+
+有效状态：`planned`、`in_progress`、`paused`、`completed`、`cancelled`。
+
+用 `--project` 可以在创建 / 更新 / 列表过滤 issue 时关联 project：
+
+```bash
+multica issue create --title "Login bug" --project <project-id>
+multica issue update <issue-id> --project <project-id>
+multica issue list --project <project-id>
+```
+
+## 配置
+
+```bash
+multica config show
+multica config set server_url wss://api.example.com/ws
+multica config set app_url https://app.example.com
+multica config set workspace_id <workspace-id>
+```
+
+## 其他命令
+
+```bash
+multica version
+multica update
+multica agent list
+```
+
+## 输出格式
+
+大多数命令支持 `--output`：
+
+- `table`：面向人阅读的表格，list 命令默认值
+- `json`：结构化 JSON，适合脚本和自动化
+
+```bash
+multica issue list --output json
+multica daemon status --output json
+```

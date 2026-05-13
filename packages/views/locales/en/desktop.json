@@ -1,0 +1,161 @@
+{
+  "routes": {
+    "issues": "Issues",
+    "issue": "Issue",
+    "projects": "Projects",
+    "project": "Project",
+    "autopilots": "Autopilot",
+    "my_issues": "My Issues",
+    "runtimes": "Runtimes",
+    "runtime": "Runtime",
+    "skills": "Skills",
+    "skill": "Skill",
+    "agents": "Agents",
+    "agent": "Agent",
+    "inbox": "Inbox",
+    "settings": "Settings"
+  },
+  "nav": {
+    "back": "Go back",
+    "forward": "Go forward",
+    "new_tab": "New tab",
+    "close_tab": "Close tab"
+  },
+  "config_error": {
+    "title": "Desktop configuration error",
+    "description": "Multica Desktop could not load <1>~/.multica/desktop.json</1>. Fix or remove the file and restart the app.",
+    "description_prefix": "Multica Desktop could not load ",
+    "description_path": "~/.multica/desktop.json",
+    "description_suffix": ". Fix or remove the file and restart the app."
+  },
+  "settings_tabs": {
+    "daemon": "Daemon",
+    "updates": "Updates"
+  },
+  "daemon": {
+    "title": "Daemon",
+    "description": "Configure how the local agent daemon behaves with the desktop app.",
+    "auto_start": {
+      "label": "Auto-start on launch",
+      "description": "Automatically start the daemon when the app opens and you are logged in."
+    },
+    "auto_stop": {
+      "label": "Auto-stop on quit",
+      "description": "Stop the daemon when the desktop app is closed. Disable this to keep the daemon running in the background."
+    },
+    "cli_status": {
+      "title": "CLI Status",
+      "checking": "Checking...",
+      "installed": "multica CLI is installed and available in PATH.",
+      "missing": "multica CLI not found. Install it to enable daemon management.",
+      "installation_guide": "Installation Guide"
+    },
+    "diagnostics": {
+      "title": "Diagnostics",
+      "description": "Identification and connection details. Useful when filing a bug report or investigating why a runtime isn't showing up.",
+      "state": "State",
+      "uptime": "Uptime",
+      "pid": "PID",
+      "daemon_id": "Daemon ID",
+      "profile": "Profile",
+      "default_profile": "default",
+      "server_url": "Server URL",
+      "device_name": "Device name",
+      "workspaces": "Workspaces"
+    },
+    "state": {
+      "running": "Running",
+      "stopped": "Stopped",
+      "starting": "Starting...",
+      "stopping": "Stopping...",
+      "installing_cli": "Setting up...",
+      "cli_not_found": "Setup Failed"
+    },
+    "state_description": {
+      "running_empty": "Running, but no runtimes have registered yet.",
+      "running_one": "Running here · 1 runtime available for tasks.",
+      "running_other": "Running here · {{count}} runtimes available for tasks.",
+      "stopped": "Not running · this device can't take new tasks.",
+      "starting": "Starting up the local daemon...",
+      "stopping": "Shutting down the local daemon...",
+      "installing_cli": "Setting up the runtime for the first time. Only happens once.",
+      "cli_not_found": "Setup failed · couldn't download the runtime. Check your network."
+    },
+    "card": {
+      "title": "Local daemon",
+      "view_logs": "View logs",
+      "restart": "Restart",
+      "stop": "Stop",
+      "start": "Start",
+      "retry_setup": "Retry setup",
+      "toast_start_failed": "Failed to start daemon",
+      "toast_stop_failed": "Failed to stop daemon",
+      "toast_restart_failed": "Failed to restart daemon",
+      "toast_restarting": "Restarting daemon",
+      "toast_restarting_description": "Runtimes will be back online in a few seconds."
+    },
+    "stop_confirm": {
+      "title_one": "Stop daemon with {{count}} active task?",
+      "title_other": "Stop daemon with {{count}} active tasks?",
+      "description_one": "{{count}} task is currently running on this device. Stopping now will interrupt it — affected tasks get marked <1>failed</1> once the timeout hits. The daemon won't auto-restart.",
+      "description_other": "{{count}} tasks are currently running on this device. Stopping now will interrupt them — affected tasks get marked <1>failed</1> once the timeout hits. The daemon won't auto-restart.",
+      "description_prefix_one": "{{count}} task is currently running on this device. Stopping now will interrupt it — affected tasks get marked ",
+      "description_prefix_other": "{{count}} tasks are currently running on this device. Stopping now will interrupt them — affected tasks get marked ",
+      "failed": "failed",
+      "description_suffix": " once the timeout hits. The daemon won't auto-restart.",
+      "cancel": "Cancel",
+      "confirm": "Stop daemon"
+    },
+    "logs": {
+      "title": "Local daemon logs",
+      "close": "Close",
+      "search_placeholder": "Search...",
+      "copy": "Copy",
+      "clear": "Clear",
+      "copied_one": "Copied {{count}} line",
+      "copied_other": "Copied {{count}} lines",
+      "copy_failed": "Failed to copy",
+      "empty_filtered": "No matching log lines",
+      "empty_filtered_hint": "Try a different search or level toggle.",
+      "empty_not_running": "Daemon isn't running",
+      "empty_not_running_hint": "Start the daemon to see logs here.",
+      "empty_running": "Waiting for daemon logs...",
+      "empty_running_hint": "New entries will appear in real time.",
+      "empty_stopped": "Start the daemon to stream logs.",
+      "showing": "Showing {{filtered}} of {{total}}",
+      "buffer_full": "(buffer full)",
+      "jump_latest": "Jump to latest",
+      "show_fields": "Show fields",
+      "hide_fields": "Hide fields",
+      "show_group": "{{count}} more \"{{message}}\" — click to expand",
+      "hide_group": "collapse {{count}} repeated",
+      "runtime_count_one": "{{count}} runtime",
+      "runtime_count_other": "{{count}} runtimes"
+    }
+  },
+  "updates": {
+    "settings": {
+      "title": "Updates",
+      "description": "The desktop app checks for new versions automatically once an hour and shortly after launch.",
+      "current_version": "Current version",
+      "current_version_value": "v{{version}}",
+      "check_title": "Check for updates",
+      "check_description": "Trigger a check now instead of waiting for the next automatic poll. Available updates appear as a notification in the corner.",
+      "up_to_date": "You're on the latest version.",
+      "available": "v{{version}} is available — see the download prompt in the corner.",
+      "checking": "Checking...",
+      "check_now": "Check now"
+    },
+    "notification": {
+      "dismiss": "Dismiss update notification",
+      "available_title": "New version available",
+      "available_description": "v{{version}} is ready to download",
+      "download": "Download update",
+      "downloading": "Downloading update...",
+      "ready_title": "Update ready",
+      "ready_description": "Restart to apply the update",
+      "see_changes": "See changes",
+      "restart_now": "Restart now"
+    }
+  }
+}

@@ -1,0 +1,188 @@
+---
+title: 参与贡献
+description: Multica 代码库贡献者的本地开发工作流。
+---
+
+## 开发模型
+
+本地开发使用一个共享 PostgreSQL 容器，每个 checkout 使用一个独立数据库。
+
+- 主 checkout 通常使用 `.env` 和 `POSTGRES_DB=multica`
+- 每个 Git worktree 使用自己的 `.env.worktree`
+- 所有 checkout 都连接同一个 PostgreSQL host：`localhost:5432`
+- 隔离发生在数据库层，不靠启动多个 Docker Compose project
+- 后端和前端端口仍然会为每个 worktree 分配不同值
+
+## 前置要求
+
+- Node.js `v20+`
+- `pnpm` `v10.28+`
+- Go `v1.26+`
+- Docker
+
+## 首次设置
+
+### 主 checkout
+
+```bash
+cp .env.example .env
+make setup-main
+```
+
+`make setup-main` 会：
+
+- 使用 `pnpm install` 安装 JavaScript 依赖
+- 确保共享 PostgreSQL 容器正在运行
+- 如果应用数据库不存在，则创建它
+- 对该数据库运行全部迁移
+
+启动应用：
+
+```bash
+make start-main
+```
+
+### Worktree
+
+在 worktree 目录中运行：
+
+```bash
+make worktree-env
+make setup-worktree
+```
+
+启动 worktree 应用：
+
+```bash
+make start-worktree
+```
+
+## 日常工作流
+
+### 主 checkout
+
+```bash
+make start-main
+make stop-main
+make check-main
+```
+
+### 功能 worktree
+
+```bash
+git worktree add ../multica-feature -b feat/my-change main
+cd ../multica-feature
+make worktree-env
+make setup-worktree
+make start-worktree
+```
+
+日常使用：
+
+```bash
+make start-worktree
+make stop-worktree
+make check-worktree
+```
+
+## 同时运行主 checkout 和 worktree
+
+这是被支持的一等工作流。两个 checkout 使用同一个 PostgreSQL 容器，但数据库和端口不同：
+
+| | 主 checkout | Worktree |
+|---|---|---|
+| 数据库 | `multica` | `multica_my_feature_702` |
+| 后端端口 | `8080` | 自动生成，例如 `18782` |
+| 前端端口 | `3000` | 自动生成，例如 `13702` |
+
+## 常用命令
+
+```bash
+# 前端（统一通过 Turborepo）
+pnpm install
+pnpm dev:web
+pnpm dev:desktop
+pnpm build
+pnpm typecheck
+pnpm lint
+pnpm test
+
+# 后端（Go）
+make dev
+make daemon
+make build
+make test
+make sqlc
+make migrate-up
+make migrate-down
+```
+
+## 测试
+
+运行本地全量检查：
+
+```bash
+make check
+```
+
+它会依次运行：
+
+1. TypeScript typecheck
+2. TypeScript unit tests
+3. Go tests
+4. Playwright E2E tests
+
+## 故障排查
+
+### 缺少 env 文件
+
+创建对应的 env 文件：
+
+```bash
+# 主 checkout
+cp .env.example .env
+
+# Worktree
+make worktree-env
+```
+
+### 查看当前 checkout 使用哪个数据库
+
+```bash
+cat .env           # 或 .env.worktree
+```
+
+重点看 `POSTGRES_DB`、`DATABASE_URL`、`PORT`、`FRONTEND_PORT`。
+
+### 列出所有本地数据库
+
+```bash
+docker compose exec -T postgres psql -U multica -d postgres \
+  -At -c "select datname from pg_database order by datname;"
+```
+
+### 破坏性重置
+
+停止 PostgreSQL，但保留本地数据库：
+
+```bash
+make db-down
+```
+
+只重置当前 checkout 的数据库：删除 `POSTGRES_DB`、重新创建，并重新运行全部迁移。其他 worktree 数据库不受影响。
+
+```bash
+make stop
+make db-reset
+make start
+```
+
+> `make db-reset` 会拒绝在 `DATABASE_URL` 指向远程 host 时运行。
+
+删除全部本地 PostgreSQL 数据：
+
+```bash
+docker compose down -v
+```
+
+> **警告：** 这会删除共享 Docker volume 和所有数据库。之后必须重新运行 `make setup-main` 或 `make setup-worktree`。

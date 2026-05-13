@@ -1,0 +1,142 @@
+---
+title: 项目资源
+description: 给项目挂上类型化资源指针（目前是 Git repo，之后可扩展到更多类型），让智能体自动获得项目上下文。
+---
+
+**项目资源**是一种挂在 [项目](/workspaces) 上的类型化指针：今天可以是 Git repo URL，之后也可以是 Notion 页面、文档链接或其他外部资源。当 [智能体](/agents) 执行该项目下 issue 的 task 时，daemon 会把项目资源列表写入智能体工作目录，并注入到 [meta-skill](/skills) prompt 中。
+
+效果是：智能体知道该 checkout 哪个 repo、哪些文档是这个项目的主要参考，不需要用户把上下文手动复制进 issue 描述。
+
+## 心智模型
+
+项目不再只是一个标签，而是一个小型**资源容器**：
+
+- 一个项目可以有 0..N 个资源。
+- 一个资源有 `resource_type`（例如 `github_repo`）和 `resource_ref`（由 `resource_type` 决定结构的 JSON payload）。
+- 新资源类型只需要增加一个字符串和对应 handler，**不需要 schema migration，也不需要重写前端**。
+
+这个形状是有意设计的：它和 Multica 已经用于 agent provider 的模式一致，都是 `type` discriminator + typed payload。这样 schema 保持稳定，之后添加 “Notion page”、“Google Doc”、“uploaded file” 或 “external URL” 都是小的增量改动。
+
+## 当前支持：`github_repo`
+
+第一种资源类型已经可用：
+
+```json
+{
+  "resource_type": "github_repo",
+  "resource_ref": {
+    "url": "https://github.com/owner/repo",
+    "default_branch_hint": "main"
+  }
+}
+```
+
+`default_branch_hint` 是可选字段。存在时，daemon 会在 meta-skill 中展示它，让智能体知道应该基于哪个分支开展工作。
+
+## 创建项目时挂载 repo
+
+在 **Web** 或 **Desktop** app 中打开 *新建项目*，会看到和状态 / 优先级 / 负责人并列的 **Repos** 入口。你可以选择 workspace 绑定的 repo，也可以粘贴临时 URL；项目创建成功时，这些都会作为 `github_repo` 资源一并挂载。
+
+CLI 示例：
+
+```bash
+# 创建项目并同时挂载 repo。server 会把资源挂载和项目创建放在同一事务里：
+# 只要资源非法，整个创建都会回滚，不会出现“项目创建成功但资源只挂了一半”的状态。
+multica project create \
+  --title "Agent UX 2026" \
+  --repo https://github.com/multica-ai/multica
+
+# 后续管理资源
+multica project resource list <project-id>
+multica project resource add  <project-id> --type github_repo --url <url>
+multica project resource remove <project-id> <resource-id>
+
+# 通用 escape hatch：只要 server 理解该 resource_type，CLI 不需要改版
+multica project resource add <project-id> \
+  --type notion_page \
+  --ref '{"page_id":"...","title":"..."}'
+```
+
+`--repo` 可以重复传入；每个值都会作为独立的 `github_repo` 资源挂载。
+
+## 智能体运行时看到什么
+
+当 daemon 为项目内 issue 启动智能体时，会做两件事。
+
+### 1. `.multica/project/resources.json`
+
+daemon 会把 API 响应的结构化版本写入智能体工作目录：
+
+```json
+{
+  "project_id": "...",
+  "project_title": "Agent UX 2026",
+  "resources": [
+    {
+      "id": "...",
+      "resource_type": "github_repo",
+      "resource_ref": {
+        "url": "https://github.com/multica-ai/multica",
+        "default_branch_hint": "main"
+      }
+    }
+  ]
+}
+```
+
+skill、辅助脚本或智能体本身需要精确资源集合时，可以解析这个文件。
+
+### 2. meta-skill prompt 中的 “Project Context”
+
+智能体的 `CLAUDE.md` / `AGENTS.md`（取决于 provider）会包含一段面向人读的摘要：
+
+```text
+## Project Context
+
+这个 issue 属于 **Agent UX 2026**。
+
+项目资源（也会写入 `.multica/project/resources.json`）：
+
+- **GitHub repo**: https://github.com/multica-ai/multica (default branch: `main`)
+
+资源只是指针；只有在和任务相关时再打开。对 `github_repo` 资源，使用
+`multica repo checkout <url>` 拉取代码。
+```
+
+这段文本故意很短。完整 payload 在磁盘上；prompt 只负责告诉智能体这个项目存在，以及它挂了哪些资源。
+
+### 失败模式
+
+资源获取是 **best-effort**。如果 API 调用失败，prompt 中不会出现项目段落，文件也不会写入，但 task 仍会启动。智能体不会因为缺少项目上下文而阻塞。
+
+## 添加新的资源类型
+
+这个抽象的目标就是让新增类型变得便宜。完整路径如下：
+
+1. **Server validator**（`server/internal/handler/project_resource.go`）：在 `validateAndNormalizeResourceRef` 中增加 case，解析并规范化新 payload。
+2. **Daemon meta-skill formatter**（`server/internal/daemon/execenv/runtime_config.go`）：在 `formatProjectResource` 中增加 case，让 agent prompt 能渲染新类型。
+3. **TypeScript 类型**（`packages/core/types/project.ts`）：扩展 `ProjectResourceType` 并添加 payload interface。
+4. **UI renderer**（`packages/views/projects/components/project-resources-section.tsx`）：在 `ResourceRow` 中增加新类型 case。
+
+不需要 schema migration，不需要新 sqlc query，不需要新 endpoint，也不需要 CLI 改动。CLI 的通用 `--ref '<json>'` flag 可以接受任何 validator 理解的 payload。之后可以选择性增加按类型定制的 CLI shortcut，但不是必需。
+
+同一张 `project_resource` 表和同一组三个 CRUD 调用处理所有类型。
+
+## Workspace repo vs project repo
+
+daemon claim handler 会按下面优先级决定给智能体展示哪些 repo（即 `CLAUDE.md` / `AGENTS.md` 里的 `## Repositories` 块）：
+
+- **项目至少有一个 `github_repo` 资源**：只展示这些 repo。workspace 绑定 repo 会被隐藏，避免智能体猜这个 issue 应该用哪个 repo。
+- **项目没有 `github_repo` 资源，或 issue 不属于项目**：回退到 workspace repo 列表。
+
+这样能让智能体的工作集保持很小：当项目明确声明 repo 时，这就是权威答案。结构化资源列表 `.multica/project/resources.json` 始终包含完整资源集合，所以想检查全部资源的 skill 仍然可以做到。
+
+checkout 侧也遵循同样逻辑：task 到达时，如果包含 project-scoped `github_repo` URL，daemon 会把这些 URL 合并进 per-workspace allowlist，并在启动 agent 前同步到本地 repo cache。因此，即使某个 project repo URL 没有绑定到 workspace 层级，`multica repo checkout` 也可以使用它；daemon 不会把它当成“未配置”拒绝。allowlist 的拆分是内部实现细节：workspace-bound URL 和 task-scoped URL 分开跟踪，避免 workspace repo refresh 在 task 运行中意外撤销项目 URL。
+
+## 当前刻意不做的事
+
+- **跨项目共享**：目前每个资源只属于一个项目。
+- **按 skill 缩小资源范围**：agent run 中所有 skill 都能看到所有资源；按类型过滤是后续增强。
+- **缓存 / 同步文档正文**：`github_repo` 只是 metadata，checkout 仍通过 `multica repo checkout` 按需发生。Notion / Google Docs 的文档正文缓存会随对应类型一起进入。
+
+这些都是有意暂缓。第一版目标是用最少移动部件验证这个抽象是否成立。

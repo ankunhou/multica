@@ -1,0 +1,161 @@
+{
+  "routes": {
+    "issues": "issue",
+    "issue": "issue",
+    "projects": "项目",
+    "project": "项目",
+    "autopilots": "自动化",
+    "my_issues": "我的 issue",
+    "runtimes": "运行时",
+    "runtime": "运行时",
+    "skills": "skill",
+    "skill": "skill",
+    "agents": "智能体",
+    "agent": "智能体",
+    "inbox": "收件箱",
+    "settings": "设置"
+  },
+  "nav": {
+    "back": "返回",
+    "forward": "前进",
+    "new_tab": "新建标签页",
+    "close_tab": "关闭标签页"
+  },
+  "config_error": {
+    "title": "桌面端配置错误",
+    "description": "Multica Desktop 无法加载 <1>~/.multica/desktop.json</1>。请修复或删除该文件，然后重启 app。",
+    "description_prefix": "Multica Desktop 无法加载 ",
+    "description_path": "~/.multica/desktop.json",
+    "description_suffix": "。请修复或删除该文件，然后重启 app。"
+  },
+  "settings_tabs": {
+    "daemon": "守护进程",
+    "updates": "更新"
+  },
+  "daemon": {
+    "title": "守护进程",
+    "description": "配置本地智能体守护进程在桌面 app 中的行为。",
+    "auto_start": {
+      "label": "启动 app 时自动启动",
+      "description": "登录后，打开 app 时自动启动守护进程。"
+    },
+    "auto_stop": {
+      "label": "退出 app 时自动停止",
+      "description": "关闭桌面 app 时停止守护进程。关闭此项后，守护进程会继续在后台运行。"
+    },
+    "cli_status": {
+      "title": "CLI 状态",
+      "checking": "检查中...",
+      "installed": "multica CLI 已安装，并且可在 PATH 中使用。",
+      "missing": "未找到 multica CLI。安装后才能管理守护进程。",
+      "installation_guide": "安装指南"
+    },
+    "diagnostics": {
+      "title": "诊断信息",
+      "description": "标识与连接详情。提交 bug 报告或排查运行时未显示的问题时会用到。",
+      "state": "状态",
+      "uptime": "运行时长",
+      "pid": "PID",
+      "daemon_id": "守护进程 ID",
+      "profile": "配置档案",
+      "default_profile": "默认",
+      "server_url": "服务端 URL",
+      "device_name": "设备名称",
+      "workspaces": "工作区"
+    },
+    "state": {
+      "running": "运行中",
+      "stopped": "已停止",
+      "starting": "启动中...",
+      "stopping": "停止中...",
+      "installing_cli": "设置中...",
+      "cli_not_found": "设置失败"
+    },
+    "state_description": {
+      "running_empty": "已运行，但还没有运行时完成注册。",
+      "running_one": "正在本设备运行 · 1 个运行时可执行 task。",
+      "running_other": "正在本设备运行 · {{count}} 个运行时可执行 task。",
+      "stopped": "未运行 · 本设备暂时不能接收新 task。",
+      "starting": "正在启动本地守护进程...",
+      "stopping": "正在关闭本地守护进程...",
+      "installing_cli": "正在首次设置运行时。这个步骤只会执行一次。",
+      "cli_not_found": "设置失败 · 无法下载运行时。请检查网络。"
+    },
+    "card": {
+      "title": "本地守护进程",
+      "view_logs": "查看日志",
+      "restart": "重启",
+      "stop": "停止",
+      "start": "启动",
+      "retry_setup": "重试设置",
+      "toast_start_failed": "启动守护进程失败",
+      "toast_stop_failed": "停止守护进程失败",
+      "toast_restart_failed": "重启守护进程失败",
+      "toast_restarting": "正在重启守护进程",
+      "toast_restarting_description": "运行时会在几秒后恢复在线。"
+    },
+    "stop_confirm": {
+      "title_one": "停止守护进程？当前有 {{count}} 个活跃 task",
+      "title_other": "停止守护进程？当前有 {{count}} 个活跃 task",
+      "description_one": "当前有 {{count}} 个 task 正在本设备运行。现在停止会中断这个 task——超时后，受影响的 task 会被标记为 <1>failed</1>。守护进程不会自动重启。",
+      "description_other": "当前有 {{count}} 个 task 正在本设备运行。现在停止会中断这些 task——超时后，受影响的 task 会被标记为 <1>failed</1>。守护进程不会自动重启。",
+      "description_prefix_one": "当前有 {{count}} 个 task 正在本设备运行。现在停止会中断这个 task——超时后，受影响的 task 会被标记为 ",
+      "description_prefix_other": "当前有 {{count}} 个 task 正在本设备运行。现在停止会中断这些 task——超时后，受影响的 task 会被标记为 ",
+      "failed": "失败",
+      "description_suffix": "。守护进程不会自动重启。",
+      "cancel": "取消",
+      "confirm": "停止守护进程"
+    },
+    "logs": {
+      "title": "本地守护进程日志",
+      "close": "关闭",
+      "search_placeholder": "搜索...",
+      "copy": "复制",
+      "clear": "清空",
+      "copied_one": "已复制 {{count}} 行",
+      "copied_other": "已复制 {{count}} 行",
+      "copy_failed": "复制失败",
+      "empty_filtered": "没有匹配的日志",
+      "empty_filtered_hint": "试试其他搜索词或日志级别。",
+      "empty_not_running": "守护进程未运行",
+      "empty_not_running_hint": "启动守护进程后，日志会显示在这里。",
+      "empty_running": "正在等待守护进程日志...",
+      "empty_running_hint": "新日志会实时显示。",
+      "empty_stopped": "启动守护进程后即可查看日志。",
+      "showing": "显示 {{filtered}} / {{total}} 行",
+      "buffer_full": "（缓冲区已满）",
+      "jump_latest": "跳到最新",
+      "show_fields": "显示字段",
+      "hide_fields": "隐藏字段",
+      "show_group": "还有 {{count}} 行 \"{{message}}\"，点击展开",
+      "hide_group": "收起 {{count}} 行重复日志",
+      "runtime_count_one": "{{count}} 个运行时",
+      "runtime_count_other": "{{count}} 个运行时"
+    }
+  },
+  "updates": {
+    "settings": {
+      "title": "更新",
+      "description": "桌面 app 会每小时自动检查一次新版本，并在启动后不久检查一次。",
+      "current_version": "当前版本",
+      "current_version_value": "版本 {{version}}",
+      "check_title": "检查更新",
+      "check_description": "立即检查一次，不必等待下次自动轮询。可用更新会显示在角落通知中。",
+      "up_to_date": "你已在使用最新版本。",
+      "available": "v{{version}} 可用——请查看角落里的下载提示。",
+      "checking": "检查中...",
+      "check_now": "立即检查"
+    },
+    "notification": {
+      "dismiss": "关闭更新通知",
+      "available_title": "有新版本可用",
+      "available_description": "v{{version}} 已可下载",
+      "download": "下载更新",
+      "downloading": "正在下载更新...",
+      "ready_title": "更新已就绪",
+      "ready_description": "重启后应用更新",
+      "see_changes": "查看变更",
+      "restart_now": "立即重启"
+    }
+  }
+}

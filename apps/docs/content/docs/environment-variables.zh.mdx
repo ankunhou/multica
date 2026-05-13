@@ -1,0 +1,260 @@
+---
+title: 环境变量
+description: self-host Multica 服务器、前端、daemon 与集成需要配置的环境变量清单。
+---
+
+import { Callout } from "fumadocs-ui/components/callout";
+
+Multica 的 [自部署](/self-host-quickstart) 服务在启动时从环境变量读取配置：数据库、登录、邮件、存储、注册白名单、实时广播、daemon 行为都在这里。推荐先从 `.env.example` 复制一份 `.env`，再按这一页逐项决定哪些要改。
+
+这一页的规则按代码实现校对过：每组都说明**默认值是什么**、**不设会怎样**、**生产环境应该注意什么**。登录与注册的完整配置流程见 [登录与注册配置](/auth-setup)。
+
+## 数据库
+
+| 环境变量 | 默认 / 示例 | 说明 |
+|---|---|---|
+| `POSTGRES_DB` | `multica` | Docker Compose 内置 PostgreSQL 的数据库名 |
+| `POSTGRES_USER` | `multica` | Docker Compose 内置 PostgreSQL 的用户名 |
+| `POSTGRES_PASSWORD` | `multica` | Docker Compose 内置 PostgreSQL 的密码 |
+| `POSTGRES_PORT` | `5432` | 本地 PostgreSQL 暴露端口 |
+| `DATABASE_URL` | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` | 后端、迁移、测试使用的数据库连接串；生产必须显式设置 |
+| `DATABASE_MAX_CONNS` | `25` | pgxpool 最大连接数；环境变量优先级高于 `DATABASE_URL` query 参数 |
+| `DATABASE_MIN_CONNS` | `5` | pgxpool 最小常驻连接数 |
+
+`DATABASE_MAX_CONNS` / `DATABASE_MIN_CONNS` 不设时使用上表默认值，不走 pgx 自带的 4 / NumCPU 默认值。
+
+## 核心服务端
+
+| 环境变量 | 默认 / 示例 | 说明 |
+|---|---|---|
+| `APP_ENV` | 空 | 代码只对 `production` 做生产安全判断；analytics 会把 `production/prod`、`staging/stage`、`development/dev/test/local` 规范化为 `production/staging/dev` |
+| `MULTICA_DEV_VERIFICATION_CODE` | 空 | 固定本地验证码；必须是 6 位数字，且 `APP_ENV=production` 时会被忽略 |
+| `PORT` | `8080` | API 服务监听端口 |
+| `LOG_LEVEL` | `debug` | 可选值：`debug` / `info` / `warn` / `warning` / `error` |
+| `METRICS_ADDR` | 空 | Prometheus 指标监听地址；留空关闭 |
+| `JWT_SECRET` | `change-me-in-production` | JWT 签名密钥；生产必须改成随机强密钥 |
+
+<Callout type="warning">
+生产环境保持 `MULTICA_DEV_VERIFICATION_CODE` 为空，并设置 `APP_ENV=production`。固定验证码适合本地自动化，但在非生产环境里，任何能请求验证码的人都能用这个固定值登录。
+</Callout>
+
+## Redis 与实时广播
+
+| 环境变量 | 默认 / 示例 | 说明 |
+|---|---|---|
+| `REDIS_URL` | 空 | 留空使用内存 hub，只适合单 API 节点；多节点部署应设置 Redis |
+| `REALTIME_RELAY_MODE` | `sharded` | 设置 `REDIS_URL` 后的实时 relay 模式；可选 `sharded` / `dual` / `legacy` |
+| `REALTIME_RELAY_SHARDS` | `8` | sharded relay 的 Redis Stream 分片数 |
+| `REALTIME_RELAY_STREAM_MAXLEN` | `100000` | 每个 shard 的 stream 近似保留长度 |
+| `REALTIME_RELAY_XREAD_COUNT` | `128` | 每次 XREAD 批量读取数量 |
+| `REALTIME_RELAY_XREAD_BLOCK` | `5s` | XREAD BLOCK 等待时间 |
+
+`dual` 主要用于迁移期双写验证；新部署一般保持 `sharded`。
+
+## Daemon / CLI
+
+| 环境变量 | 默认 / 示例 | 说明 |
+|---|---|---|
+| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | daemon / CLI 连接的服务端地址；支持 `ws` / `wss` / `http` / `https`，代码会规范化为 HTTP base URL |
+| `MULTICA_APP_URL` | `http://localhost:3000` | CLI 登录时打开的前端地址；未设时回落到 `FRONTEND_ORIGIN` |
+| `MULTICA_WORKSPACE_ID` | 空 | CLI 当前 workspace；daemon 执行 task 时会注入 |
+| `MULTICA_DAEMON_ID` | 持久化 UUID | 留空时 daemon 会在本机 profile 目录生成并复用一个 UUID；只有测试或嵌入式环境建议固定 |
+| `MULTICA_DAEMON_DEVICE_NAME` | 系统 hostname | 运行时设备名 |
+| `MULTICA_AGENT_RUNTIME_NAME` | `Local Agent` | 运行时显示名 |
+| `MULTICA_WORKSPACES_ROOT` | `~/multica_workspaces` | daemon 工作目录根路径；命名 profile 会默认用 `~/multica_workspaces_<profile>` |
+| `MULTICA_DAEMON_POLL_INTERVAL` | 代码默认 `30s`，模板示例 `3s` | task 轮询间隔；模板为了本地开发更快，示例值比代码默认值更短 |
+| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | daemon 心跳间隔 |
+| `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` | `20` | 单 daemon 最大并发 task 数 |
+| `MULTICA_AGENT_TIMEOUT` | `2h` | 单个 agent 执行超时 |
+| `MULTICA_CODEX_SEMANTIC_INACTIVITY_TIMEOUT` | `10m` | Codex 专用：语义无进展超时 |
+| `MULTICA_KEEP_ENV_AFTER_TASK` | `false` | 可选 `true` / `1`；用于调试时保留执行环境 |
+
+## Daemon 自动清理
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `MULTICA_GC_ENABLED` | `true` | 可选 `false` / `0` 禁用清理 |
+| `MULTICA_GC_INTERVAL` | `1h` | 清理循环间隔 |
+| `MULTICA_GC_TTL` | `24h` | 已完成 / 已取消 issue 目录的保留时间 |
+| `MULTICA_GC_ORPHAN_TTL` | `72h` | 无 meta 或服务端已不可访问目录的保留时间 |
+| `MULTICA_GC_ARTIFACT_TTL` | `12h` | task 完成后、issue 仍打开时，可再生构建产物的保留时间；设 `0` 可禁用这类 artifact 清理 |
+| `MULTICA_GC_ARTIFACT_PATTERNS` | `node_modules,.next,.turbo` | 按目录 basename 匹配；包含路径分隔符的 pattern 会被忽略 |
+
+默认只清理确定可再生的构建产物。`dist`、`build`、`.venv` 这类目录可能包含用户产物，不在默认列表里。
+
+## Agent CLI provider
+
+daemon 只注册能在 `PATH` 中找到可执行文件的 provider。支持的 provider：
+
+| Provider | 默认可执行文件 | 路径变量 | 模型变量 |
+|---|---|---|---|
+| Claude | `claude` | `MULTICA_CLAUDE_PATH` | `MULTICA_CLAUDE_MODEL` |
+| Codex | `codex` | `MULTICA_CODEX_PATH` | `MULTICA_CODEX_MODEL` |
+| Copilot | `copilot` | `MULTICA_COPILOT_PATH` | `MULTICA_COPILOT_MODEL` |
+| OpenCode | `opencode` | `MULTICA_OPENCODE_PATH` | `MULTICA_OPENCODE_MODEL` |
+| OpenClaw | `openclaw` | `MULTICA_OPENCLAW_PATH` | `MULTICA_OPENCLAW_MODEL` |
+| Hermes | `hermes` | `MULTICA_HERMES_PATH` | `MULTICA_HERMES_MODEL` |
+| Gemini | `gemini` | `MULTICA_GEMINI_PATH` | `MULTICA_GEMINI_MODEL` |
+| Pi | `pi` | `MULTICA_PI_PATH` | `MULTICA_PI_MODEL` |
+| Cursor | `cursor-agent` | `MULTICA_CURSOR_PATH` | `MULTICA_CURSOR_MODEL` |
+| Kimi | `kimi` | `MULTICA_KIMI_PATH` | `MULTICA_KIMI_MODEL` |
+| Kiro | `kiro-cli` | `MULTICA_KIRO_PATH` | `MULTICA_KIRO_MODEL` |
+
+`*_MODEL` 留空表示使用对应 CLI 自己的默认模型。`MULTICA_CLAUDE_ARGS` 和 `MULTICA_CODEX_ARGS` 会按 shellwords 解析，适合放额外 CLI 参数。
+
+## 自动化失败监控
+
+后端会定期暂停近期失败率过高的自动化，并给创建者发 inbox 通知。
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `AUTOPILOT_FAIL_MONITOR_INTERVAL` | `24h` | 扫描间隔；设 `0` 或负值可完全禁用 |
+| `AUTOPILOT_FAIL_MONITOR_LOOKBACK` | `168h` | 观察窗口，即过去 7 天 |
+| `AUTOPILOT_FAIL_MONITOR_MIN_RUNS` | `50` | 进入判断前至少需要的运行次数 |
+| `AUTOPILOT_FAIL_MONITOR_FAIL_RATIO` | `0.9` | 失败率阈值，合法范围 `(0,1]` |
+| `AUTOPILOT_FAIL_MONITOR_STARTUP_DELAY` | `1m` | 服务启动后首次扫描前的延迟 |
+
+## 用量聚合
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `USAGE_DAILY_ROLLUP_ENABLED` | `false` | 设为精确字符串 `true` 后，运行时用量 API 改读日聚合表 |
+
+只有在 migrations 072..076、backfill 和 pg_cron rollup 都确认正常后，才建议打开 `USAGE_DAILY_ROLLUP_ENABLED`。
+
+## 自托管镜像
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `MULTICA_IMAGE_TAG` | `latest` | 自托管镜像 tag；可固定为精确 release，例如 `v0.2.4` |
+| `MULTICA_BACKEND_IMAGE` | `ghcr.io/multica-ai/multica-backend` | 后端镜像 |
+| `MULTICA_WEB_IMAGE` | `ghcr.io/multica-ai/multica-web` | 前端镜像 |
+
+## 邮件
+
+Multica 用 Resend 发送验证码和邀请邮件。
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `RESEND_API_KEY` | 空 | Resend API key |
+| `RESEND_FROM_EMAIL` | `noreply@multica.ai` | 发件地址；生产应换成你 Resend 账号已验证域名下的地址 |
+
+`RESEND_API_KEY` 留空时，server 不报错，但验证码和邀请邮件只会打印到 stdout。适合本地开发，生产环境不要留空。
+
+## Google OAuth
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `GOOGLE_CLIENT_ID` | 空 | Google Cloud OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | 空 | Google Cloud OAuth client secret |
+| `GOOGLE_REDIRECT_URI` | `http://localhost:3000/auth/callback` | OAuth 回调地址；self-host 要换成你的前端域名 |
+
+前端登录页会运行时从 `/api/config` 读取 `GOOGLE_CLIENT_ID`，所以改 OAuth 配置只需要重启后端 / compose stack，不需要重建 web 镜像。
+
+## 文件存储
+
+Multica 存储评论中的图片和附件。配置 `S3_BUCKET` 后走 S3 / S3 兼容存储；否则回落到本地磁盘。
+
+### S3 / S3 兼容存储
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `S3_BUCKET` | 空 | 只填 bucket 名称，例如 `my-bucket`；不要填 `.s3.<region>.amazonaws.com` 后缀 |
+| `S3_REGION` | `us-west-2` | bucket 所在区域；同时用于 SDK 签名和公开 URL |
+| `AWS_ENDPOINT_URL` | 空 | S3 兼容服务端点，例如 R2 / MinIO；设了会使用 path-style URL |
+| `AWS_ACCESS_KEY_ID` | 空 | 静态凭证；未设时走 AWS SDK 默认凭证链 |
+| `AWS_SECRET_ACCESS_KEY` | 空 | 静态凭证；未设时走 AWS SDK 默认凭证链 |
+
+公开 URL 优先级：
+
+1. `CLOUDFRONT_DOMAIN` 存在：`https://<CLOUDFRONT_DOMAIN>/<key>`
+2. `AWS_ENDPOINT_URL` 存在：`<AWS_ENDPOINT_URL>/<S3_BUCKET>/<key>`
+3. 默认 AWS S3：`https://<S3_BUCKET>.s3.<S3_REGION>.amazonaws.com/<key>`；bucket 名含点时回落到 path-style URL。
+
+### CloudFront
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `CLOUDFRONT_KEY_PAIR_ID` | 空 | 留空禁用 CloudFront signed cookies |
+| `CLOUDFRONT_PRIVATE_KEY_SECRET` | `multica/cloudfront-signing-key` | AWS Secrets Manager secret 名称或 ARN |
+| `CLOUDFRONT_PRIVATE_KEY` | 空 | base64 编码 PEM；本地开发兜底用，生产优先使用 Secrets Manager |
+| `CLOUDFRONT_DOMAIN` | 空 | CloudFront 域名，例如 `static.example.com` |
+
+启用 CloudFront signed cookies 时，必须同时有 `CLOUDFRONT_KEY_PAIR_ID`、`CLOUDFRONT_DOMAIN` 和一份私钥。
+
+### 本地磁盘
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `LOCAL_UPLOAD_DIR` | `./data/uploads` | 本地上传目录 |
+| `LOCAL_UPLOAD_BASE_URL` | `http://localhost:8080`（模板示例） | 公开访问 base URL；代码里留空会返回相对路径 |
+
+### Cookie domain
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `COOKIE_DOMAIN` | 空 | session 与 CloudFront cookie 的 `Domain` 属性 |
+
+- 留空：host-only cookie，适合 localhost、局域网 IP、单 hostname 部署。
+- 设置为 `.example.com`：让 `app.example.com` 和 `api.example.com` 共享登录态。
+- 不要设置为 IP 地址：浏览器会静默丢弃这种 cookie。
+
+## 安全与访问来源
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `ALLOWED_ORIGINS` | 空 | CORS 与 WebSocket 允许来源，逗号分隔；新配置统一用这个 |
+| `CORS_ALLOWED_ORIGINS` | 空 | 旧名兼容；服务端仍会读取，Next dev server 也会读取 |
+| `REALTIME_METRICS_TOKEN` | 空 | `/health/realtime` 访问 token；反向代理后部署必须设置 |
+
+`ALLOWED_ORIGINS` 留空时，服务端会回落到 `CORS_ALLOWED_ORIGINS`、`FRONTEND_ORIGIN`，再回落到 localhost 开发来源。`REALTIME_METRICS_TOKEN` 留空时，实时指标端点只允许 direct loopback 且无转发头的请求；如果 API 在 Caddy / Nginx 后面，必须设置 token。
+
+## GitHub 集成
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `GITHUB_APP_SLUG` | 空 | GitHub App slug，即 `https://github.com/apps/<slug>` 的尾部 |
+| `GITHUB_WEBHOOK_SECRET` | 空 | webhook HMAC 校验 secret，也用于 install callback state token 签名 |
+| `GITHUB_TOKEN` | 空 | 可选；导入 GitHub skill 时作为 bearer token 使用，把 API rate limit 从匿名 60/hour 提升到 5000/hour |
+
+`GITHUB_APP_SLUG` 和 `GITHUB_WEBHOOK_SECRET` 必须同时设置，Settings 里的 Connect GitHub 才会启用，webhook 才会被接受。完整流程见 [GitHub 集成](/github-integration)。
+
+## 前端
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `FRONTEND_PORT` | `3000` | web 前端端口 |
+| `FRONTEND_ORIGIN` | `http://localhost:3000`（模板示例） | 前端公网 origin；邀请邮件链接、cookie Secure 判断、CORS fallback 都会用到 |
+| `NEXT_PUBLIC_API_URL` | 空 | 浏览器 API 地址；通常留空由页面来源推导 |
+| `NEXT_PUBLIC_WS_URL` | 空 | 浏览器 WebSocket 地址；通常留空由页面来源推导 |
+| `REMOTE_API_URL` | 空 | 本地前端代理远程后端时使用 |
+
+<Callout type="warning">
+self-host 生产部署要显式设置 `FRONTEND_ORIGIN`。如果留空，邀请邮件可能指向托管版域名，cookie 与 WebSocket 的来源判断也容易和你的实际域名不一致。
+</Callout>
+
+## 注册控制
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `ALLOW_SIGNUP` | `true` | 注册总开关；代码只把精确字符串 `false` 视为关闭 |
+| `ALLOWED_EMAIL_DOMAINS` | 空 | 域名白名单，逗号分隔，例如 `example.com,company.dev` |
+| `ALLOWED_EMAILS` | 空 | 完整邮箱白名单，逗号分隔，例如 `alice@example.com,bob@example.com` |
+
+白名单一旦设置为非空，就会限制注册范围。`ALLOWED_EMAIL_DOMAINS=company.io` + `ALLOW_SIGNUP=true` 的含义是**只允许 company.io 注册**，不是“company.io 或所有人”。
+
+## 数据分析
+
+| 环境变量 | 默认值 | 说明 |
+|---|---|---|
+| `POSTHOG_API_KEY` | 空 | 留空时服务端使用 no-op analytics client，不会上报事件 |
+| `POSTHOG_HOST` | `https://us.i.posthog.com` | PostHog host |
+| `ANALYTICS_ENVIRONMENT` | 从 `APP_ENV` 推导，最终默认 `dev` | 可选输入：`production/prod`、`staging/stage`、`development/dev/test/local` |
+| `ANALYTICS_DISABLED` | 空 / false | 可选 `true` / `1`；即使设置了 `POSTHOG_API_KEY` 也强制关闭上报 |
+
+## 下一步
+
+- [登录与注册配置](/auth-setup) —— auth 相关变量怎么配、常见陷阱是什么
+- [GitHub 集成](/github-integration) —— `GITHUB_APP_SLUG` / `GITHUB_WEBHOOK_SECRET` 背后的 GitHub App 怎么建
+- [故障排查](/troubleshooting) —— 配错时的常见症状和修复
+- [守护进程与运行时](/daemon-runtimes) —— `MULTICA_DAEMON_*` 参数的具体行为
