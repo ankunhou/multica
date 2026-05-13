@@ -1100,7 +1100,13 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
         {t(($) => $.empty.description)}
       </p>
-      <Button type="button" onClick={onCreate} size="sm" className="mt-5">
+      <Button
+        type="button"
+        onClick={onCreate}
+        size="sm"
+        variant="outline"
+        className={cn("mt-5", resourceActionButtonClassName)}
+      >
         <Plus className="h-3 w-3" />
         {t(($) => $.page.new_agent)}
       </Button>
