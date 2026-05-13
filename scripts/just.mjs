@@ -483,6 +483,7 @@ async function dbReset() {
 
 async function check() {
   await ensureDb();
+  run(exe("pnpm"), ["check:tailwind-tokens"]);
   run(exe("pnpm"), ["typecheck"]);
   run(exe("pnpm"), ["test"]);
   runMigrate("up");

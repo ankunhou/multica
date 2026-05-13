@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import type { IssuePriority, UpdateIssueRequest } from "@multica/core/types";
-import { PRIORITY_ORDER, PRIORITY_CONFIG } from "@multica/core/issues/config";
+import { PRIORITY_ORDER } from "@multica/core/issues/config";
 import { PriorityIcon } from "../priority-icon";
 import { PropertyPicker, PickerItem } from "./property-picker";
+import { ISSUE_PRIORITY_VISUALS } from "../../visuals";
 import { useT } from "../../../i18n";
 
 export function PriorityPicker({
@@ -46,7 +47,7 @@ export function PriorityPicker({
       }
     >
       {PRIORITY_ORDER.map((p) => {
-        const c = PRIORITY_CONFIG[p];
+        const visual = ISSUE_PRIORITY_VISUALS[p];
         return (
           <PickerItem
             key={p}
@@ -56,7 +57,7 @@ export function PriorityPicker({
               setOpen(false);
             }}
           >
-            <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${c.badgeBg} ${c.badgeText}`}>
+            <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${visual.badgeBg} ${visual.badgeText}`}>
               <PriorityIcon priority={p} className="h-3 w-3" inheritColor />
               {t(($) => $.priority[p])}
             </span>

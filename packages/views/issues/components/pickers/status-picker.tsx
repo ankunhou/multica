@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import type { IssueStatus, UpdateIssueRequest } from "@multica/core/types";
-import { ALL_STATUSES, STATUS_CONFIG } from "@multica/core/issues/config";
+import { ALL_STATUSES } from "@multica/core/issues/config";
 import { StatusIcon } from "../status-icon";
 import { PropertyPicker, PickerItem } from "./property-picker";
+import { ISSUE_STATUS_VISUALS } from "../../visuals";
 import { useT } from "../../../i18n";
 
 export function StatusPicker({
@@ -46,12 +47,12 @@ export function StatusPicker({
       }
     >
       {ALL_STATUSES.map((s) => {
-        const c = STATUS_CONFIG[s];
+        const visual = ISSUE_STATUS_VISUALS[s];
         return (
           <PickerItem
             key={s}
             selected={s === status}
-            hoverClassName={c.hoverBg}
+            hoverClassName={visual.hoverBg}
             onClick={() => {
               onUpdate({ status: s });
               setOpen(false);

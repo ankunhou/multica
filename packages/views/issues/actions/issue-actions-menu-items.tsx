@@ -21,7 +21,6 @@ import { api } from "@multica/core/api";
 import {
   ALL_STATUSES,
   PRIORITY_ORDER,
-  PRIORITY_CONFIG,
 } from "@multica/core/issues/config";
 import { issueKeys } from "@multica/core/issues/queries";
 import { StatusIcon } from "../components/status-icon";
@@ -42,6 +41,7 @@ import {
   ContextMenuSeparator,
 } from "@multica/ui/components/ui/context-menu";
 import type { UseIssueActionsResult } from "./use-issue-actions";
+import { ISSUE_PRIORITY_VISUALS } from "../visuals";
 import { useT } from "../../i18n";
 
 // Both Dropdown and Context menu wrappers expose an API-compatible surface
@@ -171,7 +171,7 @@ export function IssueActionsMenuItems({
           {PRIORITY_ORDER.map((p) => (
             <P.Item key={p} onClick={() => updateField({ priority: p })}>
               <span
-                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${PRIORITY_CONFIG[p].badgeBg} ${PRIORITY_CONFIG[p].badgeText}`}
+                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${ISSUE_PRIORITY_VISUALS[p].badgeBg} ${ISSUE_PRIORITY_VISUALS[p].badgeText}`}
               >
                 <PriorityIcon priority={p} className="h-3 w-3" inheritColor />
                 {t(($) => $.priority[p])}

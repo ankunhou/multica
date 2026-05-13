@@ -1,5 +1,6 @@
 import type { IssuePriority } from "@multica/core/types";
 import { PRIORITY_CONFIG } from "@multica/core/issues/config";
+import { ISSUE_PRIORITY_VISUALS } from "../visuals";
 
 export function PriorityIcon({
   priority,
@@ -11,6 +12,7 @@ export function PriorityIcon({
   inheritColor?: boolean;
 }) {
   const cfg = PRIORITY_CONFIG[priority];
+  const visual = ISSUE_PRIORITY_VISUALS[priority];
 
   // "none" — simple horizontal dashes
   if (cfg.bars === 0) {
@@ -33,7 +35,7 @@ export function PriorityIcon({
   return (
     <svg
       viewBox="0 0 16 16"
-      className={`h-3.5 w-3.5 ${inheritColor ? "" : cfg.color} shrink-0 ${className}`}
+      className={`h-3.5 w-3.5 ${inheritColor ? "" : visual.color} shrink-0 ${className}`}
       fill="currentColor"
       style={isUrgent ? { animation: "priority-pulse 2s ease-in-out infinite" } : undefined}
     >

@@ -25,7 +25,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useCreateProject } from "@multica/core/projects/mutations";
 import { useProjectDraftStore } from "@multica/core/projects";
 import {
-  PROJECT_STATUS_CONFIG,
   PROJECT_STATUS_ORDER,
   PROJECT_PRIORITY_ORDER,
 } from "@multica/core/projects/config";
@@ -57,6 +56,7 @@ import {
   useProjectStatusLabels,
   useProjectPriorityLabels,
 } from "../projects/components/labels";
+import { PROJECT_STATUS_VISUALS } from "../projects/components/visuals";
 
 function PillButton({
   children,
@@ -317,7 +317,7 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
             <DropdownMenuTrigger
               render={
                 <PillButton>
-                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[status].dotColor)} />
+                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[status].dotColor)} />
                   <span>{projectStatusLabels[status]}</span>
                 </PillButton>
               }
@@ -325,7 +325,7 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
             <DropdownMenuContent align="start" className="w-44">
               {PROJECT_STATUS_ORDER.map((s) => (
                 <DropdownMenuItem key={s} onClick={() => updateStatus(s)}>
-                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[s].dotColor)} />
+                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[s].dotColor)} />
                   <span>{projectStatusLabels[s]}</span>
                 </DropdownMenuItem>
               ))}

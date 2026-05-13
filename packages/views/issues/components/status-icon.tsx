@@ -1,5 +1,5 @@
 import type { IssueStatus } from "@multica/core/types";
-import { STATUS_CONFIG } from "@multica/core/issues/config";
+import { ISSUE_STATUS_VISUALS } from "../visuals";
 
 // ---------------------------------------------------------------------------
 // Geometry constants (viewBox 0 0 14 14, center 7,7)
@@ -166,14 +166,14 @@ export function StatusIcon({
   className?: string;
   inheritColor?: boolean;
 }) {
-  const cfg = STATUS_CONFIG[status];
+  const visual = ISSUE_STATUS_VISUALS[status];
   const Renderer = STATUS_RENDERERS[status];
 
   return (
     <svg
       viewBox="0 0 14 14"
       fill="none"
-      className={`${className} ${inheritColor ? "" : cfg.iconColor} shrink-0`}
+      className={`${className} ${inheritColor ? "" : visual.iconColor} shrink-0`}
     >
       <Renderer />
     </svg>

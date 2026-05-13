@@ -38,8 +38,8 @@ import { workspaceListOptions } from "@multica/core/workspace/queries";
 import { StatusIcon } from "../issues/components";
 import { useIssueStatusLabels } from "../issues/components/labels";
 import { ProjectIcon } from "../projects/components/project-icon";
-import { STATUS_CONFIG } from "@multica/core/issues/config";
-import { PROJECT_STATUS_CONFIG } from "@multica/core/projects/config";
+import { ISSUE_STATUS_VISUALS } from "../issues/visuals";
+import { PROJECT_STATUS_VISUALS } from "../projects/components/visuals";
 import type { ProjectStatus } from "@multica/core/types";
 import { useProjectStatusLabels } from "../projects/components/labels";
 import {
@@ -584,7 +584,7 @@ export function SearchCommand() {
                         <HighlightText text={project.title} query={query} />
                       </span>
                       <span
-                        className={`ml-auto text-xs shrink-0 ${PROJECT_STATUS_CONFIG[project.status as ProjectStatus]?.color ?? "text-muted-foreground"}`}
+                        className={`ml-auto text-xs shrink-0 ${PROJECT_STATUS_VISUALS[project.status as ProjectStatus]?.color ?? "text-muted-foreground"}`}
                       >
                         {projectStatusLabels[project.status as ProjectStatus] ?? project.status}
                       </span>
@@ -629,7 +629,7 @@ export function SearchCommand() {
                         <HighlightText text={issue.title} query={query} />
                       </span>
                       <span
-                        className={`ml-auto text-xs shrink-0 ${STATUS_CONFIG[issue.status].iconColor}`}
+                        className={`ml-auto text-xs shrink-0 ${ISSUE_STATUS_VISUALS[issue.status].iconColor}`}
                       >
                         {issueStatusLabels[issue.status]}
                       </span>
@@ -673,7 +673,7 @@ export function SearchCommand() {
                     </span>
                     <span className="truncate">{item.title}</span>
                     <span
-                      className={`ml-auto text-xs shrink-0 ${STATUS_CONFIG[item.status]?.iconColor ?? ""}`}
+                      className={`ml-auto text-xs shrink-0 ${ISSUE_STATUS_VISUALS[item.status]?.iconColor ?? ""}`}
                     >
                       {issueStatusLabels[item.status] ?? ""}
                     </span>

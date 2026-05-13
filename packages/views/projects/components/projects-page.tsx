@@ -6,9 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { projectListOptions } from "@multica/core/projects/queries";
 import { useUpdateProject } from "@multica/core/projects/mutations";
 import {
-  PROJECT_STATUS_CONFIG,
   PROJECT_STATUS_ORDER,
-  PROJECT_PRIORITY_CONFIG,
   PROJECT_PRIORITY_ORDER,
 } from "@multica/core/projects/config";
 import { useWorkspaceId } from "@multica/core/hooks";
@@ -47,6 +45,7 @@ import { useResourceViewModePreference } from "../../common/use-resource-view-mo
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectIcon } from "./project-icon";
 import { ProjectProgressMeter, getProjectProgressPercent } from "./project-progress-meter";
+import { PROJECT_PRIORITY_VISUALS, PROJECT_STATUS_VISUALS } from "./visuals";
 import { useT } from "../../i18n";
 import {
   useProjectStatusLabels,
@@ -66,7 +65,7 @@ function ProjectPriorityControl({
   className?: string;
 }) {
   const priorityLabels = useProjectPriorityLabels();
-  const priorityCfg = PROJECT_PRIORITY_CONFIG[project.priority];
+  const priorityVisual = PROJECT_PRIORITY_VISUALS[project.priority];
 
   return (
     <DropdownMenu>
@@ -80,7 +79,7 @@ function ProjectPriorityControl({
             )}
           >
             <PriorityIcon priority={project.priority} />
-            <span className={cn("text-xs", priorityCfg.color)}>{priorityLabels[project.priority]}</span>
+            <span className={cn("text-xs", priorityVisual.color)}>{priorityLabels[project.priority]}</span>
           </button>
         }
       />
@@ -107,7 +106,7 @@ function ProjectStatusControl({
   className?: string;
 }) {
   const statusLabels = useProjectStatusLabels();
-  const statusCfg = PROJECT_STATUS_CONFIG[project.status];
+  const statusVisual = PROJECT_STATUS_VISUALS[project.status];
 
   return (
     <DropdownMenu>
@@ -117,8 +116,8 @@ function ProjectStatusControl({
             type="button"
             className={cn(
               "inline-flex w-28 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-opacity hover:opacity-80",
-              statusCfg.badgeBg,
-              statusCfg.badgeText,
+              statusVisual.badgeBg,
+              statusVisual.badgeText,
               className,
             )}
           >
@@ -129,7 +128,7 @@ function ProjectStatusControl({
       <DropdownMenuContent align="start" className="w-44">
         {PROJECT_STATUS_ORDER.map((s) => (
           <DropdownMenuItem key={s} onClick={() => onUpdate({ status: s as ProjectStatus })}>
-            <span className={cn("size-2 rounded-full", PROJECT_STATUS_CONFIG[s].dotColor)} />
+            <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[s].dotColor)} />
             <span>{statusLabels[s]}</span>
             {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
           </DropdownMenuItem>

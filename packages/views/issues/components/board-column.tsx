@@ -13,9 +13,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@multica/ui/components/ui/dropdown-menu";
-import { STATUS_CONFIG } from "@multica/core/issues/config";
 import { useModalStore } from "@multica/core/modals";
 import { useViewStoreApi } from "@multica/core/issues/stores/view-store-context";
+import { ISSUE_STATUS_VISUALS } from "../visuals";
 import { StatusHeading } from "./status-heading";
 import { DraggableBoardCard } from "./board-card";
 import type { ChildProgress } from "./list-row";
@@ -39,7 +39,7 @@ export function BoardColumn({
   /** When set, the per-column "+" pre-fills the project on the create form. */
   projectId?: string;
 }) {
-  const cfg = STATUS_CONFIG[status];
+  const visual = ISSUE_STATUS_VISUALS[status];
   const { setNodeRef, isOver } = useDroppable({ id: status });
   const viewStoreApi = useViewStoreApi();
   const { t } = useT("issues");
@@ -55,7 +55,7 @@ export function BoardColumn({
   );
 
   return (
-    <div className={`flex w-[280px] shrink-0 flex-col rounded-3xl ${cfg.columnBg} p-3`}>
+    <div className={`flex w-[280px] shrink-0 flex-col rounded-3xl ${visual.columnBg} p-3`}>
       <div className="mb-3 flex items-center justify-between px-1">
         <StatusHeading status={status} count={totalCount ?? issueIds.length} />
 

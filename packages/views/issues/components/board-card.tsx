@@ -17,7 +17,7 @@ import { projectListOptions } from "@multica/core/projects/queries";
 import { ProjectIcon } from "../../projects/components/project-icon";
 import { PriorityIcon } from "./priority-icon";
 import { PriorityPicker, AssigneePicker, DueDatePicker } from "./pickers";
-import { PRIORITY_CONFIG } from "@multica/core/issues/config";
+import { ISSUE_PRIORITY_VISUALS } from "../visuals";
 import { useViewStore } from "@multica/core/issues/stores/view-store-context";
 import { ProgressRing } from "./progress-ring";
 import type { ChildProgress } from "./list-row";
@@ -51,7 +51,7 @@ export const BoardCardContent = memo(function BoardCardContent({
   const { t } = useT("issues");
   const { shortDate } = useDateTimeFormatters();
   const storeProperties = useViewStore((s) => s.cardProperties);
-  const priorityCfg = PRIORITY_CONFIG[issue.priority];
+  const priorityVisual = ISSUE_PRIORITY_VISUALS[issue.priority];
   const wsId = useWorkspaceId();
   const { data: projects = [] } = useQuery({
     ...projectListOptions(wsId),
@@ -154,7 +154,7 @@ export const BoardCardContent = memo(function BoardCardContent({
                   priority={issue.priority}
                   onUpdate={handleUpdate}
                   trigger={
-                    <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityCfg.badgeBg} ${priorityCfg.badgeText}`}>
+                    <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityVisual.badgeBg} ${priorityVisual.badgeText}`}>
                       <PriorityIcon priority={issue.priority} className="h-3 w-3" inheritColor />
                       {t(($) => $.priority[issue.priority])}
                     </span>
@@ -162,7 +162,7 @@ export const BoardCardContent = memo(function BoardCardContent({
                 />
               </PickerWrapper>
             ) : (
-              <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityCfg.badgeBg} ${priorityCfg.badgeText}`}>
+              <span className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${priorityVisual.badgeBg} ${priorityVisual.badgeText}`}>
                 <PriorityIcon priority={issue.priority} className="h-3 w-3" inheritColor />
                 {t(($) => $.priority[issue.priority])}
               </span>
