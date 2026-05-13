@@ -26,13 +26,14 @@ import { ViewStoreProvider, useViewStore } from "@multica/core/issues/stores/vie
 import { filterIssues } from "../../issues/utils/filter";
 import { getProjectIssueMetrics } from "./project-issue-metrics";
 import { ActorAvatar } from "../../common/actor-avatar";
+import { SidebarSection } from "../../common/sidebar-section";
 import { AppLink, useNavigation } from "../../navigation";
 import { TitleEditor, ContentEditor, type ContentEditorRef } from "../../editor";
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectResourcesSection } from "./project-resources-section";
 import { ProjectIcon } from "./project-icon";
 import { ProjectProgressMeter } from "./project-progress-meter";
-import { PROJECT_STATUS_VISUALS } from "./visuals";
+import { ProjectStatusDot } from "./project-status-badge";
 import { IssuesHeader } from "../../issues/components/issues-header";
 import { BoardView } from "../../issues/components/board-view";
 import { ListView } from "../../issues/components/list-view";
@@ -304,8 +305,6 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
   }
 
   const issueMetrics = getProjectIssueMetrics(project);
-  const statusVisual = PROJECT_STATUS_VISUALS[project.status];
-
   const sidebarContent = (
     <div className="space-y-5">
       {/* Icon + Title */}
@@ -344,21 +343,18 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
       </div>
 
       {/* Properties */}
-      <div>
-        <button
-          className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${propertiesOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-          onClick={() => setPropertiesOpen(!propertiesOpen)}
-        >
-          {t(($) => $.detail.section_properties)}
-          <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${propertiesOpen ? "rotate-90" : ""}`} />
-        </button>
-        {propertiesOpen && <div className="space-y-0.5 pl-2">
+      <SidebarSection
+        title={t(($) => $.detail.section_properties)}
+        open={propertiesOpen}
+        onOpenChange={setPropertiesOpen}
+        contentClassName="space-y-0.5 pl-2"
+      >
           <PropRow label={t(($) => $.table.status)}>
             <DropdownMenu>
               <DropdownMenuTrigger
                 render={
                   <button type="button" className="inline-flex items-center gap-1.5 text-xs hover:text-foreground transition-colors">
-                    <span className={cn("size-2 rounded-full", statusVisual.dotColor)} />
+                    <ProjectStatusDot status={project.status} />
                     <span>{statusLabels[project.status]}</span>
                   </button>
                 }
@@ -366,7 +362,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
               <DropdownMenuContent align="start" className="w-44">
                 {PROJECT_STATUS_ORDER.map((s) => (
                   <DropdownMenuItem key={s} onClick={() => handleUpdateField({ status: s as ProjectStatus })}>
-                    <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[s].dotColor)} />
+                    <ProjectStatusDot status={s} />
                     <span>{statusLabels[s]}</span>
                     {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
                   </DropdownMenuItem>
@@ -469,52 +465,43 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
               </PopoverContent>
             </Popover>
           </PropRow>
-        </div>}
-      </div>
+      </SidebarSection>
 
       {/* Progress */}
       {issueMetrics.totalCount > 0 && (
-        <div>
-          <button
-            className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${progressOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-            onClick={() => setProgressOpen(!progressOpen)}
-          >
-            {t(($) => $.detail.section_progress)}
-            <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${progressOpen ? "rotate-90" : ""}`} />
-          </button>
-          {progressOpen && <div className="pl-2 flex items-center gap-3">
-            <ProjectProgressMeter
-              done={issueMetrics.completedCount}
-              total={issueMetrics.totalCount}
-              className="h-2 flex-1"
-            />
-            <span className="text-xs text-muted-foreground tabular-nums shrink-0">
-              {issueMetrics.completedCount}/{issueMetrics.totalCount}
-            </span>
-          </div>}
-        </div>
+        <SidebarSection
+          title={t(($) => $.detail.section_progress)}
+          open={progressOpen}
+          onOpenChange={setProgressOpen}
+          contentClassName="pl-2 flex items-center gap-3"
+        >
+          <ProjectProgressMeter
+            done={issueMetrics.completedCount}
+            total={issueMetrics.totalCount}
+            className="h-2 flex-1"
+          />
+          <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+            {issueMetrics.completedCount}/{issueMetrics.totalCount}
+          </span>
+        </SidebarSection>
       )}
 
       {/* Description */}
-      <div>
-        <button
-          className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${descriptionOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-          onClick={() => setDescriptionOpen(!descriptionOpen)}
-        >
-          {t(($) => $.detail.section_description)}
-          <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${descriptionOpen ? "rotate-90" : ""}`} />
-        </button>
-        {descriptionOpen && <div className="pl-2">
-          <ContentEditor
-            ref={descEditorRef}
-            key={projectId}
-            defaultValue={project.description || ""}
-            placeholder={t(($) => $.detail.description_placeholder)}
-            onUpdate={(md) => handleUpdateField({ description: md || null })}
-            debounceMs={1500}
-          />
-        </div>}
-      </div>
+      <SidebarSection
+        title={t(($) => $.detail.section_description)}
+        open={descriptionOpen}
+        onOpenChange={setDescriptionOpen}
+        contentClassName="pl-2"
+      >
+        <ContentEditor
+          ref={descEditorRef}
+          key={projectId}
+          defaultValue={project.description || ""}
+          placeholder={t(($) => $.detail.description_placeholder)}
+          onUpdate={(md) => handleUpdateField({ description: md || null })}
+          debounceMs={1500}
+        />
+      </SidebarSection>
 
       {/* Resources */}
       <ProjectResourcesSection projectId={projectId} />

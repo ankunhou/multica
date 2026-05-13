@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
+import { SidebarSection } from "../../common/sidebar-section";
 import { TranscriptButton } from "../../common/task-transcript";
 import { useFailureReasonLabel } from "../../agents/components/tabs/task-failure";
 import { useT } from "../../i18n";
@@ -118,63 +119,53 @@ export function ExecutionLogSection({ issueId }: ExecutionLogSectionProps) {
   if (activeTasks.length === 0 && pastTasks.length === 0) return null;
 
   return (
-    <div>
-      <button
-        className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${
-          open ? "" : "text-muted-foreground hover:text-foreground"
-        }`}
-        onClick={() => setOpen(!open)}
-      >
-        {t(($) => $.execution_log.section)}
-        <ChevronRight
-          className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${
-            open ? "rotate-90" : ""
-          }`}
-        />
-        {activeTasks.length > 0 && (
+    <SidebarSection
+      title={t(($) => $.execution_log.section)}
+      open={open}
+      onOpenChange={setOpen}
+      contentClassName="space-y-0.5 pl-2"
+      trailing={
+        activeTasks.length > 0 && (
           <span className="ml-auto inline-flex items-center gap-1 text-agent-running">
             <span className="h-1.5 w-1.5 rounded-full bg-agent-running animate-pulse" />
             <span className="font-mono tabular-nums">{activeTasks.length}</span>
           </span>
-        )}
-      </button>
-      {open && (
-        <div className="space-y-0.5 pl-2">
-          {activeTasks.map((task) => (
-            <ActiveRow key={task.id} task={task} issueId={issueId} />
-          ))}
+        )
+      }
+    >
+      {activeTasks.map((task) => (
+        <ActiveRow key={task.id} task={task} issueId={issueId} />
+      ))}
 
-          {pastTasks.length > 0 && (
-            <>
-              {activeTasks.length > 0 && (
-                <div className="my-1.5 border-t border-border/60" />
-              )}
-              <button
-                type="button"
-                onClick={() => setShowPast(!showPast)}
-                className="flex w-full items-center gap-1 rounded px-1 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent/40 hover:text-foreground"
-              >
-                <ChevronRight
-                  className={`!size-3 shrink-0 stroke-[2.5] transition-transform ${
-                    showPast ? "rotate-90" : ""
-                  }`}
-                />
-                {showPast
-                  ? t(($) => $.execution_log.hide_past, { count: pastTasks.length })
-                  : t(($) => $.execution_log.show_past, { count: pastTasks.length })}
-              </button>
-              {showPast && (
-                <div className="mt-0.5 space-y-0.5">
-                  {pastTasks.map((task) => (
-                    <PastRow key={task.id} task={task} issueId={issueId} />
-                  ))}
-                </div>
-              )}
-            </>
+      {pastTasks.length > 0 && (
+        <>
+          {activeTasks.length > 0 && (
+            <div className="my-1.5 border-t border-border/60" />
           )}
-        </div>
+          <button
+            type="button"
+            onClick={() => setShowPast(!showPast)}
+            className="flex w-full items-center gap-1 rounded px-1 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent/40 hover:text-foreground"
+          >
+            <ChevronRight
+              className={`!size-3 shrink-0 stroke-[2.5] transition-transform ${
+                showPast ? "rotate-90" : ""
+              }`}
+            />
+            {showPast
+              ? t(($) => $.execution_log.hide_past, { count: pastTasks.length })
+              : t(($) => $.execution_log.show_past, { count: pastTasks.length })}
+          </button>
+          {showPast && (
+            <div className="mt-0.5 space-y-0.5">
+              {pastTasks.map((task) => (
+                <PastRow key={task.id} task={task} issueId={issueId} />
+              ))}
+            </div>
+          )}
+        </>
       )}
-    </div>
+    </SidebarSection>
   );
 }
 

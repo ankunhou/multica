@@ -25,6 +25,7 @@ import {
 import { issueKeys } from "@multica/core/issues/queries";
 import { StatusIcon } from "../components/status-icon";
 import { PriorityIcon } from "../components/priority-icon";
+import { IssuePriorityBadge } from "../components/priority-badge";
 import { ActorAvatar } from "../../common/actor-avatar";
 import {
   DropdownMenuItem,
@@ -41,7 +42,6 @@ import {
   ContextMenuSeparator,
 } from "@multica/ui/components/ui/context-menu";
 import type { UseIssueActionsResult } from "./use-issue-actions";
-import { ISSUE_PRIORITY_VISUALS } from "../visuals";
 import { useT } from "../../i18n";
 
 // Both Dropdown and Context menu wrappers expose an API-compatible surface
@@ -170,12 +170,7 @@ export function IssueActionsMenuItems({
         <P.SubContent>
           {PRIORITY_ORDER.map((p) => (
             <P.Item key={p} onClick={() => updateField({ priority: p })}>
-              <span
-                className={`inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium ${ISSUE_PRIORITY_VISUALS[p].badgeBg} ${ISSUE_PRIORITY_VISUALS[p].badgeText}`}
-              >
-                <PriorityIcon priority={p} className="h-3 w-3" inheritColor />
-                {t(($) => $.priority[p])}
-              </span>
+              <IssuePriorityBadge priority={p} />
               {issue.priority === p && (
                 <span className="ml-auto text-xs text-muted-foreground">{"✓"}</span>
               )}

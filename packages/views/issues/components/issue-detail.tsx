@@ -38,6 +38,7 @@ import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, Command
 import { AvatarGroup, AvatarGroupCount } from "@multica/ui/components/ui/avatar";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { PropRow } from "../../common/prop-row";
+import { SidebarSection } from "../../common/sidebar-section";
 import type { Issue, IssueStatus, IssuePriority, TimelineEntry, UpdateIssueRequest } from "@multica/core/types";
 import { STATUS_CONFIG, PRIORITY_CONFIG } from "@multica/core/issues/config";
 import { useUpdateIssue } from "@multica/core/issues/mutations";
@@ -818,15 +819,12 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   const sidebarContent = (
     <div className="space-y-5">
       {/* Properties */}
-      <div>
-        <button
-          className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${propertiesOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-          onClick={() => setPropertiesOpen(!propertiesOpen)}
-        >
-          {t(($) => $.detail.section_properties)}
-          <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${propertiesOpen ? "rotate-90" : ""}`} />
-        </button>
-        {propertiesOpen && <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2">
+      <SidebarSection
+        title={t(($) => $.detail.section_properties)}
+        open={propertiesOpen}
+        onOpenChange={setPropertiesOpen}
+        contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
+      >
           <PropRow label={t(($) => $.detail.prop_status)}>
             <StatusPicker status={issue.status} onUpdate={handleUpdateField} align="start" />
           </PropRow>
@@ -845,20 +843,16 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           <PropRow label={t(($) => $.detail.prop_labels)}>
             <LabelPicker issueId={issue.id} align="start" />
           </PropRow>
-        </div>}
-      </div>
+      </SidebarSection>
 
       {/* Parent issue */}
       {parentIssue && (
-        <div>
-          <button
-            className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${parentIssueOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-            onClick={() => setParentIssueOpen(!parentIssueOpen)}
-          >
-            {t(($) => $.detail.section_parent_issue)}
-            <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${parentIssueOpen ? "rotate-90" : ""}`} />
-          </button>
-          {parentIssueOpen && <div className="pl-2">
+        <SidebarSection
+          title={t(($) => $.detail.section_parent_issue)}
+          open={parentIssueOpen}
+          onOpenChange={setParentIssueOpen}
+          contentClassName="pl-2"
+        >
             <AppLink
               href={paths.issueDetail(parentIssue.id)}
               className="flex items-center gap-1.5 rounded-md px-2 py-1.5 -mx-2 text-xs hover:bg-accent/50 transition-colors group"
@@ -867,32 +861,26 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
               <span className="text-muted-foreground shrink-0">{parentIssue.identifier}</span>
               <span className="truncate group-hover:text-foreground">{parentIssue.title}</span>
             </AppLink>
-          </div>}
-        </div>
+        </SidebarSection>
       )}
 
       {/* Pull requests */}
-      <div>
-        <button
-          className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${pullRequestsOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-          onClick={() => setPullRequestsOpen(!pullRequestsOpen)}
-        >
-          {t(($) => $.detail.section_pull_requests)}
-          <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${pullRequestsOpen ? "rotate-90" : ""}`} />
-        </button>
-        {pullRequestsOpen && <div className="pl-2"><PullRequestList issueId={id} /></div>}
-      </div>
+      <SidebarSection
+        title={t(($) => $.detail.section_pull_requests)}
+        open={pullRequestsOpen}
+        onOpenChange={setPullRequestsOpen}
+        contentClassName="pl-2"
+      >
+        <PullRequestList issueId={id} />
+      </SidebarSection>
 
       {/* Details */}
-      <div>
-        <button
-          className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${detailsOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-          onClick={() => setDetailsOpen(!detailsOpen)}
-        >
-          {t(($) => $.detail.section_details)}
-          <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${detailsOpen ? "rotate-90" : ""}`} />
-        </button>
-        {detailsOpen && <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2">
+      <SidebarSection
+        title={t(($) => $.detail.section_details)}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
+      >
           <PropRow label={t(($) => $.detail.prop_created_by)}>
             <ActorAvatar actorType={issue.creator_type} actorId={issue.creator_id} size={18} enableHoverCard />
             <span className="cursor-pointer truncate">{getActorName(issue.creator_type, issue.creator_id)}</span>
@@ -903,8 +891,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           <PropRow label={t(($) => $.detail.prop_updated)}>
             <span className="text-muted-foreground">{shortDate(issue.updated_at)}</span>
           </PropRow>
-        </div>}
-      </div>
+      </SidebarSection>
 
       {/* Execution log — active runs + collapsed past runs. Self-contained;
           owns its own collapse state and WS subscriptions. Hides itself
@@ -913,36 +900,32 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
 
       {/* Token usage */}
       {usage && usage.task_count > 0 && (
-        <div>
-          <button
-            className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${tokenUsageOpen ? "" : "text-muted-foreground hover:text-foreground"}`}
-            onClick={() => setTokenUsageOpen(!tokenUsageOpen)}
-          >
-            {t(($) => $.detail.section_token_usage)}
-            <ChevronRight className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${tokenUsageOpen ? "rotate-90" : ""}`} />
-          </button>
-          {tokenUsageOpen && <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2">
-            <PropRow label={t(($) => $.detail.prop_input)}>
-              <span className="text-muted-foreground">{formatTokenCount(usage.total_input_tokens)}</span>
+        <SidebarSection
+          title={t(($) => $.detail.section_token_usage)}
+          open={tokenUsageOpen}
+          onOpenChange={setTokenUsageOpen}
+          contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
+        >
+          <PropRow label={t(($) => $.detail.prop_input)}>
+            <span className="text-muted-foreground">{formatTokenCount(usage.total_input_tokens)}</span>
+          </PropRow>
+          <PropRow label={t(($) => $.detail.prop_output)}>
+            <span className="text-muted-foreground">{formatTokenCount(usage.total_output_tokens)}</span>
+          </PropRow>
+          {(usage.total_cache_read_tokens > 0 || usage.total_cache_write_tokens > 0) && (
+            <PropRow label={t(($) => $.detail.prop_cache)}>
+              <span className="text-muted-foreground">
+                {t(($) => $.detail.prop_cache_value, {
+                  read: formatTokenCount(usage.total_cache_read_tokens),
+                  write: formatTokenCount(usage.total_cache_write_tokens),
+                })}
+              </span>
             </PropRow>
-            <PropRow label={t(($) => $.detail.prop_output)}>
-              <span className="text-muted-foreground">{formatTokenCount(usage.total_output_tokens)}</span>
-            </PropRow>
-            {(usage.total_cache_read_tokens > 0 || usage.total_cache_write_tokens > 0) && (
-              <PropRow label={t(($) => $.detail.prop_cache)}>
-                <span className="text-muted-foreground">
-                  {t(($) => $.detail.prop_cache_value, {
-                    read: formatTokenCount(usage.total_cache_read_tokens),
-                    write: formatTokenCount(usage.total_cache_write_tokens),
-                  })}
-                </span>
-              </PropRow>
-            )}
-            <PropRow label={t(($) => $.detail.prop_runs)}>
-              <span className="text-muted-foreground">{usage.task_count}</span>
-            </PropRow>
-          </div>}
-        </div>
+          )}
+          <PropRow label={t(($) => $.detail.prop_runs)}>
+            <span className="text-muted-foreground">{usage.task_count}</span>
+          </PropRow>
+        </SidebarSection>
       )}
     </div>
   );

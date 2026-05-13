@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronRight, FolderGit, Plus, Trash2 } from "lucide-react";
+import { FolderGit, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   projectResourcesOptions,
@@ -26,6 +26,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@multica/ui/components/ui/tooltip";
+import { SidebarSection } from "../../common/sidebar-section";
 import { useT } from "../../i18n";
 
 // Project Resources sidebar section.
@@ -75,97 +76,89 @@ export function ProjectResourcesSection({ projectId }: { projectId: string }) {
   };
 
   return (
-    <div>
-      <button
-        className={`flex w-full items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors mb-2 hover:bg-accent/70 ${open ? "" : "text-muted-foreground hover:text-foreground"}`}
-        onClick={() => setOpen(!open)}
-      >
-        {t(($) => $.resources.section_header)}
-        <ChevronRight
-          className={`!size-3 shrink-0 stroke-[2.5] text-muted-foreground transition-transform ${open ? "rotate-90" : ""}`}
-        />
-      </button>
-      {open && (
-        <div className="pl-2 space-y-1.5">
-          {resources.length === 0 && (
-            <p className="text-xs text-muted-foreground">
-              {t(($) => $.resources.empty)}
-            </p>
-          )}
-          {resources.map((resource) => (
-            <ResourceRow
-              key={resource.id}
-              resource={resource}
-              onRemove={() => handleRemove(resource)}
-            />
-          ))}
-          <Popover open={addOpen} onOpenChange={setAddOpen}>
-            <PopoverTrigger
-              render={
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
-                >
-                  <Plus className="size-3" />
-                  {t(($) => $.resources.add_button)}
-                </Button>
-              }
-            />
-            <PopoverContent align="start" className="w-72 p-2 space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">
-                {t(($) => $.resources.popover_title)}
-              </div>
-              {workspace?.repos && workspace.repos.length > 0 && (
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {workspace.repos.map((repo) => {
-                    const isAttached = attachedUrls.has(repo.url);
-                    const isDisabled = isAttached || createResource.isPending;
-                    return (
-                      // Use aria-disabled instead of the native `disabled` attribute so
-                      // hover events still reach the tooltip trigger on attached rows
-                      // (browsers suppress pointer events on disabled form controls).
-                      <button
-                        key={repo.url}
-                        type="button"
-                        aria-disabled={isDisabled}
-                        onClick={async () => {
-                          if (isDisabled) return;
-                          await handleAttach(repo.url);
-                          setAddOpen(false);
-                        }}
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs text-left hover:bg-accent transition-colors aria-disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:hover:bg-transparent"
-                      >
-                        <FolderGit className="size-3.5" />
-                        <Tooltip>
-                          <TooltipTrigger
-                            render={
-                              <span className="truncate flex-1">{repo.url}</span>
-                            }
-                          />
-                          <TooltipContent side="top">{repo.url}</TooltipContent>
-                        </Tooltip>
-                        {isAttached && (
-                          <span className="text-[10px] text-muted-foreground">
-                            {t(($) => $.resources.attached_badge)}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              <CustomRepoForm
-                onSubmit={async (url) => {
-                  await handleAttach(url);
-                  setAddOpen(false);
-                }}
-              />
-            </PopoverContent>
-          </Popover>
-        </div>
+    <SidebarSection
+      title={t(($) => $.resources.section_header)}
+      open={open}
+      onOpenChange={setOpen}
+      contentClassName="pl-2 space-y-1.5"
+    >
+      {resources.length === 0 && (
+        <p className="text-xs text-muted-foreground">
+          {t(($) => $.resources.empty)}
+        </p>
       )}
-    </div>
+      {resources.map((resource) => (
+        <ResourceRow
+          key={resource.id}
+          resource={resource}
+          onRemove={() => handleRemove(resource)}
+        />
+      ))}
+      <Popover open={addOpen} onOpenChange={setAddOpen}>
+        <PopoverTrigger
+          render={
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
+            >
+              <Plus className="size-3" />
+              {t(($) => $.resources.add_button)}
+            </Button>
+          }
+        />
+        <PopoverContent align="start" className="w-72 p-2 space-y-2">
+          <div className="text-xs font-medium text-muted-foreground">
+            {t(($) => $.resources.popover_title)}
+          </div>
+          {workspace?.repos && workspace.repos.length > 0 && (
+            <div className="space-y-1 max-h-48 overflow-y-auto">
+              {workspace.repos.map((repo) => {
+                const isAttached = attachedUrls.has(repo.url);
+                const isDisabled = isAttached || createResource.isPending;
+                return (
+                  // Use aria-disabled instead of the native `disabled` attribute so
+                  // hover events still reach the tooltip trigger on attached rows
+                  // (browsers suppress pointer events on disabled form controls).
+                  <button
+                    key={repo.url}
+                    type="button"
+                    aria-disabled={isDisabled}
+                    onClick={async () => {
+                      if (isDisabled) return;
+                      await handleAttach(repo.url);
+                      setAddOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs text-left hover:bg-accent transition-colors aria-disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:hover:bg-transparent"
+                  >
+                    <FolderGit className="size-3.5" />
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <span className="truncate flex-1">{repo.url}</span>
+                        }
+                      />
+                      <TooltipContent side="top">{repo.url}</TooltipContent>
+                    </Tooltip>
+                    {isAttached && (
+                      <span className="text-[10px] text-muted-foreground">
+                        {t(($) => $.resources.attached_badge)}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <CustomRepoForm
+            onSubmit={async (url) => {
+              await handleAttach(url);
+              setAddOpen(false);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    </SidebarSection>
   );
 }
 

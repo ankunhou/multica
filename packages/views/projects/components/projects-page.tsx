@@ -45,7 +45,8 @@ import { useResourceViewModePreference } from "../../common/use-resource-view-mo
 import { PriorityIcon } from "../../issues/components/priority-icon";
 import { ProjectIcon } from "./project-icon";
 import { ProjectProgressMeter, getProjectProgressPercent } from "./project-progress-meter";
-import { PROJECT_PRIORITY_VISUALS, PROJECT_STATUS_VISUALS } from "./visuals";
+import { ProjectStatusBadge, ProjectStatusDot } from "./project-status-badge";
+import { PROJECT_PRIORITY_VISUALS } from "./visuals";
 import { useT } from "../../i18n";
 import {
   useProjectStatusLabels,
@@ -106,7 +107,6 @@ function ProjectStatusControl({
   className?: string;
 }) {
   const statusLabels = useProjectStatusLabels();
-  const statusVisual = PROJECT_STATUS_VISUALS[project.status];
 
   return (
     <DropdownMenu>
@@ -115,20 +115,18 @@ function ProjectStatusControl({
           <button
             type="button"
             className={cn(
-              "inline-flex w-28 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2 py-1 text-xs font-medium transition-opacity hover:opacity-80",
-              statusVisual.badgeBg,
-              statusVisual.badgeText,
+              "inline-flex w-28 shrink-0 cursor-pointer items-center justify-center transition-opacity hover:opacity-80",
               className,
             )}
           >
-            {statusLabels[project.status]}
+            <ProjectStatusBadge status={project.status} className="w-full" />
           </button>
         }
       />
       <DropdownMenuContent align="start" className="w-44">
         {PROJECT_STATUS_ORDER.map((s) => (
           <DropdownMenuItem key={s} onClick={() => onUpdate({ status: s as ProjectStatus })}>
-            <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[s].dotColor)} />
+            <ProjectStatusDot status={s} />
             <span>{statusLabels[s]}</span>
             {s === project.status && <Check className="ml-auto h-3.5 w-3.5" />}
           </DropdownMenuItem>

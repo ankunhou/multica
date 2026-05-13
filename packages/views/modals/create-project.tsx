@@ -56,7 +56,7 @@ import {
   useProjectStatusLabels,
   useProjectPriorityLabels,
 } from "../projects/components/labels";
-import { PROJECT_STATUS_VISUALS } from "../projects/components/visuals";
+import { ProjectStatusDot } from "../projects/components/project-status-badge";
 
 function PillButton({
   children,
@@ -317,7 +317,7 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
             <DropdownMenuTrigger
               render={
                 <PillButton>
-                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[status].dotColor)} />
+                  <ProjectStatusDot status={status} />
                   <span>{projectStatusLabels[status]}</span>
                 </PillButton>
               }
@@ -325,7 +325,7 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
             <DropdownMenuContent align="start" className="w-44">
               {PROJECT_STATUS_ORDER.map((s) => (
                 <DropdownMenuItem key={s} onClick={() => updateStatus(s)}>
-                  <span className={cn("size-2 rounded-full", PROJECT_STATUS_VISUALS[s].dotColor)} />
+                  <ProjectStatusDot status={s} />
                   <span>{projectStatusLabels[s]}</span>
                 </DropdownMenuItem>
               ))}
