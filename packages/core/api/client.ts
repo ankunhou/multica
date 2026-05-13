@@ -11,6 +11,8 @@ import type {
   ListIssuesParams,
   Agent,
   CreateAgentRequest,
+  GenerateAgentDraftRequest,
+  GeneratedAgentDraft,
   UpdateAgentRequest,
   AgentTask,
   AgentActivityBucket,
@@ -95,8 +97,10 @@ import {
   ChildIssuesResponseSchema,
   CommentsListSchema,
   EMPTY_ATTACHMENT,
+  EMPTY_GENERATED_AGENT_DRAFT,
   EMPTY_LIST_ISSUES_RESPONSE,
   EMPTY_TIMELINE_ENTRIES,
+  GeneratedAgentDraftSchema,
   ListIssuesResponseSchema,
   SubscribersListSchema,
   TimelineEntriesSchema,
@@ -647,6 +651,16 @@ export class ApiClient {
     return this.fetch("/api/agents", {
       method: "POST",
       body: JSON.stringify(data),
+    });
+  }
+
+  async generateAgentDraft(data: GenerateAgentDraftRequest): Promise<GeneratedAgentDraft> {
+    const raw = await this.fetch<unknown>("/api/agents/generate", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+    return parseWithFallback(raw, GeneratedAgentDraftSchema, EMPTY_GENERATED_AGENT_DRAFT, {
+      endpoint: "POST /api/agents/generate",
     });
   }
 

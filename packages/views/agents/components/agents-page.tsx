@@ -541,7 +541,6 @@ export function AgentsPage() {
       )}
       {showQuickCreate && (
         <QuickCreateAgentDialog
-          agents={agents}
           runtimes={runtimes}
           runtimesLoading={runtimesLoading}
           currentUserId={currentUser?.id ?? null}

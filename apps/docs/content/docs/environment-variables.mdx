@@ -33,6 +33,18 @@ These are the core variables you must think about before deploying — some have
 
 **When unset**, the values above are used — **not** pgx's built-in 4/NumCPU defaults, which previously caused pool exhaustion in production.
 
+## Agent generation
+
+The Agents page can turn a one-sentence brief into a full agent config by calling an OpenAI-compatible chat completions API from the server.
+
+| Variable | Default | Description |
+|---|---|---|
+| `OPENAI_API_KEY` | empty | Enables one-sentence agent generation. When unset, the API returns an explicit configuration error |
+| `OPENAI_AGENT_GENERATION_MODEL` | `gpt-5-mini` | Model used for generating agent name, description, and instructions |
+| `OPENAI_AGENT_GENERATION_BASE_URL` | `https://api.openai.com/v1` | Optional OpenAI-compatible base URL, without the `/chat/completions` suffix |
+
+`OPENAI_MODEL` and `OPENAI_BASE_URL` are accepted as fallbacks when the agent-generation-specific variables are unset.
+
 ## Email configuration
 
 Multica uses [Resend](https://resend.com/) to send verification codes and invite emails.

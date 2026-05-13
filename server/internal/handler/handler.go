@@ -75,6 +75,7 @@ type Handler struct {
 	LocalSkillImportStore LocalSkillImportStore
 	LivenessStore         LivenessStore
 	HeartbeatScheduler    HeartbeatScheduler
+	AgentDraftGenerator   AgentDraftGenerator
 	Storage               storage.Storage
 	CFSigner              *auth.CloudFrontSigner
 	Analytics             analytics.Client
@@ -116,6 +117,7 @@ func New(queries *db.Queries, txStarter txStarter, hub *realtime.Hub, bus *event
 		LocalSkillImportStore: NewInMemoryLocalSkillImportStore(),
 		LivenessStore:         NewNoopLivenessStore(),
 		HeartbeatScheduler:    NewPassthroughHeartbeatScheduler(queries),
+		AgentDraftGenerator:   NewOpenAIAgentDraftGeneratorFromEnv(),
 		Storage:               store,
 		CFSigner:              cfSigner,
 		Analytics:             analyticsClient,

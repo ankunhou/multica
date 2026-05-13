@@ -1,5 +1,10 @@
 import { z } from "zod";
-import type { Attachment, ListIssuesResponse, TimelineEntry } from "../types";
+import type {
+  Attachment,
+  GeneratedAgentDraft,
+  ListIssuesResponse,
+  TimelineEntry,
+} from "../types";
 
 // ---------------------------------------------------------------------------
 // Schemas for the highest-risk API endpoints — those whose responses drive
@@ -169,3 +174,15 @@ export const SubscribersListSchema = z.array(SubscriberSchema);
 export const ChildIssuesResponseSchema = z.object({
   issues: z.array(IssueSchema).default([]),
 }).loose();
+
+export const GeneratedAgentDraftSchema = z.object({
+  name: z.string(),
+  description: z.string(),
+  instructions: z.string(),
+}).loose();
+
+export const EMPTY_GENERATED_AGENT_DRAFT: GeneratedAgentDraft = {
+  name: "",
+  description: "",
+  instructions: "",
+};

@@ -4,7 +4,7 @@
     "tagline": "AI teammates that pick up issues, comment, and update status.",
     "learn_more": "Learn more →",
     "new_agent": "New agent",
-    "quick_create_agent": "Quick create",
+    "quick_create_agent": "Generate",
     "search_placeholder": "Search agents…",
     "view_list": "List view",
     "view_grid": "Card view",
@@ -233,16 +233,16 @@
     "create_failed_toast": "Failed to create agent"
   },
   "quick_create_dialog": {
-    "title": "Create Agent",
+    "title": "Generate Agent",
     "prompt_label": "One-sentence brief",
     "prompt_placeholder": "Review frontend PRs with a focus on accessibility and state management",
-    "default_name": "New Agent",
     "runtime_loading": "Loading runtimes...",
     "runtime_selected": "Runtime: {{name}}",
     "runtime_none": "No runtime available",
-    "create": "Create",
-    "creating": "Creating...",
+    "create": "Generate and create",
+    "creating": "Generating...",
     "cancel": "Cancel",
+    "generate_failed_toast": "Failed to generate agent",
     "create_failed_toast": "Failed to create agent"
   },
   "tab_body": {

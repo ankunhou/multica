@@ -11,6 +11,8 @@ export type {
   AgentRuntime,
   RuntimeDevice,
   CreateAgentRequest,
+  GenerateAgentDraftRequest,
+  GeneratedAgentDraft,
   UpdateAgentRequest,
   Skill,
   SkillSummary,

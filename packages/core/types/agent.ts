@@ -168,6 +168,16 @@ export interface CreateAgentRequest {
   template?: string;
 }
 
+export interface GenerateAgentDraftRequest {
+  prompt: string;
+}
+
+export interface GeneratedAgentDraft {
+  name: string;
+  description: string;
+  instructions: string;
+}
+
 export interface UpdateAgentRequest {
   name?: string;
   description?: string;

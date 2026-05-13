@@ -4,7 +4,7 @@
     "tagline": "能领取议题、留下评论、推进状态的 AI 队友。",
     "learn_more": "了解更多 →",
     "new_agent": "新建智能体",
-    "quick_create_agent": "一句话创建",
+    "quick_create_agent": "一句话生成",
     "search_placeholder": "搜索智能体...",
     "view_list": "列表视图",
     "view_grid": "卡片视图",
@@ -229,16 +229,16 @@
     "create_failed_toast": "创建智能体失败"
   },
   "quick_create_dialog": {
-    "title": "创建智能体",
+    "title": "一句话生成智能体",
     "prompt_label": "一句话描述",
     "prompt_placeholder": "帮我审查前端 PR，重点关注可访问性和状态管理",
-    "default_name": "新智能体",
     "runtime_loading": "正在加载运行时...",
     "runtime_selected": "运行时：{{name}}",
     "runtime_none": "暂无可用运行时",
-    "create": "创建",
-    "creating": "创建中...",
+    "create": "生成并创建",
+    "creating": "生成中...",
     "cancel": "取消",
+    "generate_failed_toast": "生成智能体失败",
     "create_failed_toast": "创建智能体失败"
   },
   "tab_body": {

@@ -2,12 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
-import type {
-  Agent,
-  CreateAgentRequest,
-  RuntimeDevice,
-} from "@multica/core/types";
-import { AGENT_DESCRIPTION_MAX_LENGTH } from "@multica/core/agents";
+import type { CreateAgentRequest, RuntimeDevice } from "@multica/core/types";
+import { api } from "@multica/core/api";
 import { isImeComposing } from "@multica/core/utils";
 import {
   Dialog,
@@ -22,49 +18,10 @@ import { toast } from "sonner";
 import { CharCounter } from "./char-counter";
 import { useT } from "../../i18n";
 
-const QUICK_AGENT_NAME_MAX = 32;
+const QUICK_AGENT_PROMPT_MAX = 1000;
 
 function normalizePrompt(value: string): string {
   return value.replace(/\s+/g, " ").trim();
-}
-
-function truncateGraphemes(value: string, max: number): string {
-  const chars = [...value];
-  if (chars.length <= max) return value;
-  return `${chars.slice(0, max - 1).join("").trim()}…`;
-}
-
-export function deriveQuickAgentName(prompt: string, fallback: string): string {
-  const normalized = normalizePrompt(prompt);
-  if (!normalized) return fallback;
-
-  const firstSentence = normalized.split(/[。.!?！？\n]/u)[0]?.trim() ?? "";
-  const candidate = firstSentence
-    .replace(/^(please\s+)?(create|make|build)\s+(an?\s+)?/i, "")
-    .replace(/^(请|帮我|帮忙|创建|新建|做一个|做个)\s*/u, "")
-    .replace(/\s*(的)?(智能体|agent)$/iu, "")
-    .trim();
-
-  return truncateGraphemes(
-    candidate || firstSentence || fallback,
-    QUICK_AGENT_NAME_MAX,
-  );
-}
-
-export function makeUniqueQuickAgentName(
-  baseName: string,
-  agents: Agent[],
-): string {
-  const existing = new Set(
-    agents.map((agent) => agent.name.trim().toLowerCase()),
-  );
-  if (!existing.has(baseName.trim().toLowerCase())) return baseName;
-
-  for (let i = 2; i < 100; i += 1) {
-    const candidate = `${baseName} ${i}`;
-    if (!existing.has(candidate.toLowerCase())) return candidate;
-  }
-  return `${baseName} ${Date.now()}`;
 }
 
 function canUseRuntime(
@@ -93,26 +50,13 @@ function pickRuntime(
     })[0] ?? null;
 }
 
-function buildInstructions(prompt: string): string {
-  return [
-    "You are an AI teammate in this Multica workspace.",
-    "",
-    "Role brief:",
-    prompt,
-    "",
-    "Use this brief as your primary operating guidance. Keep work focused, ask for clarification when the task is ambiguous, and report results concisely.",
-  ].join("\n");
-}
-
 export function QuickCreateAgentDialog({
-  agents,
   runtimes,
   runtimesLoading,
   currentUserId,
   onClose,
   onCreate,
 }: {
-  agents: Agent[];
   runtimes: RuntimeDevice[];
   runtimesLoading?: boolean;
   currentUserId: string | null;
@@ -128,23 +72,26 @@ export function QuickCreateAgentDialog({
   );
   const normalizedPrompt = normalizePrompt(prompt);
   const promptLength = [...prompt].length;
-  const promptOverLimit = promptLength > AGENT_DESCRIPTION_MAX_LENGTH;
+  const promptOverLimit = promptLength > QUICK_AGENT_PROMPT_MAX;
 
   const handleSubmit = async () => {
     if (!normalizedPrompt || promptOverLimit || !selectedRuntime) return;
 
-    const baseName = deriveQuickAgentName(
-      normalizedPrompt,
-      t(($) => $.quick_create_dialog.default_name),
-    );
-    const name = makeUniqueQuickAgentName(baseName, agents);
-
     setCreating(true);
     try {
+      const draft = await api.generateAgentDraft({ prompt: normalizedPrompt });
+      if (
+        !draft.name.trim() ||
+        !draft.description.trim() ||
+        !draft.instructions.trim()
+      ) {
+        throw new Error(t(($) => $.quick_create_dialog.generate_failed_toast));
+      }
+
       await onCreate({
-        name,
-        description: normalizedPrompt,
-        instructions: buildInstructions(normalizedPrompt),
+        name: draft.name.trim(),
+        description: draft.description.trim(),
+        instructions: draft.instructions.trim(),
         runtime_id: selectedRuntime.id,
         visibility: "private",
         template: "quick_create",
@@ -183,7 +130,7 @@ export function QuickCreateAgentDialog({
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
               placeholder={t(($) => $.quick_create_dialog.prompt_placeholder)}
-              maxLength={AGENT_DESCRIPTION_MAX_LENGTH + 1}
+              maxLength={QUICK_AGENT_PROMPT_MAX + 1}
               className="min-h-28 resize-none"
               onKeyDown={(event) => {
                 if (isImeComposing(event)) return;
@@ -205,7 +152,7 @@ export function QuickCreateAgentDialog({
               </p>
               <CharCounter
                 length={promptLength}
-                max={AGENT_DESCRIPTION_MAX_LENGTH}
+                max={QUICK_AGENT_PROMPT_MAX}
               />
             </div>
           </div>
