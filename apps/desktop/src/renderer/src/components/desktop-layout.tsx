@@ -29,7 +29,7 @@ function SidebarTopBar() {
 
   return (
     <div
-      className="h-12 shrink-0 flex items-center justify-end px-2"
+      className="h-13 shrink-0 flex items-center justify-end px-3"
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       <div
@@ -40,7 +40,7 @@ function SidebarTopBar() {
           onClick={goBack}
           disabled={!canGoBack}
           aria-label={t(($) => $.nav.back)}
-          className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
         >
           <ChevronLeft className="size-4" />
         </button>
@@ -48,7 +48,7 @@ function SidebarTopBar() {
           onClick={goForward}
           disabled={!canGoForward}
           aria-label={t(($) => $.nav.forward)}
-          className="flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-accent hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+          className="flex size-8 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
         >
           <ChevronRight className="size-4" />
         </button>
@@ -70,7 +70,7 @@ function MainTopBar() {
   return (
     <header
       className={cn(
-        "h-12 shrink-0 flex items-center gap-2",
+        "h-13 shrink-0 flex items-center gap-2 px-1",
         sidebarHidden && "pl-20",
       )}
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
@@ -154,14 +154,14 @@ export function DesktopShell() {
           triggered by IndexRedirect, not a route. */}
       <WorkspaceSlugProvider slug={slug}>
         <DesktopInboxBridge />
-        <div className="flex h-screen">
+        <div className="flex h-screen bg-sidebar">
           <SidebarProvider className="flex-1">
             {slug && <AppSidebar topSlot={<SidebarTopBar />} searchSlot={<SearchTrigger />} />}
             {/* Right side: header + content container */}
             <div className="flex flex-1 min-w-0 flex-col">
               <MainTopBar />
               {/* Content area with inset styling — relative so ChatWindow/ChatFab are constrained here */}
-              <div className="relative flex flex-1 min-h-0 flex-col overflow-hidden mr-2 mb-2 ml-0.5 rounded-xl shadow-sm bg-background">
+              <div className="relative flex flex-1 min-h-0 flex-col overflow-hidden mr-3 mb-3 ml-0 rounded-2xl border border-border/80 bg-background shadow-sm">
                 <TabContent />
                 {slug && <ChatWindow />}
                 {slug && <ChatFab />}

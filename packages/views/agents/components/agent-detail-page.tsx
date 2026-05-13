@@ -245,7 +245,7 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
         </div>
       )}
 
-      <div className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto p-3 md:grid md:grid-cols-[320px_minmax(0,1fr)] md:gap-4 md:overflow-hidden md:p-6">
+      <div className="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto p-4 md:grid md:grid-cols-[320px_minmax(0,1fr)] md:gap-4 md:overflow-hidden md:p-6">
         <AgentDetailInspector
           agent={agent}
           runtime={runtime}
@@ -332,11 +332,11 @@ function DetailHeader({
   // up here was redundant chrome.
 
   return (
-    <PageHeader className="justify-between gap-3 px-5">
+    <PageHeader className="justify-between gap-3 border-b-0 px-6 py-5">
       <div className="flex min-w-0 items-center gap-2">
         <AppLink
           href={backHref}
-          className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="inline-flex h-8 items-center gap-1 rounded-xl px-2 text-xs text-muted-foreground transition-colors hover:bg-accent/35 hover:text-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {t(($) => $.detail.back_to_agents)}
@@ -344,10 +344,7 @@ function DetailHeader({
         <span className="text-muted-foreground/40">/</span>
         <h1 className="truncate text-sm font-medium">{agent.name}</h1>
         {!isArchived && presence && (
-          <AgentAvailabilityBadge
-            detail={presence}
-            className="rounded-md border px-1.5 py-0.5"
-          />
+          <AgentAvailabilityBadge detail={presence} className="rounded-xl px-2 py-0.5" />
         )}
       </div>
 
@@ -379,7 +376,7 @@ function BackHeader({ paths, title }: { paths: string; title: string }) {
       <div className="flex items-center gap-2">
         <AppLink
           href={paths}
-          className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          className="inline-flex h-8 items-center gap-1 rounded-xl px-2 text-xs text-muted-foreground transition-colors hover:bg-accent/35 hover:text-foreground"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {title}
@@ -395,8 +392,8 @@ function DetailLoadingSkeleton() {
       <PageHeader className="px-5">
         <Skeleton className="h-5 w-48" />
       </PageHeader>
-      <div className="flex flex-1 min-h-0 flex-col gap-3 overflow-y-auto p-3 md:grid md:grid-cols-[320px_minmax(0,1fr)] md:gap-4 md:overflow-hidden md:p-6">
-        <div className="flex flex-col gap-4 rounded-lg border p-5">
+      <div className="flex flex-1 min-h-0 flex-col gap-4 overflow-y-auto p-4 md:grid md:grid-cols-[320px_minmax(0,1fr)] md:gap-4 md:overflow-hidden md:p-6">
+        <div className="flex flex-col gap-4 rounded-3xl bg-card p-5 shadow-sm ring-1 ring-border/45">
           <Skeleton className="h-14 w-14 rounded-lg" />
           <Skeleton className="h-5 w-40" />
           <Skeleton className="h-3 w-full" />
@@ -406,7 +403,7 @@ function DetailLoadingSkeleton() {
             <Skeleton className="h-3 w-1/2" />
           </div>
         </div>
-        <div className="flex flex-col gap-4 rounded-lg border p-6">
+        <div className="flex flex-col gap-4 rounded-3xl bg-card p-6 shadow-sm ring-1 ring-border/45">
           <Skeleton className="h-6 w-64" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-5/6" />

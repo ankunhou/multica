@@ -369,12 +369,12 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
       <DialogContent
         showCloseButton={false}
         className={cn(
-          "p-0 gap-0 flex flex-col overflow-hidden",
+          "p-0 gap-0 flex flex-col overflow-hidden rounded-3xl bg-popover/95 shadow-2xl backdrop-blur-sm",
           "!transition-all !duration-300 !ease-out !-translate-y-1/2",
           "!w-[calc(100vw-2rem)]",
           isExpanded
             ? "!max-w-6xl !h-[calc(100vh-4rem)]"
-            : "!max-w-5xl !h-[min(720px,calc(100vh-4rem))]",
+            : "!max-w-5xl !h-[min(620px,calc(100vh-4rem))]",
         )}
       >
         <DialogTitle className="sr-only">
@@ -382,10 +382,10 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
         </DialogTitle>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0 border-b">
+        <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
           <div className="flex items-center gap-2 text-xs">
             <div className="flex items-center gap-1.5">
-              <span className="inline-flex size-5 items-center justify-center rounded-md bg-primary/15 text-primary">
+              <span className="inline-flex size-6 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Rocket className="size-3" />
               </span>
               <span className="font-medium text-foreground">
@@ -403,13 +403,13 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               </>
             )}
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1.5">
             <Tooltip>
               <TooltipTrigger
                 render={
                   <button
                     onClick={() => setIsExpanded((v) => !v)}
-                    className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                    className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                   >
                     {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
                   </button>
@@ -424,7 +424,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                 render={
                   <button
                     onClick={() => onOpenChange(false)}
-                    className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                    className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                   >
                     <XIcon className="size-4" />
                   </button>
@@ -441,19 +441,19 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden"
         >
           {/* Left: Runbook */}
-          <div className="flex-1 min-h-0 flex flex-col border-b lg:border-b-0 lg:border-r">
-            <div className="px-6 pt-5 pb-3 shrink-0">
+          <div className="flex-1 min-h-0 flex flex-col border-b border-border/70 lg:border-b-0 lg:border-r">
+            <div className="px-8 pt-4 pb-3 shrink-0">
               <TitleEditor
                 autoFocus={isCreate}
                 defaultValue={initial.title ?? ""}
                 placeholder={t(($) => $.dialog.title_placeholder)}
-                className="text-2xl font-semibold tracking-tight"
+                className="text-2xl font-semibold tracking-tight md:text-3xl"
                 onChange={setTitle}
                 onSubmit={handleSubmit}
               />
             </div>
 
-            <div className="px-6 pb-2 shrink-0 flex items-baseline gap-2">
+            <div className="px-8 pb-2 shrink-0 flex items-baseline gap-2">
               <span className="text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
                 {t(($) => $.dialog.runbook_label)}
               </span>
@@ -462,8 +462,8 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               </span>
             </div>
 
-            <div className="flex-1 min-h-0 px-6 pb-6 flex flex-col">
-              <div className="h-full overflow-y-auto rounded-lg border border-border bg-background transition-colors focus-within:border-input px-4 py-3">
+            <div className="flex-1 min-h-0 px-7 pb-7 flex flex-col">
+              <div className="h-full overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02] transition-colors focus-within:border-input">
                 <ContentEditor
                   defaultValue={initial.description ?? ""}
                   placeholder={t(($) => $.dialog.description_placeholder)}
@@ -476,7 +476,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           </div>
 
           {/* Right: Configuration */}
-          <aside className="w-full lg:w-[340px] shrink-0 overflow-y-auto px-5 py-5 space-y-5 bg-muted/30">
+          <aside className="w-full lg:w-[340px] shrink-0 overflow-y-auto px-6 py-5 space-y-5 bg-muted/20">
             <AgentSection
               selectedId={assigneeId}
               onChange={setAssigneeId}
@@ -500,7 +500,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between gap-3 px-5 py-3 border-t shrink-0 bg-background">
+        <div className="flex items-center justify-between gap-3 px-6 py-4 border-t border-border/70 shrink-0 bg-background/80">
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
             <Zap className="size-3.5 text-amber-500 shrink-0" />
             <span className="truncate">{t(($) => $.dialog.auto_run_hint)}</span>

@@ -303,7 +303,7 @@ export function ManualCreatePanel({
             <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_manual)}</DialogTitle>
 
             {/* Header */}
-            <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
+            <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
               <div className="flex items-center gap-1.5 text-xs">
                 <span className="text-muted-foreground">{workspaceName}</span>
                 <ChevronRight className="size-3 text-muted-foreground/50" />
@@ -315,7 +315,7 @@ export function ManualCreatePanel({
                     render={
                       <button
                         onClick={() => setIsExpanded(!isExpanded)}
-                        className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                        className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                       >
                         {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
                       </button>
@@ -332,7 +332,7 @@ export function ManualCreatePanel({
                     render={
                       <button
                         onClick={onClose}
-                        className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                        className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                       >
                         <XIcon className="size-4" />
                       </button>
@@ -344,20 +344,20 @@ export function ManualCreatePanel({
             </div>
 
             {/* Title */}
-            <div className="px-5 pb-2 shrink-0">
+            <div className="px-7 pb-3 shrink-0">
               <TitleEditor
                 key={formResetKey}
                 autoFocus
                 defaultValue={draft.title}
                 placeholder={t(($) => $.create_issue.title_placeholder)}
-                className="text-lg font-semibold"
+                className="text-2xl font-semibold tracking-tight"
                 onChange={(v) => updateTitle(v)}
                 onSubmit={handleSubmit}
               />
             </div>
 
             {/* Description — takes remaining space */}
-            <div {...descDropZoneProps} className="relative flex flex-1 min-h-0 overflow-y-auto px-5">
+            <div {...descDropZoneProps} className="relative mx-7 flex flex-1 min-h-0 overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]">
               <ContentEditor
                 ref={descEditorRef}
                 defaultValue={draft.description}
@@ -370,7 +370,7 @@ export function ManualCreatePanel({
             </div>
 
             {/* Property toolbar */}
-            <div className="flex items-center gap-1.5 px-4 py-2 shrink-0 flex-wrap">
+            <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
               {/* Status */}
               <StatusPicker
                 status={status}
@@ -539,7 +539,7 @@ export function ManualCreatePanel({
             />
 
             {/* Footer */}
-            <div className="flex flex-col gap-2 border-t px-4 py-3 shrink-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex min-h-7 items-center gap-2">
                 <FileUploadButton
                   onSelect={(file) => descEditorRef.current?.uploadFile(file)}
@@ -550,7 +550,7 @@ export function ManualCreatePanel({
                   type="button"
                   onClick={switchToAgent}
                   title={t(($) => $.create_issue.switch_to_agent_tooltip)}
-                  className="border-beam group flex shrink-0 items-center gap-1.5 text-xs px-2 py-1 rounded-sm text-muted-foreground bg-brand/5 hover:bg-brand/10 hover:text-foreground transition-colors cursor-pointer"
+                  className="border-beam group flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground bg-brand/5 hover:bg-brand/10 hover:text-foreground transition-colors cursor-pointer"
                 >
                   <ArrowLeftRight className="size-3.5 text-brand/80 transition-transform duration-300 group-hover:rotate-180" />
                   {t(($) => $.create_issue.switch_to_agent)}
@@ -582,15 +582,15 @@ export function manualDialogContentClass(
   backlogHintIssueId: string | null,
 ) {
   return cn(
-    "p-0 gap-0 flex flex-col overflow-hidden",
+    "p-0 gap-0 flex flex-col overflow-hidden rounded-3xl bg-popover/95 shadow-2xl backdrop-blur-sm",
     "!top-1/2 !left-1/2 !-translate-x-1/2",
     backlogHintIssueId
       ? "!max-w-[480px] !w-[calc(100vw-2rem)] !h-auto !-translate-y-1/2 !transition-none !duration-0"
       : "!transition-all !duration-300 !ease-out",
     !backlogHintIssueId && isExpanded
-      ? "!max-w-4xl !w-full !h-5/6 !-translate-y-1/2"
+      ? "!max-w-5xl !w-[calc(100vw-2rem)] !h-[calc(100vh-4rem)] !-translate-y-1/2"
       : !backlogHintIssueId
-        ? "!max-w-2xl !w-full !h-96 !-translate-y-1/2"
+        ? "!max-w-4xl !w-[calc(100vw-2rem)] !h-[min(560px,calc(100vh-4rem))] !-translate-y-1/2"
         : "",
   );
 }

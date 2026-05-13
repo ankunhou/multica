@@ -121,17 +121,17 @@ export function AgentOverviewPane({
     // page itself, so this pane has no inherited height. `min-h-[60vh]` keeps
     // the tab content area usably tall when content is short; `md:` restores
     // the grid-driven full-height behavior on tablet and up.
-    <div className="flex min-h-[60vh] flex-col overflow-hidden rounded-lg border bg-background md:h-full md:min-h-0">
-      <div className="flex shrink-0 items-center gap-0 overflow-x-auto border-b px-2 md:px-4">
+    <div className="flex min-h-[60vh] flex-col overflow-hidden rounded-3xl bg-card shadow-sm ring-1 ring-border/45 md:h-full md:min-h-0">
+      <div className="flex shrink-0 items-center gap-1 overflow-x-auto px-4 pt-4">
         {detailTabs.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => requestTabChange(tab.id)}
-            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 px-3 py-2.5 text-xs font-medium transition-colors ${
+            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
               activeTab === tab.id
-                ? "border-foreground text-foreground"
-                : "border-transparent text-muted-foreground hover:text-foreground"
+                ? "bg-muted text-foreground"
+                : "text-muted-foreground hover:bg-muted/45 hover:text-foreground"
             }`}
           >
             <tab.icon className="h-3.5 w-3.5" />
@@ -216,6 +216,6 @@ export function AgentOverviewPane({
 // list) still scrolls via the parent's overflow-y-auto.
 function TabContent({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mx-auto flex h-full max-w-2xl flex-col p-4 md:p-6">{children}</div>
+    <div className="mx-auto flex h-full max-w-2xl flex-col p-5 md:p-7">{children}</div>
   );
 }

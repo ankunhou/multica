@@ -39,8 +39,8 @@ export function PropRow({
 }) {
   return (
     <div
-      className={`-mx-2 col-span-2 grid min-h-8 grid-cols-subgrid items-center rounded-md px-2 ${
-        interactive ? "transition-colors hover:bg-accent/50" : ""
+      className={`-mx-1 col-span-2 grid min-h-8 grid-cols-subgrid items-center rounded-xl px-2 ${
+        interactive ? "transition-colors hover:bg-accent/30" : ""
       }`}
     >
       <span className="text-xs text-muted-foreground">{label}</span>

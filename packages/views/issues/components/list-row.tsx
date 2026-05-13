@@ -51,8 +51,8 @@ export const ListRow = memo(function ListRow({
   return (
     <IssueActionsContextMenu issue={issue}>
       <div
-        className={`group/row flex h-9 items-center gap-2 px-4 text-sm transition-colors hover:not-data-[popup-open]:bg-accent/60 data-[popup-open]:bg-accent ${
-          selected ? "bg-accent/30" : ""
+        className={`group/row flex h-10 items-center gap-2 rounded-xl px-4 text-sm transition-colors hover:not-data-[popup-open]:bg-accent/35 data-[popup-open]:bg-accent/45 ${
+          selected ? "bg-accent/25" : ""
         }`}
       >
         <div className="relative flex shrink-0 items-center justify-center w-4 h-4">
@@ -79,7 +79,7 @@ export const ListRow = memo(function ListRow({
           <span className="flex min-w-0 flex-1 items-center gap-1.5">
             <span className="truncate">{issue.title}</span>
             {showChildProgress && (
-              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted/60 px-1.5 py-0.5">
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-muted/45 px-1.5 py-0.5">
                 <ProgressRing done={childProgress!.done} total={childProgress!.total} size={14} />
                 <span className="text-[11px] text-muted-foreground tabular-nums font-medium">
                   {childProgress!.done}/{childProgress!.total}

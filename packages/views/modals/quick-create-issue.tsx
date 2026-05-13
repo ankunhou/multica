@@ -306,7 +306,7 @@ export function AgentCreatePanel({
         <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_agent)}</DialogTitle>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
+        <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
           <div className="flex items-center gap-1.5 text-xs">
             <span className="text-muted-foreground">{workspaceName}</span>
             <ChevronRight className="size-3 text-muted-foreground/50" />
@@ -322,7 +322,7 @@ export function AgentCreatePanel({
               onClick={() => setIsExpanded(!isExpanded)}
               title={isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)}
               aria-label={isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)}
-              className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+              className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
             >
               {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
             </button>
@@ -331,7 +331,7 @@ export function AgentCreatePanel({
               onClick={onClose}
               title={t(($) => $.common.close)}
               aria-label={t(($) => $.common.close)}
-              className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+              className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
             >
               <XIcon className="size-4" />
             </button>
@@ -339,14 +339,14 @@ export function AgentCreatePanel({
         </div>
 
         {/* Agent picker */}
-        <div className="px-5 pt-1 pb-2 shrink-0">
+        <div className="px-7 pt-1 pb-3 shrink-0">
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
                 <button
                   type="button"
                   aria-label={t(($) => $.create_issue.agent.select_agent_aria)}
-                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-sm px-1.5 py-1 -ml-1.5 hover:bg-accent/60"
+                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-lg px-1.5 py-1 -ml-1.5 hover:bg-accent/60"
                 >
                   <span>{t(($) => $.create_issue.agent.created_by)}</span>
                   {selectedAgent ? (
@@ -396,7 +396,7 @@ export function AgentCreatePanel({
         </div>
 
         {selectedAgent && versionBlocked && (
-          <div className="mx-5 mb-2 shrink-0 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
+          <div className="mx-7 mb-3 shrink-0 rounded-xl border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
             {versionCheck.state === "missing"
               ? t(($) => $.create_issue.agent.version_missing, { min: versionCheck.min })
               : t(($) => $.create_issue.agent.version_below, {
@@ -415,7 +415,7 @@ export function AgentCreatePanel({
             editor unbounded and pushed the modal past the viewport. */}
         <div
           {...dropZoneProps}
-          className="relative px-5 pb-3 flex flex-1 min-h-[140px] overflow-y-auto"
+          className="relative mx-7 flex flex-1 min-h-[180px] overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]"
         >
           <ContentEditor
             ref={editorRef}
@@ -433,7 +433,7 @@ export function AgentCreatePanel({
         </div>
 
         {error && (
-          <div className="px-5 pb-2 text-xs text-destructive">{error}</div>
+          <div className="px-7 pb-2 text-xs text-destructive">{error}</div>
         )}
 
         {/* Property toolbar — mirrors the manual panel's pill row so the
@@ -442,7 +442,7 @@ export function AgentCreatePanel({
             inferred from the prompt), so it's a single pill. The pick is
             persisted per-workspace via useQuickCreateStore.lastProjectId so
             users targeting one project skip retyping "in project X". */}
-        <div className="flex items-center gap-1.5 px-4 pb-2 shrink-0 flex-wrap">
+        <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
           <ProjectPicker
             projectId={projectId}
             onUpdate={(u) => setProjectId(u.project_id ?? null)}
@@ -452,7 +452,7 @@ export function AgentCreatePanel({
         </div>
 
         {/* Footer */}
-        <div className="flex flex-col gap-2 border-t px-4 py-3 shrink-0 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-h-7 items-center gap-2">
             <FileUploadButton
               size="sm"
@@ -470,7 +470,7 @@ export function AgentCreatePanel({
               type="button"
               onClick={switchToManual}
               title={t(($) => $.create_issue.switch_to_manual_tooltip)}
-              className="flex shrink-0 items-center gap-1.5 text-xs px-2 py-1 rounded-sm text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
+              className="flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
             >
               <ArrowLeftRight className="size-3.5" />
               {t(($) => $.create_issue.switch_to_manual)}

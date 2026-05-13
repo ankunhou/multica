@@ -102,7 +102,7 @@ function AutopilotRow({ autopilot }: { autopilot: Autopilot }) {
   const StatusIcon = visual.icon;
 
   return (
-    <div className="group/row flex flex-col gap-2 border-b px-4 py-3 text-sm transition-colors hover:bg-accent/40 sm:h-11 sm:flex-row sm:items-center sm:gap-2 sm:border-b-0 sm:px-5 sm:py-0">
+    <div className="group/row flex flex-col gap-2 border-b border-border/70 px-4 py-3 text-sm transition-colors hover:bg-accent/35 sm:h-12 sm:flex-row sm:items-center sm:gap-2 sm:border-b-0 sm:px-5 sm:py-0">
       <AppLink
         href={wsPaths.autopilotDetail(autopilot.id)}
         className="flex min-w-0 items-center gap-2 sm:flex-1"
@@ -155,25 +155,27 @@ export function AutopilotsPage() {
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
-      <PageHeader className="justify-between px-5">
-        <div className="flex items-center gap-2">
-          <Zap className="h-4 w-4 text-muted-foreground" />
-          <h1 className="text-sm font-medium">{t(($) => $.page.title)}</h1>
-          {!isLoading && autopilots.length > 0 && (
-            <span className="text-xs text-muted-foreground tabular-nums">{autopilots.length}</span>
-          )}
+      <PageHeader className="h-auto items-start justify-between border-b-0 px-6 py-8 md:px-12 md:py-12">
+        <div className="min-w-0">
+          <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+            <Zap className="h-4 w-4" />
+            {!isLoading && autopilots.length > 0 && (
+              <span className="tabular-nums">{autopilots.length}</span>
+            )}
+          </div>
+          <h1 className="text-3xl font-semibold tracking-tight md:text-4xl">{t(($) => $.page.title)}</h1>
         </div>
-        <Button size="sm" variant="outline" onClick={() => openCreate()}>
+        <Button size="lg" onClick={() => openCreate()} className="rounded-2xl px-4">
           <Plus className="h-3.5 w-3.5 mr-1" />
           {t(($) => $.page.new_autopilot)}
         </Button>
       </PageHeader>
 
       {/* Table */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto px-5 pb-8 md:px-12">
         {isLoading ? (
-          <>
-            <div className="sticky top-0 z-[1] hidden h-8 items-center gap-2 border-b bg-muted/30 px-5 sm:flex">
+          <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-card shadow-sm">
+            <div className="sticky top-0 z-[1] hidden h-10 items-center gap-2 border-b bg-muted/25 px-5 sm:flex">
               <span className="shrink-0 w-4" />
               <Skeleton className="h-3 w-12 flex-1 max-w-[48px]" />
               <Skeleton className="h-3 w-12 shrink-0" />
@@ -186,22 +188,22 @@ export function AutopilotsPage() {
                 <Skeleton key={i} className="h-[72px] w-full sm:h-11" />
               ))}
             </div>
-          </>
+          </div>
         ) : autopilots.length === 0 ? (
-          <div className="flex flex-col items-center py-16 px-5">
+          <div className="mx-auto flex max-w-5xl flex-col items-center px-2 py-4 md:py-8">
             <Zap className="h-10 w-10 mb-3 text-muted-foreground opacity-30" />
-            <p className="text-sm text-muted-foreground">{t(($) => $.page.empty.title)}</p>
-            <p className="text-xs text-muted-foreground mt-1 mb-6">
+            <p className="text-base font-medium">{t(($) => $.page.empty.title)}</p>
+            <p className="text-sm text-muted-foreground mt-1 mb-8">
               {t(($) => $.page.empty.hint)}
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full max-w-3xl">
+            <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {TEMPLATES.map((tpl) => {
                 const Icon = tpl.icon;
                 return (
                   <button
                     key={tpl.id}
                     type="button"
-                    className="flex items-start gap-3 rounded-lg border p-3 text-left transition-colors hover:bg-accent/40"
+                    className="flex min-h-36 items-start gap-3 rounded-2xl border bg-card p-4 text-left shadow-sm transition-colors hover:bg-accent/35"
                     onClick={() => openCreate(tpl)}
                   >
                     <Icon className="h-5 w-5 shrink-0 text-muted-foreground mt-0.5" />
@@ -217,15 +219,15 @@ export function AutopilotsPage() {
                 );
               })}
             </div>
-            <Button size="sm" variant="outline" className="mt-4" onClick={() => openCreate()}>
+            <Button size="sm" variant="outline" className="mt-5 rounded-xl" onClick={() => openCreate()}>
               <Plus className="h-3.5 w-3.5 mr-1" />
               {t(($) => $.page.start_blank)}
             </Button>
           </div>
         ) : (
-          <>
+          <div className="mx-auto w-full max-w-5xl overflow-hidden rounded-2xl border bg-card shadow-sm">
             {/* Column headers */}
-            <div className="sticky top-0 z-[1] hidden h-8 items-center gap-2 border-b bg-muted/30 px-5 text-xs font-medium text-muted-foreground sm:flex">
+            <div className="sticky top-0 z-[1] hidden h-10 items-center gap-2 border-b bg-muted/25 px-5 text-xs font-medium text-muted-foreground sm:flex">
               <span className="shrink-0 w-4" />
               <span className="min-w-0 flex-1">{t(($) => $.page.table.name)}</span>
               <span className="w-32 shrink-0">{t(($) => $.page.table.agent)}</span>
@@ -236,7 +238,7 @@ export function AutopilotsPage() {
             {autopilots.map((autopilot) => (
               <AutopilotRow key={autopilot.id} autopilot={autopilot} />
             ))}
-          </>
+          </div>
         )}
       </div>
 

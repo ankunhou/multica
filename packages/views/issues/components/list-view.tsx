@@ -67,10 +67,10 @@ export function ListView({
     : undefined;
 
   return (
-    <div className="flex-1 min-h-0 overflow-y-auto p-2">
+    <div className="flex-1 min-h-0 overflow-y-auto p-3">
       <Accordion.Root
         multiple
-        className="space-y-1"
+        className="space-y-2"
         value={expandedStatuses}
         onValueChange={(value: string[]) => {
           for (const status of visibleStatuses) {
@@ -126,7 +126,7 @@ function StatusAccordionItem({
 
   return (
     <Accordion.Item value={status}>
-      <Accordion.Header className="group/header flex h-10 items-center rounded-lg bg-muted/40 transition-colors hover:bg-accent/30">
+      <Accordion.Header className="group/header flex h-10 items-center rounded-2xl bg-muted/20 transition-colors hover:bg-accent/25">
         <div className="pl-3 flex items-center">
           <input
             type="checkbox"
@@ -170,7 +170,7 @@ function StatusAccordionItem({
           </Tooltip>
         </div>
       </Accordion.Header>
-      <Accordion.Panel className="pt-1">
+      <Accordion.Panel className="pt-1.5">
         {issues.length > 0 ? (
           <>
             {issues.map((issue) => (

@@ -55,8 +55,8 @@ export function BoardColumn({
   );
 
   return (
-    <div className={`flex w-[280px] shrink-0 flex-col rounded-xl ${cfg.columnBg} p-2`}>
-      <div className="mb-2 flex items-center justify-between px-1.5">
+    <div className={`flex w-[280px] shrink-0 flex-col rounded-3xl ${cfg.columnBg} p-3`}>
+      <div className="mb-3 flex items-center justify-between px-1">
         <StatusHeading status={status} count={totalCount ?? issueIds.length} />
 
         {/* Right: add + menu */}
@@ -64,7 +64,7 @@ export function BoardColumn({
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button variant="ghost" size="icon-sm" className="rounded-full text-muted-foreground">
+                <Button variant="ghost" size="icon-sm" className="rounded-xl text-muted-foreground">
                   <MoreHorizontal className="size-3.5" />
                 </Button>
               }
@@ -82,7 +82,7 @@ export function BoardColumn({
                 <Button
                   variant="ghost"
                   size="icon-sm"
-                  className="rounded-full text-muted-foreground"
+                  className="rounded-xl text-muted-foreground"
                   onClick={() =>
                     useModalStore
                       .getState()
@@ -99,8 +99,8 @@ export function BoardColumn({
       </div>
       <div
         ref={setNodeRef}
-        className={`min-h-[200px] flex-1 space-y-2 overflow-y-auto rounded-lg p-1 transition-colors ${
-          isOver ? "bg-accent/60" : ""
+        className={`min-h-[200px] flex-1 space-y-2.5 overflow-y-auto rounded-2xl transition-colors ${
+          isOver ? "bg-background/50 p-1" : "p-0.5"
         }`}
       >
         <SortableContext items={issueIds} strategy={verticalListSortingStrategy}>

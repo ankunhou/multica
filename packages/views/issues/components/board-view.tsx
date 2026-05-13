@@ -283,7 +283,7 @@ export function BoardView({
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex flex-1 min-h-0 gap-4 overflow-x-auto p-4">
+      <div className="flex flex-1 min-h-0 gap-3 overflow-x-auto p-4">
         {visibleStatuses.map((status) => (
           <PaginatedBoardColumn
             key={status}
@@ -390,7 +390,7 @@ function HiddenColumnRow({
   const viewStoreApi = useViewStoreApi();
   const { total } = useLoadMoreByStatus(status, myIssuesOpts);
   return (
-    <div className="flex items-center justify-between rounded-lg px-2.5 py-2 hover:bg-muted/50">
+    <div className="flex items-center justify-between rounded-2xl px-3 py-2 hover:bg-muted/35">
       <div className="flex items-center gap-2">
         <StatusIcon status={status} className="h-3.5 w-3.5" />
         <span className="text-sm">{t(($) => $.status[status])}</span>
@@ -403,7 +403,7 @@ function HiddenColumnRow({
               <Button
                 variant="ghost"
                 size="icon-sm"
-                className="rounded-full text-muted-foreground"
+                className="rounded-xl text-muted-foreground"
               >
                 <MoreHorizontal className="size-3.5" />
               </Button>

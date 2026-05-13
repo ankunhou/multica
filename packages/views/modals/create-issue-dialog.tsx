@@ -55,7 +55,7 @@ export function CreateIssueDialog({
   const className =
     mode === "agent"
       ? cn(
-          "p-0 gap-0 flex flex-col overflow-hidden",
+          "p-0 gap-0 flex flex-col overflow-hidden rounded-3xl bg-popover/95 shadow-2xl backdrop-blur-sm",
           "!top-1/2 !left-1/2 !-translate-x-1/2 !-translate-y-1/2",
           // Smooth size transition when switching modes — the manual mode
           // uses the same easing.
@@ -66,8 +66,8 @@ export function CreateIssueDialog({
           // — pasted screenshots still scroll inside instead of pushing the
           // dialog past the viewport.
           isExpanded
-            ? "!max-w-4xl !w-full !h-5/6"
-            : "!max-w-xl !w-full !max-h-[80vh]",
+            ? "!max-w-5xl !w-[calc(100vw-2rem)] !h-[calc(100vh-4rem)]"
+            : "!max-w-4xl !w-[calc(100vw-2rem)] !h-[min(520px,calc(100vh-4rem))]",
         )
       : manualDialogContentClass(isExpanded, backlogHintIssueId);
 

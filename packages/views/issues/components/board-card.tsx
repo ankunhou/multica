@@ -80,7 +80,7 @@ export const BoardCardContent = memo(function BoardCardContent({
   const showLabels = storeProperties.labels && labels.length > 0;
 
   return (
-    <div className="rounded-lg border-[0.5px] border-border bg-card py-3 px-2.5 shadow-[0_3px_6px_-2px_rgba(0,0,0,0.02),0_1px_1px_0_rgba(0,0,0,0.04)] transition-colors group-hover/card:border-accent group-hover/card:bg-accent group-data-[popup-open]/card:border-accent group-data-[popup-open]/card:bg-accent">
+    <div className="rounded-2xl bg-card px-3 py-3 shadow-sm ring-1 ring-border/45 transition-colors group-hover/card:bg-accent/45 group-hover/card:ring-border/70 group-data-[popup-open]/card:bg-accent/45 group-data-[popup-open]/card:ring-border/70">
       {/* Row 1: Identifier */}
       <p className="text-xs text-muted-foreground">{issue.identifier}</p>
 
@@ -91,9 +91,9 @@ export const BoardCardContent = memo(function BoardCardContent({
 
       {/* Sub-issue progress + project + labels */}
       {(showChildProgress || showProject || showLabels) && (
-        <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+        <div className="mt-2 flex items-center gap-1.5 flex-wrap">
           {showChildProgress && (
-            <div className="inline-flex items-center gap-1 rounded-full bg-muted/60 px-1.5 py-0.5">
+            <div className="inline-flex items-center gap-1 rounded-full bg-muted/45 px-1.5 py-0.5">
               <ProgressRing done={childProgress!.done} total={childProgress!.total} size={14} />
               <span className="text-[11px] text-muted-foreground tabular-nums font-medium">
                 {childProgress!.done}/{childProgress!.total}
@@ -101,7 +101,7 @@ export const BoardCardContent = memo(function BoardCardContent({
             </div>
           )}
           {showProject && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-muted/60 px-1.5 py-0.5 text-[11px] text-muted-foreground max-w-[160px]">
+            <span className="inline-flex items-center gap-1 rounded-full bg-muted/45 px-1.5 py-0.5 text-[11px] text-muted-foreground max-w-[160px]">
               <ProjectIcon project={project} size="sm" />
               <span className="truncate">{project!.title}</span>
             </span>

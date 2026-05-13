@@ -100,14 +100,16 @@ export function SettingsPage({ extraAccountTabs }: SettingsPageProps = {}) {
       value={activeTab}
       onValueChange={handleTabChange}
       orientation="vertical"
-      className="flex-1 min-h-0 gap-0 flex flex-col md:flex-row md:overflow-hidden overflow-y-auto"
+      className="flex-1 min-h-0 gap-0 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden bg-background"
     >
       {/* Left nav (stacks on top on mobile, sidebar on md+) */}
-      <div className="shrink-0 md:w-52 border-b md:border-b-0 md:border-r md:overflow-y-auto p-3 md:p-4">
-        <h1 className="text-sm font-semibold mb-4 px-2">{t(($) => $.page.title)}</h1>
-        <TabsList variant="line" className="flex-col items-stretch w-full">
+      <div className="shrink-0 border-b bg-sidebar/45 p-3 md:w-64 md:border-b-0 md:border-r md:border-border/70 md:bg-sidebar/35 md:p-4 md:overflow-y-auto">
+        <div className="mb-5 px-2 pt-1">
+          <h1 className="text-lg font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
+        </div>
+        <TabsList variant="line" className="flex-col items-stretch w-full gap-1">
           {/* My Account group */}
-          <span className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
+          <span className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground/80">
             {t(($) => $.page.my_account)}
           </span>
           {ACCOUNT_TAB_KEYS.map((key) => {
@@ -127,7 +129,7 @@ export function SettingsPage({ extraAccountTabs }: SettingsPageProps = {}) {
           ))}
 
           {/* Workspace group */}
-          <span className="px-2 pb-1 pt-4 text-xs font-medium text-muted-foreground truncate">
+          <span className="px-2 pb-1 pt-5 text-xs font-medium text-muted-foreground/80 truncate">
             {workspaceName ?? t(($) => $.page.workspace_fallback)}
           </span>
           {WORKSPACE_TAB_KEYS.map((key) => {
@@ -144,7 +146,7 @@ export function SettingsPage({ extraAccountTabs }: SettingsPageProps = {}) {
 
       {/* Right content */}
       <div className="flex-1 min-w-0 md:overflow-y-auto">
-        <div className="w-full max-w-3xl mx-auto p-4 md:p-6">
+        <div className="w-full max-w-4xl mx-auto px-5 py-10 md:px-10 md:py-20">
           <TabsContent value="profile"><AccountTab /></TabsContent>
           <TabsContent value="preferences"><PreferencesTab /></TabsContent>
           <TabsContent value="notifications"><NotificationsTab /></TabsContent>

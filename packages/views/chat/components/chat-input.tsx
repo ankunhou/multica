@@ -203,7 +203,7 @@ export function ChatInput({
       <div
         {...(uploadEnabled ? dropZoneProps : {})}
         className={cn(
-          "relative mx-auto flex min-h-16 max-h-40 w-full max-w-4xl flex-col rounded-lg bg-card pb-9 border-1 border-border transition-colors focus-within:border-brand",
+          "relative mx-auto flex min-h-20 max-h-44 w-full max-w-4xl flex-col rounded-2xl bg-card pb-10 border border-border/80 shadow-sm transition-colors focus-within:border-brand",
           // Visual + interaction lock when there's no agent. We don't
           // toggle ContentEditor's editable mode (Tiptap can't switch
           // cleanly post-mount, and the prop has been removed); instead
@@ -244,7 +244,7 @@ export function ChatInput({
             {leftAdornment}
           </div>
         )}
-        <div className="absolute bottom-1 right-1.5 flex items-center gap-1">
+        <div className="absolute bottom-1.5 right-2 flex items-center gap-1">
           {rightAdornment}
           {uploadEnabled && (
             <FileUploadButton

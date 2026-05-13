@@ -97,9 +97,9 @@ export function AgentDetailInspector({
   const isOnline = runtime?.status === "online";
 
   return (
-    <aside className="flex w-full flex-col rounded-lg border bg-background md:h-full md:min-h-0 md:overflow-y-auto">
+    <aside className="flex w-full flex-col rounded-3xl bg-card shadow-sm ring-1 ring-border/45 md:h-full md:min-h-0 md:overflow-y-auto">
       {/* Identity */}
-      <div className="flex flex-col gap-3 border-b px-5 pb-5 pt-5">
+      <div className="flex flex-col gap-3 px-6 pb-5 pt-6">
         <AvatarEditor agent={agent} canEdit={canEdit} onUpdate={update} />
         <NameAndDescription
           agent={agent}
@@ -175,7 +175,7 @@ export function AgentDetailInspector({
       </Section>
 
       {/* Skills */}
-      <div className="flex flex-col border-b px-5 py-4">
+      <div className="flex flex-col px-6 py-4">
         <div className="mb-2 flex items-center gap-2">
           <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
             {t(($) => $.inspector.section_skills)}
@@ -188,7 +188,7 @@ export function AgentDetailInspector({
           {agent.skills.map((s) => (
             <span
               key={s.id}
-              className="rounded-md bg-muted px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground"
+              className="rounded-lg bg-muted/45 px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground"
             >
               {s.name}
             </span>
@@ -212,8 +212,8 @@ function Section({
   children: ReactNode;
 }) {
   return (
-    <div className="border-b px-5 py-4">
-      <div className="mb-1 -mx-2 px-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+    <div className="mx-3 mb-2 rounded-2xl bg-muted/20 px-3 py-3">
+      <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </div>
       <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
@@ -346,7 +346,7 @@ function NameAndDescription({
           <button
             type="button"
             {...triggerProps}
-            className="group -mx-1 inline-flex items-center gap-1.5 self-start rounded px-1 text-left text-base font-semibold leading-tight transition-colors hover:bg-accent/50"
+        className="group -mx-1 inline-flex items-center gap-1.5 self-start rounded-lg px-1 text-left text-base font-semibold leading-tight transition-colors hover:bg-accent/35"
           >
             <span>{agent.name}</span>
             <Pencil className="h-3 w-3 shrink-0 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground" />
@@ -389,7 +389,7 @@ function DescriptionEditor({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group -mx-1 inline-flex items-start gap-1.5 self-start rounded px-1 text-left text-xs leading-relaxed transition-colors hover:bg-accent/50"
+        className="group -mx-1 inline-flex items-start gap-1.5 self-start rounded-lg px-1 text-left text-xs leading-relaxed transition-colors hover:bg-accent/35"
       >
         {value ? (
           <span className="text-muted-foreground">{value}</span>
@@ -467,7 +467,7 @@ function DescriptionEditorBody({
               void commit();
             }
           }}
-          className="w-full resize-none rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus-visible:border-input"
+          className="w-full resize-none rounded-2xl border border-border/55 bg-background/70 px-3 py-2 text-sm outline-none focus-visible:border-input"
         />
         <CharCounter length={length} max={AGENT_DESCRIPTION_MAX_LENGTH} />
       </div>
@@ -577,7 +577,7 @@ function InlineEditPopover({
                   void commit();
                 }
               }}
-              className="h-8"
+              className="h-9"
             />
           ) : (
             <textarea
@@ -600,7 +600,7 @@ function InlineEditPopover({
                 }
               }}
               rows={3}
-              className="w-full resize-none rounded-md border bg-transparent px-2 py-1.5 text-xs outline-none focus-visible:border-input"
+              className="w-full resize-none rounded-2xl border border-border/55 bg-background/70 px-3 py-2 text-xs outline-none focus-visible:border-input"
             />
           )}
           {error && <p className="text-xs text-destructive">{error}</p>}
@@ -649,7 +649,7 @@ function PresenceBadge({
     <div className="flex flex-wrap items-center gap-1.5">
       <AgentAvailabilityBadge
         detail={presence}
-        className="rounded-md border px-1.5 py-0.5"
+        className="rounded-xl px-2 py-0.5"
       />
     </div>
   );
