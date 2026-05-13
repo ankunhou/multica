@@ -3,5 +3,10 @@
   "cancel": "Cancel",
   "delete": "Delete",
   "confirm": "Confirm",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "not_found": {
+    "title": "Page not found",
+    "description": "The page you are looking for doesn't exist or has been moved.",
+    "back_home": "Back to Multica"
+  }
 }

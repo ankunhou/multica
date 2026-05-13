@@ -4,7 +4,7 @@ export const locales: Locale[] = ["en", "zh"];
 
 export const localeLabels: Record<Locale, string> = {
   en: "EN",
-  zh: "\u4e2d\u6587",
+  zh: "中文",
 };
 
 type FeatureSection = {
@@ -17,6 +17,103 @@ type FeatureSection = {
 type FooterGroup = {
   label: string;
   links: { label: string; href: string }[];
+};
+
+type FeatureVisuals = {
+  common: {
+    demo: string;
+    issueTitle: string;
+    issueDescription: string;
+    status: {
+      backlog: string;
+      todo: string;
+      in_progress: string;
+      in_review: string;
+      done: string;
+    };
+    priority: {
+      none: string;
+      low: string;
+      medium: string;
+      high: string;
+      urgent: string;
+    };
+  };
+  teammates: {
+    activity: string;
+    subscribe: string;
+    properties: string;
+    status: string;
+    priority: string;
+    assignee: string;
+    assignTo: string;
+    unassigned: string;
+    members: string;
+    agents: string;
+    assignedToClaude: string;
+    statusChanged: string;
+    comments: string[];
+  };
+  autonomous: {
+    working: string;
+    toolCalls: string;
+    result: string;
+    history: string;
+    toolTimeline: {
+      analyzing: string;
+      issuePreview: string;
+      editIssue: string;
+      updatedErrors: string;
+      checkingComments: string;
+      commentPreview: string;
+      testsPassed: string;
+    };
+    historyItems: {
+      setupTypes: string;
+      migrateIssue: string;
+      migrateComment: string;
+    };
+  };
+  skills: {
+    title: string;
+    files: string;
+    items: {
+      deploy: { name: string; description: string };
+      migration: { name: string; description: string };
+      review: { name: string; description: string };
+      tests: { name: string; description: string };
+    };
+    doc: {
+      title: string;
+      description: string;
+      stepsTitle: string;
+      steps: string[];
+    };
+  };
+  runtimes: {
+    title: string;
+    online: string;
+    offline: string;
+    range7d: string;
+    range30d: string;
+    range90d: string;
+    input: string;
+    output: string;
+    cacheRead: string;
+    cacheWrite: string;
+    activity: string;
+    weekdays: {
+      mon: string;
+      wed: string;
+      fri: string;
+    };
+    less: string;
+    more: string;
+    dailyCost: string;
+    dateMar18: string;
+    dateMar25: string;
+    dateMar31: string;
+  };
 };
 
 export type LandingDict = {
@@ -36,6 +133,7 @@ export type LandingDict = {
     skills: FeatureSection;
     runtimes: FeatureSection;
   };
+  featureVisuals: FeatureVisuals;
   howItWorks: {
     label: string;
     headlineMain: string;

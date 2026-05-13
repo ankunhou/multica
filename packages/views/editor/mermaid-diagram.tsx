@@ -299,7 +299,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
         }
       } catch (err) {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Failed to render Mermaid diagram");
+          setError(err instanceof Error ? err.message : t(($) => $.mermaid.render_error));
         }
       }
     }
@@ -309,7 +309,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
     return () => {
       cancelled = true;
     };
-  }, [chart, diagramId, themeVersion]);
+  }, [chart, diagramId, themeVersion, t]);
 
   if (error) {
     return (

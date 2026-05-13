@@ -195,6 +195,7 @@
     "legend_input": "Input",
     "legend_output": "Output",
     "legend_cache_write": "Cache write",
+    "tooltip_cost": "Cost",
     "empty_no_usage": "No usage in this period.",
     "empty_pricing_missing": "Tokens recorded but pricing missing for:",
     "empty_pricing_hint": "Set a custom rate to include them in cost totals.",

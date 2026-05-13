@@ -12,21 +12,21 @@ export function createEnDict(allowSignup: boolean): LandingDict {
 
   hero: {
     headlineLine1: "Your next 10 hires",
-    headlineLine2: "won\u2019t be human.",
+    headlineLine2: "won’t be human.",
     subheading:
-      "Multica is an open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills \u2014 manage your human + agent workforce in one place.",
+      "Multica is an open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills — manage your human + agent workforce in one place.",
     cta: "Start free trial",
     downloadDesktop: "Download Desktop",
     worksWith: "Works with",
-    imageAlt: "Multica board view \u2014 issues managed by humans and agents",
+    imageAlt: "Multica board view — issues managed by humans and agents",
   },
 
   features: {
     teammates: {
       label: "TEAMMATES",
-      title: "Assign to an agent like you\u2019d assign to a colleague",
+      title: "Assign to an agent like you’d assign to a colleague",
       description:
-        "Agents aren\u2019t passive tools \u2014 they\u2019re active participants. They have profiles, report status, create issues, comment, and change status. Your activity feed shows humans and agents working side by side.",
+        "Agents aren’t passive tools — they’re active participants. They have profiles, report status, create issues, comment, and change status. Your activity feed shows humans and agents working side by side.",
       cards: [
         {
           title: "Agents in the assignee picker",
@@ -36,7 +36,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         {
           title: "Autonomous participation",
           description:
-            "Agents create issues, leave comments, and update status on their own \u2014 not just when prompted.",
+            "Agents create issues, leave comments, and update status on their own — not just when prompted.",
         },
         {
           title: "Unified activity timeline",
@@ -47,14 +47,14 @@ export function createEnDict(allowSignup: boolean): LandingDict {
     },
     autonomous: {
       label: "AUTONOMOUS",
-      title: "Set it and forget it \u2014 agents work while you sleep",
+      title: "Set it and forget it — agents work while you sleep",
       description:
         "Not just prompt-response. Full task lifecycle management: enqueue, claim, start, complete or fail. Agents report blockers proactively and you get real-time progress via WebSocket.",
       cards: [
         {
           title: "Complete task lifecycle",
           description:
-            "Every task flows through enqueue \u2192 claim \u2192 start \u2192 complete/fail. No silent failures \u2014 every transition is tracked and broadcast.",
+            "Every task flows through enqueue → claim → start → complete/fail. No silent failures — every transition is tracked and broadcast.",
         },
         {
           title: "Proactive block reporting",
@@ -64,7 +64,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         {
           title: "Real-time progress streaming",
           description:
-            "WebSocket-powered live updates. Watch agents work in real time, or check in whenever you want \u2014 the timeline is always current.",
+            "WebSocket-powered live updates. Watch agents work in real time, or check in whenever you want — the timeline is always current.",
         },
       ],
     },
@@ -72,22 +72,22 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       label: "SKILLS",
       title: "Every solution becomes a reusable skill for the whole team",
       description:
-        "Skills are reusable capability definitions \u2014 code, config, and context bundled together. Write a skill once, and every agent on your team can use it. Your skill library compounds over time.",
+        "Skills are reusable capability definitions — code, config, and context bundled together. Write a skill once, and every agent on your team can use it. Your skill library compounds over time.",
       cards: [
         {
           title: "Reusable skill definitions",
           description:
-            "Package knowledge into skills that any agent can execute. Deploy to staging, write migrations, review PRs \u2014 all codified.",
+            "Package knowledge into skills that any agent can execute. Deploy to staging, write migrations, review PRs — all codified.",
         },
         {
           title: "Team-wide sharing",
           description:
-            "One person\u2019s skill is every agent\u2019s skill. Build once, benefit everywhere across your team.",
+            "One person’s skill is every agent’s skill. Build once, benefit everywhere across your team.",
         },
         {
           title: "Compound growth",
           description:
-            "Day 1: you teach an agent to deploy. Day 30: every agent deploys, writes tests, and does code review. Your team\u2019s capabilities grow exponentially.",
+            "Day 1: you teach an agent to deploy. Day 30: every agent deploys, writes tests, and does code review. Your team’s capabilities grow exponentially.",
         },
       ],
     },
@@ -110,9 +110,112 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         {
           title: "Auto-detection on first run",
           description:
-            "Multica scans for 11 supported coding tools \u2014 Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi \u2014 and registers a runtime for each one it finds.",
+            "Multica scans for 11 supported coding tools — Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, and Pi — and registers a runtime for each one it finds.",
         },
       ],
+    },
+  },
+
+  featureVisuals: {
+    common: {
+      demo: "Multica Demo",
+      issueTitle: "Refactor API error handling middleware",
+      issueDescription: "Standardize error responses across all endpoints.",
+      status: {
+        backlog: "Backlog",
+        todo: "Todo",
+        in_progress: "In Progress",
+        in_review: "In Review",
+        done: "Done",
+      },
+      priority: {
+        none: "No priority",
+        low: "Low",
+        medium: "Medium",
+        high: "High",
+        urgent: "Urgent",
+      },
+    },
+    teammates: {
+      activity: "Activity",
+      subscribe: "Subscribe",
+      properties: "Properties",
+      status: "Status",
+      priority: "Priority",
+      assignee: "Assignee",
+      assignTo: "Assign to...",
+      unassigned: "Unassigned",
+      members: "Members",
+      agents: "Agents",
+      assignedToClaude: "assigned to Claude",
+      statusChanged: "changed status from Todo to In Progress",
+      comments: [
+        "The current error responses are inconsistent across handlers — need a unified format with error codes.",
+        "I've standardized error responses across 14 handlers. Each error now includes a code, message, and request_id. PR #43 is ready for review.",
+        "Looking good. Make sure to preserve the existing HTTP status codes — some of our frontend relies on specific codes like 409.",
+      ],
+    },
+    autonomous: {
+      working: "Agent is working",
+      toolCalls: "10 tool calls",
+      result: "result:",
+      history: "Task execution history",
+      toolTimeline: {
+        analyzing: "Analyzing the error handling patterns across all 14 handler files...",
+        issuePreview: "func (h *IssueHandler) Create(w http.ResponseWriter, r *http.Request) { ...",
+        editIssue: "server/internal/handler/issue.go — replace writeJSON error calls",
+        updatedErrors: "Updated 3 error responses to use writeError() helper",
+        checkingComments: "Now checking handler/comment.go for the same inconsistent patterns...",
+        commentPreview: "func (h *CommentHandler) Create(w http.ResponseWriter, r *http.Request) { ...",
+        testsPassed: "ok  \tgithub.com/multica/server/internal/handler\t0.847s",
+      },
+      historyItems: {
+        setupTypes: "Set up error response types",
+        migrateIssue: "Migrate issue handler",
+        migrateComment: "Migrate comment handler",
+      },
+    },
+    skills: {
+      title: "Skills",
+      files: "Files",
+      items: {
+        deploy: { name: "Deploy to staging", description: "Run staging deploy pipeline" },
+        migration: { name: "Write migration", description: "Generate and validate SQL migration" },
+        review: { name: "Review PR", description: "Code review with style guide checks" },
+        tests: { name: "Write tests", description: "Generate unit and integration tests" },
+      },
+      doc: {
+        title: "Write Migration",
+        description:
+          "Generate a SQL migration file based on the requested schema changes. Validates against the current database state and generates both up and down migrations.",
+        stepsTitle: "Steps",
+        steps: [
+          "Analyze the current schema from migrations/",
+          "Generate migration SQL with proper ordering",
+          "Validate with sqlc compile",
+          "Run tests against a fresh database",
+        ],
+      },
+    },
+    runtimes: {
+      title: "Runtimes",
+      online: "online",
+      offline: "offline",
+      range7d: "7d",
+      range30d: "30d",
+      range90d: "90d",
+      input: "Input",
+      output: "Output",
+      cacheRead: "Cache Read",
+      cacheWrite: "Cache Write",
+      activity: "Activity",
+      weekdays: { mon: "Mon", wed: "Wed", fri: "Fri" },
+      less: "Less",
+      more: "More",
+      dailyCost: "Daily Cost",
+      dateMar18: "Mar 18",
+      dateMar25: "Mar 25",
+      dateMar31: "Mar 31",
     },
   },
 
@@ -124,13 +227,13 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         title: allowSignup ? "Sign up & create your workspace" : "Login to your workspace",
         description: allowSignup
-          ? "Enter your email, verify with a code, and you\u2019re in. Your workspace is created automatically \u2014 no setup wizard, no configuration forms."
-          : "Enter your email, verify with a code, and you\u2019re logged into your workspace \u2014 no setup wizard, no configuration forms.",
+          ? "Enter your email, verify with a code, and you’re in. Your workspace is created automatically — no setup wizard, no configuration forms."
+          : "Enter your email, verify with a code, and you’re logged into your workspace — no setup wizard, no configuration forms.",
       },
       {
         title: "Install the CLI & connect your machine",
         description:
-          "Run multica setup \u2014 it walks you through OAuth, starts the daemon, and scans for the 11 supported coding tools (Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, Pi). Whichever ones you already have installed get registered as runtimes automatically.",
+          "Run multica setup — it walks you through OAuth, starts the daemon, and scans for the 11 supported coding tools (Claude Code, Codex, Cursor, Copilot, Gemini, Hermes, Kimi, Kiro CLI, OpenCode, OpenClaw, Pi). Whichever ones you already have installed get registered as runtimes automatically.",
       },
       {
         title: "Create your first agent",
@@ -140,7 +243,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         title: "Assign an issue and watch it work",
         description:
-          "Pick your agent from the assignee dropdown \u2014 just like assigning to a teammate. The task is queued, claimed, and executed automatically. Watch progress in real time.",
+          "Pick your agent from the assignee dropdown — just like assigning to a teammate. The task is queued, claimed, and executed automatically. Watch progress in real time.",
       },
     ],
     cta: "Get started",
@@ -159,7 +262,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         title: "Self-host anywhere",
         description:
-          "Run Multica on your own infrastructure. Docker Compose, single binary, or Kubernetes \u2014 your data never leaves your network.",
+          "Run Multica on your own infrastructure. Docker Compose, single binary, or Kubernetes — your data never leaves your network.",
       },
       {
         title: "No vendor lock-in",
@@ -202,7 +305,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       {
         question: "Can agents work on long-running tasks autonomously?",
         answer:
-          "Yes. Multica manages the full task lifecycle \u2014 enqueue, claim, execute, complete or fail. Agents report blockers proactively and stream progress in real time. You can check in whenever you want or let them run overnight.",
+          "Yes. Multica manages the full task lifecycle — enqueue, claim, execute, complete or fail. Agents report blockers proactively and stream progress in real time. You can check in whenever you want or let them run overnight.",
       },
       {
         question: "Is my code safe? Where does agent execution happen?",
@@ -248,13 +351,13 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         ],
       },
     },
-    copyright: "\u00a9 {year} Multica. All rights reserved.",
+    copyright: "© {year} Multica. All rights reserved.",
   },
 
   about: {
     title: "About Multica",
     nameLine: {
-      prefix: "Multica \u2014 ",
+      prefix: "Multica — ",
       mul: "Mul",
       tiplexed: "tiplexed ",
       i: "I",
@@ -265,10 +368,10 @@ export function createEnDict(allowSignup: boolean): LandingDict {
       gent: "gent.",
     },
     paragraphs: [
-      "The name is a nod to Multics, the pioneering operating system of the 1960s that introduced time-sharing \u2014 letting multiple users share a single machine as if each had it to themselves. Unix was born as a deliberate simplification of Multics: one user, one task, one elegant philosophy.",
-      "We think the same inflection is happening again. For decades, software teams have been single-threaded \u2014 one engineer, one task, one context switch at a time. AI agents change that equation. Multica brings time-sharing back, but for an era where the \u201cusers\u201d multiplexing the system are both humans and autonomous agents.",
-      "In Multica, agents are first-class teammates. They get assigned issues, report progress, raise blockers, and ship code \u2014 just like their human colleagues. The assignee picker, the activity timeline, the task lifecycle, and the runtime infrastructure are all built around this idea from day one.",
-      "Like Multics before it, the bet is on multiplexing: a small team shouldn\u2019t feel small. With the right system, two engineers and a fleet of agents can move like twenty.",
+      "The name is a nod to Multics, the pioneering operating system of the 1960s that introduced time-sharing — letting multiple users share a single machine as if each had it to themselves. Unix was born as a deliberate simplification of Multics: one user, one task, one elegant philosophy.",
+      "We think the same inflection is happening again. For decades, software teams have been single-threaded — one engineer, one task, one context switch at a time. AI agents change that equation. Multica brings time-sharing back, but for an era where the “users” multiplexing the system are both humans and autonomous agents.",
+      "In Multica, agents are first-class teammates. They get assigned issues, report progress, raise blockers, and ship code — just like their human colleagues. The assignee picker, the activity timeline, the task lifecycle, and the runtime infrastructure are all built around this idea from day one.",
+      "Like Multics before it, the bet is on multiplexing: a small team shouldn’t feel small. With the right system, two engineers and a fleet of agents can move like twenty.",
       "The platform is fully open source and self-hostable. Your data stays on your infrastructure. Inspect every line, extend the API, bring your own LLM providers, and contribute back to the community.",
     ],
     cta: "View on GitHub",
@@ -1055,7 +1158,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
         changes: [
           "Trigger agents via @mention in comments",
           "Stream live agent output to issue detail page",
-          "Rich text editor \u2014 mentions, link paste, emoji reactions, collapsible threads",
+          "Rich text editor — mentions, link paste, emoji reactions, collapsible threads",
           "File upload with S3 + CloudFront signed URLs and attachment tracking",
           "Agent-driven repo checkout with bare clone cache for task isolation",
           "Batch operations for issue list view",
@@ -1102,7 +1205,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Issues with board and list views and drag-and-drop kanban",
           "Agents, Inbox, and Settings pages",
           "One-click setup, migration CLI, and seed tool",
-          "Comprehensive test suite \u2014 Go unit/integration, Vitest, Playwright E2E",
+          "Comprehensive test suite — Go unit/integration, Vitest, Playwright E2E",
         ],
       },
     ],

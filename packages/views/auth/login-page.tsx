@@ -13,6 +13,7 @@ import {
 import { Input } from "@multica/ui/components/ui/input";
 import { Button } from "@multica/ui/components/ui/button";
 import { Label } from "@multica/ui/components/ui/label";
+import { useTheme } from "@multica/ui/components/common/theme-provider";
 import {
   InputOTP,
   InputOTPGroup,
@@ -67,9 +68,25 @@ interface LoginPageProps {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function redirectToCliCallback(url: string, token: string, state: string) {
-  const separator = url.includes("?") ? "&" : "?";
-  window.location.href = `${url}${separator}token=${encodeURIComponent(token)}&state=${encodeURIComponent(state)}`;
+type CliCallbackTheme = "light" | "dark";
+
+function normalizeCliCallbackTheme(
+  theme: string | undefined,
+): CliCallbackTheme | undefined {
+  return theme === "light" || theme === "dark" ? theme : undefined;
+}
+
+function redirectToCliCallback(
+  url: string,
+  token: string,
+  state: string,
+  theme?: CliCallbackTheme,
+) {
+  const callbackUrl = new URL(url);
+  callbackUrl.searchParams.set("token", token);
+  callbackUrl.searchParams.set("state", state);
+  if (theme) callbackUrl.searchParams.set("theme", theme);
+  window.location.href = callbackUrl.toString();
 }
 
 /**
@@ -108,6 +125,8 @@ export function LoginPage({
 }: LoginPageProps) {
   const { t } = useT("auth");
   const qc = useQueryClient();
+  const { resolvedTheme, theme } = useTheme();
+  const cliCallbackTheme = normalizeCliCallbackTheme(resolvedTheme ?? theme);
   const [step, setStep] = useState<"email" | "code" | "cli_confirm">("email");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -201,7 +220,12 @@ export function LoginPage({
           localStorage.setItem("multica_token", token);
           api.setToken(token);
           onTokenObtained?.();
-          redirectToCliCallback(cliCallback.url, token, cliCallback.state);
+          redirectToCliCallback(
+            cliCallback.url,
+            token,
+            cliCallback.state,
+            cliCallbackTheme,
+          );
           return;
         }
 
@@ -224,7 +248,7 @@ export function LoginPage({
         setLoading(false);
       }
     },
-    [email, onSuccess, cliCallback, onTokenObtained, qc, t],
+    [email, onSuccess, cliCallback, onTokenObtained, qc, t, cliCallbackTheme],
   );
 
   const handleResend = async () => {
@@ -259,7 +283,12 @@ export function LoginPage({
       }
 
       onTokenObtained?.();
-      redirectToCliCallback(cliCallback.url, token, cliCallback.state);
+      redirectToCliCallback(
+        cliCallback.url,
+        token,
+        cliCallback.state,
+        cliCallbackTheme,
+      );
     } catch {
       setError(t(($) => $.errors.cli_auth_failed));
       setExistingUser(null);

@@ -35,6 +35,12 @@ const mockApiSetToken = vi.hoisted(() => vi.fn());
 const mockApiGetMe = vi.hoisted(() => vi.fn());
 const mockApiIssueCliToken = vi.hoisted(() => vi.fn());
 const mockSetQueryData = vi.hoisted(() => vi.fn());
+const mockUseTheme = vi.hoisted(() =>
+  vi.fn<() => { resolvedTheme?: string; theme?: string }>(() => ({
+    resolvedTheme: undefined,
+    theme: undefined,
+  })),
+);
 
 vi.mock("@tanstack/react-query", async () => {
   const actual = await vi.importActual<typeof import("@tanstack/react-query")>(
@@ -71,6 +77,10 @@ vi.mock("@multica/core/api", () => ({
 
 vi.mock("@multica/core/types", () => ({}));
 
+vi.mock("@multica/ui/components/common/theme-provider", () => ({
+  useTheme: mockUseTheme,
+}));
+
 // ---------------------------------------------------------------------------
 // Import after mocks
 // ---------------------------------------------------------------------------
@@ -98,6 +108,7 @@ describe("LoginPage", () => {
     vi.clearAllMocks();
     // Default: no existing session (getMe rejects when no auth)
     mockApiGetMe.mockRejectedValue(new Error("unauthorized"));
+    mockUseTheme.mockReturnValue({ resolvedTheme: undefined, theme: undefined });
     localStorage.clear();
     // Reset window.location for tests that change it
     Object.defineProperty(window, "location", {
@@ -457,6 +468,36 @@ describe("LoginPage", () => {
     expect(onTokenObtained).toHaveBeenCalled();
     expect(window.location.href).toContain(
       "http://localhost:9876/callback?token=existing-jwt&state=abc",
+    );
+  });
+
+  it("CLI authorize redirect includes the resolved web theme", async () => {
+    mockUseTheme.mockReturnValue({ resolvedTheme: "dark", theme: "system" });
+    localStorage.setItem("multica_token", "existing-jwt");
+    mockApiGetMe
+      .mockRejectedValueOnce(new Error("no cookie"))
+      .mockResolvedValueOnce({
+        id: "u-1",
+        email: "user@example.com",
+        name: "Test User",
+      });
+
+    render(
+      <LoginPage
+        onSuccess={onSuccess}
+        cliCallback={{ url: "http://localhost:9876/callback", state: "abc" }}
+      />,
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
+    });
+
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: /^authorize$/i }));
+
+    expect(window.location.href).toContain(
+      "http://localhost:9876/callback?token=existing-jwt&state=abc&theme=dark",
     );
   });
 

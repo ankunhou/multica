@@ -25,7 +25,7 @@ import { copyMarkdown } from "../../editor";
 import type { AgentAvailability } from "@multica/core/agents";
 import type { ChatMessage, ChatPendingTask, TaskMessagePayload, TaskFailureReason } from "@multica/core/types";
 import type { ChatTimelineItem } from "@multica/core/chat";
-import { failureReasonLabel } from "../../agents/components/tabs/task-failure";
+import { useFailureReasonLabel } from "../../agents/components/tabs/task-failure";
 import { TaskStatusPill } from "./task-status-pill";
 import { formatElapsedMs } from "../lib/format";
 import { splitTimeline, extractCopyText } from "../lib/copy-text";
@@ -307,6 +307,16 @@ function ElapsedCaption({
   );
 }
 
+function isTaskFailureReason(reason: string): reason is TaskFailureReason {
+  return (
+    reason === "agent_error" ||
+    reason === "timeout" ||
+    reason === "runtime_offline" ||
+    reason === "runtime_recovery" ||
+    reason === "manual"
+  );
+}
+
 function FailureBubble({
   reason,
   rawError,
@@ -319,13 +329,15 @@ function FailureBubble({
   elapsedMs?: number | null;
 }) {
   const { t } = useT("chat");
+  const failureLabelOf = useFailureReasonLabel();
   const [open, setOpen] = useState(false);
   // Map the back-end enum to copy via the shared label table; an unknown
   // reason (e.g. a future enum value the front-end doesn't ship yet)
   // falls back to a generic translated label.
   const label =
-    failureReasonLabel[reason as TaskFailureReason] ??
-    t(($) => $.message_list.task_failed_fallback);
+    isTaskFailureReason(reason)
+      ? failureLabelOf(reason)
+      : t(($) => $.message_list.task_failed_fallback);
 
   return (
     <div className="w-full space-y-1.5">

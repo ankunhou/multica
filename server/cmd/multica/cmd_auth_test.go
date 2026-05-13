@@ -2,6 +2,7 @@ package main
 
 import (
 	"net"
+	"strings"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -116,6 +117,52 @@ func TestResolveCallbackBinding(t *testing.T) {
 				t.Errorf("bind addr = %q, want %q", gotBind, tc.wantBind)
 			}
 		})
+	}
+}
+
+func TestCallbackSuccessHTMLLocale(t *testing.T) {
+	en := callbackSuccessHTML("en-US", "")
+	for _, want := range []string{
+		`<html lang="en">`,
+		"Authentication successful",
+		"You can close this tab and return to the terminal.",
+		"Your CLI session is now authenticated.",
+	} {
+		if !strings.Contains(en, want) {
+			t.Fatalf("English callback HTML missing %q:\n%s", want, en)
+		}
+	}
+
+	zh := callbackSuccessHTML("zh-CN", "")
+	for _, want := range []string{
+		`<html lang="zh-Hans">`,
+		"认证成功",
+		"你可以关闭此标签页，并返回终端。",
+		"你的 CLI 会话已完成认证。",
+	} {
+		if !strings.Contains(zh, want) {
+			t.Fatalf("Chinese callback HTML missing %q:\n%s", want, zh)
+		}
+	}
+	if strings.Contains(zh, "Authentication successful") {
+		t.Fatalf("Chinese callback HTML should not contain English success title:\n%s", zh)
+	}
+}
+
+func TestCallbackSuccessHTMLTheme(t *testing.T) {
+	dark := callbackSuccessHTML("en-US", "dark")
+	if !strings.Contains(dark, `<html lang="en" data-theme="dark">`) {
+		t.Fatalf("dark callback HTML missing theme attribute:\n%s", dark)
+	}
+
+	light := callbackSuccessHTML("zh-CN", "light")
+	if !strings.Contains(light, `<html lang="zh-Hans" data-theme="light">`) {
+		t.Fatalf("light callback HTML missing theme attribute:\n%s", light)
+	}
+
+	system := callbackSuccessHTML("en-US", normalizeCallbackTheme("system"))
+	if strings.Contains(system, `<html lang="en" data-theme=`) {
+		t.Fatalf("invalid theme should fall back to system preference:\n%s", system)
 	}
 }
 

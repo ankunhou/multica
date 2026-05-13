@@ -37,7 +37,7 @@ import { issueDetailOptions } from "@multica/core/issues/queries";
 import { AppLink } from "../../../navigation";
 import { TranscriptButton } from "../../../common/task-transcript";
 import { taskStatusConfig } from "../../config";
-import { failureReasonLabel } from "./task-failure";
+import { useFailureReasonLabel } from "./task-failure";
 import { Sparkline } from "../sparkline";
 import { useT } from "../../../i18n";
 import { useDateTimeFormatters } from "../../../i18n/date-time";
@@ -353,6 +353,7 @@ function TaskRow({
   agent: Agent;
 }) {
   const { t } = useT("agents");
+  const failureLabelOf = useFailureReasonLabel();
   const { relativeTime } = useDateTimeFormatters();
   const paths = useWorkspacePaths();
   const [cancelling, setCancelling] = useState(false);
@@ -429,7 +430,7 @@ function TaskRow({
   // cast is safe because the back-end only emits one of the enum values.
   const failureLabel =
     task.status === "failed" && task.failure_reason
-      ? failureReasonLabel[task.failure_reason as TaskFailureReason]
+      ? failureLabelOf(task.failure_reason as TaskFailureReason)
       : null;
 
   // Only show duration for terminal rows. An active row's duration is

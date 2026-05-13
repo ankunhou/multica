@@ -14,7 +14,7 @@ import {
 } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { TranscriptButton } from "../../common/task-transcript";
-import { failureReasonLabel } from "../../agents/components/tabs/task-failure";
+import { useFailureReasonLabel } from "../../agents/components/tabs/task-failure";
 import { useT } from "../../i18n";
 import { useDateTimeFormatters } from "../../i18n/date-time";
 import { TerminateTaskConfirmDialog } from "./terminate-task-confirm-dialog";
@@ -337,6 +337,7 @@ function ActiveRow({ task, issueId }: { task: AgentTask; issueId: string }) {
 function PastRow({ task, issueId }: { task: AgentTask; issueId: string }) {
   const { t } = useT("issues");
   const { relativeTime } = useDateTimeFormatters();
+  const failureLabelOf = useFailureReasonLabel();
   const [retrying, setRetrying] = useState(false);
   const tone = STATUS_TONE[task.status];
   const label = useStatusLabel(task.status);
@@ -344,7 +345,7 @@ function PastRow({ task, issueId }: { task: AgentTask; issueId: string }) {
   const time = task.completed_at ? relativeTime(task.completed_at) : "—";
   const failureLabel =
     task.status === "failed" && task.failure_reason
-      ? failureReasonLabel[task.failure_reason as TaskFailureReason]
+      ? failureLabelOf(task.failure_reason as TaskFailureReason)
       : null;
 
   // Retry only makes sense for terminal-but-not-success rows. The rerun

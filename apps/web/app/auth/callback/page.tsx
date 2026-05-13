@@ -15,9 +15,11 @@ import {
   CardContent,
 } from "@multica/ui/components/ui/card";
 import { Button } from "@multica/ui/components/ui/button";
+import { useT } from "@multica/views/i18n";
 import { Loader2 } from "lucide-react";
 
 function CallbackContent() {
+  const { t } = useT("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const qc = useQueryClient();
@@ -28,13 +30,13 @@ function CallbackContent() {
   useEffect(() => {
     const code = searchParams.get("code");
     if (!code) {
-      setError("Missing authorization code");
+      setError(t(($) => $.errors.missing_authorization_code));
       return;
     }
 
     const errorParam = searchParams.get("error");
     if (errorParam) {
-      setError(errorParam === "access_denied" ? "Access denied" : errorParam);
+      setError(errorParam === "access_denied" ? t(($) => $.errors.access_denied) : errorParam);
       return;
     }
 
@@ -57,7 +59,7 @@ function CallbackContent() {
           window.location.href = `multica://auth/callback?token=${encodeURIComponent(token)}`;
         })
         .catch((err) => {
-          setError(err instanceof Error ? err.message : "Login failed");
+          setError(err instanceof Error ? err.message : t(($) => $.errors.login_failed));
         });
     } else {
       // Normal web flow
@@ -104,20 +106,21 @@ function CallbackContent() {
           router.push(resolvePostAuthDestination(wsList, onboarded));
         })
         .catch((err) => {
-          setError(err instanceof Error ? err.message : "Login failed");
+          setError(err instanceof Error ? err.message : t(($) => $.errors.login_failed));
         });
     }
-  }, [searchParams, loginWithGoogle, router, qc]);
+  }, [searchParams, loginWithGoogle, router, qc, t]);
 
   if (desktopToken) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Opening Multica</CardTitle>
+            <CardTitle className="text-2xl">
+              {t(($) => $.web.desktop_handoff.opening_title)}
+            </CardTitle>
             <CardDescription>
-              You should see a prompt to open the Multica desktop app. If
-              nothing happens, click the button below.
+              {t(($) => $.web.desktop_handoff.opening_description)}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -127,7 +130,7 @@ function CallbackContent() {
                 window.location.href = `multica://auth/callback?token=${encodeURIComponent(desktopToken)}`;
               }}
             >
-              Open Multica Desktop
+              {t(($) => $.web.desktop_handoff.open_button)}
             </Button>
           </CardContent>
         </Card>
@@ -140,12 +143,14 @@ function CallbackContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Login Failed</CardTitle>
+            <CardTitle className="text-2xl">
+              {t(($) => $.errors.login_failed_title)}
+            </CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <a href={paths.login()} className="text-primary underline-offset-4 hover:underline">
-              Back to login
+              {t(($) => $.errors.back_to_login)}
             </a>
           </CardContent>
         </Card>
@@ -157,8 +162,10 @@ function CallbackContent() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Signing in...</CardTitle>
-          <CardDescription>Please wait while we complete your login</CardDescription>
+          <CardTitle className="text-2xl">
+            {t(($) => $.web.callback.signing_in)}
+          </CardTitle>
+          <CardDescription>{t(($) => $.web.callback.signing_in_description)}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

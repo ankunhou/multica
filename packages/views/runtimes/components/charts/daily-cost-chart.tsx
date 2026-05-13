@@ -12,6 +12,7 @@ import {
   type ChartConfig,
 } from "@multica/ui/components/ui/chart";
 import type { DailyCostStackData } from "../../utils";
+import { useT } from "../../../i18n";
 
 // Three-segment stack (input / output / cache write) — keeps the user's
 // attention on what's actually driving spend. Cache reads are excluded
@@ -29,11 +30,23 @@ export const costStackConfig = {
 } satisfies ChartConfig;
 
 export function DailyCostChart({ data }: { data: DailyCostStackData[] }) {
+  const { t } = useT("runtimes");
+  const labels: Record<string, string> = {
+    input: t(($) => $.usage.legend_input),
+    output: t(($) => $.usage.legend_output),
+    cacheWrite: t(($) => $.usage.legend_cache_write),
+  };
+  const localizedConfig = {
+    input: { label: labels.input, color: "var(--chart-1)" },
+    output: { label: labels.output, color: "var(--chart-2)" },
+    cacheWrite: { label: labels.cacheWrite, color: "var(--chart-3)" },
+  } satisfies ChartConfig;
+
   // No internal empty-state — the parent decides what to show in place of
   // the chart (often a diagnostic explaining *why* there's no cost). Letting
   // recharts render an empty axis would be both ugly and uninformative.
   return (
-    <ChartContainer config={costStackConfig} className="aspect-[3/1] w-full">
+    <ChartContainer config={localizedConfig} className="aspect-[3/1] w-full">
       <BarChart data={data} margin={{ left: 0, right: 0, top: 4, bottom: 0 }}>
         <CartesianGrid vertical={false} />
         <XAxis
@@ -55,8 +68,8 @@ export function DailyCostChart({ data }: { data: DailyCostStackData[] }) {
             <ChartTooltipContent
               formatter={(value, name) =>
                 typeof value === "number"
-                  ? `$${value.toFixed(2)} ${name}`
-                  : `${value} ${name}`
+                  ? `$${value.toFixed(2)} ${labels[String(name)] ?? String(name)}`
+                  : `${value} ${labels[String(name)] ?? String(name)}`
               }
             />
           }

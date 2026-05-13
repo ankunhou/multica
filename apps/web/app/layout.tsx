@@ -72,39 +72,52 @@ export const viewport: Viewport = {
   ],
 };
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://www.multica.ai"),
-  title: {
-    default: "Multica — Project Management for Human + Agent Teams",
-    template: "%s | Multica",
-  },
-  description:
-    "Open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills.",
-  icons: {
-    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
-    shortcut: ["/favicon.svg"],
-  },
-  openGraph: {
-    type: "website",
-    siteName: "Multica",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    site: "@multica_hq",
-    creator: "@multica_hq",
-  },
-  alternates: {
-    canonical: "/",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
-
 function isSupportedLocale(value: string | null): value is SupportedLocale {
   return value !== null && (SUPPORTED_LOCALES as readonly string[]).includes(value);
+}
+
+function localeFromHeader(value: string | null): SupportedLocale {
+  return isSupportedLocale(value) ? value : DEFAULT_LOCALE;
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers();
+  const locale = localeFromHeader(h.get("x-multica-locale"));
+  const isZh = locale === "zh-Hans";
+
+  return {
+    metadataBase: new URL("https://www.multica.ai"),
+    title: {
+      default: isZh
+        ? "Multica - 面向人类与智能体团队的项目管理"
+        : "Multica - Project Management for Human + Agent Teams",
+      template: "%s | Multica",
+    },
+    description: isZh
+      ? "开源平台，把编码智能体变成真正的队友。分配任务、跟踪进度、积累 skill。"
+      : "Open-source platform that turns coding agents into real teammates. Assign tasks, track progress, compound skills.",
+    icons: {
+      icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+      shortcut: ["/favicon.svg"],
+    },
+    openGraph: {
+      type: "website",
+      siteName: "Multica",
+      locale: isZh ? "zh_CN" : "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      site: "@multica_hq",
+      creator: "@multica_hq",
+    },
+    alternates: {
+      canonical: "/",
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
 }
 
 // HTML lang attribute uses BCP-47 region tags that screen readers and font
@@ -122,10 +135,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const h = await headers();
-  const headerLocale = h.get("x-multica-locale");
-  const locale: SupportedLocale = isSupportedLocale(headerLocale)
-    ? headerLocale
-    : DEFAULT_LOCALE;
+  const locale = localeFromHeader(h.get("x-multica-locale"));
   const resources = { [locale]: RESOURCES[locale] };
 
   return (

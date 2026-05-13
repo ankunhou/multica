@@ -3,5 +3,10 @@
   "cancel": "取消",
   "delete": "删除",
   "confirm": "确认",
-  "loading": "加载中..."
+  "loading": "加载中...",
+  "not_found": {
+    "title": "页面不存在",
+    "description": "你要找的页面不存在，或已经被移动。",
+    "back_home": "返回 Multica"
+  }
 }
