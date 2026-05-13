@@ -5,13 +5,13 @@ import { getLandingLocale, landingMetadata } from "@/features/landing/i18n/serve
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-serif",
+  variable: "--font-serif-latin",
 });
 
 const notoSerifSC = Noto_Serif_SC({
   subsets: ["latin"],
   weight: "400",
-  variable: "--font-serif-zh",
+  variable: "--font-serif-cjk",
 });
 
 export default async function LandingLayout({

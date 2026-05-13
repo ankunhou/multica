@@ -877,7 +877,7 @@ export function createEnDict(allowSignup: boolean): LandingDict {
           "Create Agent dialog shows runtime owner with Mine/All filter",
         ],
         improvements: [
-          "Inter font with CJK fallback and automatic CJK+Latin spacing",
+          "Chinese-first font stack with automatic CJK+Latin spacing",
           "Sidebar user menu redesigned as full-row popover",
           "WebSocket ping/pong heartbeat to detect dead connections",
           "Members can now create agents and manage their own skills",

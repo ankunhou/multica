@@ -877,7 +877,7 @@ export function createZhDict(allowSignup: boolean): LandingDict {
           "创建 Agent 对话框显示运行时所有者和 Mine/All 筛选",
         ],
         improvements: [
-          "Inter 字体 + CJK 回退，中英文自动间距",
+          "中文优先字体栈，中英文自动间距",
           "侧边栏用户菜单改为整行弹出面板",
           "WebSocket ping/pong 心跳检测断线连接",
           "普通成员现在可以创建 Agent 和管理自己的 Skills",

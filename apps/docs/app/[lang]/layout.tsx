@@ -13,21 +13,13 @@ import { DocsSettings } from "@/components/docs-settings";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
-  fallback: [
-    "-apple-system",
-    "BlinkMacSystemFont",
-    "Segoe UI",
-    "PingFang SC",
-    "Microsoft YaHei",
-    "Noto Sans CJK SC",
-    "sans-serif",
-  ],
+  variable: "--font-latin",
+  fallback: ["system-ui", "sans-serif"],
 });
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-mono-latin",
   fallback: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"],
 });
 
@@ -38,7 +30,7 @@ const geistMono = Geist_Mono({
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   style: ["normal"],
-  variable: "--font-serif",
+  variable: "--font-serif-latin",
   fallback: [
     "ui-serif",
     "Iowan Old Style",
