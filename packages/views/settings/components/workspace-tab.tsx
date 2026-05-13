@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Save, LogOut } from "lucide-react";
+import { Camera, Loader2, LogOut, Save, Trash2 } from "lucide-react";
 import { Input } from "@multica/ui/components/ui/input";
 import { Textarea } from "@multica/ui/components/ui/textarea";
 import { Label } from "@multica/ui/components/ui/label";
@@ -28,6 +28,7 @@ import {
   workspaceListOptions,
 } from "@multica/core/workspace/queries";
 import { api } from "@multica/core/api";
+import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import {
   resolvePostAuthDestination,
   useCurrentWorkspace,
@@ -98,7 +99,9 @@ export function WorkspaceTab() {
   const [name, setName] = useState(workspace?.name ?? "");
   const [description, setDescription] = useState(workspace?.description ?? "");
   const [context, setContext] = useState(workspace?.context ?? "");
+  const [logoUrl, setLogoUrl] = useState(workspace?.logo_url ?? "");
   const [saving, setSaving] = useState(false);
+  const { upload, uploading } = useFileUpload(api);
   const [actionId, setActionId] = useState<string | null>(null);
   const [confirmAction, setConfirmAction] = useState<{
     title: string;
@@ -123,7 +126,42 @@ export function WorkspaceTab() {
     setName(workspace?.name ?? "");
     setDescription(workspace?.description ?? "");
     setContext(workspace?.context ?? "");
+    setLogoUrl(workspace?.logo_url ?? "");
   }, [workspace]);
+
+  const updateWorkspaceCache = (updated: Workspace) => {
+    qc.setQueryData(workspaceKeys.list(), (old: Workspace[] | undefined) =>
+      old?.map((ws) => (ws.id === updated.id ? updated : ws)),
+    );
+  };
+
+  const handleLogoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!workspace || !file) return;
+    event.target.value = "";
+    try {
+      const result = await upload(file);
+      if (!result) return;
+      const updated = await api.updateWorkspace(workspace.id, { logo_url: result.link });
+      setLogoUrl(updated.logo_url ?? "");
+      updateWorkspaceCache(updated);
+      toast.success(t(($) => $.workspace.toast_logo_updated));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t(($) => $.workspace.toast_logo_failed));
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!workspace) return;
+    try {
+      const updated = await api.updateWorkspace(workspace.id, { logo_url: "" });
+      setLogoUrl("");
+      updateWorkspaceCache(updated);
+      toast.success(t(($) => $.workspace.toast_logo_removed));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t(($) => $.workspace.toast_logo_failed));
+    }
+  };
 
   const handleSave = async () => {
     if (!workspace) return;
@@ -133,10 +171,9 @@ export function WorkspaceTab() {
         name,
         description,
         context,
+        logo_url: logoUrl,
       });
-      qc.setQueryData(workspaceKeys.list(), (old: Workspace[] | undefined) =>
-        old?.map((ws) => (ws.id === updated.id ? updated : ws)),
-      );
+      updateWorkspaceCache(updated);
       toast.success(t(($) => $.workspace.toast_saved));
     } catch (e) {
       toast.error(e instanceof Error ? e.message : t(($) => $.workspace.toast_save_failed));
@@ -193,6 +230,51 @@ export function WorkspaceTab() {
 
         <Card>
           <CardContent className="space-y-3">
+            <div>
+              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.logo_label)}</Label>
+              <div className="mt-2 flex items-center gap-3">
+                <label
+                  className="group relative flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border bg-muted text-sm font-semibold text-muted-foreground focus-within:ring-2 focus-within:ring-ring"
+                >
+                  {logoUrl ? (
+                    <img src={logoUrl} alt={t(($) => $.workspace.logo_alt, { name: workspace.name })} className="h-full w-full object-cover" />
+                  ) : (
+                    workspace.name.charAt(0).toUpperCase()
+                  )}
+                  {canManageWorkspace && (
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      {uploading ? (
+                        <Loader2 className="h-5 w-5 animate-spin text-white" />
+                      ) : (
+                        <Camera className="h-5 w-5 text-white" />
+                      )}
+                    </span>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="sr-only"
+                    disabled={!canManageWorkspace || uploading}
+                    onChange={handleLogoUpload}
+                  />
+                </label>
+                <div className="min-w-0 flex-1 text-xs text-muted-foreground">
+                  {t(($) => $.workspace.logo_hint)}
+                </div>
+                {logoUrl && canManageWorkspace && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRemoveLogo}
+                    disabled={uploading}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                    {t(($) => $.workspace.logo_remove)}
+                  </Button>
+                )}
+              </div>
+            </div>
             <div>
               <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.name_label)}</Label>
               <Input

@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -115,6 +116,9 @@ done
 
 func TestKiroBackendSetModelFailureFailsTask(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake kiro fixture is a POSIX shell script")
+	}
 
 	fakePath := filepath.Join(t.TempDir(), "kiro-cli")
 	writeTestExecutable(t, fakePath, []byte(fakeKiroACPScript()))
@@ -163,6 +167,9 @@ func TestKiroBackendSetModelFailureFailsTask(t *testing.T) {
 
 func TestKiroBackendInvokesACPWithTrustAllTools(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake kiro fixture is a POSIX shell script")
+	}
 
 	tempDir := t.TempDir()
 	argsFile := filepath.Join(tempDir, "argv.txt")
@@ -223,6 +230,9 @@ func TestKiroBackendInvokesACPWithTrustAllTools(t *testing.T) {
 
 func TestKiroBackendUsesSessionLoadForResume(t *testing.T) {
 	t.Parallel()
+	if runtime.GOOS == "windows" {
+		t.Skip("fake kiro fixture is a POSIX shell script")
+	}
 
 	tempDir := t.TempDir()
 	requestsFile := filepath.Join(tempDir, "requests.jsonl")

@@ -23,6 +23,7 @@ function makeWorkspace(over: Partial<Workspace>): Workspace {
     context: null,
     settings: {},
     repos: [],
+    logo_url: null,
     issue_prefix: "DEF",
     created_at: "",
     updated_at: "",

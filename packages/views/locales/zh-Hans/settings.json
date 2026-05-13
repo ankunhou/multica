@@ -110,6 +110,13 @@
   },
   "workspace": {
     "section_general": "通用",
+    "logo_label": "Logo",
+    "logo_hint": "上传一张方形图片，用于侧边栏和工作区切换器。",
+    "logo_alt": "{{name}} logo",
+    "logo_remove": "移除",
+    "toast_logo_updated": "工作区 logo 已更新",
+    "toast_logo_removed": "工作区 logo 已移除",
+    "toast_logo_failed": "更新工作区 logo 失败",
     "name_label": "名称",
     "description_label": "描述",
     "description_placeholder": "这个工作区主要做什么？",

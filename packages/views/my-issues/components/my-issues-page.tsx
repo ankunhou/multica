@@ -161,7 +161,7 @@ export function MyIssuesPage() {
     <div className="flex flex-1 min-h-0 flex-col">
       {/* Header 1: Workspace breadcrumb */}
       <PageHeader className="gap-1.5">
-        <WorkspaceAvatar name={workspace?.name ?? "W"} size="sm" />
+        <WorkspaceAvatar name={workspace?.name ?? "W"} logoUrl={workspace?.logo_url} size="sm" />
         <span className="text-sm text-muted-foreground">
           {workspace?.name ?? t(($) => $.page.workspace_fallback)}
         </span>

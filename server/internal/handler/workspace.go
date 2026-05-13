@@ -40,6 +40,7 @@ type WorkspaceResponse struct {
 	Context     *string `json:"context"`
 	Settings    any     `json:"settings"`
 	Repos       any     `json:"repos"`
+	LogoURL     *string `json:"logo_url"`
 	IssuePrefix string  `json:"issue_prefix"`
 	CreatedAt   string  `json:"created_at"`
 	UpdatedAt   string  `json:"updated_at"`
@@ -68,10 +69,18 @@ func workspaceToResponse(w db.Workspace) WorkspaceResponse {
 		Context:     textToPtr(w.Context),
 		Settings:    settings,
 		Repos:       repos,
+		LogoURL:     workspaceLogoURLToPtr(w.LogoUrl),
 		IssuePrefix: w.IssuePrefix,
 		CreatedAt:   timestampToString(w.CreatedAt),
 		UpdatedAt:   timestampToString(w.UpdatedAt),
 	}
+}
+
+func workspaceLogoURLToPtr(t pgtype.Text) *string {
+	if !t.Valid || strings.TrimSpace(t.String) == "" {
+		return nil
+	}
+	return &t.String
 }
 
 type MemberResponse struct {
@@ -133,6 +142,7 @@ type CreateWorkspaceRequest struct {
 	Description *string `json:"description"`
 	Context     *string `json:"context"`
 	IssuePrefix *string `json:"issue_prefix"`
+	LogoURL     *string `json:"logo_url"`
 }
 
 func (h *Handler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
@@ -175,12 +185,17 @@ func (h *Handler) CreateWorkspace(w http.ResponseWriter, r *http.Request) {
 	}
 
 	qtx := h.Queries.WithTx(tx)
+	logoURL := ""
+	if req.LogoURL != nil {
+		logoURL = strings.TrimSpace(*req.LogoURL)
+	}
 	ws, err := qtx.CreateWorkspace(r.Context(), db.CreateWorkspaceParams{
 		Name:        req.Name,
 		Slug:        req.Slug,
 		Description: ptrToText(req.Description),
 		Context:     ptrToText(req.Context),
 		IssuePrefix: issuePrefix,
+		LogoUrl:     pgtype.Text{String: logoURL, Valid: logoURL != ""},
 	})
 	if err != nil {
 		if isUniqueViolation(err) {
@@ -231,6 +246,7 @@ type UpdateWorkspaceRequest struct {
 	Settings    any     `json:"settings"`
 	Repos       any     `json:"repos"`
 	IssuePrefix *string `json:"issue_prefix"`
+	LogoURL     *string `json:"logo_url"`
 }
 
 func (h *Handler) UpdateWorkspace(w http.ResponseWriter, r *http.Request) {
@@ -276,6 +292,9 @@ func (h *Handler) UpdateWorkspace(w http.ResponseWriter, r *http.Request) {
 		if prefix != "" {
 			params.IssuePrefix = pgtype.Text{String: prefix, Valid: true}
 		}
+	}
+	if req.LogoURL != nil {
+		params.LogoUrl = pgtype.Text{String: strings.TrimSpace(*req.LogoURL), Valid: true}
 	}
 
 	ws, err := h.Queries.UpdateWorkspace(r.Context(), params)

@@ -3,6 +3,7 @@
 package repocache
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"log/slog"
 	"net/url"
@@ -14,7 +15,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
 )
 
 // gitEnv returns an environment for git subprocesses that contact remotes.
@@ -173,6 +173,9 @@ func (c *Cache) Fetch(barePath string) error {
 //	my-repo                                      -> my-repo.git (bare name fallback)
 func bareDirName(rawURL string) string {
 	rawURL = strings.TrimRight(rawURL, "/")
+	if isLocalFilesystemPath(rawURL) {
+		return localBareDirName(rawURL)
+	}
 
 	host, path := splitHostAndPath(rawURL)
 	host = strings.ToLower(strings.TrimSpace(host))
@@ -188,7 +191,7 @@ func bareDirName(rawURL string) string {
 	if host != "" {
 		parts = append(parts, host)
 	}
-	for _, seg := range strings.Split(path, "/") {
+	for _, seg := range strings.Split(filepath.ToSlash(path), "/") {
 		if seg != "" {
 			parts = append(parts, seg)
 		}
@@ -201,7 +204,55 @@ func bareDirName(rawURL string) string {
 	if name == "" || name == ".git" {
 		name = "repo.git"
 	}
-	return name
+	return shortenBareDirName(name, rawURL)
+}
+
+func isLocalFilesystemPath(rawURL string) bool {
+	return filepath.IsAbs(rawURL) || strings.HasPrefix(rawURL, `\\`) || strings.HasPrefix(rawURL, `//`)
+}
+
+func localBareDirName(rawPath string) string {
+	base := strings.TrimSuffix(filepath.Base(rawPath), ".git")
+	base = sanitizeCachePathSegment(base)
+	sum := sha256.Sum256([]byte(filepath.Clean(rawPath)))
+	return fmt.Sprintf("local+%s-%x.git", base, sum[:8])
+}
+
+func shortenBareDirName(name, rawURL string) string {
+	const maxBareDirNameLen = 96
+	if len(name) <= maxBareDirNameLen {
+		return name
+	}
+	sum := sha256.Sum256([]byte(rawURL))
+	stem := strings.TrimSuffix(name, ".git")
+	if len(stem) > 70 {
+		stem = strings.TrimRight(stem[:70], "+-.")
+	}
+	if stem == "" {
+		stem = "repo"
+	}
+	return fmt.Sprintf("%s-%x.git", stem, sum[:8])
+}
+
+func sanitizeCachePathSegment(s string) string {
+	s = strings.TrimSpace(s)
+	replacer := strings.NewReplacer(
+		`/`, "-",
+		`\`, "-",
+		":", "%3A",
+		"<", "-",
+		">", "-",
+		`"`, "-",
+		"|", "-",
+		"?", "-",
+		"*", "-",
+	)
+	s = replacer.Replace(s)
+	s = strings.Trim(s, " .-")
+	if s == "" {
+		return "repo"
+	}
+	return s
 }
 
 // splitHostAndPath extracts the host and path-with-namespace from the
@@ -683,7 +734,7 @@ func getRemoteDefaultBranch(barePath string) string {
 	// 2) Common default branch names under the origin namespace.
 	for _, candidate := range []string{"refs/remotes/origin/main", "refs/remotes/origin/master"} {
 		cmd := exec.Command("git", "-C", barePath, "rev-parse", "--verify", candidate)
-	
+
 		if err := cmd.Run(); err == nil {
 			return candidate
 		}
@@ -698,7 +749,7 @@ func getRemoteDefaultBranch(barePath string) string {
 	if bareRef != "" {
 		originRef := "refs/remotes/origin/" + strings.TrimPrefix(bareRef, "refs/heads/")
 		cmd := exec.Command("git", "-C", barePath, "rev-parse", "--verify", originRef)
-	
+
 		if err := cmd.Run(); err == nil {
 			return originRef
 		}
@@ -930,6 +981,11 @@ func excludeFromGit(worktreePath, pattern string) error {
 func repoNameFromURL(url string) string {
 	url = strings.TrimRight(url, "/")
 	url = strings.TrimSuffix(url, ".git")
+	if isLocalFilesystemPath(url) {
+		name := strings.TrimSuffix(filepath.Base(url), ".git")
+		return sanitizeCachePathSegment(name)
+	}
+	url = filepath.ToSlash(url)
 
 	if i := strings.LastIndex(url, "/"); i >= 0 {
 		url = url[i+1:]
@@ -945,7 +1001,7 @@ func repoNameFromURL(url string) string {
 	if name == "" {
 		return "repo"
 	}
-	return name
+	return sanitizeCachePathSegment(name)
 }
 
 var nonAlphanumeric = regexp.MustCompile(`[^a-z0-9]+`)

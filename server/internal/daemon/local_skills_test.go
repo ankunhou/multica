@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"runtime"
 	"testing"
 )
 
@@ -28,7 +29,7 @@ func writeTestLocalSkill(t *testing.T, root, rel string, files map[string]string
 
 func TestListRuntimeLocalSkills_Claude(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	writeTestLocalSkill(t, filepath.Join(home, ".claude", "skills"), "review-helper", map[string]string{
 		"SKILL.md":           "---\nname: Review Helper\ndescription: Review pull requests\n---\n# Review Helper\n",
@@ -72,7 +73,7 @@ func TestListRuntimeLocalSkills_Claude(t *testing.T) {
 
 func TestListRuntimeLocalSkills_Kiro(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	writeTestLocalSkill(t, filepath.Join(home, ".kiro", "skills"), "review-helper", map[string]string{
 		"SKILL.md": "---\nname: Kiro Review\ndescription: Review code with Kiro\n---\n# Kiro Review\n",
@@ -107,7 +108,7 @@ func TestListRuntimeLocalSkills_Kiro(t *testing.T) {
 // listRuntimeLocalSkills must follow those symlinks.
 func TestListRuntimeLocalSkills_FollowsSymlinkedSkillDirs(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	// Real skill lives outside the runtime root.
 	target := writeTestLocalSkill(t, filepath.Join(home, ".agents", "skills"), "lark-doc", map[string]string{
@@ -121,6 +122,9 @@ func TestListRuntimeLocalSkills_FollowsSymlinkedSkillDirs(t *testing.T) {
 		t.Fatalf("mkdir skills root: %v", err)
 	}
 	if err := os.Symlink(target, filepath.Join(skillsRoot, "lark-doc")); err != nil {
+		if runtime.GOOS == "windows" {
+			t.Skipf("symlink privilege unavailable on Windows: %v", err)
+		}
 		t.Fatalf("symlink: %v", err)
 	}
 
@@ -162,7 +166,7 @@ func TestListRuntimeLocalSkills_FollowsSymlinkedSkillDirs(t *testing.T) {
 func TestListRuntimeLocalSkills_CodexUsesSharedCODEXHOME(t *testing.T) {
 	home := t.TempDir()
 	codexHome := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 	t.Setenv("CODEX_HOME", codexHome)
 
 	writeTestLocalSkill(t, filepath.Join(codexHome, "skills"), "debugger", map[string]string{
@@ -185,7 +189,7 @@ func TestListRuntimeLocalSkills_CodexUsesSharedCODEXHOME(t *testing.T) {
 	if skills[0].Key != "debugger" {
 		t.Fatalf("key = %q, want debugger", skills[0].Key)
 	}
-	if skills[0].SourcePath != filepath.Join(codexHome, "skills", "debugger") {
+	if skills[0].SourcePath != filepath.ToSlash(filepath.Join(codexHome, "skills", "debugger")) {
 		t.Fatalf("source_path = %q", skills[0].SourcePath)
 	}
 }
@@ -202,7 +206,7 @@ func TestListRuntimeLocalSkills_CodexUsesSharedCODEXHOME(t *testing.T) {
 // bundle, not separate skills.
 func TestListRuntimeLocalSkills_DescendsIntoNestedSkillDirs(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	root := filepath.Join(home, ".config", "opencode", "skills")
 
@@ -241,7 +245,7 @@ func TestListRuntimeLocalSkills_DescendsIntoNestedSkillDirs(t *testing.T) {
 
 func TestLoadRuntimeLocalSkillBundle_OpenCode(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	writeTestLocalSkill(t, filepath.Join(home, ".config", "opencode", "skills"), "release/reporter", map[string]string{
 		"SKILL.md":           "---\nname: Release Reporter\ndescription: Summarize release notes\n---\n# Release Reporter\n",
@@ -278,7 +282,7 @@ func TestLoadRuntimeLocalSkillBundle_OpenCode(t *testing.T) {
 
 func TestListRuntimeLocalSkills_OpenClaw(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	writeTestLocalSkill(t, filepath.Join(home, ".openclaw", "skills"), "planner", map[string]string{
 		"SKILL.md": "# Planner\n",
@@ -301,7 +305,7 @@ func TestListRuntimeLocalSkills_OpenClaw(t *testing.T) {
 
 func TestLoadRuntimeLocalSkillBundle_Cursor(t *testing.T) {
 	home := t.TempDir()
-	t.Setenv("HOME", home)
+	setTestHome(t, home)
 
 	writeTestLocalSkill(t, filepath.Join(home, ".cursor", "skills"), "docs-helper", map[string]string{
 		"SKILL.md":         "---\nname: Docs Helper\n---\n# Docs Helper\n",

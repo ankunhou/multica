@@ -1,0 +1,1 @@
+ALTER TABLE workspace DROP COLUMN IF EXISTS logo_url;

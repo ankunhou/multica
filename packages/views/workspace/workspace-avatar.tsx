@@ -8,20 +8,25 @@ const sizeMap = {
 
 interface WorkspaceAvatarProps {
   name: string;
+  logoUrl?: string | null;
   size?: keyof typeof sizeMap;
   className?: string;
 }
 
-function WorkspaceAvatar({ name, size = "sm", className }: WorkspaceAvatarProps) {
+function WorkspaceAvatar({ name, logoUrl, size = "sm", className }: WorkspaceAvatarProps) {
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center justify-center border bg-muted font-semibold text-muted-foreground",
+        "inline-flex shrink-0 items-center justify-center overflow-hidden border bg-muted font-semibold text-muted-foreground",
         sizeMap[size],
         className
       )}
     >
-      {name.charAt(0).toUpperCase()}
+      {logoUrl ? (
+        <img src={logoUrl} alt={`${name} logo`} className="h-full w-full object-cover" />
+      ) : (
+        name.charAt(0).toUpperCase()
+      )}
     </span>
   );
 }
