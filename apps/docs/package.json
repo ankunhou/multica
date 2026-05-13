@@ -9,7 +9,7 @@
     "start": "next start",
     "typecheck": "fumadocs-mdx && tsc --noEmit",
     "test": "vitest run",
-    "postinstall": "fumadocs-mdx"
+    "postinstall": "pnpm exec fumadocs-mdx"
   },
   "dependencies": {
     "@multica/ui": "workspace:*",

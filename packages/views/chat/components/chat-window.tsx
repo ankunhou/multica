@@ -459,6 +459,7 @@ export function ChatWindow() {
                   size="icon-sm"
                   className="rounded-full text-muted-foreground"
                   onClick={handleNewChat}
+                  aria-label={t(($) => $.window.new_chat_tooltip)}
                 />
               }
             >
@@ -484,6 +485,9 @@ export function ChatWindow() {
                   size="icon-sm"
                   className="text-muted-foreground"
                   onClick={toggleExpand}
+                  aria-label={isExpanded || isAtMax
+                    ? t(($) => $.window.restore_tooltip)
+                    : t(($) => $.window.expand_tooltip)}
                 />
               }
             >
@@ -501,6 +505,7 @@ export function ChatWindow() {
                   size="icon-sm"
                   className="text-muted-foreground"
                   onClick={handleMinimize}
+                  aria-label={t(($) => $.window.minimize_tooltip)}
                 />
               }
             >

@@ -136,6 +136,7 @@ function CommentInput({ issueId, onSubmit }: CommentInputProps) {
           onClick={handleSubmit}
           disabled={isEmpty}
           loading={submitting}
+          ariaLabel={t(($) => $.comment.send_tooltip)}
           tooltip={`${t(($) => $.comment.send_tooltip)} · ${formatShortcut(modKey, enterKey)}`}
         />
       </div>

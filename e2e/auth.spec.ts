@@ -6,15 +6,15 @@ test.describe("Authentication", () => {
     await page.goto("/login");
 
     await expect(page.getByText("Sign in to Multica")).toBeVisible();
-    await expect(page.getByLabel("Email")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Continue" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Email" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Continue" })).toBeDisabled();
   });
 
   test("login and redirect to /issues", async ({ page }) => {
     await loginAsDefault(page);
 
     await expect(page).toHaveURL(/\/issues/);
-    await expect(page.locator("text=All Issues")).toBeVisible();
+    await expect(page.getByRole("button", { name: /New Issue/ })).toBeVisible();
   });
 
   test("unauthenticated user is redirected to /login", async ({ page }) => {
@@ -36,8 +36,7 @@ test.describe("Authentication", () => {
     // Open the workspace dropdown menu
     await openWorkspaceMenu(page);
 
-    // Click Sign out
-    await page.locator("text=Sign out").click();
+    await page.getByRole("menuitem", { name: "Log out" }).click();
 
     await page.waitForURL("**/login", { timeout: 10000 });
     await expect(page).toHaveURL(/\/login/);

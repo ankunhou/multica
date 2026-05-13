@@ -29,6 +29,7 @@ export class TestApiClient {
     const client = new pg.Client(DATABASE_URL);
     await client.connect();
     try {
+      await client.query("SELECT pg_advisory_lock(hashtext($1))", [email]);
       // Keep each E2E login isolated so previous test runs do not trip the
       // per-email send-code rate limit.
       await client.query("DELETE FROM verification_code WHERE email = $1", [email]);
@@ -77,6 +78,9 @@ export class TestApiClient {
 
       return data;
     } finally {
+      await client
+        .query("SELECT pg_advisory_unlock(hashtext($1))", [email])
+        .catch(() => {});
       await client.end();
     }
   }
