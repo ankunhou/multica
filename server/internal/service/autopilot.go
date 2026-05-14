@@ -11,6 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/multica-ai/multica/server/internal/analytics"
 	"github.com/multica-ai/multica/server/internal/events"
+	"github.com/multica-ai/multica/server/internal/i18n"
 	"github.com/multica-ai/multica/server/internal/util"
 	db "github.com/multica-ai/multica/server/pkg/db/generated"
 	"github.com/multica-ai/multica/server/pkg/protocol"
@@ -125,7 +126,7 @@ func (s *AutopilotService) dispatchCreateIssue(ctx context.Context, ap db.Autopi
 	}
 
 	title := s.interpolateTemplate(ap)
-	description := s.buildIssueDescription(ap)
+	description := s.buildIssueDescription(ctx, ap)
 
 	issue, err := qtx.CreateIssueWithOrigin(ctx, db.CreateIssueWithOriginParams{
 		WorkspaceID:   ap.WorkspaceID,
@@ -578,14 +579,24 @@ func autopilotRunDurationMS(run db.AutopilotRun) int64 {
 	return ms
 }
 
-// buildIssueDescription appends an autopilot system instruction to the
-// user-provided description, asking the agent to rename the issue after
-// it understands the actual work.
-func (s *AutopilotService) buildIssueDescription(ap db.Autopilot) pgtype.Text {
-	now := time.Now().UTC().Format("2006-01-02 15:04 UTC")
-	note := fmt.Sprintf("\n\n---\n*Autopilot run triggered at %s. After starting work, rename this issue to accurately reflect what you are doing.*", now)
+// buildIssueDescription appends a localized autopilot system instruction to
+// the user-provided description, asking the agent to rename the issue after it
+// understands the actual work.
+func (s *AutopilotService) buildIssueDescription(ctx context.Context, ap db.Autopilot) pgtype.Text {
+	note := i18n.AutopilotIssueDescriptionNote(s.autopilotCreatorLocale(ctx, ap), time.Now())
 	base := ap.Description.String
 	return pgtype.Text{String: base + note, Valid: true}
+}
+
+func (s *AutopilotService) autopilotCreatorLocale(ctx context.Context, ap db.Autopilot) string {
+	if ap.CreatedByType == "agent" {
+		return i18n.LocaleEN
+	}
+	user, err := s.Queries.GetUser(ctx, ap.CreatedByID)
+	if err != nil || !user.Language.Valid {
+		return i18n.LocaleEN
+	}
+	return i18n.NormalizeLocale(user.Language.String)
 }
 
 // interpolateTemplate replaces {{date}} in the issue title template.

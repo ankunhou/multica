@@ -42,3 +42,27 @@ func TestAutopilotPausedBodyZhHans(t *testing.T) {
 		}
 	}
 }
+
+func TestAutopilotIssueDescriptionNote(t *testing.T) {
+	triggeredAt := time.Date(2026, 5, 13, 20, 14, 0, 0, time.UTC)
+
+	en := AutopilotIssueDescriptionNote("en", triggeredAt)
+	for _, want := range []string{
+		"Autopilot run triggered at 2026-05-13 20:14 UTC",
+		"rename this issue",
+	} {
+		if !strings.Contains(en, want) {
+			t.Fatalf("English note missing %q: %s", want, en)
+		}
+	}
+
+	zh := AutopilotIssueDescriptionNote("zh-Hans", triggeredAt)
+	for _, want := range []string{
+		"自动化运行于 2026-05-13 20:14 UTC 触发",
+		"请将这个议题重命名",
+	} {
+		if !strings.Contains(zh, want) {
+			t.Fatalf("Chinese note missing %q: %s", want, zh)
+		}
+	}
+}

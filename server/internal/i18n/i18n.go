@@ -135,6 +135,20 @@ func AutopilotPausedBody(locale string, failedRuns, totalRuns int64, failPct flo
 	)
 }
 
+func AutopilotIssueDescriptionNote(locale string, triggeredAt time.Time) string {
+	now := triggeredAt.UTC().Format("2006-01-02 15:04 UTC")
+	if IsZhHans(locale) {
+		return fmt.Sprintf(
+			"\n\n---\n*自动化运行于 %s 触发。开始工作后，请将这个议题重命名为能准确反映当前工作内容的标题。*",
+			now,
+		)
+	}
+	return fmt.Sprintf(
+		"\n\n---\n*Autopilot run triggered at %s. After starting work, rename this issue to accurately reflect what you are doing.*",
+		now,
+	)
+}
+
 func QuickCreateFailedTitle(locale string) string {
 	if IsZhHans(locale) {
 		return "快速创建失败"
