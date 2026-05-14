@@ -4,7 +4,7 @@ import type { UploadResult } from "@multica/core/hooks/use-file-upload";
 import { createSafeId } from "@multica/core/utils";
 
 /** Find and remove a fileCard node by uploadId. */
- 
+
 function removeUploadingFileCard(editor: any, uploadId: string) {
   const { tr } = editor.state;
   let deleted = false;
@@ -21,7 +21,7 @@ function removeUploadingFileCard(editor: any, uploadId: string) {
 }
 
 /** Update a fileCard node from uploading state to final state with real URL. */
- 
+
 function finalizeFileCard(editor: any, uploadId: string, href: string) {
   const { tr } = editor.state;
   let updated = false;
@@ -41,7 +41,6 @@ function finalizeFileCard(editor: any, uploadId: string, href: string) {
   if (updated) editor.view.dispatch(tr);
 }
 
- 
 function removeImageBySrc(editor: any, src: string) {
   if (!editor) return;
   const { tr } = editor.state;
@@ -63,7 +62,6 @@ function removeImageBySrc(editor: any, src: string) {
  * Used by both paste/drop (at cursor) and button upload (at end of doc).
  */
 export async function uploadAndInsertFile(
-   
   editor: any,
   file: File,
   handler: (file: File) => Promise<UploadResult | null>,
@@ -85,20 +83,22 @@ export async function uploadAndInsertFile(
       if (result) {
         const { tr } = editor.state;
         let found = false;
-        editor.state.doc.descendants((node: { type: { name: string }; attrs: { src: string } }, nodePos: number) => {
-          if (found) return false;
-          if (node.type.name === "image" && node.attrs.src === blobUrl) {
-            tr.setNodeMarkup(nodePos, undefined, {
-              ...node.attrs,
-              src: result.link,
-              alt: result.filename,
-              uploading: false,
-            });
-            found = true;
-            return false;
-          }
-          return undefined;
-        });
+        editor.state.doc.descendants(
+          (node: { type: { name: string }; attrs: { src: string } }, nodePos: number) => {
+            if (found) return false;
+            if (node.type.name === "image" && node.attrs.src === blobUrl) {
+              tr.setNodeMarkup(nodePos, undefined, {
+                ...node.attrs,
+                src: result.link,
+                alt: result.filename,
+                uploading: false,
+              });
+              found = true;
+              return false;
+            }
+            return undefined;
+          },
+        );
         if (found) editor.view.dispatch(tr);
       } else {
         removeImageBySrc(editor, blobUrl);
@@ -111,7 +111,13 @@ export async function uploadAndInsertFile(
   } else {
     // Non-image: insert skeleton fileCard → upload → finalize with real URL
     const uploadId = createSafeId();
-    const cardAttrs = { filename: file.name, href: "", fileSize: file.size, uploading: true, uploadId };
+    const cardAttrs = {
+      filename: file.name,
+      href: "",
+      fileSize: file.size,
+      uploading: true,
+      uploadId,
+    };
     const insertContent = { type: "fileCard", attrs: cardAttrs };
     if (pos !== undefined) {
       editor.chain().focus().insertContentAt(pos, insertContent).run();

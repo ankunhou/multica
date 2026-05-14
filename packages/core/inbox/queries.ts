@@ -24,8 +24,7 @@ export function useInboxUnreadCount(wsId: string | null | undefined): number {
     queryKey: inboxKeys.list(wsId ?? ""),
     queryFn: () => api.listInbox(),
     enabled: !!wsId,
-    select: (items: InboxItem[]) =>
-      deduplicateInboxItems(items).filter((i) => !i.read).length,
+    select: (items: InboxItem[]) => deduplicateInboxItems(items).filter((i) => !i.read).length,
   });
   return data ?? 0;
 }
@@ -46,14 +45,8 @@ export function deduplicateInboxItems(items: InboxItem[]): InboxItem[] {
   }
   const merged: InboxItem[] = [];
   for (const group of groups.values()) {
-    group.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    );
+    group.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     if (group[0]) merged.push(group[0]);
   }
-  return merged.sort(
-    (a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-  );
+  return merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 }

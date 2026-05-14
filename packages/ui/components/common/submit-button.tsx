@@ -3,11 +3,7 @@
 import type { ReactNode } from "react";
 import { ArrowUp, Loader2, Square } from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 
 interface SubmitButtonProps {
   onClick: () => void;
@@ -55,12 +51,7 @@ function SubmitButton({
   }
 
   const submitButton = (
-    <Button
-      size="icon-sm"
-      disabled={disabled || loading}
-      onClick={onClick}
-      aria-label={ariaLabel}
-    >
+    <Button size="icon-sm" disabled={disabled || loading} onClick={onClick} aria-label={ariaLabel}>
       {loading ? <Loader2 className="animate-spin" /> : <ArrowUp />}
     </Button>
   );

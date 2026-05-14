@@ -13,10 +13,7 @@ export default [
     ignores: ["**/*.test.tsx", "test/**"],
     plugins: { i18next },
     rules: {
-      "i18next/no-literal-string": [
-        "error",
-        { mode: "jsx-text-only" },
-      ],
+      "i18next/no-literal-string": ["error", { mode: "jsx-text-only" }],
     },
   },
 ];

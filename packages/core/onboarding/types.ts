@@ -21,19 +21,9 @@ export type OnboardingCompletionPath =
 
 export type TeamSize = "solo" | "team" | "other";
 
-export type Role =
-  | "developer"
-  | "product_lead"
-  | "writer"
-  | "founder"
-  | "other";
+export type Role = "developer" | "product_lead" | "writer" | "founder" | "other";
 
-export type UseCase =
-  | "coding"
-  | "planning"
-  | "writing_research"
-  | "explore"
-  | "other";
+export type UseCase = "coding" | "planning" | "writing_research" | "explore" | "other";
 
 export interface QuestionnaireAnswers {
   team_size: TeamSize | null;

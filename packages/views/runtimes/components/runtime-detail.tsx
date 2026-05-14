@@ -1,14 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  ArrowLeft,
-  Trash2,
-  ChevronRight,
-  Cpu,
-  Globe,
-  Lock,
-} from "lucide-react";
+import { ArrowLeft, Trash2, ChevronRight, Cpu, Globe, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import type { AgentRuntime, Agent, MemberWithUser } from "@multica/core/types";
@@ -17,10 +10,7 @@ import { useWorkspaceId } from "@multica/core/hooks";
 import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
 import { useDeleteRuntime, useUpdateRuntime } from "@multica/core/runtimes/mutations";
 import { deriveRuntimeHealth } from "@multica/core/runtimes";
-import {
-  type AgentPresenceDetail,
-  useWorkspacePresenceMap,
-} from "@multica/core/agents";
+import { type AgentPresenceDetail, useWorkspacePresenceMap } from "@multica/core/agents";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { Button } from "@multica/ui/components/ui/button";
 import {
@@ -33,11 +23,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@multica/ui/components/ui/alert-dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import {
   Select,
   SelectContent,
@@ -56,22 +42,14 @@ import { UsageSection } from "./usage-section";
 import { useT } from "../../i18n";
 
 function getCliVersion(metadata: Record<string, unknown>): string | null {
-  if (
-    metadata &&
-    typeof metadata.cli_version === "string" &&
-    metadata.cli_version
-  ) {
+  if (metadata && typeof metadata.cli_version === "string" && metadata.cli_version) {
     return metadata.cli_version;
   }
   return null;
 }
 
 function getLaunchedBy(metadata: Record<string, unknown>): string | null {
-  if (
-    metadata &&
-    typeof metadata.launched_by === "string" &&
-    metadata.launched_by
-  ) {
+  if (metadata && typeof metadata.launched_by === "string" && metadata.launched_by) {
     return metadata.launched_by;
   }
   return null;
@@ -99,10 +77,8 @@ function useNowTick(intervalMs = 30_000): number {
 
 export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
   const { t } = useT("runtimes");
-  const cliVersion =
-    runtime.runtime_mode === "local" ? getCliVersion(runtime.metadata) : null;
-  const launchedBy =
-    runtime.runtime_mode === "local" ? getLaunchedBy(runtime.metadata) : null;
+  const cliVersion = runtime.runtime_mode === "local" ? getCliVersion(runtime.metadata) : null;
+  const launchedBy = runtime.runtime_mode === "local" ? getLaunchedBy(runtime.metadata) : null;
 
   const user = useAuthStore((s) => s.user);
   const wsId = useWorkspaceId();
@@ -117,21 +93,17 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
 
   const health = deriveRuntimeHealth(runtime, now);
   const ownerMember = runtime.owner_id
-    ? members.find((m) => m.user_id === runtime.owner_id) ?? null
+    ? (members.find((m) => m.user_id === runtime.owner_id) ?? null)
     : null;
 
-  const currentMember = user
-    ? members.find((m) => m.user_id === user.id)
-    : null;
+  const currentMember = user ? members.find((m) => m.user_id === user.id) : null;
   const isAdmin = currentMember
     ? currentMember.role === "owner" || currentMember.role === "admin"
     : false;
   const isRuntimeOwner = user && runtime.owner_id === user.id;
   const canDelete = isAdmin || isRuntimeOwner;
 
-  const servingAgents = agents.filter(
-    (a) => a.runtime_id === runtime.id && !a.archived_at,
-  );
+  const servingAgents = agents.filter((a) => a.runtime_id === runtime.id && !a.archived_at);
 
   const handleDelete = () => {
     deleteMutation.mutate(runtime.id, {
@@ -154,18 +126,12 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
           skill-detail-page topbar so users build one mental model for
           "go back to the index" across the dashboard. */}
       <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-        <Button
-          variant="ghost"
-          size="xs"
-          render={<AppLink href={paths.runtimes()} />}
-        >
+        <Button variant="ghost" size="xs" render={<AppLink href={paths.runtimes()} />}>
           <ArrowLeft className="h-3 w-3" />
           {t(($) => $.detail.all_runtimes)}
         </Button>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="truncate font-mono text-xs text-foreground">
-          {runtime.name}
-        </span>
+        <span className="truncate font-mono text-xs text-foreground">{runtime.name}</span>
         <div className="ml-auto flex items-center gap-2">
           {!canDelete && (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -232,7 +198,12 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
       </div>
 
       {/* Delete confirmation */}
-      <AlertDialog open={deleteOpen} onOpenChange={(v) => { if (!v) setDeleteOpen(false); }}>
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(v) => {
+          if (!v) setDeleteOpen(false);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t(($) => $.detail.delete_dialog.title)}</AlertDialogTitle>
@@ -247,7 +218,9 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? t(($) => $.detail.delete_dialog.deleting) : t(($) => $.detail.delete_dialog.confirm)}
+              {deleteMutation.isPending
+                ? t(($) => $.detail.delete_dialog.deleting)
+                : t(($) => $.detail.delete_dialog.confirm)}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -299,9 +272,7 @@ function HeroCard({
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-            <h2 className="truncate text-base font-semibold tracking-tight">
-              {runtime.name}
-            </h2>
+            <h2 className="truncate text-base font-semibold tracking-tight">{runtime.name}</h2>
             <HealthBadge health={health} />
             <span className="text-xs text-muted-foreground">
               {t(($) => $.detail.last_seen, { when: lastSeen })}
@@ -333,11 +304,7 @@ function HeroCard({
           {device?.hostname ? (
             <Tooltip>
               <TooltipTrigger
-                render={
-                  <span className="block truncate font-mono text-xs">
-                    {device.hostname}
-                  </span>
-                }
+                render={<span className="block truncate font-mono text-xs">{device.hostname}</span>}
               />
               <TooltipContent>{device.hostname}</TooltipContent>
             </Tooltip>
@@ -347,9 +314,7 @@ function HeroCard({
         </Fact>
         <Fact label="Runtime">
           <span className="block truncate text-sm">
-            {device?.runtime ?? (
-              <span className="capitalize">{runtime.provider}</span>
-            )}
+            {device?.runtime ?? <span className="capitalize">{runtime.provider}</span>}
           </span>
         </Fact>
       </dl>
@@ -365,9 +330,7 @@ function HeroCard({
             className="flex w-full items-center gap-1 px-4 py-2 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronRight
-              className={`h-3 w-3 transition-transform ${
-                showDetails ? "rotate-90" : ""
-              }`}
+              className={`h-3 w-3 transition-transform ${showDetails ? "rotate-90" : ""}`}
             />
             {t(($) => $.detail.technical_details)}
           </button>
@@ -404,9 +367,7 @@ function Fact({
 }) {
   return (
     <div className={`min-w-0 ${compact ? "" : "px-4 py-3"}`}>
-      <dt className="text-[11px] uppercase tracking-wider text-muted-foreground">
-        {label}
-      </dt>
+      <dt className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</dt>
       <dd className={`mt-1 ${mono ? "font-mono text-xs" : ""}`}>{children}</dd>
     </div>
   );
@@ -434,9 +395,7 @@ function ServingAgentsCard({
       {agents.length === 0 ? (
         <div className="flex flex-col items-center px-4 py-6 text-center">
           <Cpu className="h-5 w-5 text-muted-foreground/40" />
-          <p className="mt-2 text-xs text-muted-foreground">
-            {t(($) => $.detail.no_agents)}
-          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{t(($) => $.detail.no_agents)}</p>
         </div>
       ) : (
         <div className="divide-y">
@@ -455,11 +414,15 @@ function ServingAgentsCard({
                 href={agentHref(agent.id)}
                 className="group flex items-center gap-2 px-4 py-2 transition-colors hover:bg-accent/40 focus-visible:bg-accent/40 focus-visible:outline-none"
               >
-                <ActorAvatar actorType="agent" actorId={agent.id} size={20} enableHoverCard showStatusDot />
+                <ActorAvatar
+                  actorType="agent"
+                  actorId={agent.id}
+                  size={20}
+                  enableHoverCard
+                  showStatusDot
+                />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate text-xs font-medium">
-                    {agent.name}
-                  </div>
+                  <div className="truncate text-xs font-medium">{agent.name}</div>
                   <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
                     <span className="inline-flex items-center gap-1.5">
                       <span className={`h-1.5 w-1.5 rounded-full ${av.dotClass}`} />
@@ -473,10 +436,14 @@ function ServingAgentsCard({
                         />
                         {tAgents(($) => $.workload[detail.workload])}
                         {running > 0 && (
-                          <span className="text-muted-foreground">{t(($) => $.detail.running_chip, { count: running })}</span>
+                          <span className="text-muted-foreground">
+                            {t(($) => $.detail.running_chip, { count: running })}
+                          </span>
                         )}
                         {queued > 0 && (
-                          <span className="text-muted-foreground">{t(($) => $.detail.queued_chip, { count: queued })}</span>
+                          <span className="text-muted-foreground">
+                            {t(($) => $.detail.queued_chip, { count: queued })}
+                          </span>
                         )}
                       </span>
                     )}
@@ -530,11 +497,7 @@ function DiagnosticsCard({
           <div className="mb-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
             {t(($) => $.detail.diagnostics_timezone)}
           </div>
-          {canDelete ? (
-            <TimezoneEditor runtime={runtime} />
-          ) : (
-            <TimezoneReadout runtime={runtime} />
-          )}
+          {canDelete ? <TimezoneEditor runtime={runtime} /> : <TimezoneReadout runtime={runtime} />}
         </div>
         {isLocal && (
           <div className="border-t pt-3">
@@ -606,9 +569,7 @@ type IntlWithSupportedValues = typeof Intl & {
 
 function supportedTimezones(): string[] {
   try {
-    const supported = (Intl as IntlWithSupportedValues).supportedValuesOf?.(
-      "timeZone",
-    );
+    const supported = (Intl as IntlWithSupportedValues).supportedValuesOf?.("timeZone");
     return supported && supported.length > 0 ? supported : COMMON_TIMEZONES;
   } catch {
     return COMMON_TIMEZONES;
@@ -630,15 +591,11 @@ function VisibilityReadout({ runtime }: { runtime: AgentRuntime }) {
         render={
           <span className="inline-flex items-center gap-1.5 rounded-md border bg-muted/30 px-2 py-1.5 text-xs">
             <Icon className="h-3 w-3 text-muted-foreground" />
-            <span className="font-medium">
-              {t(($) => $.detail.visibility_label[visibility])}
-            </span>
+            <span className="font-medium">{t(($) => $.detail.visibility_label[visibility])}</span>
           </span>
         }
       />
-      <TooltipContent>
-        {t(($) => $.detail.visibility_hint[visibility])}
-      </TooltipContent>
+      <TooltipContent>{t(($) => $.detail.visibility_hint[visibility])}</TooltipContent>
     </Tooltip>
   );
 }
@@ -665,8 +622,7 @@ function VisibilityEditor({ runtime }: { runtime: AgentRuntime }) {
               visibility: t(($) => $.detail.visibility_label[next]),
             }),
           ),
-        onError: () =>
-          toast.error(t(($) => $.detail.visibility_toast_failed)),
+        onError: () => toast.error(t(($) => $.detail.visibility_toast_failed)),
       },
     );
   };
@@ -766,10 +722,8 @@ function TimezoneEditor({ runtime }: { runtime: AgentRuntime }) {
     updateRuntime.mutate(
       { runtimeId: runtime.id, patch: { timezone: next } },
       {
-        onSuccess: () =>
-          toast.success(t(($) => $.detail.timezone_toast_updated, { tz: next })),
-        onError: () =>
-          toast.error(t(($) => $.detail.timezone_toast_failed)),
+        onSuccess: () => toast.success(t(($) => $.detail.timezone_toast_updated, { tz: next })),
+        onError: () => toast.error(t(($) => $.detail.timezone_toast_failed)),
       },
     );
   };
@@ -784,9 +738,7 @@ function TimezoneEditor({ runtime }: { runtime: AgentRuntime }) {
         }}
       >
         <SelectTrigger size="sm" className="w-full rounded-md font-mono text-xs">
-          <SelectValue>
-            {current === browser ? `${current}${browserSuffix}` : current}
-          </SelectValue>
+          <SelectValue>{current === browser ? `${current}${browserSuffix}` : current}</SelectValue>
         </SelectTrigger>
         <SelectContent align="start" className="max-h-72">
           {options.map((tz) => (

@@ -14,8 +14,7 @@ export const configStore = createStore<ConfigState>((set) => ({
   allowSignup: true,
   googleClientId: "",
   setCdnDomain: (domain) => set({ cdnDomain: domain }),
-  setAuthConfig: ({ allowSignup, googleClientId = "" }) =>
-    set({ allowSignup, googleClientId }),
+  setAuthConfig: ({ allowSignup, googleClientId = "" }) => set({ allowSignup, googleClientId }),
 }));
 
 export function useConfigStore(): ConfigState;

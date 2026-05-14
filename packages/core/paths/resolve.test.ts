@@ -27,16 +27,12 @@ describe("resolvePostAuthDestination", () => {
     // does the right thing if it ever appears: send the user to onboarding
     // rather than dropping them into a workspace with `onboarded_at` null.
     expect(resolvePostAuthDestination([], false)).toBe(paths.onboarding());
-    expect(resolvePostAuthDestination([makeWs("acme")], false)).toBe(
-      paths.onboarding(),
-    );
+    expect(resolvePostAuthDestination([makeWs("acme")], false)).toBe(paths.onboarding());
   });
 
   it("onboarded + has workspace → /<first.slug>/issues", () => {
     const ws = [makeWs("acme"), makeWs("beta")];
-    expect(resolvePostAuthDestination(ws, true)).toBe(
-      paths.workspace("acme").issues(),
-    );
+    expect(resolvePostAuthDestination(ws, true)).toBe(paths.workspace("acme").issues());
   });
 
   it("onboarded + zero workspaces → /workspaces/new", () => {

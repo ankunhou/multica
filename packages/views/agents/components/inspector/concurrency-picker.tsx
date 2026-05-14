@@ -34,11 +34,7 @@ export function ConcurrencyPicker({
   }, [open, value]);
 
   if (!canEdit) {
-    return (
-      <span className="font-mono text-xs tabular-nums text-muted-foreground">
-        {value}
-      </span>
-    );
+    return <span className="font-mono text-xs tabular-nums text-muted-foreground">{value}</span>;
   }
 
   const commit = async () => {
@@ -57,12 +53,8 @@ export function ConcurrencyPicker({
       width="w-auto"
       align="start"
       tooltip={tooltip}
-      triggerRender={
-        <button type="button" className={CHIP_CLASS} aria-label={tooltip} />
-      }
-      trigger={
-        <span className="font-mono tabular-nums">{value}</span>
-      }
+      triggerRender={<button type="button" className={CHIP_CLASS} aria-label={tooltip} />}
+      trigger={<span className="font-mono tabular-nums">{value}</span>}
     >
       <div className="space-y-2 p-2">
         <p className="text-xs text-muted-foreground">

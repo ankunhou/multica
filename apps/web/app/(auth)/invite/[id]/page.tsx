@@ -21,16 +21,13 @@ export default function InviteAcceptPage() {
   // Redirect to login if not authenticated, with a redirect back to this page.
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace(
-        `${paths.login()}?next=${encodeURIComponent(paths.invite(params.id))}`,
-      );
+      router.replace(`${paths.login()}?next=${encodeURIComponent(paths.invite(params.id))}`);
     }
   }, [isLoading, user, router, params.id]);
 
   if (isLoading || !user) return null;
 
-  const onBack =
-    wsList.length > 0 ? () => router.push(paths.root()) : undefined;
+  const onBack = wsList.length > 0 ? () => router.push(paths.root()) : undefined;
 
   return <InvitePage invitationId={params.id} onBack={onBack} />;
 }

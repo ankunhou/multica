@@ -2,9 +2,7 @@ import { describe, expect, it } from "vitest";
 import { matchLocale, pickLocale } from "./pick-locale";
 import type { LocaleAdapter } from "./types";
 
-function makeAdapter(
-  overrides: Partial<LocaleAdapter> = {},
-): LocaleAdapter {
+function makeAdapter(overrides: Partial<LocaleAdapter> = {}): LocaleAdapter {
   return {
     getUserChoice: () => null,
     getSystemPreferences: () => [],

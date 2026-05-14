@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  createContext,
-  useContext,
-  type AnchorHTMLAttributes,
-  type ReactNode,
-} from "react";
+import { createContext, useContext, type AnchorHTMLAttributes, type ReactNode } from "react";
 import { i18n, type Lang } from "@/lib/i18n";
 import { prefixLocale } from "@/lib/locale-link";
 
@@ -15,18 +10,8 @@ const DocsLocaleContext = createContext<Lang>(i18n.defaultLanguage as Lang);
 // Wraps the rendered MDX subtree so descendant <LocaleLink>s and any
 // editorial component using `useDocsLocale()` know which language the page
 // was rendered in. Mounted at each docs page entry; never elsewhere.
-export function DocsLocaleProvider({
-  lang,
-  children,
-}: {
-  lang: Lang;
-  children: ReactNode;
-}) {
-  return (
-    <DocsLocaleContext.Provider value={lang}>
-      {children}
-    </DocsLocaleContext.Provider>
-  );
+export function DocsLocaleProvider({ lang, children }: { lang: Lang; children: ReactNode }) {
+  return <DocsLocaleContext.Provider value={lang}>{children}</DocsLocaleContext.Provider>;
 }
 
 export function useDocsLocale(): Lang {

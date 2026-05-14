@@ -90,6 +90,5 @@ export const useRecentIssuesStore = create<RecentIssuesState>()(
 );
 
 export function selectRecentIssues(wsId: string | null) {
-  return (state: RecentIssuesState) =>
-    wsId ? (state.byWorkspace[wsId] ?? EMPTY) : EMPTY;
+  return (state: RecentIssuesState) => (wsId ? (state.byWorkspace[wsId] ?? EMPTY) : EMPTY);
 }

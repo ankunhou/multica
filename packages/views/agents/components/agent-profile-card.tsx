@@ -4,10 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { Agent, AgentRuntime } from "@multica/core/types";
 import { useAgentPresenceDetail } from "@multica/core/agents";
 import { useWorkspaceId } from "@multica/core/hooks";
-import {
-  deriveRuntimeHealth,
-  type RuntimeHealth,
-} from "@multica/core/runtimes";
+import { deriveRuntimeHealth, type RuntimeHealth } from "@multica/core/runtimes";
 import { agentListOptions, memberListOptions } from "@multica/core/workspace/queries";
 import { runtimeListOptions } from "@multica/core/runtimes/queries";
 import { useWorkspacePaths } from "@multica/core/paths";
@@ -51,9 +48,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
     );
   }
 
-  const owner = agent.owner_id
-    ? members.find((m) => m.user_id === agent.owner_id) ?? null
-    : null;
+  const owner = agent.owner_id ? (members.find((m) => m.user_id === agent.owner_id) ?? null) : null;
   const runtime = runtimes.find((r) => r.id === agent.runtime_id) ?? null;
   const isArchived = !!agent.archived_at;
   const initials = agent.name
@@ -91,9 +86,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
               </span>
             )}
           </div>
-          {!isArchived && (
-            <AgentAvailabilityLine wsId={wsId} agentId={agent.id} />
-          )}
+          {!isArchived && <AgentAvailabilityLine wsId={wsId} agentId={agent.id} />}
         </div>
         {!isArchived && (
           <AppLink
@@ -107,9 +100,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
 
       {/* Description */}
       {agent.description && (
-        <p className="line-clamp-2 text-xs text-muted-foreground">
-          {agent.description}
-        </p>
+        <p className="line-clamp-2 text-xs text-muted-foreground">{agent.description}</p>
       )}
 
       {/* Meta rows — minimal set: runtime (where it lives), skills (what
@@ -117,9 +108,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
           omitted — power-user detail lives on the detail page. */}
       <div className="flex flex-col gap-1.5 text-xs">
         <RuntimeRow agent={agent} runtime={runtime} />
-        {agent.skills.length > 0 && (
-          <SkillsRow skills={agent.skills.map((s) => s.name)} />
-        )}
+        {agent.skills.length > 0 && <SkillsRow skills={agent.skills.map((s) => s.name)} />}
         {owner && <MetaRow label={t(($) => $.profile_card.owner_label)} value={owner.name} />}
       </div>
     </div>
@@ -130,13 +119,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
 // (online / unstable / offline). Last-task state is intentionally NOT
 // shown here; it belongs in the agents list and the detail page where
 // there's room for icon + label + reason without crowding the popover.
-function AgentAvailabilityLine({
-  wsId,
-  agentId,
-}: {
-  wsId: string | undefined;
-  agentId: string;
-}) {
+function AgentAvailabilityLine({ wsId, agentId }: { wsId: string | undefined; agentId: string }) {
   const detail = useAgentPresenceDetail(wsId, agentId);
   if (detail === "loading") {
     return <Skeleton className="mt-0.5 h-3 w-16" />;
@@ -151,13 +134,7 @@ function AgentAvailabilityLine({
 // the dot is the agent's effective availability (which mostly tracks
 // runtime health), and seeing the same wifi icon next to the runtime
 // name confirms WHICH runtime is the one currently in the dot's state.
-function RuntimeRow({
-  agent,
-  runtime,
-}: {
-  agent: Agent;
-  runtime: AgentRuntime | null;
-}) {
+function RuntimeRow({ agent, runtime }: { agent: Agent; runtime: AgentRuntime | null }) {
   const { t } = useT("agents");
   const isCloud = agent.runtime_mode === "cloud";
   const health: RuntimeHealth = isCloud
@@ -167,12 +144,12 @@ function RuntimeRow({
       : "offline";
   const label =
     runtime?.name ??
-    (isCloud
-      ? t(($) => $.row.fallback_runtime_cloud)
-      : t(($) => $.profile_card.unknown_runtime));
+    (isCloud ? t(($) => $.row.fallback_runtime_cloud) : t(($) => $.profile_card.unknown_runtime));
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-12 shrink-0 text-muted-foreground">{t(($) => $.profile_card.runtime_label)}</span>
+      <span className="w-12 shrink-0 text-muted-foreground">
+        {t(($) => $.profile_card.runtime_label)}
+      </span>
       <HealthIcon health={health} className="h-3 w-3 shrink-0" />
       <span className="min-w-0 truncate" title={label}>
         {label}
@@ -181,15 +158,7 @@ function RuntimeRow({
   );
 }
 
-function MetaRow({
-  label,
-  value,
-  mono,
-}: {
-  label: string;
-  value: string;
-  mono?: boolean;
-}) {
+function MetaRow({ label, value, mono }: { label: string; value: string; mono?: boolean }) {
   return (
     <div className="flex items-center gap-1.5">
       <span className="w-12 shrink-0 text-muted-foreground">{label}</span>
@@ -206,7 +175,9 @@ function SkillsRow({ skills }: { skills: string[] }) {
   const overflow = skills.length - visible.length;
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-12 shrink-0 text-muted-foreground">{t(($) => $.profile_card.skills_label)}</span>
+      <span className="w-12 shrink-0 text-muted-foreground">
+        {t(($) => $.profile_card.skills_label)}
+      </span>
       <div className="flex min-w-0 flex-wrap gap-1">
         {visible.map((s) => (
           <span

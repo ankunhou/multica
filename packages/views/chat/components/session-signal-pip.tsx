@@ -10,11 +10,7 @@ interface ChatSessionSignalPipProps {
   className?: string;
 }
 
-export function ChatSessionSignalPip({
-  signal,
-  label,
-  className,
-}: ChatSessionSignalPipProps) {
+export function ChatSessionSignalPip({ signal, label, className }: ChatSessionSignalPipProps) {
   return (
     <span
       aria-label={label}

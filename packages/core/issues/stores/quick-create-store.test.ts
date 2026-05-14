@@ -17,9 +17,7 @@ describe("quick create store", () => {
     const { setPrompt, clearPrompt } = useQuickCreateStore.getState();
 
     setPrompt("Investigate the inbox loading regression");
-    expect(useQuickCreateStore.getState().prompt).toBe(
-      "Investigate the inbox loading regression",
-    );
+    expect(useQuickCreateStore.getState().prompt).toBe("Investigate the inbox loading regression");
 
     clearPrompt();
     expect(useQuickCreateStore.getState().prompt).toBe("");

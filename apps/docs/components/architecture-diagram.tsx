@@ -88,9 +88,7 @@ function MulticaSide() {
 
       <div className="flex-1 flex flex-col">
         <SectionLabel>Server</SectionLabel>
-        <div className="text-xs text-muted-foreground mb-4">
-          Cloud or self-hosted
-        </div>
+        <div className="text-xs text-muted-foreground mb-4">Cloud or self-hosted</div>
 
         <div className="text-xs space-y-1.5 text-foreground/80">
           <div>Workspaces</div>
@@ -119,10 +117,7 @@ function Connector({ horizontal }: { horizontal: boolean }) {
     );
   }
   return (
-    <div
-      className="text-center text-muted-foreground/50 text-xl select-none"
-      aria-hidden="true"
-    >
+    <div className="text-center text-muted-foreground/50 text-xl select-none" aria-hidden="true">
       ⇅
     </div>
   );
@@ -136,13 +131,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Pill({
-  children,
-  muted = false,
-}: {
-  children: React.ReactNode;
-  muted?: boolean;
-}) {
+function Pill({ children, muted = false }: { children: React.ReactNode; muted?: boolean }) {
   return (
     <span
       className={`inline-flex items-center rounded-md border px-2 py-1 text-[11px] font-medium ${

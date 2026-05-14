@@ -52,22 +52,16 @@ export class WSClient {
     // proxies, CDNs, and browser history.  In cookie mode the HttpOnly cookie
     // is sent automatically with the upgrade request.  In token mode the token
     // is delivered as the first WebSocket message after the connection opens.
-    if (this.workspaceSlug)
-      url.searchParams.set("workspace_slug", this.workspaceSlug);
-    if (this.identity?.platform)
-      url.searchParams.set("client_platform", this.identity.platform);
-    if (this.identity?.version)
-      url.searchParams.set("client_version", this.identity.version);
-    if (this.identity?.os)
-      url.searchParams.set("client_os", this.identity.os);
+    if (this.workspaceSlug) url.searchParams.set("workspace_slug", this.workspaceSlug);
+    if (this.identity?.platform) url.searchParams.set("client_platform", this.identity.platform);
+    if (this.identity?.version) url.searchParams.set("client_version", this.identity.version);
+    if (this.identity?.os) url.searchParams.set("client_os", this.identity.os);
 
     this.ws = new WebSocket(url.toString());
 
     this.ws.onopen = () => {
       if (!this.cookieAuth && this.token) {
-        this.ws!.send(
-          JSON.stringify({ type: "auth", payload: { token: this.token } }),
-        );
+        this.ws!.send(JSON.stringify({ type: "auth", payload: { token: this.token } }));
         return;
       }
 

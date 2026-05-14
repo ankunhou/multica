@@ -107,11 +107,7 @@ export function buildActivityMap(
   for (const agent of agents) {
     out.set(
       agent.id,
-      deriveAgentActivity(
-        bucketsByAgent.get(agent.id) ?? [],
-        agent.created_at,
-        now,
-      ),
+      deriveAgentActivity(bucketsByAgent.get(agent.id) ?? [], agent.created_at, now),
     );
   }
   return out;
@@ -149,10 +145,7 @@ export function deriveAgentActivity(
 
   const createdAt = new Date(agentCreatedAt).getTime();
   const ageMs = Number.isFinite(createdAt) ? now - createdAt : Infinity;
-  const daysSinceCreated = Math.min(
-    DAYS,
-    Math.max(0, Math.floor(ageMs / DAY_MS)),
-  );
+  const daysSinceCreated = Math.min(DAYS, Math.max(0, Math.floor(ageMs / DAY_MS)));
 
   return {
     buckets: series,
@@ -174,14 +167,10 @@ export function summarizeActivityWindow(
   windowDays: number,
 ): ActivityWindowSummary {
   if (!activity) return { ...EMPTY_SUMMARY, windowDays };
-  const safeWindow = Math.min(
-    Math.max(0, windowDays),
-    activity.buckets.length,
-  );
+  const safeWindow = Math.min(Math.max(0, windowDays), activity.buckets.length);
   // `slice(-0)` returns the full array (JS quirk: -0 === 0), so guard
   // explicitly when no window is requested.
-  const slice =
-    safeWindow === 0 ? [] : activity.buckets.slice(-safeWindow);
+  const slice = safeWindow === 0 ? [] : activity.buckets.slice(-safeWindow);
   let totalRuns = 0;
   let totalFailed = 0;
   for (const b of slice) {

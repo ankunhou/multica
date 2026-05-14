@@ -23,8 +23,7 @@ export function projectResourcesOptions(wsId: string, projectId: string) {
 export function useCreateProjectResource(wsId: string, projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (data: CreateProjectResourceRequest) =>
-      api.createProjectResource(projectId, data),
+    mutationFn: (data: CreateProjectResourceRequest) => api.createProjectResource(projectId, data),
     onSuccess: (created) => {
       qc.setQueryData<ListProjectResourcesResponse>(
         projectResourceKeys.list(wsId, projectId),
@@ -49,8 +48,7 @@ export function useCreateProjectResource(wsId: string, projectId: string) {
 export function useDeleteProjectResource(wsId: string, projectId: string) {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (resourceId: string) =>
-      api.deleteProjectResource(projectId, resourceId),
+    mutationFn: (resourceId: string) => api.deleteProjectResource(projectId, resourceId),
     onMutate: async (resourceId) => {
       await qc.cancelQueries({
         queryKey: projectResourceKeys.list(wsId, projectId),
@@ -64,9 +62,7 @@ export function useDeleteProjectResource(wsId: string, projectId: string) {
           old
             ? {
                 ...old,
-                resources: old.resources.filter(
-                  (r: ProjectResource) => r.id !== resourceId,
-                ),
+                resources: old.resources.filter((r: ProjectResource) => r.id !== resourceId),
                 total: old.total - 1,
               }
             : old,

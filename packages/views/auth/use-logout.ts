@@ -32,8 +32,7 @@ export function useLogout() {
     // access to, BEFORE clearing the React Query cache (which holds the
     // workspace list). Otherwise per-workspace drafts/chat/etc would leak
     // to the next user on this device.
-    const cachedWorkspaces =
-      queryClient.getQueryData<Workspace[]>(workspaceKeys.list()) ?? [];
+    const cachedWorkspaces = queryClient.getQueryData<Workspace[]>(workspaceKeys.list()) ?? [];
     for (const ws of cachedWorkspaces) {
       clearWorkspaceStorage(defaultStorage, ws.slug);
     }
@@ -42,8 +41,7 @@ export function useLogout() {
     // the next user gets redirected by the proxy to the previous user's
     // last workspace, then bounced to NoAccessPage — confusing.
     if (typeof document !== "undefined") {
-      document.cookie =
-        "last_workspace_slug=; path=/; max-age=0; SameSite=Lax";
+      document.cookie = "last_workspace_slug=; path=/; max-age=0; SameSite=Lax";
     }
 
     // Clear desktop tab state. Tab paths can contain workspace slugs and

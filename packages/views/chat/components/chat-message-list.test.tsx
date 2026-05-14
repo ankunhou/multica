@@ -56,8 +56,6 @@ describe("ChatMessageList", () => {
       />,
     );
 
-    expect(screen.getByText("Agent execution error")).toHaveClass(
-      "text-agent-failed/90",
-    );
+    expect(screen.getByText("Agent execution error")).toHaveClass("text-agent-failed/90");
   });
 });

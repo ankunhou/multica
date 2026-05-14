@@ -3,21 +3,13 @@
 import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import type {
-  Issue,
-  MemberWithUser,
-  Agent,
-  UpdateIssueRequest,
-} from "@multica/core/types";
+import type { Issue, MemberWithUser, Agent, UpdateIssueRequest } from "@multica/core/types";
 import { useAuthStore } from "@multica/core/auth";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { useModalStore } from "@multica/core/modals";
 import { useUpdateIssue } from "@multica/core/issues/mutations";
-import {
-  memberListOptions,
-  agentListOptions,
-} from "@multica/core/workspace/queries";
+import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
 import { pinListOptions, useCreatePin, useDeletePin } from "@multica/core/pins";
 import { canAssignAgent } from "../components/pickers";
 import { useNavigation } from "../../navigation";
@@ -65,17 +57,11 @@ export function useIssueActions(issue: Issue | null): UseIssueActionsResult {
     [members, userId],
   );
   const filteredAgents = useMemo(
-    () =>
-      agents.filter(
-        (a) => !a.archived_at && canAssignAgent(a, userId, currentMemberRole),
-      ),
+    () => agents.filter((a) => !a.archived_at && canAssignAgent(a, userId, currentMemberRole)),
     [agents, userId, currentMemberRole],
   );
   const isPinned =
-    !!issue &&
-    pinnedItems.some(
-      (p) => p.item_type === "issue" && p.item_id === issue.id,
-    );
+    !!issue && pinnedItems.some((p) => p.item_type === "issue" && p.item_id === issue.id);
 
   const updateIssue = useUpdateIssue();
   const createPin = useCreatePin();

@@ -17,10 +17,7 @@ describe("createPersistStorage", () => {
     const storage = createPersistStorage(adapter);
 
     storage.setItem("key", JSON.stringify("value"));
-    expect(adapter.setItem).toHaveBeenCalledWith(
-      "key",
-      JSON.stringify("value"),
-    );
+    expect(adapter.setItem).toHaveBeenCalledWith("key", JSON.stringify("value"));
 
     const result = storage.getItem("key");
     expect(adapter.getItem).toHaveBeenCalledWith("key");

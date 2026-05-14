@@ -1,7 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeftRight, Check, ChevronRight, Maximize2, Minimize2, X as XIcon } from "lucide-react";
+import {
+  ArrowLeftRight,
+  Check,
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+  X as XIcon,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { DialogTitle } from "@multica/ui/components/ui/dialog";
@@ -37,12 +44,7 @@ import { ProjectPicker } from "../projects/components/project-picker";
 import { canAssignAgent } from "../issues/components/pickers/assignee-picker";
 import { useAuthStore } from "@multica/core/auth";
 import { memberListOptions } from "@multica/core/workspace/queries";
-import {
-  ContentEditor,
-  type ContentEditorRef,
-  useFileDropZone,
-  FileDropOverlay,
-} from "../editor";
+import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay } from "../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { useT } from "../i18n";
 
@@ -83,9 +85,7 @@ export function AgentCreatePanel({
   // Pull `isSuccess` so the stale-id sweep below can distinguish "still
   // loading" from "loaded as empty". Reading length alone treats both as
   // empty and incorrectly clears a valid persisted preference on every open.
-  const { data: projects = [], isSuccess: projectsLoaded } = useQuery(
-    projectListOptions(wsId),
-  );
+  const { data: projects = [], isSuccess: projectsLoaded } = useQuery(projectListOptions(wsId));
 
   const memberRole = useMemo(
     () => members.find((m) => m.user_id === userId)?.role,
@@ -94,10 +94,7 @@ export function AgentCreatePanel({
 
   // Visible = not archived AND assignable by this user.
   const visibleAgents = useMemo(
-    () =>
-      agents.filter(
-        (a) => !a.archived_at && canAssignAgent(a, userId, memberRole),
-      ),
+    () => agents.filter((a) => !a.archived_at && canAssignAgent(a, userId, memberRole)),
     [agents, userId, memberRole],
   );
 
@@ -195,10 +192,7 @@ export function AgentCreatePanel({
   // uses, so users can paste screenshots straight into the prompt and the
   // agent receives them as embedded markdown image URLs in the prompt.
   const { uploadWithToast, uploading } = useFileUpload(api);
-  const handleUploadFile = useCallback(
-    (file: File) => uploadWithToast(file),
-    [uploadWithToast],
-  );
+  const handleUploadFile = useCallback((file: File) => uploadWithToast(file), [uploadWithToast]);
   const { isDragOver, dropZoneProps } = useFileDropZone({
     onDrop: (files) => files.forEach((f) => editorRef.current?.uploadFile(f)),
   });
@@ -226,9 +220,12 @@ export function AgentCreatePanel({
       setLastProjectId(projectId);
       clearPrompt();
       setLastMode("agent");
-      toast.success(t(($) => $.create_issue.agent.toast_sent), {
-        duration: 4000,
-      });
+      toast.success(
+        t(($) => $.create_issue.agent.toast_sent),
+        {
+          duration: 4000,
+        },
+      );
       if (keepOpen) {
         // Stay open for continuous creation — clear the editor so the
         // user can immediately type the next prompt.
@@ -290,9 +287,7 @@ export function AgentCreatePanel({
     const md = editorRef.current?.getMarkdown() ?? "";
     useIssueDraftStore.getState().setDraft({
       description: md,
-      ...(agentId
-        ? { assigneeType: "agent" as const, assigneeId: agentId }
-        : {}),
+      ...(agentId ? { assigneeType: "agent" as const, assigneeId: agentId } : {}),
     });
     setLastMode("manual");
     // Hand the picked project to the manual panel through the same `data`
@@ -304,203 +299,200 @@ export function AgentCreatePanel({
 
   return (
     <>
-        <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_agent)}</DialogTitle>
+      <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_agent)}</DialogTitle>
 
-        {/* Header */}
-        <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="text-muted-foreground">{workspaceName}</span>
-            <ChevronRight className="size-3 text-muted-foreground/50" />
-            <span className="font-medium">{t(($) => $.create_issue.agent_breadcrumb)}</span>
-          </div>
-          {/* Native `title` instead of Base UI Tooltip — Tooltip opens on
+      {/* Header */}
+      <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
+        <div className="flex items-center gap-1.5 text-xs">
+          <span className="text-muted-foreground">{workspaceName}</span>
+          <ChevronRight className="size-3 text-muted-foreground/50" />
+          <span className="font-medium">{t(($) => $.create_issue.agent_breadcrumb)}</span>
+        </div>
+        {/* Native `title` instead of Base UI Tooltip — Tooltip opens on
               keyboard focus, and the dialog's focus trap briefly lands focus
               on the first focusable element on mount, causing the tooltip to
               auto-pop every open. Same workaround applies to expand. */}
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => setIsExpanded(!isExpanded)}
-              title={isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)}
-              aria-label={isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)}
-              className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
-            >
-              {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              title={t(($) => $.common.close)}
-              aria-label={t(($) => $.common.close)}
-              className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
-            >
-              <XIcon className="size-4" />
-            </button>
-          </div>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => setIsExpanded(!isExpanded)}
+            title={
+              isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)
+            }
+            aria-label={
+              isExpanded ? t(($) => $.common.collapse_tooltip) : t(($) => $.common.expand_tooltip)
+            }
+            className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+          >
+            {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            title={t(($) => $.common.close)}
+            aria-label={t(($) => $.common.close)}
+            className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+          >
+            <XIcon className="size-4" />
+          </button>
         </div>
+      </div>
 
-        {/* Agent picker */}
-        <div className="px-7 pt-1 pb-3 shrink-0">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <button
-                  type="button"
-                  aria-label={t(($) => $.create_issue.agent.select_agent_aria)}
-                  className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-lg px-1.5 py-1 -ml-1.5 hover:bg-accent/60"
+      {/* Agent picker */}
+      <div className="px-7 pt-1 pb-3 shrink-0">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <button
+                type="button"
+                aria-label={t(($) => $.create_issue.agent.select_agent_aria)}
+                className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-lg px-1.5 py-1 -ml-1.5 hover:bg-accent/60"
+              >
+                <span>{t(($) => $.create_issue.agent.created_by)}</span>
+                {selectedAgent ? (
+                  <span className="flex items-center gap-1.5 text-foreground">
+                    <ActorAvatar actorType="agent" actorId={selectedAgent.id} size={16} />
+                    {selectedAgent.name}
+                  </span>
+                ) : (
+                  <span>{t(($) => $.create_issue.agent.pick_an_agent)}</span>
+                )}
+              </button>
+            }
+          />
+          <DropdownMenuContent align="start" className="w-64 max-h-72 overflow-y-auto">
+            {visibleAgents.length === 0 ? (
+              <div className="px-2 py-1.5 text-xs text-muted-foreground">
+                {t(($) => $.create_issue.agent.no_agents)}
+              </div>
+            ) : (
+              visibleAgents.map((a: Agent) => (
+                <DropdownMenuItem
+                  key={a.id}
+                  onClick={() => {
+                    setAgentId(a.id);
+                    setError(null);
+                  }}
+                  className="flex items-center gap-2"
                 >
-                  <span>{t(($) => $.create_issue.agent.created_by)}</span>
-                  {selectedAgent ? (
-                    <span className="flex items-center gap-1.5 text-foreground">
-                      <ActorAvatar
-                        actorType="agent"
-                        actorId={selectedAgent.id}
-                        size={16}
-                      />
-                      {selectedAgent.name}
-                    </span>
-                  ) : (
-                    <span>{t(($) => $.create_issue.agent.pick_an_agent)}</span>
-                  )}
-                </button>
-              }
-            />
-            <DropdownMenuContent align="start" className="w-64 max-h-72 overflow-y-auto">
-              {visibleAgents.length === 0 ? (
-                <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                  {t(($) => $.create_issue.agent.no_agents)}
-                </div>
-              ) : (
-                visibleAgents.map((a: Agent) => (
-                  <DropdownMenuItem
-                    key={a.id}
-                    onClick={() => {
-                      setAgentId(a.id);
-                      setError(null);
-                    }}
-                    className="flex items-center gap-2"
-                  >
-                    <ActorAvatar
-                      actorType="agent"
-                      actorId={a.id}
-                      size={16}
-                    />
-                    <span className="flex-1 truncate">{a.name}</span>
-                    {agentId === a.id && (
-                      <Check className="size-3.5 text-muted-foreground" />
-                    )}
-                  </DropdownMenuItem>
-                ))
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+                  <ActorAvatar actorType="agent" actorId={a.id} size={16} />
+                  <span className="flex-1 truncate">{a.name}</span>
+                  {agentId === a.id && <Check className="size-3.5 text-muted-foreground" />}
+                </DropdownMenuItem>
+              ))
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
 
-        {selectedAgent && versionBlocked && (
-          <Notice variant="warning" className="mx-7 mb-3 w-auto shrink-0 rounded-xl">
-            {versionCheck.state === "missing"
-              ? t(($) => $.create_issue.agent.version_missing, { min: versionCheck.min })
-              : t(($) => $.create_issue.agent.version_below, {
-                  current: versionCheck.current,
-                  min: versionCheck.min,
-                })}
-          </Notice>
-        )}
+      {selectedAgent && versionBlocked && (
+        <Notice variant="warning" className="mx-7 mb-3 w-auto shrink-0 rounded-xl">
+          {versionCheck.state === "missing"
+            ? t(($) => $.create_issue.agent.version_missing, { min: versionCheck.min })
+            : t(($) => $.create_issue.agent.version_below, {
+                current: versionCheck.current,
+                min: versionCheck.min,
+              })}
+        </Notice>
+      )}
 
-        {/* Prompt — same rich editor Advanced uses, so paste/drop images,
+      {/* Prompt — same rich editor Advanced uses, so paste/drop images,
             mentions, and formatting all work. The dropZone wrapper enables
             drag-and-drop file uploads alongside paste. */}
-        {/* `flex-1 min-h-0 overflow-y-auto` so the editor area absorbs the
+      {/* `flex-1 min-h-0 overflow-y-auto` so the editor area absorbs the
             remaining vertical space inside the (now max-bounded) DialogContent
             and scrolls internally. Without it, pasting an image expanded the
             editor unbounded and pushed the modal past the viewport. */}
-        <div
-          {...dropZoneProps}
-          className="relative mx-7 flex flex-1 min-h-[180px] overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]"
-        >
-          <ContentEditor
-            ref={editorRef}
-            defaultValue={initialPrompt}
-            placeholder={t(($) => $.create_issue.agent.prompt_placeholder)}
-            onUpdate={(md) => {
-              setHasContent(md.trim().length > 0);
-              setPrompt(md);
-            }}
-            onUploadFile={handleUploadFile}
-            onSubmit={submit}
-            debounceMs={150}
-          />
-          {isDragOver && <FileDropOverlay />}
-        </div>
+      <div
+        {...dropZoneProps}
+        className="relative mx-7 flex flex-1 min-h-[180px] overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]"
+      >
+        <ContentEditor
+          ref={editorRef}
+          defaultValue={initialPrompt}
+          placeholder={t(($) => $.create_issue.agent.prompt_placeholder)}
+          onUpdate={(md) => {
+            setHasContent(md.trim().length > 0);
+            setPrompt(md);
+          }}
+          onUploadFile={handleUploadFile}
+          onSubmit={submit}
+          debounceMs={150}
+        />
+        {isDragOver && <FileDropOverlay />}
+      </div>
 
-        {error && (
-          <div className="px-7 pb-2 text-xs text-destructive">{error}</div>
-        )}
+      {error && <div className="px-7 pb-2 text-xs text-destructive">{error}</div>}
 
-        {/* Property toolbar — mirrors the manual panel's pill row so the
+      {/* Property toolbar — mirrors the manual panel's pill row so the
             project pill sits in the same place across both modes. Agent mode
             owns only the project (status / priority / assignee / due-date are
             inferred from the prompt), so it's a single pill. The pick is
             persisted per-workspace via useQuickCreateStore.lastProjectId so
             users targeting one project skip retyping "in project X". */}
-        <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
-          <ProjectPicker
-            projectId={projectId}
-            onUpdate={(u) => setProjectId(u.project_id ?? null)}
-            triggerRender={<PillButton />}
-            align="start"
-          />
-        </div>
+      <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
+        <ProjectPicker
+          projectId={projectId}
+          onUpdate={(u) => setProjectId(u.project_id ?? null)}
+          triggerRender={<PillButton />}
+          align="start"
+        />
+      </div>
 
-        {/* Footer */}
-        <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-h-7 items-center gap-2">
-            <FileUploadButton
-              size="sm"
-              disabled={uploading}
-              onSelect={(file) => editorRef.current?.uploadFile(file)}
-            />
-            {keepOpen && sentCount > 0 && (
-              <span className="text-xs text-success">
-                {t(($) => $.create_issue.agent.sent_count, { count: sentCount })}
-              </span>
-            )}
-          </div>
-          <div className="flex flex-wrap items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={switchToManual}
-              title={t(($) => $.create_issue.switch_to_manual_tooltip)}
-              className="flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
-            >
-              <ArrowLeftRight className="size-3.5" />
-              {t(($) => $.create_issue.switch_to_manual)}
-            </button>
-            <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
-              <Switch
-                size="sm"
-                checked={keepOpen}
-                onCheckedChange={setKeepOpen}
-              />
-              {t(($) => $.create_issue.create_another)}
-            </label>
-            <Button
-              size="sm"
-              onClick={submit}
-              disabled={!hasContent || !agentId || submitting || versionBlocked || uploading}
-              title={
-                versionBlocked
-                  ? t(($) => $.create_issue.agent.version_blocked_tooltip, { min: versionCheck.min })
-                  : undefined
-              }
-              className={justSent ? "min-w-28 !bg-success !text-success-foreground" : "min-w-28"}
-            >
-              {submitting ? t(($) => $.create_issue.agent.sending) : uploading ? t(($) => $.create_issue.agent.uploading) : justSent ? (
-                <span className="flex items-center gap-1"><Check className="size-3.5" />{t(($) => $.create_issue.agent.sent_label)}</span>
-              ) : `${t(($) => $.create_issue.agent.submit)} (${formatShortcut(modKey, enterKey)})`}
-            </Button>
-          </div>
+      {/* Footer */}
+      <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex min-h-7 items-center gap-2">
+          <FileUploadButton
+            size="sm"
+            disabled={uploading}
+            onSelect={(file) => editorRef.current?.uploadFile(file)}
+          />
+          {keepOpen && sentCount > 0 && (
+            <span className="text-xs text-success">
+              {t(($) => $.create_issue.agent.sent_count, { count: sentCount })}
+            </span>
+          )}
         </div>
+        <div className="flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={switchToManual}
+            title={t(($) => $.create_issue.switch_to_manual_tooltip)}
+            className="flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
+          >
+            <ArrowLeftRight className="size-3.5" />
+            {t(($) => $.create_issue.switch_to_manual)}
+          </button>
+          <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <Switch size="sm" checked={keepOpen} onCheckedChange={setKeepOpen} />
+            {t(($) => $.create_issue.create_another)}
+          </label>
+          <Button
+            size="sm"
+            onClick={submit}
+            disabled={!hasContent || !agentId || submitting || versionBlocked || uploading}
+            title={
+              versionBlocked
+                ? t(($) => $.create_issue.agent.version_blocked_tooltip, { min: versionCheck.min })
+                : undefined
+            }
+            className={justSent ? "min-w-28 !bg-success !text-success-foreground" : "min-w-28"}
+          >
+            {submitting ? (
+              t(($) => $.create_issue.agent.sending)
+            ) : uploading ? (
+              t(($) => $.create_issue.agent.uploading)
+            ) : justSent ? (
+              <span className="flex items-center gap-1">
+                <Check className="size-3.5" />
+                {t(($) => $.create_issue.agent.sent_label)}
+              </span>
+            ) : (
+              `${t(($) => $.create_issue.agent.submit)} (${formatShortcut(modKey, enterKey)})`
+            )}
+          </Button>
+        </div>
+      </div>
     </>
   );
 }

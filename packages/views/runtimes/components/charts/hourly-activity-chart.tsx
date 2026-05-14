@@ -1,11 +1,5 @@
 import { useMemo } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -65,9 +59,7 @@ export function HourlyActivityChart({ data }: { data: HourlyCostPoint[] }) {
           content={
             <ChartTooltipContent
               formatter={(value) =>
-                typeof value === "number"
-                  ? `$${value.toFixed(2)}`
-                  : String(value)
+                typeof value === "number" ? `$${value.toFixed(2)}` : String(value)
               }
             />
           }

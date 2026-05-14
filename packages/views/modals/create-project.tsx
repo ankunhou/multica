@@ -11,12 +11,7 @@ import { ChevronRight, Maximize2, Minimize2, X as XIcon, UserMinus } from "lucid
  */
 function GithubIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-      className={className}
-    >
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
       <path d="M12 .5C5.73.5.66 5.57.66 11.84c0 5.01 3.25 9.26 7.76 10.76.57.1.78-.25.78-.55 0-.27-.01-1.17-.02-2.13-3.16.69-3.83-1.34-3.83-1.34-.52-1.31-1.27-1.66-1.27-1.66-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.24 3.34.95.1-.74.4-1.24.72-1.53-2.52-.29-5.18-1.26-5.18-5.62 0-1.24.45-2.26 1.18-3.06-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.15 1.17a10.93 10.93 0 0 1 5.74 0c2.19-1.48 3.15-1.17 3.15-1.17.62 1.57.23 2.73.11 3.02.74.8 1.18 1.82 1.18 3.06 0 4.37-2.67 5.32-5.21 5.61.41.35.78 1.04.78 2.1 0 1.52-.01 2.74-.01 3.11 0 .3.21.66.79.55 4.51-1.5 7.76-5.75 7.76-10.76C23.34 5.57 18.27.5 12 .5Z" />
     </svg>
   );
@@ -24,10 +19,7 @@ function GithubIcon({ className }: { className?: string }) {
 import { useQuery } from "@tanstack/react-query";
 import { useCreateProject } from "@multica/core/projects/mutations";
 import { useProjectDraftStore } from "@multica/core/projects";
-import {
-  PROJECT_STATUS_ORDER,
-  PROJECT_PRIORITY_ORDER,
-} from "@multica/core/projects/config";
+import { PROJECT_STATUS_ORDER, PROJECT_PRIORITY_ORDER } from "@multica/core/projects/config";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
 import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
@@ -52,10 +44,7 @@ import { ActorAvatar } from "../common/actor-avatar";
 import { ProjectIcon } from "../projects/components/project-icon";
 import { useNavigation } from "../navigation";
 import { useT } from "../i18n";
-import {
-  useProjectStatusLabels,
-  useProjectPriorityLabels,
-} from "../projects/components/labels";
+import { useProjectStatusLabels, useProjectPriorityLabels } from "../projects/components/labels";
 import { ProjectStatusDot } from "../projects/components/project-status-badge";
 
 function PillButton({
@@ -78,21 +67,12 @@ function PillButton({
   );
 }
 
-function RepoUrlText({
-  url,
-  className,
-}: {
-  url: string;
-  className?: string;
-}) {
+function RepoUrlText({ url, className }: { url: string; className?: string }) {
   return (
     <Tooltip>
       <TooltipTrigger
         render={
-          <span
-            title={url}
-            className={cn("truncate flex-1 text-left", className)}
-          >
+          <span title={url} className={cn("truncate flex-1 text-left", className)}>
             {url}
           </span>
         }
@@ -140,14 +120,27 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
   const workspaceRepos = workspace?.repos ?? [];
 
   // Sync field changes to draft store
-  const updateTitle = (v: string) => { setTitle(v); setDraft({ title: v }); };
-  const updateStatus = (v: ProjectStatus) => { setStatus(v); setDraft({ status: v }); };
-  const updatePriority = (v: ProjectPriority) => { setPriority(v); setDraft({ priority: v }); };
+  const updateTitle = (v: string) => {
+    setTitle(v);
+    setDraft({ title: v });
+  };
+  const updateStatus = (v: ProjectStatus) => {
+    setStatus(v);
+    setDraft({ status: v });
+  };
+  const updatePriority = (v: ProjectPriority) => {
+    setPriority(v);
+    setDraft({ priority: v });
+  };
   const updateLead = (type?: "member" | "agent", id?: string) => {
-    setLeadType(type); setLeadId(id);
+    setLeadType(type);
+    setLeadId(id);
     setDraft({ leadType: type, leadId: id });
   };
-  const updateIcon = (v: string | undefined) => { setIcon(v); setDraft({ icon: v }); };
+  const updateIcon = (v: string | undefined) => {
+    setIcon(v);
+    setDraft({ icon: v });
+  };
 
   const [leadOpen, setLeadOpen] = useState(false);
   const [leadFilter, setLeadFilter] = useState("");
@@ -209,7 +202,12 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
+    <Dialog
+      open
+      onOpenChange={(v) => {
+        if (!v) onClose();
+      }}
+    >
       <DialogContent
         showCloseButton={false}
         className={cn(
@@ -237,7 +235,11 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
                     onClick={() => setIsExpanded(!isExpanded)}
                     className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                   >
-                    {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+                    {isExpanded ? (
+                      <Minimize2 className="size-4" />
+                    ) : (
+                      <Maximize2 className="size-4" />
+                    )}
                   </button>
                 }
               />
@@ -313,237 +315,238 @@ export function CreateProjectModal({ onClose }: { onClose: () => void }) {
             single Repos pill on its own row looked too sparse. */}
         <div className="flex items-center justify-between gap-2 px-4 py-3 border-t shrink-0">
           <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <PillButton>
-                  <ProjectStatusDot status={status} />
-                  <span>{projectStatusLabels[status]}</span>
-                </PillButton>
-              }
-            />
-            <DropdownMenuContent align="start" className="w-44">
-              {PROJECT_STATUS_ORDER.map((s) => (
-                <DropdownMenuItem key={s} onClick={() => updateStatus(s)}>
-                  <ProjectStatusDot status={s} />
-                  <span>{projectStatusLabels[s]}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <PillButton>
+                    <ProjectStatusDot status={status} />
+                    <span>{projectStatusLabels[status]}</span>
+                  </PillButton>
+                }
+              />
+              <DropdownMenuContent align="start" className="w-44">
+                {PROJECT_STATUS_ORDER.map((s) => (
+                  <DropdownMenuItem key={s} onClick={() => updateStatus(s)}>
+                    <ProjectStatusDot status={s} />
+                    <span>{projectStatusLabels[s]}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <PillButton>
-                  <PriorityIcon priority={priority} />
-                  <span>{projectPriorityLabels[priority]}</span>
-                </PillButton>
-              }
-            />
-            <DropdownMenuContent align="start" className="w-44">
-              {PROJECT_PRIORITY_ORDER.map((pr) => (
-                <DropdownMenuItem key={pr} onClick={() => updatePriority(pr)}>
-                  <PriorityIcon priority={pr} />
-                  <span>{projectPriorityLabels[pr]}</span>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <PillButton>
+                    <PriorityIcon priority={priority} />
+                    <span>{projectPriorityLabels[priority]}</span>
+                  </PillButton>
+                }
+              />
+              <DropdownMenuContent align="start" className="w-44">
+                {PROJECT_PRIORITY_ORDER.map((pr) => (
+                  <DropdownMenuItem key={pr} onClick={() => updatePriority(pr)}>
+                    <PriorityIcon priority={pr} />
+                    <span>{projectPriorityLabels[pr]}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-          <Popover
-            open={leadOpen}
-            onOpenChange={(v) => {
-              setLeadOpen(v);
-              if (!v) setLeadFilter("");
-            }}
-          >
-            <PopoverTrigger
-              render={
-                <PillButton>
-                  {leadType && leadId ? (
+            <Popover
+              open={leadOpen}
+              onOpenChange={(v) => {
+                setLeadOpen(v);
+                if (!v) setLeadFilter("");
+              }}
+            >
+              <PopoverTrigger
+                render={
+                  <PillButton>
+                    {leadType && leadId ? (
+                      <>
+                        <ActorAvatar
+                          actorType={leadType}
+                          actorId={leadId}
+                          size={16}
+                          showStatusDot
+                        />
+                        <span>{leadLabel}</span>
+                      </>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {t(($) => $.create_project.lead)}
+                      </span>
+                    )}
+                  </PillButton>
+                }
+              />
+              <PopoverContent align="start" className="w-52 p-0">
+                <div className="px-2 py-1.5 border-b">
+                  <input
+                    type="text"
+                    value={leadFilter}
+                    onChange={(e) => setLeadFilter(e.target.value)}
+                    placeholder={t(($) => $.create_project.lead_placeholder)}
+                    className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
+                  />
+                </div>
+                <div className="p-1 max-h-60 overflow-y-auto">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      updateLead(undefined, undefined);
+                      setLeadOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                  >
+                    <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">
+                      {t(($) => $.create_project.no_lead)}
+                    </span>
+                  </button>
+                  {filteredMembers.length > 0 && (
                     <>
-                      <ActorAvatar actorType={leadType} actorId={leadId} size={16} showStatusDot />
-                      <span>{leadLabel}</span>
+                      <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {t(($) => $.create_project.members_group)}
+                      </div>
+                      {filteredMembers.map((m) => (
+                        <button
+                          type="button"
+                          key={m.user_id}
+                          onClick={() => {
+                            updateLead("member", m.user_id);
+                            setLeadOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                        >
+                          <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
+                          <span>{m.name}</span>
+                        </button>
+                      ))}
                     </>
-                  ) : (
-                    <span className="text-muted-foreground">{t(($) => $.create_project.lead)}</span>
                   )}
-                </PillButton>
-              }
-            />
-            <PopoverContent align="start" className="w-52 p-0">
-              <div className="px-2 py-1.5 border-b">
-                <input
-                  type="text"
-                  value={leadFilter}
-                  onChange={(e) => setLeadFilter(e.target.value)}
-                  placeholder={t(($) => $.create_project.lead_placeholder)}
-                  className="w-full bg-transparent text-sm placeholder:text-muted-foreground outline-none"
-                />
-              </div>
-              <div className="p-1 max-h-60 overflow-y-auto">
-                <button
-                  type="button"
-                  onClick={() => {
-                    updateLead(undefined, undefined);
-                    setLeadOpen(false);
-                  }}
-                  className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-                >
-                  <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
-                  <span className="text-muted-foreground">{t(($) => $.create_project.no_lead)}</span>
-                </button>
-                {filteredMembers.length > 0 && (
-                  <>
-                    <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t(($) => $.create_project.members_group)}
-                    </div>
-                    {filteredMembers.map((m) => (
-                      <button
-                        type="button"
-                        key={m.user_id}
-                        onClick={() => {
-                          updateLead("member", m.user_id);
-                          setLeadOpen(false);
-                        }}
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-                      >
-                        <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
-                        <span>{m.name}</span>
-                      </button>
-                    ))}
-                  </>
-                )}
-                {filteredAgents.length > 0 && (
-                  <>
-                    <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                      {t(($) => $.create_project.agents_group)}
-                    </div>
-                    {filteredAgents.map((a) => (
-                      <button
-                        type="button"
-                        key={a.id}
-                        onClick={() => {
-                          updateLead("agent", a.id);
-                          setLeadOpen(false);
-                        }}
-                        className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
-                      >
-                        <ActorAvatar actorType="agent" actorId={a.id} size={16} showStatusDot />
-                        <span>{a.name}</span>
-                      </button>
-                    ))}
-                  </>
-                )}
-                {filteredMembers.length === 0 &&
-                  filteredAgents.length === 0 &&
-                  leadFilter && (
+                  {filteredAgents.length > 0 && (
+                    <>
+                      <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                        {t(($) => $.create_project.agents_group)}
+                      </div>
+                      {filteredAgents.map((a) => (
+                        <button
+                          type="button"
+                          key={a.id}
+                          onClick={() => {
+                            updateLead("agent", a.id);
+                            setLeadOpen(false);
+                          }}
+                          className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
+                        >
+                          <ActorAvatar actorType="agent" actorId={a.id} size={16} showStatusDot />
+                          <span>{a.name}</span>
+                        </button>
+                      ))}
+                    </>
+                  )}
+                  {filteredMembers.length === 0 && filteredAgents.length === 0 && leadFilter && (
                     <div className="px-2 py-3 text-center text-sm text-muted-foreground">
                       {t(($) => $.create_project.no_results)}
                     </div>
                   )}
-              </div>
-            </PopoverContent>
-          </Popover>
+                </div>
+              </PopoverContent>
+            </Popover>
 
-          <Popover open={repoPopoverOpen} onOpenChange={setRepoPopoverOpen}>
-            <PopoverTrigger
-              render={
-                <PillButton>
-                  <GithubIcon className="size-3" />
-                  <span>
-                    {selectedRepos.length === 0
-                      ? t(($) => $.create_project.repos_pill)
-                      : t(($) => $.create_project.repos_pill_count, { count: selectedRepos.length })}
-                  </span>
-                </PillButton>
-              }
-            />
-            <PopoverContent align="start" className="w-72 p-2 space-y-2">
-              <div className="text-xs font-medium text-muted-foreground">
-                {t(($) => $.create_project.repos_heading)}
-              </div>
-              {workspaceRepos.length > 0 ? (
-                <div className="space-y-1 max-h-48 overflow-y-auto">
-                  {workspaceRepos.map((repo) => {
-                    const checked = selectedRepos.includes(repo.url);
-                    return (
-                      <button
-                        type="button"
-                        key={repo.url}
-                        onClick={() => toggleRepo(repo.url)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors",
-                          checked && "bg-accent",
-                        )}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={checked}
-                          readOnly
-                          className="size-3.5"
-                        />
-                        <GithubIcon className="size-3.5" />
-                        <RepoUrlText url={repo.url} />
-                      </button>
-                    );
-                  })}
+            <Popover open={repoPopoverOpen} onOpenChange={setRepoPopoverOpen}>
+              <PopoverTrigger
+                render={
+                  <PillButton>
+                    <GithubIcon className="size-3" />
+                    <span>
+                      {selectedRepos.length === 0
+                        ? t(($) => $.create_project.repos_pill)
+                        : t(($) => $.create_project.repos_pill_count, {
+                            count: selectedRepos.length,
+                          })}
+                    </span>
+                  </PillButton>
+                }
+              />
+              <PopoverContent align="start" className="w-72 p-2 space-y-2">
+                <div className="text-xs font-medium text-muted-foreground">
+                  {t(($) => $.create_project.repos_heading)}
                 </div>
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  {t(($) => $.create_project.repos_empty)}
-                </p>
-              )}
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  addCustomRepo();
-                }}
-                className="flex items-center gap-1.5 pt-1 border-t"
-              >
-                <input
-                  type="url"
-                  value={customRepoUrl}
-                  onChange={(e) => setCustomRepoUrl(e.target.value)}
-                  placeholder={t(($) => $.create_project.repos_url_placeholder)}
-                  className="flex-1 bg-transparent text-xs px-2 py-1 outline-none placeholder:text-muted-foreground"
-                />
-                <Button
-                  type="submit"
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 px-2 text-xs"
-                  disabled={!customRepoUrl.trim()}
-                >
-                  {t(($) => $.create_project.repos_add)}
-                </Button>
-              </form>
-              {selectedRepos.length > 0 && (
-                <div className="space-y-1 pt-1 border-t">
-                  <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
-                    {t(($) => $.create_project.repos_selected)}
+                {workspaceRepos.length > 0 ? (
+                  <div className="space-y-1 max-h-48 overflow-y-auto">
+                    {workspaceRepos.map((repo) => {
+                      const checked = selectedRepos.includes(repo.url);
+                      return (
+                        <button
+                          type="button"
+                          key={repo.url}
+                          onClick={() => toggleRepo(repo.url)}
+                          className={cn(
+                            "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-accent transition-colors",
+                            checked && "bg-accent",
+                          )}
+                        >
+                          <input type="checkbox" checked={checked} readOnly className="size-3.5" />
+                          <GithubIcon className="size-3.5" />
+                          <RepoUrlText url={repo.url} />
+                        </button>
+                      );
+                    })}
                   </div>
-                  {selectedRepos.map((url) => (
-                    <div
-                      key={url}
-                      className="flex items-center gap-2 text-xs"
-                    >
-                      <GithubIcon className="size-3 text-muted-foreground" />
-                      <RepoUrlText url={url} />
-                      <button
-                        type="button"
-                        onClick={() => toggleRepo(url)}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <XIcon className="size-3" />
-                      </button>
+                ) : (
+                  <p className="text-xs text-muted-foreground">
+                    {t(($) => $.create_project.repos_empty)}
+                  </p>
+                )}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    addCustomRepo();
+                  }}
+                  className="flex items-center gap-1.5 pt-1 border-t"
+                >
+                  <input
+                    type="url"
+                    value={customRepoUrl}
+                    onChange={(e) => setCustomRepoUrl(e.target.value)}
+                    placeholder={t(($) => $.create_project.repos_url_placeholder)}
+                    className="flex-1 bg-transparent text-xs px-2 py-1 outline-none placeholder:text-muted-foreground"
+                  />
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 px-2 text-xs"
+                    disabled={!customRepoUrl.trim()}
+                  >
+                    {t(($) => $.create_project.repos_add)}
+                  </Button>
+                </form>
+                {selectedRepos.length > 0 && (
+                  <div className="space-y-1 pt-1 border-t">
+                    <div className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+                      {t(($) => $.create_project.repos_selected)}
                     </div>
-                  ))}
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
+                    {selectedRepos.map((url) => (
+                      <div key={url} className="flex items-center gap-2 text-xs">
+                        <GithubIcon className="size-3 text-muted-foreground" />
+                        <RepoUrlText url={url} />
+                        <button
+                          type="button"
+                          onClick={() => toggleRepo(url)}
+                          className="text-muted-foreground hover:text-foreground"
+                        >
+                          <XIcon className="size-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
           </div>
 
           <Button

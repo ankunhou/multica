@@ -1,10 +1,10 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@multica/ui/lib/utils"
+import { cn } from "@multica/ui/lib/utils";
 
 function clampValue(value: number): number {
-  if (!Number.isFinite(value)) return 0
-  return Math.min(100, Math.max(0, value))
+  if (!Number.isFinite(value)) return 0;
+  return Math.min(100, Math.max(0, value));
 }
 
 function Meter({
@@ -13,10 +13,10 @@ function Meter({
   value,
   ...props
 }: React.ComponentProps<"div"> & {
-  value: number
-  indicatorClassName?: string
+  value: number;
+  indicatorClassName?: string;
 }) {
-  const clamped = clampValue(value)
+  const clamped = clampValue(value);
 
   return (
     <div
@@ -32,12 +32,12 @@ function Meter({
         data-slot="meter-indicator"
         className={cn(
           "absolute inset-y-0 left-0 rounded-full bg-primary transition-all",
-          indicatorClassName
+          indicatorClassName,
         )}
         style={{ width: `${clamped}%` }}
       />
     </div>
-  )
+  );
 }
 
-export { Meter }
+export { Meter };

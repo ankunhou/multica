@@ -1,4 +1,4 @@
-import LinkifyIt from 'linkify-it'
+import LinkifyIt from "linkify-it";
 
 /**
  * Linkify - URL and file path detection for markdown preprocessing
@@ -8,12 +8,12 @@ import LinkifyIt from 'linkify-it'
  */
 
 // Initialize linkify-it with default settings (fuzzy URLs, emails enabled)
-const linkify = new LinkifyIt()
+const linkify = new LinkifyIt();
 
 // File path regex - detects /path, ~/path, ./path with common extensions
 // Matches paths that start with /, ~/, or ./ followed by path chars and a file extension
 const FILE_PATH_REGEX =
-  /(?:^|[\s([{<])((\/|~\/|\.\/)[\w\-./@]+\.(?:ts|tsx|js|jsx|mjs|cjs|md|json|yaml|yml|py|go|rs|css|scss|less|html|htm|txt|log|sh|bash|zsh|swift|kt|java|c|cpp|h|hpp|rb|php|xml|toml|ini|cfg|conf|env|sql|graphql|vue|svelte|astro|prisma|dockerfile|makefile|gitignore))(?=[\s)\]}.,;:!?>]|$)/gi
+  /(?:^|[\s([{<])((\/|~\/|\.\/)[\w\-./@]+\.(?:ts|tsx|js|jsx|mjs|cjs|md|json|yaml|yml|py|go|rs|css|scss|less|html|htm|txt|log|sh|bash|zsh|swift|kt|java|c|cpp|h|hpp|rb|php|xml|toml|ini|cfg|conf|env|sql|graphql|vue|svelte|astro|prisma|dockerfile|makefile|gitignore))(?=[\s)\]}.,;:!?>]|$)/gi;
 
 // CJK full-width punctuation that should terminate a URL.
 // linkify-it only treats ASCII punctuation as URL boundaries, so in Chinese /
@@ -21,20 +21,19 @@ const FILE_PATH_REGEX =
 // character up to the next whitespace swallowed into the href. We truncate the
 // detected URL at the first occurrence of any of these characters. Character
 // set mirrors the fix applied in mattermost/marked#22.
-const CJK_URL_TERMINATOR_REGEX =
-  /[！-／：-＠［-｀｛-～、。「-】]/
+const CJK_URL_TERMINATOR_REGEX = /[！-／：-＠［-｀｛-～、。「-】]/;
 
 interface DetectedLink {
-  type: 'url' | 'email' | 'file'
-  text: string
-  url: string
-  start: number
-  end: number
+  type: "url" | "email" | "file";
+  text: string;
+  url: string;
+  start: number;
+  end: number;
 }
 
 interface CodeRange {
-  start: number
-  end: number
+  start: number;
+  end: number;
 }
 
 /**
@@ -42,99 +41,99 @@ interface CodeRange {
  * These ranges should be excluded from link detection
  */
 function findCodeRanges(text: string): CodeRange[] {
-  const ranges: CodeRange[] = []
+  const ranges: CodeRange[] = [];
 
   // Find fenced code blocks (```...```)
-  const fencedRegex = /```[\s\S]*?```/g
-  let match
+  const fencedRegex = /```[\s\S]*?```/g;
+  let match;
   while ((match = fencedRegex.exec(text)) !== null) {
-    ranges.push({ start: match.index, end: match.index + match[0].length })
+    ranges.push({ start: match.index, end: match.index + match[0].length });
   }
 
   // Find display math blocks ($$...$$)
-  const displayMathRegex = /\$\$[\s\S]*?\$\$/g
+  const displayMathRegex = /\$\$[\s\S]*?\$\$/g;
   while ((match = displayMathRegex.exec(text)) !== null) {
-    const pos = match.index
-    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end)
+    const pos = match.index;
+    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end);
     if (!insideOther) {
-      ranges.push({ start: pos, end: pos + match[0].length })
+      ranges.push({ start: pos, end: pos + match[0].length });
     }
   }
 
   // Find inline math ($...$)
-  const inlineMathRegex = /(?<!\$)\$(?!\$)([^$\n]+)\$(?!\$)/g
+  const inlineMathRegex = /(?<!\$)\$(?!\$)([^$\n]+)\$(?!\$)/g;
   while ((match = inlineMathRegex.exec(text)) !== null) {
-    const pos = match.index
-    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end)
+    const pos = match.index;
+    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end);
     if (!insideOther) {
-      ranges.push({ start: pos, end: pos + match[0].length })
+      ranges.push({ start: pos, end: pos + match[0].length });
     }
   }
 
   // Find inline code (`...`)
   // But skip escaped backticks and code inside fenced blocks
-  const inlineRegex = /(?<!`)`(?!`)([^`\n]+)`(?!`)/g
+  const inlineRegex = /(?<!`)`(?!`)([^`\n]+)`(?!`)/g;
   while ((match = inlineRegex.exec(text)) !== null) {
-    const pos = match.index
+    const pos = match.index;
     // Check if this is inside a fenced block or math block
-    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end)
+    const insideOther = ranges.some((r) => pos >= r.start && pos < r.end);
     if (!insideOther) {
-      ranges.push({ start: pos, end: pos + match[0].length })
+      ranges.push({ start: pos, end: pos + match[0].length });
     }
   }
 
-  return ranges
+  return ranges;
 }
 
 /**
  * Check if a position is inside any code range
  */
 function isInsideCode(pos: number, ranges: CodeRange[]): boolean {
-  return ranges.some((r) => pos >= r.start && pos < r.end)
+  return ranges.some((r) => pos >= r.start && pos < r.end);
 }
 
 function isEscaped(text: string, index: number): boolean {
-  let slashCount = 0
-  for (let i = index - 1; i >= 0 && text[i] === '\\'; i--) {
-    slashCount++
+  let slashCount = 0;
+  for (let i = index - 1; i >= 0 && text[i] === "\\"; i--) {
+    slashCount++;
   }
-  return slashCount % 2 === 1
+  return slashCount % 2 === 1;
 }
 
 function findMatchingBracket(text: string, openIndex: number): number {
-  let depth = 0
+  let depth = 0;
 
   for (let i = openIndex; i < text.length; i++) {
-    if (isEscaped(text, i)) continue
+    if (isEscaped(text, i)) continue;
 
-    const char = text[i]
-    if (char === '[') {
-      depth++
-    } else if (char === ']') {
-      depth--
-      if (depth === 0) return i
+    const char = text[i];
+    if (char === "[") {
+      depth++;
+    } else if (char === "]") {
+      depth--;
+      if (depth === 0) return i;
     }
   }
 
-  return -1
+  return -1;
 }
 
 function findInlineLinkEnd(text: string, openParenIndex: number): number {
-  let depth = 0
+  let depth = 0;
 
   for (let i = openParenIndex; i < text.length; i++) {
-    if (isEscaped(text, i)) continue
+    if (isEscaped(text, i)) continue;
 
-    const char = text[i]
-    if (char === '(') {
-      depth++
-    } else if (char === ')') {
-      depth--
-      if (depth === 0) return i + 1
+    const char = text[i];
+    if (char === "(") {
+      depth++;
+    } else if (char === ")") {
+      depth--;
+      if (depth === 0) return i + 1;
     }
   }
 
-  return -1
+  return -1;
 }
 
 /**
@@ -142,37 +141,37 @@ function findInlineLinkEnd(text: string, openParenIndex: number): number {
  * nested links inside their labels or destinations.
  */
 function findMarkdownLinkRanges(text: string): CodeRange[] {
-  const ranges: CodeRange[] = []
+  const ranges: CodeRange[] = [];
 
   for (let i = 0; i < text.length; i++) {
-    if (text[i] !== '[' || isEscaped(text, i)) continue
-    if (ranges.some((r) => i >= r.start && i < r.end)) continue
+    if (text[i] !== "[" || isEscaped(text, i)) continue;
+    if (ranges.some((r) => i >= r.start && i < r.end)) continue;
 
-    const labelEnd = findMatchingBracket(text, i)
-    if (labelEnd === -1) continue
+    const labelEnd = findMatchingBracket(text, i);
+    if (labelEnd === -1) continue;
 
-    const start = i > 0 && text[i - 1] === '!' && !isEscaped(text, i - 1) ? i - 1 : i
-    const nextChar = text[labelEnd + 1]
+    const start = i > 0 && text[i - 1] === "!" && !isEscaped(text, i - 1) ? i - 1 : i;
+    const nextChar = text[labelEnd + 1];
 
-    if (nextChar === '(') {
-      const end = findInlineLinkEnd(text, labelEnd + 1)
+    if (nextChar === "(") {
+      const end = findInlineLinkEnd(text, labelEnd + 1);
       if (end !== -1) {
-        ranges.push({ start, end })
-        i = end - 1
+        ranges.push({ start, end });
+        i = end - 1;
       }
-      continue
+      continue;
     }
 
-    if (nextChar === '[') {
-      const referenceEnd = findMatchingBracket(text, labelEnd + 1)
+    if (nextChar === "[") {
+      const referenceEnd = findMatchingBracket(text, labelEnd + 1);
       if (referenceEnd !== -1) {
-        ranges.push({ start, end: referenceEnd + 1 })
-        i = referenceEnd
+        ranges.push({ start, end: referenceEnd + 1 });
+        i = referenceEnd;
       }
     }
   }
 
-  return ranges
+  return ranges;
 }
 
 /**
@@ -182,19 +181,19 @@ function findMarkdownLinkRanges(text: string): CodeRange[] {
 function isAlreadyLinked(text: string, linkStart: number, linkEnd: number): boolean {
   // Check if preceded by ]( which indicates we're inside a markdown link href
   // Pattern: [text](URL) - we're checking if URL is our link
-  const before = text.slice(Math.max(0, linkStart - 2), linkStart)
-  if (before.endsWith('](')) return true
+  const before = text.slice(Math.max(0, linkStart - 2), linkStart);
+  if (before.endsWith("](")) return true;
 
   // Check if preceded by ][ for reference links
-  if (before.endsWith('][')) return true
+  if (before.endsWith("][")) return true;
 
   // Check if the link text is wrapped in []
   // Pattern: [URL](href) - URL is being used as link text
-  const charBefore = text[linkStart - 1]
-  const charAfter = text[linkEnd]
-  if (charBefore === '[' && charAfter === ']') return true
+  const charBefore = text[linkStart - 1];
+  const charAfter = text[linkEnd];
+  if (charBefore === "[" && charAfter === "]") return true;
 
-  return false
+  return false;
 }
 
 /**
@@ -202,9 +201,9 @@ function isAlreadyLinked(text: string, linkStart: number, linkEnd: number): bool
  */
 function rangesOverlap(
   a: { start: number; end: number },
-  b: { start: number; end: number }
+  b: { start: number; end: number },
 ): boolean {
-  return a.start < b.end && b.start < a.end
+  return a.start < b.end && b.start < a.end;
 }
 
 /**
@@ -214,35 +213,35 @@ function rangesOverlap(
  * as a URL boundary), we truncate at that punctuation and re-scan the tail.
  */
 function collectLinkifyMatches(text: string, offset: number, out: DetectedLink[]): void {
-  const matches = linkify.match(text)
-  if (!matches) return
+  const matches = linkify.match(text);
+  if (!matches) return;
 
   for (const match of matches) {
-    const cjkIdx = match.text.search(CJK_URL_TERMINATOR_REGEX)
-    if (cjkIdx === 0) continue // match starts with CJK punct — skip
+    const cjkIdx = match.text.search(CJK_URL_TERMINATOR_REGEX);
+    if (cjkIdx === 0) continue; // match starts with CJK punct — skip
 
-    const truncate = cjkIdx > 0
-    const matchText = truncate ? match.text.slice(0, cjkIdx) : match.text
+    const truncate = cjkIdx > 0;
+    const matchText = truncate ? match.text.slice(0, cjkIdx) : match.text;
     // linkify-it may prepend a scheme (e.g. "http://" or "mailto:") to url
     // while leaving text as the raw substring. Preserve that prefix.
-    const schemePrefix = match.url.slice(0, match.url.length - match.text.length)
-    const matchUrl = truncate ? schemePrefix + matchText : match.url
-    const matchEnd = truncate ? match.index + cjkIdx : match.lastIndex
+    const schemePrefix = match.url.slice(0, match.url.length - match.text.length);
+    const matchUrl = truncate ? schemePrefix + matchText : match.url;
+    const matchEnd = truncate ? match.index + cjkIdx : match.lastIndex;
 
     out.push({
-      type: match.schema === 'mailto:' ? 'email' : 'url',
+      type: match.schema === "mailto:" ? "email" : "url",
       text: matchText,
       url: matchUrl,
       start: match.index + offset,
-      end: matchEnd + offset
-    })
+      end: matchEnd + offset,
+    });
 
     if (truncate) {
       // Rescan the tail after the CJK punct — linkify-it had greedily swallowed
       // it, so any additional URLs after the punct were never emitted.
-      const tailStart = matchEnd + 1
-      collectLinkifyMatches(text.slice(tailStart), offset + tailStart, out)
-      return
+      const tailStart = matchEnd + 1;
+      collectLinkifyMatches(text.slice(tailStart), offset + tailStart, out);
+      return;
     }
   }
 }
@@ -251,40 +250,40 @@ function collectLinkifyMatches(text: string, offset: number, out: DetectedLink[]
  * Detect all links (URLs, emails, file paths) in text
  */
 export function detectLinks(text: string): DetectedLink[] {
-  const links: DetectedLink[] = []
+  const links: DetectedLink[] = [];
 
   // 1. Detect URLs and emails with linkify-it, applying CJK boundary handling.
-  collectLinkifyMatches(text, 0, links)
+  collectLinkifyMatches(text, 0, links);
 
   // 2. Detect file paths with custom regex
   // Reset regex state
-  FILE_PATH_REGEX.lastIndex = 0
-  let fileMatch
+  FILE_PATH_REGEX.lastIndex = 0;
+  let fileMatch;
   while ((fileMatch = FILE_PATH_REGEX.exec(text)) !== null) {
-    const path = fileMatch[1]
-    if (!path) continue // Skip if no capture group
+    const path = fileMatch[1];
+    if (!path) continue; // Skip if no capture group
 
     // Calculate actual start position (after any leading whitespace/punctuation)
-    const fullMatch = fileMatch[0]
-    const pathOffset = fullMatch.indexOf(path)
-    const start = fileMatch.index + pathOffset
+    const fullMatch = fileMatch[0];
+    const pathOffset = fullMatch.indexOf(path);
+    const start = fileMatch.index + pathOffset;
 
     // Check for overlaps with URL matches (URLs take precedence)
-    const pathRange = { start, end: start + path.length }
-    const overlapsUrl = links.some((link) => rangesOverlap(pathRange, link))
-    if (overlapsUrl) continue
+    const pathRange = { start, end: start + path.length };
+    const overlapsUrl = links.some((link) => rangesOverlap(pathRange, link));
+    if (overlapsUrl) continue;
 
     links.push({
-      type: 'file',
+      type: "file",
       text: path,
       url: path, // File paths are passed as-is to onFileClick handler
       start,
-      end: start + path.length
-    })
+      end: start + path.length,
+    });
   }
 
   // Sort by position
-  return links.sort((a, b) => a.start - b.start)
+  return links.sort((a, b) => a.start - b.start);
 }
 
 /**
@@ -294,42 +293,42 @@ export function detectLinks(text: string): DetectedLink[] {
 export function preprocessLinks(text: string): string {
   // Quick check - if no potential links, return early
   if (!linkify.pretest(text) && !/[~/.]\//.test(text)) {
-    return text
+    return text;
   }
 
-  const codeRanges = findCodeRanges(text)
-  const markdownLinkRanges = findMarkdownLinkRanges(text)
-  const links = detectLinks(text)
+  const codeRanges = findCodeRanges(text);
+  const markdownLinkRanges = findMarkdownLinkRanges(text);
+  const links = detectLinks(text);
 
-  if (links.length === 0) return text
+  if (links.length === 0) return text;
 
   // Build result, converting raw links to markdown links
-  let result = ''
-  let lastIndex = 0
+  let result = "";
+  let lastIndex = 0;
 
   for (const link of links) {
     // Skip if inside code block
-    if (isInsideCode(link.start, codeRanges)) continue
+    if (isInsideCode(link.start, codeRanges)) continue;
 
     // Skip if this match is inside an existing markdown link or image.
-    if (markdownLinkRanges.some((range) => rangesOverlap(link, range))) continue
+    if (markdownLinkRanges.some((range) => rangesOverlap(link, range))) continue;
 
     // Skip if already a markdown link
-    if (isAlreadyLinked(text, link.start, link.end)) continue
+    if (isAlreadyLinked(text, link.start, link.end)) continue;
 
     // Add text before this link
-    result += text.slice(lastIndex, link.start)
+    result += text.slice(lastIndex, link.start);
 
     // Convert to markdown link
-    result += `[${link.text}](${link.url})`
+    result += `[${link.text}](${link.url})`;
 
-    lastIndex = link.end
+    lastIndex = link.end;
   }
 
   // Add remaining text
-  result += text.slice(lastIndex)
+  result += text.slice(lastIndex);
 
-  return result
+  return result;
 }
 
 /**
@@ -337,5 +336,5 @@ export function preprocessLinks(text: string): string {
  * Useful for optimization - skip preprocessing if no links present
  */
 export function hasLinks(text: string): boolean {
-  return linkify.pretest(text) || /[~/.]\/[\w]/.test(text)
+  return linkify.pretest(text) || /[~/.]\/[\w]/.test(text);
 }

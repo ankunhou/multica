@@ -84,12 +84,15 @@ export function InboxPage() {
     if (selected) lastResolvedKeyRef.current = selectedKey;
   }, [selected, selectedKey]);
 
-  const setSelectedKey = useCallback((key: string) => {
-    setSelectedKeyState(key);
-    const inboxPath = wsPaths.inbox();
-    const url = key ? `${inboxPath}?issue=${key}` : inboxPath;
-    replace(url);
-  }, [replace, wsPaths]);
+  const setSelectedKey = useCallback(
+    (key: string) => {
+      setSelectedKeyState(key);
+      const inboxPath = wsPaths.inbox();
+      const url = key ? `${inboxPath}?issue=${key}` : inboxPath;
+      replace(url);
+    },
+    [replace, wsPaths],
+  );
 
   // Shared inbox links (?issue=<id>) may point to notifications not in this
   // user's inbox (archived, or never received). Fall back to the issue page
@@ -124,7 +127,6 @@ export function InboxPage() {
   const timeAgo = useTimeAgo();
   const typeLabels = useTypeLabels();
 
-
   // Auto-mark-read whenever a selected item is unread — covers both click-
   // to-select and URL-param-select (e.g. OS notification click on desktop).
   // The mutation flips `read: true` optimistically, so this effect settles
@@ -147,8 +149,7 @@ export function InboxPage() {
   const handleArchive = (id: string) => {
     const idx = items.findIndex((i) => i.id === id);
     const archived = idx >= 0 ? items[idx] : null;
-    const wasSelected =
-      !!archived && (archived.issue_id ?? archived.id) === selectedKey;
+    const wasSelected = !!archived && (archived.issue_id ?? archived.id) === selectedKey;
     if (wasSelected) {
       // List is sorted newest-first; prefer the next (older) item, fall back
       // to the previous (newer) one when archiving at the bottom, and only
@@ -196,21 +197,11 @@ export function InboxPage() {
     <PageHeader className="justify-between">
       <div className="flex items-center gap-2">
         <h1 className="text-sm font-semibold">{t(($) => $.page.title)}</h1>
-        {unreadCount > 0 && (
-          <span className="text-xs text-muted-foreground">
-            {unreadCount}
-          </span>
-        )}
+        {unreadCount > 0 && <span className="text-xs text-muted-foreground">{unreadCount}</span>}
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground"
-            />
-          }
+          render={<Button variant="ghost" size="icon-sm" className="text-muted-foreground" />}
         >
           <MoreHorizontal className="h-4 w-4" />
         </DropdownMenuTrigger>
@@ -237,24 +228,25 @@ export function InboxPage() {
     </PageHeader>
   );
 
-  const listBody = items.length === 0 ? (
-    <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-      <Inbox className="mb-3 h-8 w-8 text-muted-foreground/50" />
-      <p className="text-sm">{t(($) => $.list.empty)}</p>
-    </div>
-  ) : (
-    <div>
-      {items.map((item) => (
-        <InboxListItem
-          key={item.id}
-          item={item}
-          isSelected={(item.issue_id ?? item.id) === selectedKey}
-          onClick={() => handleSelect(item)}
-          onArchive={() => handleArchive(item.id)}
-        />
-      ))}
-    </div>
-  );
+  const listBody =
+    items.length === 0 ? (
+      <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+        <Inbox className="mb-3 h-8 w-8 text-muted-foreground/50" />
+        <p className="text-sm">{t(($) => $.list.empty)}</p>
+      </div>
+    ) : (
+      <div>
+        {items.map((item) => (
+          <InboxListItem
+            key={item.id}
+            item={item}
+            isSelected={(item.issue_id ?? item.id) === selectedKey}
+            onClick={() => handleSelect(item)}
+            onArchive={() => handleArchive(item.id)}
+          />
+        ))}
+      </div>
+    );
 
   const detailContent = selected?.issue_id ? (
     // Key by issue_id (not inbox-item id): a new comment/reaction generates a
@@ -312,9 +304,7 @@ export function InboxPage() {
               const agentId = selected.details?.agent_id;
               useIssueDraftStore.getState().setDraft({
                 description: prompt,
-                ...(agentId
-                  ? { assigneeType: "agent" as const, assigneeId: agentId }
-                  : {}),
+                ...(agentId ? { assigneeType: "agent" as const, assigneeId: agentId } : {}),
               });
               useModalStore.getState().open("create-issue");
             }}
@@ -322,11 +312,7 @@ export function InboxPage() {
             {t(($) => $.detail.edit_advanced)}
           </Button>
         )}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handleArchive(selected.id)}
-        >
+        <Button variant="outline" size="sm" onClick={() => handleArchive(selected.id)}>
           <Archive className="mr-1.5 h-3.5 w-3.5" />
           {t(($) => $.detail.archive)}
         </Button>
@@ -373,9 +359,7 @@ export function InboxPage() {
               {t(($) => $.page.back)}
             </Button>
           </div>
-          <div className="flex-1 min-h-0 overflow-y-auto">
-            {detailContent}
-          </div>
+          <div className="flex-1 min-h-0 overflow-y-auto">{detailContent}</div>
         </div>
       );
     }
@@ -384,9 +368,7 @@ export function InboxPage() {
     return (
       <div className="flex flex-1 flex-col min-h-0">
         {listHeader}
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          {listBody}
-        </div>
+        <div className="flex-1 min-h-0 overflow-y-auto">{listBody}</div>
       </div>
     );
   }
@@ -395,8 +377,19 @@ export function InboxPage() {
 
   if (loading) {
     return (
-      <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
-        <ResizablePanel id="list" defaultSize={320} minSize={240} maxSize={480} groupResizeBehavior="preserve-pixel-size">
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="flex-1 min-h-0"
+        defaultLayout={defaultLayout}
+        onLayoutChanged={onLayoutChanged}
+      >
+        <ResizablePanel
+          id="list"
+          defaultSize={320}
+          minSize={240}
+          maxSize={480}
+          groupResizeBehavior="preserve-pixel-size"
+        >
           <div className="flex flex-col border-r h-full">
             <div className="flex h-12 shrink-0 items-center border-b px-4">
               <Skeleton className="h-5 w-16" />
@@ -426,29 +419,36 @@ export function InboxPage() {
   }
 
   return (
-    <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
-      <ResizablePanel id="list" defaultSize={320} minSize={240} maxSize={480} groupResizeBehavior="preserve-pixel-size">
-      <div className="flex flex-col border-r h-full">
-        {listHeader}
-        <div className="flex-1 min-h-0 overflow-y-auto">
-          {listBody}
+    <ResizablePanelGroup
+      orientation="horizontal"
+      className="flex-1 min-h-0"
+      defaultLayout={defaultLayout}
+      onLayoutChanged={onLayoutChanged}
+    >
+      <ResizablePanel
+        id="list"
+        defaultSize={320}
+        minSize={240}
+        maxSize={480}
+        groupResizeBehavior="preserve-pixel-size"
+      >
+        <div className="flex flex-col border-r h-full">
+          {listHeader}
+          <div className="flex-1 min-h-0 overflow-y-auto">{listBody}</div>
         </div>
-      </div>
       </ResizablePanel>
       <ResizableHandle />
       <ResizablePanel id="detail" minSize="40%">
-      <div className="flex flex-col min-h-0 h-full">
-        {detailContent ?? (
-          <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
-            <Inbox className="mb-3 h-10 w-10 text-muted-foreground/30" />
-            <p className="text-sm">
-              {items.length === 0
-                ? t(($) => $.detail.empty)
-                : t(($) => $.detail.select_prompt)}
-            </p>
-          </div>
-        )}
-      </div>
+        <div className="flex flex-col min-h-0 h-full">
+          {detailContent ?? (
+            <div className="flex h-full flex-col items-center justify-center text-muted-foreground">
+              <Inbox className="mb-3 h-10 w-10 text-muted-foreground/30" />
+              <p className="text-sm">
+                {items.length === 0 ? t(($) => $.detail.empty) : t(($) => $.detail.select_prompt)}
+              </p>
+            </div>
+          )}
+        </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );

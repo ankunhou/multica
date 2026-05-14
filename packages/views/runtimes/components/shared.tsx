@@ -5,11 +5,7 @@ import { ProviderLogo } from "./provider-logo";
 import { useT } from "../../i18n";
 
 export function RuntimeModeIcon({ mode }: { mode: string }) {
-  return mode === "cloud" ? (
-    <Cloud className="h-3.5 w-3.5" />
-  ) : (
-    <Monitor className="h-3.5 w-3.5" />
-  );
+  return mode === "cloud" ? <Cloud className="h-3.5 w-3.5" /> : <Monitor className="h-3.5 w-3.5" />;
 }
 
 // Compact provider tag: small logo square + provider name. Used in dense
@@ -44,11 +40,7 @@ export function HealthDot({
   className?: string;
 }) {
   if (health === "loading") {
-    return (
-      <span
-        className={`inline-block h-2 w-2 rounded-full bg-muted ${className}`}
-      />
-    );
+    return <span className={`inline-block h-2 w-2 rounded-full bg-muted ${className}`} />;
   }
   return (
     <span
@@ -66,10 +58,7 @@ export function HealthDot({
 //   recently_lost → WifiHigh (fewer bars, warning) — transient hiccup
 //   offline       → WifiOff (slashed, muted) — long unreachable
 //   about_to_gc   → WifiOff (slashed, destructive) — sweeper coming
-const HEALTH_ICON: Record<
-  RuntimeHealth,
-  { Icon: typeof Wifi; tone: string }
-> = {
+const HEALTH_ICON: Record<RuntimeHealth, { Icon: typeof Wifi; tone: string }> = {
   online: { Icon: Wifi, tone: "text-success" },
   recently_lost: { Icon: WifiHigh, tone: "text-warning" },
   offline: { Icon: WifiOff, tone: "text-muted-foreground" },
@@ -115,11 +104,7 @@ export function useHealthLabel(): (health: RuntimeHealth | "loading") => string 
   };
 }
 
-export function HealthBadge({
-  health,
-}: {
-  health: RuntimeHealth | "loading";
-}) {
+export function HealthBadge({ health }: { health: RuntimeHealth | "loading" }) {
   const labelOf = useHealthLabel();
   if (health === "loading") {
     return (
@@ -149,11 +134,7 @@ export function InfoField({
   return (
     <div>
       <div className="text-xs text-muted-foreground">{label}</div>
-      <div
-        className={`mt-0.5 text-sm truncate ${mono ? "font-mono text-xs" : ""}`}
-      >
-        {value}
-      </div>
+      <div className={`mt-0.5 text-sm truncate ${mono ? "font-mono text-xs" : ""}`}>{value}</div>
     </div>
   );
 }
@@ -183,12 +164,7 @@ export function KpiCard({
   hint?: React.ReactNode;
   accent?: "brand" | "success" | "default";
 }) {
-  const valueClass =
-    accent === "brand"
-      ? "text-brand"
-      : accent === "success"
-        ? "text-success"
-        : "";
+  const valueClass = accent === "brand" ? "text-brand" : accent === "success" ? "text-success" : "";
   return (
     <div className="flex flex-col gap-2 p-5">
       <div className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
@@ -197,9 +173,7 @@ export function KpiCard({
       <div className={`text-3xl font-semibold leading-none tabular-nums ${valueClass}`}>
         {value}
       </div>
-      {hint != null && (
-        <div className="text-xs text-muted-foreground">{hint}</div>
-      )}
+      {hint != null && <div className="text-xs text-muted-foreground">{hint}</div>}
     </div>
   );
 }

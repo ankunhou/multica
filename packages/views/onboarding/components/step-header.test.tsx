@@ -33,9 +33,7 @@ describe("StepHeader", () => {
   it("shows 'Step N of M' text matching the current step's position", () => {
     // workspace is index 1 (0-indexed) → Step 2 of 5
     render(<StepHeader currentStep="workspace" />);
-    expect(
-      screen.getByText(`Step 2 of ${ONBOARDING_STEP_ORDER.length}`),
-    ).toBeInTheDocument();
+    expect(screen.getByText(`Step 2 of ${ONBOARDING_STEP_ORDER.length}`)).toBeInTheDocument();
   });
 
   it("sets accessible progressbar attrs", () => {
@@ -50,8 +48,6 @@ describe("StepHeader", () => {
     // the flow's local step could drift during a refactor — the header
     // must not crash. Assert the defensive fallback lands on step 1.
     render(<StepHeader currentStep={"bogus" as never} />);
-    expect(
-      screen.getByText(`Step 1 of ${ONBOARDING_STEP_ORDER.length}`),
-    ).toBeInTheDocument();
+    expect(screen.getByText(`Step 1 of ${ONBOARDING_STEP_ORDER.length}`)).toBeInTheDocument();
   });
 });

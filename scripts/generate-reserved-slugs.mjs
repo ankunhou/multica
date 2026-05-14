@@ -42,9 +42,7 @@ lines.push("export const RESERVED_SLUGS: ReadonlySet<string> = new Set([");
 const seen = new Set();
 for (const [i, group] of data.groups.entries()) {
   if (!group.label || !Array.isArray(group.slugs)) {
-    throw new Error(
-      `reserved_slugs.json: each group must have a "label" string and "slugs" array`,
-    );
+    throw new Error(`reserved_slugs.json: each group must have a "label" string and "slugs" array`);
   }
   if (i > 0) lines.push("");
   lines.push(`  // ${group.label}`);

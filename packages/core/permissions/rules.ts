@@ -1,11 +1,4 @@
-import type {
-  Agent,
-  Comment,
-  Member,
-  MemberRole,
-  RuntimeDevice,
-  Skill,
-} from "../types";
+import type { Agent, Comment, Member, MemberRole, RuntimeDevice, Skill } from "../types";
 import { ALLOW, deny, type Decision, type PermissionContext } from "./types";
 
 /**
@@ -19,8 +12,7 @@ import { ALLOW, deny, type Decision, type PermissionContext } from "./types";
  * sprinkling copy through the view layer.
  */
 
-const isAdminLike = (role: MemberRole | null) =>
-  role === "owner" || role === "admin";
+const isAdminLike = (role: MemberRole | null) => role === "owner" || role === "admin";
 
 // ---- Agents ----------------------------------------------------------------
 
@@ -46,10 +38,7 @@ export function canEditAgent(agent: Agent, ctx: PermissionContext): Decision {
  * any workspace member; private agents are restricted to their owner plus
  * workspace admins/owners. Mirrors `issue.go:1471-1490`.
  */
-export function canAssignAgentToIssue(
-  agent: Agent,
-  ctx: PermissionContext,
-): Decision {
+export function canAssignAgentToIssue(agent: Agent, ctx: PermissionContext): Decision {
   if (ctx.userId === null) {
     return deny("not_authenticated", "Sign in to assign agents.");
   }
@@ -78,10 +67,7 @@ export function canEditSkill(skill: Skill, ctx: PermissionContext): Decision {
   if (skill.created_by !== null && skill.created_by === ctx.userId) {
     return ALLOW;
   }
-  return deny(
-    "not_resource_owner",
-    "Only the creator and workspace admins can edit this skill.",
-  );
+  return deny("not_resource_owner", "Only the creator and workspace admins can edit this skill.");
 }
 
 export function canDeleteSkill(skill: Skill, ctx: PermissionContext): Decision {
@@ -90,33 +76,21 @@ export function canDeleteSkill(skill: Skill, ctx: PermissionContext): Decision {
 
 // ---- Comments --------------------------------------------------------------
 
-export function canEditComment(
-  comment: Comment,
-  ctx: PermissionContext,
-): Decision {
+export function canEditComment(comment: Comment, ctx: PermissionContext): Decision {
   if (ctx.userId === null) {
     return deny("not_authenticated", "Sign in to edit comments.");
   }
   // Only member-authored comments can be edited; agent-authored comments are
   // immutable from any human's perspective.
   if (comment.author_type !== "member") {
-    return deny(
-      "not_resource_owner",
-      "Agent-authored comments cannot be edited.",
-    );
+    return deny("not_resource_owner", "Agent-authored comments cannot be edited.");
   }
   if (comment.author_id === ctx.userId) return ALLOW;
   if (isAdminLike(ctx.role)) return ALLOW;
-  return deny(
-    "not_resource_owner",
-    "Only the author and workspace admins can edit this comment.",
-  );
+  return deny("not_resource_owner", "Only the author and workspace admins can edit this comment.");
 }
 
-export function canDeleteComment(
-  comment: Comment,
-  ctx: PermissionContext,
-): Decision {
+export function canDeleteComment(comment: Comment, ctx: PermissionContext): Decision {
   if (ctx.userId === null) {
     return deny("not_authenticated", "Sign in to delete comments.");
   }
@@ -132,10 +106,7 @@ export function canDeleteComment(
 
 // ---- Runtimes --------------------------------------------------------------
 
-export function canDeleteRuntime(
-  runtime: RuntimeDevice,
-  ctx: PermissionContext,
-): Decision {
+export function canDeleteRuntime(runtime: RuntimeDevice, ctx: PermissionContext): Decision {
   if (ctx.userId === null) {
     return deny("not_authenticated", "Sign in to delete runtimes.");
   }
@@ -153,26 +124,17 @@ export function canDeleteRuntime(
 
 export function canUpdateWorkspaceSettings(ctx: PermissionContext): Decision {
   if (isAdminLike(ctx.role)) return ALLOW;
-  return deny(
-    "not_admin_role",
-    "Only workspace owners and admins can update workspace settings.",
-  );
+  return deny("not_admin_role", "Only workspace owners and admins can update workspace settings.");
 }
 
 export function canDeleteWorkspace(ctx: PermissionContext): Decision {
   if (ctx.role === "owner") return ALLOW;
-  return deny(
-    "not_owner_role",
-    "Only the workspace owner can delete this workspace.",
-  );
+  return deny("not_owner_role", "Only the workspace owner can delete this workspace.");
 }
 
 export function canManageMembers(ctx: PermissionContext): Decision {
   if (isAdminLike(ctx.role)) return ALLOW;
-  return deny(
-    "not_admin_role",
-    "Only workspace owners and admins can manage members.",
-  );
+  return deny("not_admin_role", "Only workspace owners and admins can manage members.");
 }
 
 /**
@@ -194,10 +156,7 @@ export function canChangeMemberRole(
 
   if (target.role === "owner") {
     if (ctx.role !== "owner") {
-      return deny(
-        "not_owner_role",
-        "Only the workspace owner can change another owner's role.",
-      );
+      return deny("not_owner_role", "Only the workspace owner can change another owner's role.");
     }
     if (ownerCount <= 1) {
       return deny(

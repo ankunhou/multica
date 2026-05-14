@@ -71,8 +71,8 @@ func validateAndNormalizeResourceRef(resourceType string, ref json.RawMessage) (
 }
 
 type githubRepoRef struct {
-	URL                string `json:"url"`
-	DefaultBranchHint  string `json:"default_branch_hint,omitempty"`
+	URL               string `json:"url"`
+	DefaultBranchHint string `json:"default_branch_hint,omitempty"`
 }
 
 func validateGithubRepoRef(ref json.RawMessage) (json.RawMessage, error) {

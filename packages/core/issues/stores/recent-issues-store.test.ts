@@ -22,9 +22,7 @@ describe("useRecentIssuesStore.recordVisit", () => {
     recordVisit("ws-a", "issue-2");
     recordVisit("ws-a", "issue-1");
 
-    const ids = useRecentIssuesStore
-      .getState()
-      .byWorkspace["ws-a"]?.map((e) => e.id);
+    const ids = useRecentIssuesStore.getState().byWorkspace["ws-a"]?.map((e) => e.id);
     expect(ids).toEqual(["issue-1", "issue-2"]);
   });
 

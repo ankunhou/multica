@@ -1,8 +1,4 @@
-import type {
-  RuntimeUsage,
-  RuntimeUsageByAgent,
-  RuntimeUsageByHour,
-} from "@multica/core/types";
+import type { RuntimeUsage, RuntimeUsageByAgent, RuntimeUsageByHour } from "@multica/core/types";
 import { getCustomPricing } from "@multica/core/runtimes/custom-pricing-store";
 
 // ---------------------------------------------------------------------------
@@ -52,7 +48,9 @@ export function formatDeviceInfo(raw: string | null): string | null {
 function prettifyOsArch(part: string): string {
   const lower = part.toLowerCase();
   // Pattern: <os>-<arch>; e.g. darwin-amd64, linux-arm64, windows-amd64.
-  const match = lower.match(/^(darwin|linux|windows|freebsd|openbsd|netbsd)-(amd64|arm64|386|arm)$/);
+  const match = lower.match(
+    /^(darwin|linux|windows|freebsd|openbsd|netbsd)-(amd64|arm64|386|arm)$/,
+  );
   if (!match) return part;
   const os = match[1] ?? "";
   const arch = match[2] ?? "";
@@ -138,45 +136,45 @@ const MODEL_PRICING: Record<
   { input: number; output: number; cacheRead: number; cacheWrite: number }
 > = {
   // -- Anthropic: current generation (4.5+ — Opus dropped from 15/75 to 5/25 here) --
-  "claude-haiku-4-5":   { input: 1,    output: 5,    cacheRead: 0.10, cacheWrite: 1.25 },
-  "claude-sonnet-4-5":  { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75 },
-  "claude-sonnet-4-6":  { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75 },
-  "claude-opus-4-5":    { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25 },
-  "claude-opus-4-6":    { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25 },
-  "claude-opus-4-7":    { input: 5,    output: 25,   cacheRead: 0.50, cacheWrite: 6.25 },
+  "claude-haiku-4-5": { input: 1, output: 5, cacheRead: 0.1, cacheWrite: 1.25 },
+  "claude-sonnet-4-5": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+  "claude-sonnet-4-6": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
+  "claude-opus-4-5": { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
+  "claude-opus-4-6": { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
+  "claude-opus-4-7": { input: 5, output: 25, cacheRead: 0.5, cacheWrite: 6.25 },
 
   // -- Anthropic: pre-4.5 Opus (legacy, still served at original price tier) --
-  "claude-opus-4-1":    { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
-  "claude-opus-4":      { input: 15,   output: 75,   cacheRead: 1.50, cacheWrite: 18.75 },
+  "claude-opus-4-1": { input: 15, output: 75, cacheRead: 1.5, cacheWrite: 18.75 },
+  "claude-opus-4": { input: 15, output: 75, cacheRead: 1.5, cacheWrite: 18.75 },
 
   // -- Anthropic: Sonnet 4.0 (deprecated; same price as the 4.x family) --
-  "claude-sonnet-4":    { input: 3,    output: 15,   cacheRead: 0.30, cacheWrite: 3.75 },
+  "claude-sonnet-4": { input: 3, output: 15, cacheRead: 0.3, cacheWrite: 3.75 },
 
   // -- Anthropic: older Haiku tier (defensive entry for the rare runtime still on it) --
-  "claude-haiku-3-5":   { input: 0.80, output: 4,    cacheRead: 0.08, cacheWrite: 1.00 },
+  "claude-haiku-3-5": { input: 0.8, output: 4, cacheRead: 0.08, cacheWrite: 1.0 },
 
   // -- OpenAI: dotted-minor Codex catalog SKUs. Each generation is priced
   //    independently — no fallback to `gpt-5`. Entries track
   //    `server/pkg/agent/models.go` (Codex provider list).
-  "gpt-5.5":            { input: 5,    output: 30,   cacheRead: 0.50,  cacheWrite: 5 },
-  "gpt-5.4-mini":       { input: 0.75, output: 4.50, cacheRead: 0.075, cacheWrite: 0.75 },
-  "gpt-5.4":            { input: 2.50, output: 15,   cacheRead: 0.25,  cacheWrite: 2.50 },
-  "gpt-5.3-codex":      { input: 1.75, output: 14,   cacheRead: 0.175, cacheWrite: 1.75 },
+  "gpt-5.5": { input: 5, output: 30, cacheRead: 0.5, cacheWrite: 5 },
+  "gpt-5.4-mini": { input: 0.75, output: 4.5, cacheRead: 0.075, cacheWrite: 0.75 },
+  "gpt-5.4": { input: 2.5, output: 15, cacheRead: 0.25, cacheWrite: 2.5 },
+  "gpt-5.3-codex": { input: 1.75, output: 14, cacheRead: 0.175, cacheWrite: 1.75 },
 
   // -- OpenAI: GPT-5 family (Codex CLI's default is gpt-5-codex; -codex/-mini/-nano variants priced per OpenAI tiers) --
-  "gpt-5-codex":        { input: 1.25, output: 10,   cacheRead: 0.125, cacheWrite: 1.25 },
-  "gpt-5-mini":         { input: 0.25, output: 2,    cacheRead: 0.025, cacheWrite: 0.25 },
-  "gpt-5-nano":         { input: 0.05, output: 0.40, cacheRead: 0.005, cacheWrite: 0.05 },
-  "gpt-5":              { input: 1.25, output: 10,   cacheRead: 0.125, cacheWrite: 1.25 },
+  "gpt-5-codex": { input: 1.25, output: 10, cacheRead: 0.125, cacheWrite: 1.25 },
+  "gpt-5-mini": { input: 0.25, output: 2, cacheRead: 0.025, cacheWrite: 0.25 },
+  "gpt-5-nano": { input: 0.05, output: 0.4, cacheRead: 0.005, cacheWrite: 0.05 },
+  "gpt-5": { input: 1.25, output: 10, cacheRead: 0.125, cacheWrite: 1.25 },
 
   // -- OpenAI: o-series reasoning models --
-  "o3-mini":            { input: 1.10, output: 4.40, cacheRead: 0.55,  cacheWrite: 1.10 },
-  "o3":                 { input: 2,    output: 8,    cacheRead: 0.50,  cacheWrite: 2 },
-  "o4-mini":            { input: 1.10, output: 4.40, cacheRead: 0.275, cacheWrite: 1.10 },
+  "o3-mini": { input: 1.1, output: 4.4, cacheRead: 0.55, cacheWrite: 1.1 },
+  o3: { input: 2, output: 8, cacheRead: 0.5, cacheWrite: 2 },
+  "o4-mini": { input: 1.1, output: 4.4, cacheRead: 0.275, cacheWrite: 1.1 },
 
   // -- OpenAI: GPT-4o family (legacy, kept for runtimes still configured against it) --
-  "gpt-4o-mini":        { input: 0.15, output: 0.60, cacheRead: 0.075, cacheWrite: 0.15 },
-  "gpt-4o":             { input: 2.50, output: 10,   cacheRead: 1.25,  cacheWrite: 2.50 },
+  "gpt-4o-mini": { input: 0.15, output: 0.6, cacheRead: 0.075, cacheWrite: 0.15 },
+  "gpt-4o": { input: 2.5, output: 10, cacheRead: 1.25, cacheWrite: 2.5 },
 };
 
 // Resolve a model string to its pricing tier. Exact match, with one
@@ -322,10 +320,7 @@ export function aggregateByDate(usage: RuntimeUsage[]): {
 } {
   const dateMap = new Map<string, Omit<DailyTokenData, "label">>();
   const costMap = new Map<string, number>();
-  const stackMap = new Map<
-    string,
-    { input: number; output: number; cacheWrite: number }
-  >();
+  const stackMap = new Map<string, { input: number; output: number; cacheWrite: number }>();
   const modelMap = new Map<string, { tokens: number; cost: number }>();
 
   for (const u of usage) {
@@ -358,8 +353,7 @@ export function aggregateByDate(usage: RuntimeUsage[]): {
 
     const modelName = u.model || u.provider;
     const m = modelMap.get(modelName) ?? { tokens: 0, cost: 0 };
-    m.tokens +=
-      u.input_tokens + u.output_tokens + u.cache_read_tokens + u.cache_write_tokens;
+    m.tokens += u.input_tokens + u.output_tokens + u.cache_read_tokens + u.cache_write_tokens;
     m.cost += estimateCost(u);
     modelMap.set(modelName, m);
   }
@@ -433,8 +427,7 @@ export function aggregateCostByAgent(rows: RuntimeUsageByAgent[]): CostByKey[] {
       cost: 0,
       taskCount: 0,
     };
-    entry.tokens +=
-      r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
+    entry.tokens += r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
     entry.cost += estimateCost(r);
     entry.taskCount += r.task_count;
     map.set(r.agent_id, entry);
@@ -449,8 +442,7 @@ export function aggregateCostByModel(rows: RuntimeUsage[]): CostByKey[] {
   for (const r of rows) {
     const key = r.model || r.provider || "unknown";
     const entry = map.get(key) ?? { key, tokens: 0, cost: 0, taskCount: 0 };
-    entry.tokens +=
-      r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
+    entry.tokens += r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
     entry.cost += estimateCost(r);
     map.set(key, entry);
   }
@@ -467,8 +459,7 @@ export function aggregateCostByHour(rows: RuntimeUsageByHour[]): CostByKey[] {
   for (const r of rows) {
     const entry = buckets.get(r.hour);
     if (!entry) continue;
-    entry.tokens +=
-      r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
+    entry.tokens += r.input_tokens + r.output_tokens + r.cache_read_tokens + r.cache_write_tokens;
     entry.cost += estimateCost(r);
     entry.taskCount += r.task_count;
   }

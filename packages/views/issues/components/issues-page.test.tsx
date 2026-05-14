@@ -33,9 +33,7 @@ vi.mock("@multica/core/auth", () => ({
 // useCurrentWorkspace derives from the workspace slug in URL Context. Tests
 // don't mount a real route, so we short-circuit to a fixed fixture.
 vi.mock("@multica/core/paths", async () => {
-  const actual = await vi.importActual<typeof import("@multica/core/paths")>(
-    "@multica/core/paths",
-  );
+  const actual = await vi.importActual<typeof import("@multica/core/paths")>("@multica/core/paths");
   return {
     ...actual,
     useCurrentWorkspace: () => ({ id: "ws-1", name: "Test WS", slug: "test" }),
@@ -56,7 +54,9 @@ vi.mock("../../navigation", () => ({
 
 // Mock workspace avatar
 vi.mock("../../workspace/workspace-avatar", () => ({
-  WorkspaceAvatar: ({ name }: { name: string }) => <span data-testid="workspace-avatar">{name.charAt(0)}</span>,
+  WorkspaceAvatar: ({ name }: { name: string }) => (
+    <span data-testid="workspace-avatar">{name.charAt(0)}</span>
+  ),
 }));
 
 // Mock api (queries use api internally)
@@ -85,11 +85,23 @@ vi.mock("@multica/core/issues/config", () => ({
   STATUS_CONFIG: {
     backlog: { label: "Backlog", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
     todo: { label: "Todo", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
-    in_progress: { label: "In Progress", iconColor: "text-warning", hoverBg: "hover:bg-warning/10" },
+    in_progress: {
+      label: "In Progress",
+      iconColor: "text-warning",
+      hoverBg: "hover:bg-warning/10",
+    },
     in_review: { label: "In Review", iconColor: "text-success", hoverBg: "hover:bg-success/10" },
     done: { label: "Done", iconColor: "text-info", hoverBg: "hover:bg-info/10" },
-    blocked: { label: "Blocked", iconColor: "text-destructive", hoverBg: "hover:bg-destructive/10" },
-    cancelled: { label: "Cancelled", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
+    blocked: {
+      label: "Blocked",
+      iconColor: "text-destructive",
+      hoverBg: "hover:bg-destructive/10",
+    },
+    cancelled: {
+      label: "Cancelled",
+      iconColor: "text-muted-foreground",
+      hoverBg: "hover:bg-accent",
+    },
   },
   PRIORITY_ORDER: ["urgent", "high", "medium", "low", "none"],
   PRIORITY_CONFIG: {
@@ -114,7 +126,15 @@ const mockViewState = {
   labelFilters: [] as string[],
   sortBy: "position" as const,
   sortDirection: "asc" as const,
-  cardProperties: { priority: true, description: true, assignee: true, dueDate: true, project: true, childProgress: true, labels: true },
+  cardProperties: {
+    priority: true,
+    description: true,
+    assignee: true,
+    dueDate: true,
+    project: true,
+    childProgress: true,
+    labels: true,
+  },
   listCollapsedStatuses: [] as string[],
   setViewMode: vi.fn(),
   toggleStatusFilter: vi.fn(),
@@ -188,7 +208,14 @@ vi.mock("@multica/core/issues/stores/selection-store", () => ({
       const state = { selectedIds: new Set(), toggle: vi.fn(), clear: vi.fn(), setAll: vi.fn() };
       return selector ? selector(state) : state;
     },
-    { getState: () => ({ selectedIds: new Set(), toggle: vi.fn(), clear: vi.fn(), setAll: vi.fn() }) },
+    {
+      getState: () => ({
+        selectedIds: new Set(),
+        toggle: vi.fn(),
+        clear: vi.fn(),
+        setAll: vi.fn(),
+      }),
+    },
   ),
 }));
 
@@ -210,10 +237,7 @@ vi.mock("@multica/core/issues/stores/recent-issues-store", () => ({
 }));
 
 vi.mock("@multica/core/modals", () => ({
-  useModalStore: Object.assign(
-    () => ({ open: vi.fn() }),
-    { getState: () => ({ open: vi.fn() }) },
-  ),
+  useModalStore: Object.assign(() => ({ open: vi.fn() }), { getState: () => ({ open: vi.fn() }) }),
 }));
 
 // Mock sonner toast
@@ -253,16 +277,13 @@ vi.mock("@dnd-kit/utilities", () => ({
 
 // Mock @base-ui/react/accordion (used by ListView)
 vi.mock("@base-ui/react/accordion", () => ({
-  Accordion: Object.assign(
-    ({ children }: any) => <div>{children}</div>,
-    {
-      Root: ({ children }: any) => <div>{children}</div>,
-      Item: ({ children }: any) => <div>{children}</div>,
-      Header: ({ children }: any) => <div>{children}</div>,
-      Trigger: ({ children }: any) => <button>{children}</button>,
-      Panel: ({ children }: any) => <div>{children}</div>,
-    },
-  ),
+  Accordion: Object.assign(({ children }: any) => <div>{children}</div>, {
+    Root: ({ children }: any) => <div>{children}</div>,
+    Item: ({ children }: any) => <div>{children}</div>,
+    Header: ({ children }: any) => <div>{children}</div>,
+    Trigger: ({ children }: any) => <button>{children}</button>,
+    Panel: ({ children }: any) => <div>{children}</div>,
+  }),
 }));
 
 // ---------------------------------------------------------------------------
@@ -351,9 +372,7 @@ function renderWithQuery(ui: React.ReactElement) {
   });
   return render(
     <I18nProvider locale="en" resources={TEST_RESOURCES}>
-      <QueryClientProvider client={qc}>
-        {ui}
-      </QueryClientProvider>
+      <QueryClientProvider client={qc}>{ui}</QueryClientProvider>
     </I18nProvider>,
   );
 }

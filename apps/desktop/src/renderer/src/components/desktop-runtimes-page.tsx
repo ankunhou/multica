@@ -26,14 +26,7 @@ export function DesktopRuntimesPage() {
   }, []);
 
   const bootstrapping =
-    status.state === "installing_cli" ||
-    status.state === "starting" ||
-    status.state === "running";
+    status.state === "installing_cli" || status.state === "starting" || status.state === "running";
 
-  return (
-    <RuntimesPage
-      topSlot={<DaemonRuntimeCard />}
-      bootstrapping={bootstrapping}
-    />
-  );
+  return <RuntimesPage topSlot={<DaemonRuntimeCard />} bootstrapping={bootstrapping} />;
 }

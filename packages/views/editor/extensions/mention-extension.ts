@@ -12,15 +12,10 @@ export const BaseMentionExtension = Mention.extend({
     const prefix = type === "issue" ? "" : "@";
     return [
       "span",
-      mergeAttributes(
-        { "data-type": "mention" },
-        this.options.HTMLAttributes,
-        HTMLAttributes,
-        {
-          "data-mention-type": node.attrs.type ?? "member",
-          "data-mention-id": node.attrs.id,
-        },
-      ),
+      mergeAttributes({ "data-type": "mention" }, this.options.HTMLAttributes, HTMLAttributes, {
+        "data-mention-type": node.attrs.type ?? "member",
+        "data-mention-id": node.attrs.id,
+      }),
       `${prefix}${node.attrs.label ?? node.attrs.id}`,
     ];
   },
@@ -29,8 +24,7 @@ export const BaseMentionExtension = Mention.extend({
       ...this.parent?.(),
       type: {
         default: "member",
-        parseHTML: (el: HTMLElement) =>
-          el.getAttribute("data-mention-type") ?? "member",
+        parseHTML: (el: HTMLElement) => el.getAttribute("data-mention-type") ?? "member",
         renderHTML: () => ({}),
       },
     };
@@ -48,9 +42,7 @@ export const BaseMentionExtension = Mention.extend({
       // Label accepts escaped chars (\\[ \\]) or any non-] character.
       // This prevents the label from crossing a ]( Markdown link boundary
       // while still supporting bracket-containing names like "David\[TF\]".
-      const match = src.match(
-        /^\[@?((?:\\.|[^\]])+)\]\(mention:\/\/(\w+)\/([^)]+)\)/,
-      );
+      const match = src.match(/^\[@?((?:\\.|[^\]])+)\]\(mention:\/\/(\w+)\/([^)]+)\)/);
       if (!match) return undefined;
       // Unescape backslash-escaped brackets that renderMarkdown may produce.
       const rawLabel = match[1]?.replace(/\\\[/g, "[").replace(/\\\]/g, "]");

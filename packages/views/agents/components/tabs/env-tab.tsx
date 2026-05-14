@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-  Plus,
-  Save,
-  Trash2,
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Lock, Plus, Save, Trash2 } from "lucide-react";
 import type { Agent } from "@multica/core/types";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
@@ -57,48 +49,32 @@ export function EnvTab({
   onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t } = useT("agents");
-  const [envEntries, setEnvEntries] = useState<EnvEntry[]>(
-    envMapToEntries(agent.custom_env ?? {}),
-  );
+  const [envEntries, setEnvEntries] = useState<EnvEntry[]>(envMapToEntries(agent.custom_env ?? {}));
   const [saving, setSaving] = useState(false);
 
   const currentEnvMap = entriesToEnvMap(envEntries);
   const originalEnvMap = agent.custom_env ?? {};
-  const dirty =
-    JSON.stringify(currentEnvMap) !== JSON.stringify(originalEnvMap);
+  const dirty = JSON.stringify(currentEnvMap) !== JSON.stringify(originalEnvMap);
 
   useEffect(() => {
     onDirtyChange?.(dirty);
   }, [dirty, onDirtyChange]);
 
   const addEnvEntry = () => {
-    setEnvEntries([
-      ...envEntries,
-      { id: nextEnvId++, key: "", value: "", visible: true },
-    ]);
+    setEnvEntries([...envEntries, { id: nextEnvId++, key: "", value: "", visible: true }]);
   };
 
   const removeEnvEntry = (index: number) => {
     setEnvEntries(envEntries.filter((_, i) => i !== index));
   };
 
-  const updateEnvEntry = (
-    index: number,
-    field: "key" | "value",
-    val: string,
-  ) => {
-    setEnvEntries(
-      envEntries.map((entry, i) =>
-        i === index ? { ...entry, [field]: val } : entry,
-      ),
-    );
+  const updateEnvEntry = (index: number, field: "key" | "value", val: string) => {
+    setEnvEntries(envEntries.map((entry, i) => (i === index ? { ...entry, [field]: val } : entry)));
   };
 
   const toggleEnvVisibility = (index: number) => {
     setEnvEntries(
-      envEntries.map((entry, i) =>
-        i === index ? { ...entry, visible: !entry.visible } : entry,
-      ),
+      envEntries.map((entry, i) => (i === index ? { ...entry, visible: !entry.visible } : entry)),
     );
   };
 
@@ -124,18 +100,12 @@ export function EnvTab({
   if (readOnly) {
     return (
       <div className="space-y-4">
-        <p className="text-xs text-muted-foreground">
-          {t(($) => $.tab_body.env.intro_readonly)}
-        </p>
+        <p className="text-xs text-muted-foreground">{t(($) => $.tab_body.env.intro_readonly)}</p>
         {envEntries.length > 0 ? (
           <div className="space-y-2">
             {envEntries.map((entry) => (
               <div key={entry.id} className="flex items-center gap-2">
-                <Input
-                  value={entry.key}
-                  readOnly
-                  className="w-[40%] bg-muted font-mono text-xs"
-                />
+                <Input value={entry.key} readOnly className="w-[40%] bg-muted font-mono text-xs" />
                 <div className="relative flex-1">
                   <Input
                     type="password"
@@ -197,9 +167,7 @@ export function EnvTab({
                 <Input
                   type={entry.visible ? "text" : "password"}
                   value={entry.value}
-                  onChange={(e) =>
-                    updateEnvEntry(index, "value", e.target.value)
-                  }
+                  onChange={(e) => updateEnvEntry(index, "value", e.target.value)}
                   placeholder={t(($) => $.tab_body.env.value_placeholder)}
                   className="pr-8 font-mono text-xs"
                 />
@@ -207,7 +175,11 @@ export function EnvTab({
                   type="button"
                   onClick={() => toggleEnvVisibility(index)}
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={entry.visible ? t(($) => $.tab_body.env.hide_value_aria) : t(($) => $.tab_body.env.show_value_aria)}
+                  aria-label={
+                    entry.visible
+                      ? t(($) => $.tab_body.env.hide_value_aria)
+                      : t(($) => $.tab_body.env.show_value_aria)
+                  }
                 >
                   {entry.visible ? (
                     <EyeOff className="h-3.5 w-3.5" />
@@ -232,7 +204,9 @@ export function EnvTab({
 
       <div className="flex items-center justify-end gap-3">
         {dirty && (
-          <span className="text-xs text-muted-foreground">{t(($) => $.tab_body.common.unsaved_changes)}</span>
+          <span className="text-xs text-muted-foreground">
+            {t(($) => $.tab_body.common.unsaved_changes)}
+          </span>
         )}
         <Button onClick={handleSave} disabled={!dirty || saving} size="sm">
           {saving ? (

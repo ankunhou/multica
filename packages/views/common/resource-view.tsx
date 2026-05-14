@@ -15,8 +15,7 @@ export const resourceActionButtonClassName =
 export const resourceSearchInputClassName =
   "h-8 w-64 rounded-full border-border/50 bg-card/75 pl-8 text-sm shadow-none";
 
-export const resourceSegmentClassName =
-  "flex items-center gap-0.5 rounded-full bg-muted/60 p-0.5";
+export const resourceSegmentClassName = "flex items-center gap-0.5 rounded-full bg-muted/60 p-0.5";
 
 export function resourceSegmentItemClassName(active: boolean) {
   return cn(
@@ -27,40 +26,22 @@ export function resourceSegmentItemClassName(active: boolean) {
   );
 }
 
-export function ResourcePageBody({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function ResourcePageBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div className={cn("flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10", className)} {...props} />
+  );
+}
+
+export function ResourceSurface({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "flex-1 overflow-y-auto px-5 pb-8 pt-2 md:px-10",
-        className,
-      )}
+      className={cn("rounded-3xl border border-border/45 bg-card/75 shadow-none", className)}
       {...props}
     />
   );
 }
 
-export function ResourceSurface({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn(
-        "rounded-3xl border border-border/45 bg-card/75 shadow-none",
-        className,
-      )}
-      {...props}
-    />
-  );
-}
-
-export function ResourceToolbarRow({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+export function ResourceToolbarRow({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(

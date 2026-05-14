@@ -19,10 +19,7 @@ import { useRef } from "react";
  * (e.g. desktop tab close), the memory is discarded — correct, since the
  * user lost that view anyway.
  */
-export function useWorkspaceSeen(
-  slug: string | undefined,
-  resolved: boolean,
-): boolean {
+export function useWorkspaceSeen(slug: string | undefined, resolved: boolean): boolean {
   const seenRef = useRef<Set<string>>(new Set());
   if (resolved && slug) seenRef.current.add(slug);
   return slug ? seenRef.current.has(slug) : false;

@@ -1,18 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import {
-  Loader2,
-  CheckCircle2,
-  XCircle,
-  ArrowUpCircle,
-  Check,
-} from "lucide-react";
+import { Loader2, CheckCircle2, XCircle, ArrowUpCircle, Check } from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
 import { api } from "@multica/core/api";
 import type { RuntimeUpdateStatus } from "@multica/core/types";
 import { useT } from "../../i18n";
 
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases/latest";
+const GITHUB_RELEASES_URL = "https://api.github.com/repos/multica-ai/multica/releases/latest";
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
 
 let cachedLatestVersion: string | null = null;
@@ -52,10 +45,7 @@ function isNewer(latest: string, current: string): boolean {
   return false;
 }
 
-const statusConfig: Record<
-  RuntimeUpdateStatus,
-  { icon: typeof Loader2; color: string }
-> = {
+const statusConfig: Record<RuntimeUpdateStatus, { icon: typeof Loader2; color: string }> = {
   pending: { icon: Loader2, color: "text-muted-foreground" },
   running: { icon: Loader2, color: "text-info" },
   completed: { icon: CheckCircle2, color: "text-success" },
@@ -145,13 +135,8 @@ export function UpdateSection({
           setStatus(result.status as RuntimeUpdateStatus);
 
           if (result.status === "completed") {
-            markCompleted(
-              result.output ?? `Updated to ${targetVersion ?? latestVersion}`,
-            );
-          } else if (
-            result.status === "failed" ||
-            result.status === "timeout"
-          ) {
+            markCompleted(result.output ?? `Updated to ${targetVersion ?? latestVersion}`);
+          } else if (result.status === "failed" || result.status === "timeout") {
             setError(result.error ?? t(($) => $.update.unknown_error));
             setUpdating(false);
             setTargetVersion(null);
@@ -169,10 +154,7 @@ export function UpdateSection({
     }
   };
 
-  const hasUpdate =
-    currentVersion &&
-    latestVersion &&
-    isNewer(latestVersion, currentVersion);
+  const hasUpdate = currentVersion && latestVersion && isNewer(latestVersion, currentVersion);
 
   const config = status ? statusConfig[status] : null;
   const Icon = config?.icon;
@@ -181,7 +163,9 @@ export function UpdateSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-muted-foreground">{t(($) => $.update.cli_version_label)}</span>
+        <span className="text-xs text-muted-foreground">
+          {t(($) => $.update.cli_version_label)}
+        </span>
         <span className="text-xs font-mono">
           {currentVersion ?? t(($) => $.update.version_unknown)}
         </span>
@@ -205,20 +189,15 @@ export function UpdateSection({
             {hasUpdate && !status && (
               <>
                 <span className="text-xs text-muted-foreground">→</span>
-                <span className="text-xs font-mono text-info">
-                  {latestVersion}
+                <span className="text-xs font-mono text-info">{latestVersion}</span>
+                <span className="text-xs text-muted-foreground">
+                  {t(($) => $.update.available)}
                 </span>
-                <span className="text-xs text-muted-foreground">{t(($) => $.update.available)}</span>
               </>
             )}
 
             {hasUpdate && isOnline && !status && (
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={handleUpdate}
-                disabled={updating}
-              >
+              <Button variant="outline" size="xs" onClick={handleUpdate} disabled={updating}>
                 <ArrowUpCircle className="h-3 w-3" />
                 {t(($) => $.update.action)}
               </Button>
@@ -227,9 +206,7 @@ export function UpdateSection({
         )}
 
         {config && Icon && status && (
-          <span
-            className={`inline-flex items-center gap-1 text-xs ${config.color}`}
-          >
+          <span className={`inline-flex items-center gap-1 text-xs ${config.color}`}>
             <Icon className={`h-3 w-3 ${isActive ? "animate-spin" : ""}`} />
             {t(($) => $.update.status[status])}
           </span>
@@ -246,12 +223,7 @@ export function UpdateSection({
         <div className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2">
           <p className="text-xs text-destructive">{error}</p>
           {status === "failed" && (
-            <Button
-              variant="ghost"
-              size="xs"
-              className="mt-1"
-              onClick={handleUpdate}
-            >
+            <Button variant="ghost" size="xs" className="mt-1" onClick={handleUpdate}>
               {t(($) => $.update.retry)}
             </Button>
           )}

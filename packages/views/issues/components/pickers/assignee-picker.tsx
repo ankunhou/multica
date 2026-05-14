@@ -8,14 +8,13 @@ import { useAuthStore } from "@multica/core/auth";
 import { canAssignAgentToIssue } from "@multica/core/permissions";
 import { useActorName } from "@multica/core/workspace/hooks";
 import { useWorkspaceId } from "@multica/core/hooks";
-import { memberListOptions, agentListOptions, assigneeFrequencyOptions } from "@multica/core/workspace/queries";
-import { ActorAvatar } from "../../../common/actor-avatar";
 import {
-  PropertyPicker,
-  PickerItem,
-  PickerSection,
-  PickerEmpty,
-} from "./property-picker";
+  memberListOptions,
+  agentListOptions,
+  assigneeFrequencyOptions,
+} from "@multica/core/workspace/queries";
+import { ActorAvatar } from "../../../common/actor-avatar";
+import { PropertyPicker, PickerItem, PickerSection, PickerEmpty } from "./property-picker";
 import { useT } from "../../../i18n";
 
 /**
@@ -30,9 +29,10 @@ export function canAssignAgent(
 ): boolean {
   return canAssignAgentToIssue(agent, {
     userId: userId ?? null,
-    role: memberRole === "owner" || memberRole === "admin" || memberRole === "member"
-      ? memberRole
-      : null,
+    role:
+      memberRole === "owner" || memberRole === "admin" || memberRole === "member"
+        ? memberRole
+        : null,
   }).allowed;
 }
 
@@ -89,8 +89,7 @@ export function AssigneePicker({
     .filter((a) => !a.archived_at && a.name.toLowerCase().includes(query))
     .sort((a, b) => getFreq("agent", b.id) - getFreq("agent", a.id));
 
-  const isSelected = (type: string, id: string) =>
-    assigneeType === type && assigneeId === id;
+  const isSelected = (type: string, id: string) => assigneeType === type && assigneeId === id;
 
   const triggerLabel =
     assigneeType && assigneeId
@@ -111,13 +110,23 @@ export function AssigneePicker({
       onSearchChange={setFilter}
       triggerRender={triggerRender}
       trigger={
-        customTrigger ? customTrigger : assigneeType && assigneeId ? (
+        customTrigger ? (
+          customTrigger
+        ) : assigneeType && assigneeId ? (
           <>
-            <ActorAvatar actorType={assigneeType} actorId={assigneeId} size={18} enableHoverCard showStatusDot />
+            <ActorAvatar
+              actorType={assigneeType}
+              actorId={assigneeId}
+              size={18}
+              enableHoverCard
+              showStatusDot
+            />
             <span className="truncate">{triggerLabel}</span>
           </>
         ) : (
-          <span className="text-muted-foreground">{t(($) => $.pickers.assignee.trigger_unassigned)}</span>
+          <span className="text-muted-foreground">
+            {t(($) => $.pickers.assignee.trigger_unassigned)}
+          </span>
         )
       }
     >
@@ -131,7 +140,9 @@ export function AssigneePicker({
           }}
         >
           <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
-          <span className="text-muted-foreground">{t(($) => $.pickers.assignee.trigger_unassigned)}</span>
+          <span className="text-muted-foreground">
+            {t(($) => $.pickers.assignee.trigger_unassigned)}
+          </span>
         </PickerItem>
       )}
 
@@ -164,9 +175,7 @@ export function AssigneePicker({
             const decision = canAssignAgentToIssue(a, {
               userId: user?.id ?? null,
               role:
-                memberRole === "owner" ||
-                memberRole === "admin" ||
-                memberRole === "member"
+                memberRole === "owner" || memberRole === "admin" || memberRole === "member"
                   ? memberRole
                   : null,
             });
@@ -197,9 +206,7 @@ export function AssigneePicker({
         </PickerSection>
       )}
 
-      {filteredMembers.length === 0 &&
-        filteredAgents.length === 0 &&
-        filter && <PickerEmpty />}
+      {filteredMembers.length === 0 && filteredAgents.length === 0 && filter && <PickerEmpty />}
     </PropertyPicker>
   );
 }

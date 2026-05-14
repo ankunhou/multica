@@ -5,12 +5,10 @@ export const runtimeKeys = {
   all: (wsId: string) => ["runtimes", wsId] as const,
   list: (wsId: string) => [...runtimeKeys.all(wsId), "list"] as const,
   listMine: (wsId: string) => [...runtimeKeys.all(wsId), "list", "mine"] as const,
-  usage: (rid: string, days: number) =>
-    ["runtimes", "usage", rid, days] as const,
+  usage: (rid: string, days: number) => ["runtimes", "usage", rid, days] as const,
   usageByAgent: (rid: string, days: number) =>
     ["runtimes", "usage", "by-agent", rid, days] as const,
-  usageByHour: (rid: string, days: number) =>
-    ["runtimes", "usage", "by-hour", rid, days] as const,
+  usageByHour: (rid: string, days: number) => ["runtimes", "usage", "by-hour", rid, days] as const,
   latestVersion: () => ["runtimes", "latestVersion"] as const,
 };
 
@@ -53,8 +51,7 @@ export function runtimeListOptions(wsId: string, owner?: "me") {
   });
 }
 
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases/latest";
+const GITHUB_RELEASES_URL = "https://api.github.com/repos/multica-ai/multica/releases/latest";
 
 export function latestCliVersionOptions() {
   return queryOptions({

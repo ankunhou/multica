@@ -33,11 +33,7 @@ interface DesktopAPI {
   setUnreadBadge: (count: number) => void;
   /** Listen for "open inbox row" requests from notification clicks. Returns an unsubscribe function. */
   onInboxOpen: (
-    callback: (payload: {
-      slug: string;
-      itemId: string;
-      issueKey: string;
-    }) => void,
+    callback: (payload: { slug: string; itemId: string; issueKey: string }) => void,
   ) => () => void;
 }
 
@@ -79,7 +75,9 @@ interface DaemonAPI {
 }
 
 interface UpdaterAPI {
-  onUpdateAvailable: (callback: (info: { version: string; releaseNotes?: string }) => void) => () => void;
+  onUpdateAvailable: (
+    callback: (info: { version: string; releaseNotes?: string }) => void,
+  ) => () => void;
   onDownloadProgress: (callback: (progress: { percent: number }) => void) => () => void;
   onUpdateDownloaded: (callback: () => void) => () => void;
   downloadUpdate: () => Promise<void>;

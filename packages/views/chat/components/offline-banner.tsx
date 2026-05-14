@@ -30,9 +30,7 @@ export function OfflineBanner({ agentName, availability }: Props) {
       <div className="px-5 mb-1.5">
         <Notice variant="warning" className="mx-auto max-w-4xl">
           <AlertCircle className="size-3.5 shrink-0" />
-          <span className="truncate">
-            {t(($) => $.offline_banner.unstable, { name })}
-          </span>
+          <span className="truncate">{t(($) => $.offline_banner.unstable, { name })}</span>
         </Notice>
       </div>
     );
@@ -41,9 +39,7 @@ export function OfflineBanner({ agentName, availability }: Props) {
     <div className="px-5 mb-1.5">
       <Notice className="mx-auto max-w-4xl">
         <WifiOff className="size-3.5 shrink-0" />
-        <span className="truncate">
-          {t(($) => $.offline_banner.offline, { name })}
-        </span>
+        <span className="truncate">{t(($) => $.offline_banner.offline, { name })}</span>
       </Notice>
     </div>
   );

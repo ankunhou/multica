@@ -1,19 +1,19 @@
-import * as React from 'react'
-import ReactMarkdown, { type Components, defaultUrlTransform } from 'react-markdown'
-import rehypeKatex from 'rehype-katex'
-import rehypeRaw from 'rehype-raw'
-import rehypeSanitize, { defaultSchema } from 'rehype-sanitize'
-import remarkBreaks from 'remark-breaks'
-import remarkGfm from 'remark-gfm'
-import remarkMath from 'remark-math'
-import { FileText, Download } from 'lucide-react'
-import { cn } from '@multica/ui/lib/utils'
-import { CodeBlock, InlineCode } from './CodeBlock'
-import { preprocessFileCards } from './file-cards'
-import { preprocessLinks } from './linkify'
-import { preprocessMentionShortcodes } from './mentions'
-import 'katex/dist/katex.min.css'
-import './markdown.css'
+import * as React from "react";
+import ReactMarkdown, { type Components, defaultUrlTransform } from "react-markdown";
+import rehypeKatex from "rehype-katex";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize, { defaultSchema } from "rehype-sanitize";
+import remarkBreaks from "remark-breaks";
+import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import { FileText, Download } from "lucide-react";
+import { cn } from "@multica/ui/lib/utils";
+import { CodeBlock, InlineCode } from "./CodeBlock";
+import { preprocessFileCards } from "./file-cards";
+import { preprocessLinks } from "./linkify";
+import { preprocessMentionShortcodes } from "./mentions";
+import "katex/dist/katex.min.css";
+import "./markdown.css";
 
 /**
  * Render modes for markdown content:
@@ -27,39 +27,39 @@ import './markdown.css'
  * - 'full': Rich rendering with beautiful tables, styled code blocks, proper typography
  *   Best for: Documentation, long-form content, when presentation matters
  */
-export type RenderMode = 'terminal' | 'minimal' | 'full'
+export type RenderMode = "terminal" | "minimal" | "full";
 
 export interface MarkdownProps {
-  children: string
+  children: string;
   /**
    * Render mode controlling formatting level
    * @default 'minimal'
    */
-  mode?: RenderMode
-  className?: string
+  mode?: RenderMode;
+  className?: string;
   /**
    * Message ID for memoization (optional)
    * When provided, memoizes parsed blocks to avoid re-parsing during streaming
    */
-  id?: string
+  id?: string;
   /**
    * Callback when a URL is clicked
    */
-  onUrlClick?: (url: string) => void
+  onUrlClick?: (url: string) => void;
   /**
    * Callback when a file path is clicked
    */
-  onFileClick?: (path: string) => void
+  onFileClick?: (path: string) => void;
   /**
    * Custom renderer for mention links (e.g. mention://issue/UUID).
    * When not provided, mentions render as a simple styled span.
    */
-  renderMention?: (props: { type: string; id: string }) => React.ReactNode
+  renderMention?: (props: { type: string; id: string }) => React.ReactNode;
   /**
    * CDN hostname for file card detection (e.g. "multica-static.copilothub.ai").
    * When provided, enables file card preprocessing and rendering.
    */
-  cdnDomain?: string
+  cdnDomain?: string;
 }
 
 // Sanitization schema — extends GitHub defaults to allow code highlighting classes
@@ -68,42 +68,33 @@ const sanitizeSchema = {
   ...defaultSchema,
   protocols: {
     ...defaultSchema.protocols,
-    href: [...(defaultSchema.protocols?.href ?? []), 'mention'],
+    href: [...(defaultSchema.protocols?.href ?? []), "mention"],
   },
   attributes: {
     ...defaultSchema.attributes,
-    div: [
-      ...(defaultSchema.attributes?.div ?? []),
-      'dataType',
-      'dataHref',
-      'dataFilename',
-    ],
+    div: [...(defaultSchema.attributes?.div ?? []), "dataType", "dataHref", "dataFilename"],
     code: [
       ...(defaultSchema.attributes?.code ?? []),
-      ['className', /^language-/],
-      ['className', /^math-/],
-      ['className', /^hljs/],
+      ["className", /^language-/],
+      ["className", /^math-/],
+      ["className", /^hljs/],
     ],
-    img: [
-      ...(defaultSchema.attributes?.img ?? []),
-      'alt',
-    ],
+    img: [...(defaultSchema.attributes?.img ?? []), "alt"],
   },
-}
+};
 
 /**
  * Custom URL transform that allows mention:// protocol (used for @mentions)
  * while keeping the default security for all other URLs.
  */
 function urlTransform(url: string): string {
-  if (url.startsWith('mention://')) return url
-  return defaultUrlTransform(url)
+  if (url.startsWith("mention://")) return url;
+  return defaultUrlTransform(url);
 }
-
 
 // File path detection regex - matches paths starting with /, ~/, or ./
 const FILE_PATH_REGEX =
-  /^(?:\/|~\/|\.\/)[\w\-./@]+\.(?:ts|tsx|js|jsx|mjs|cjs|md|json|yaml|yml|py|go|rs|css|scss|less|html|htm|txt|log|sh|bash|zsh|swift|kt|java|c|cpp|h|hpp|rb|php|xml|toml|ini|cfg|conf|env|sql|graphql|vue|svelte|astro|prisma)$/i
+  /^(?:\/|~\/|\.\/)[\w\-./@]+\.(?:ts|tsx|js|jsx|mjs|cjs|md|json|yaml|yml|py|go|rs|css|scss|less|html|htm|txt|log|sh|bash|zsh|swift|kt|java|c|cpp|h|hpp|rb|php|xml|toml|ini|cfg|conf|env|sql|graphql|vue|svelte|astro|prisma)$/i;
 
 /**
  * Create custom components based on render mode
@@ -117,12 +108,12 @@ function createComponents(
   const baseComponents: Partial<Components> = {
     // FileCard: intercept <div data-type="fileCard"> from preprocessFileCards
     div: ({ node, children, ...props }) => {
-      const dataType = node?.properties?.dataType as string | undefined
-      if (dataType === 'fileCard') {
-        const rawHref = (node?.properties?.dataHref as string) || ''
+      const dataType = node?.properties?.dataType as string | undefined;
+      if (dataType === "fileCard") {
+        const rawHref = (node?.properties?.dataHref as string) || "";
         // Only allow http(s) URLs to prevent javascript: and other dangerous schemes.
-        const href = /^https?:\/\//i.test(rawHref) ? rawHref : ''
-        const filename = (node?.properties?.dataFilename as string) || ''
+        const href = /^https?:\/\//i.test(rawHref) ? rawHref : "";
+        const filename = (node?.properties?.dataFilename as string) || "";
         return (
           <div className="my-1 flex items-center gap-2 rounded-md border border-border bg-muted/50 px-2.5 py-1 transition-colors hover:bg-muted">
             <FileText className="size-4 shrink-0 text-muted-foreground" />
@@ -133,70 +124,57 @@ function createComponents(
               <button
                 type="button"
                 className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
-                onClick={() => window.open(href, '_blank', 'noopener,noreferrer')}
+                onClick={() => window.open(href, "_blank", "noopener,noreferrer")}
               >
                 <Download className="size-3.5" />
               </button>
             )}
           </div>
-        )
+        );
       }
-      return <div {...props}>{children}</div>
+      return <div {...props}>{children}</div>;
     },
     // Images: render uploaded images with constrained sizing
     img: ({ src, alt }) => (
-      <img
-        src={src}
-        alt={alt ?? ""}
-        className="max-w-full h-auto rounded-md my-2"
-        loading="lazy"
-      />
+      <img src={src} alt={alt ?? ""} className="max-w-full h-auto rounded-md my-2" loading="lazy" />
     ),
     // Links: Make clickable with callbacks, or render as mention
     a: ({ href, children }) => {
       // Mention links: mention://member/id, mention://agent/id, mention://issue/id, mention://all/all
-      if (href?.startsWith('mention://')) {
-        const mentionMatch = href.match(/^mention:\/\/(member|agent|issue|all)\/(.+)$/)
+      if (href?.startsWith("mention://")) {
+        const mentionMatch = href.match(/^mention:\/\/(member|agent|issue|all)\/(.+)$/);
         if (mentionMatch?.[1] && mentionMatch[2]) {
-          const type = mentionMatch[1]
-          const id = mentionMatch[2]
+          const type = mentionMatch[1];
+          const id = mentionMatch[2];
 
           if (renderMention) {
             // Let the custom renderer opt out for types it doesn't handle
             // by returning null/undefined — we then fall through to the
             // default styled span so nothing ever disappears silently.
-            const rendered = renderMention({ type, id })
-            if (rendered) return <>{rendered}</>
+            const rendered = renderMention({ type, id });
+            if (rendered) return <>{rendered}</>;
           }
 
           // Fallback: render as a simple styled span
-          return (
-            <span className="text-primary font-semibold mx-0.5">
-              {children}
-            </span>
-          )
+          return <span className="text-primary font-semibold mx-0.5">{children}</span>;
         }
-        return (
-          <span className="text-primary font-semibold mx-0.5">
-            {children}
-          </span>
-        )
+        return <span className="text-primary font-semibold mx-0.5">{children}</span>;
       }
 
       const handleClick = (e: React.MouseEvent): void => {
-        e.preventDefault()
+        e.preventDefault();
         if (href) {
           // Check if it's a file path
           if (FILE_PATH_REGEX.test(href) && onFileClick) {
-            onFileClick(href)
+            onFileClick(href);
           } else if (onUrlClick) {
-            onUrlClick(href)
+            onUrlClick(href);
           } else {
             // Default: open in new window
-            window.open(href, '_blank', 'noopener,noreferrer')
+            window.open(href, "_blank", "noopener,noreferrer");
           }
         }
-      }
+      };
 
       return (
         <a
@@ -206,12 +184,12 @@ function createComponents(
         >
           {children}
         </a>
-      )
-    }
-  }
+      );
+    },
+  };
 
   // Terminal mode: minimal formatting
-  if (mode === 'terminal') {
+  if (mode === "terminal") {
     return {
       ...baseComponents,
       // No special code handling - just monospace
@@ -226,28 +204,28 @@ function createComponents(
       // Plain tables
       table: ({ children }) => <table className="my-2 font-mono text-sm">{children}</table>,
       th: ({ children }) => <th className="text-left pr-4">{children}</th>,
-      td: ({ children }) => <td className="pr-4">{children}</td>
-    }
+      td: ({ children }) => <td className="pr-4">{children}</td>,
+    };
   }
 
   // Minimal mode: clean with syntax highlighting
-  if (mode === 'minimal') {
+  if (mode === "minimal") {
     return {
       ...baseComponents,
       // Inline code
       code: ({ className, children, ...props }) => {
-        const match = /language-(\w+)/.exec(className || '')
+        const match = /language-(\w+)/.exec(className || "");
         const isBlock =
-          'node' in props && props.node?.position?.start.line !== props.node?.position?.end.line
+          "node" in props && props.node?.position?.start.line !== props.node?.position?.end.line;
 
         // Block code - use CodeBlock with full mode
         if (match || isBlock) {
-          const code = String(children).replace(/\n$/, '')
-          return <CodeBlock code={code} language={match?.[1]} mode="full" className="my-1" />
+          const code = String(children).replace(/\n$/, "");
+          return <CodeBlock code={code} language={match?.[1]} mode="full" className="my-1" />;
         }
 
         // Inline code
-        return <InlineCode>{children}</InlineCode>
+        return <InlineCode>{children}</InlineCode>;
       },
       pre: ({ children }) => <>{children}</>,
       // Comfortable paragraph spacing
@@ -289,8 +267,8 @@ function createComponents(
       hr: () => <hr className="my-4 border-border" />,
       // Strong/emphasis
       strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
-      em: ({ children }) => <em className="italic">{children}</em>
-    }
+      em: ({ children }) => <em className="italic">{children}</em>,
+    };
   }
 
   // Full mode: rich styling
@@ -298,16 +276,16 @@ function createComponents(
     ...baseComponents,
     // Full code blocks with copy button
     code: ({ className, children, ...props }) => {
-      const match = /language-(\w+)/.exec(className || '')
+      const match = /language-(\w+)/.exec(className || "");
       const isBlock =
-        'node' in props && props.node?.position?.start.line !== props.node?.position?.end.line
+        "node" in props && props.node?.position?.start.line !== props.node?.position?.end.line;
 
       if (match || isBlock) {
-        const code = String(children).replace(/\n$/, '')
-        return <CodeBlock code={code} language={match?.[1]} mode="full" className="my-1" />
+        const code = String(children).replace(/\n$/, "");
+        return <CodeBlock code={code} language={match?.[1]} mode="full" className="my-1" />;
       }
 
-      return <InlineCode>{children}</InlineCode>
+      return <InlineCode>{children}</InlineCode>;
     },
     pre: ({ children }) => <>{children}</>,
     // Rich paragraph spacing
@@ -346,7 +324,7 @@ function createComponents(
     ),
     // Task lists (GFM)
     input: ({ type, checked }) => {
-      if (type === 'checkbox') {
+      if (type === "checkbox") {
         return (
           <input
             type="checkbox"
@@ -354,17 +332,17 @@ function createComponents(
             readOnly
             className="mr-2 rounded border-muted-foreground"
           />
-        )
+        );
       }
-      return <input type={type} />
+      return <input type={type} />;
     },
     // Horizontal rules
     hr: () => <hr className="my-6 border-border" />,
     // Strong/emphasis
     strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
     em: ({ children }) => <em className="italic">{children}</em>,
-    del: ({ children }) => <del className="line-through text-muted-foreground">{children}</del>
-  }
+    del: ({ children }) => <del className="line-through text-muted-foreground">{children}</del>,
+  };
 }
 
 /**
@@ -380,31 +358,28 @@ function createComponents(
  */
 export function Markdown({
   children,
-  mode = 'minimal',
+  mode = "minimal",
   className,
   onUrlClick,
   onFileClick,
   renderMention,
-  cdnDomain
+  cdnDomain,
 }: MarkdownProps): React.JSX.Element {
   const components = React.useMemo(
     () => createComponents(mode, onUrlClick, onFileClick, renderMention),
-    [mode, onUrlClick, onFileClick, renderMention]
-  )
+    [mode, onUrlClick, onFileClick, renderMention],
+  );
 
   // Preprocess: convert mention shortcodes, raw URLs, and file cards to renderable content
-  const processedContent = React.useMemo(
-    () => {
-      let result = preprocessMentionShortcodes(children)
-      result = preprocessLinks(result)
-      result = preprocessFileCards(result, cdnDomain ?? '')
-      return result
-    },
-    [children, cdnDomain]
-  )
+  const processedContent = React.useMemo(() => {
+    let result = preprocessMentionShortcodes(children);
+    result = preprocessLinks(result);
+    result = preprocessFileCards(result, cdnDomain ?? "");
+    return result;
+  }, [children, cdnDomain]);
 
   return (
-    <div className={cn('markdown-content break-words', className)}>
+    <div className={cn("markdown-content break-words", className)}>
       <ReactMarkdown
         remarkPlugins={[remarkMath, remarkBreaks, [remarkGfm, { singleTilde: false }]]}
         rehypePlugins={[rehypeRaw, [rehypeSanitize, sanitizeSchema], rehypeKatex]}
@@ -414,7 +389,7 @@ export function Markdown({
         {processedContent}
       </ReactMarkdown>
     </div>
-  )
+  );
 }
 
 /**
@@ -430,9 +405,9 @@ export const MemoizedMarkdown = React.memo(Markdown, (prevProps, nextProps) => {
       prevProps.id === nextProps.id &&
       prevProps.children === nextProps.children &&
       prevProps.mode === nextProps.mode
-    )
+    );
   }
   // Otherwise compare content and mode
-  return prevProps.children === nextProps.children && prevProps.mode === nextProps.mode
-})
-MemoizedMarkdown.displayName = 'MemoizedMarkdown'
+  return prevProps.children === nextProps.children && prevProps.mode === nextProps.mode;
+});
+MemoizedMarkdown.displayName = "MemoizedMarkdown";

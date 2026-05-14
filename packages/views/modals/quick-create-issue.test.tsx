@@ -79,17 +79,17 @@ vi.mock("@multica/core/projects/queries", () => ({
 
 vi.mock("@multica/core/issues/stores/quick-create-store", () => ({
   useQuickCreateStore: (selector?: (state: typeof mockQuickCreateStore) => unknown) =>
-    (selector ? selector(mockQuickCreateStore) : mockQuickCreateStore),
+    selector ? selector(mockQuickCreateStore) : mockQuickCreateStore,
 }));
 
 vi.mock("@multica/core/issues/stores/create-mode-store", () => ({
   useCreateModeStore: (selector?: (state: { setLastMode: typeof mockSetLastMode }) => unknown) =>
-    (selector ? selector({ setLastMode: mockSetLastMode }) : { setLastMode: mockSetLastMode }),
+    selector ? selector({ setLastMode: mockSetLastMode }) : { setLastMode: mockSetLastMode },
 }));
 
 vi.mock("@multica/core/auth", () => ({
   useAuthStore: (selector?: (state: { user: { id: string } }) => unknown) =>
-    (selector ? selector({ user: { id: "user-1" } }) : { user: { id: "user-1" } }),
+    selector ? selector({ user: { id: "user-1" } }) : { user: { id: "user-1" } },
 }));
 
 vi.mock("@multica/core/runtimes", () => ({
@@ -125,37 +125,39 @@ vi.mock("../common/pill-button", () => ({
 }));
 
 vi.mock("../editor", () => {
-  const ContentEditor = forwardRef(({ defaultValue, onUpdate, onSubmit, placeholder }: any, ref: any) => {
-    const valueRef = useRef(defaultValue || "");
-    const [value, setValue] = useState(defaultValue || "");
+  const ContentEditor = forwardRef(
+    ({ defaultValue, onUpdate, onSubmit, placeholder }: any, ref: any) => {
+      const valueRef = useRef(defaultValue || "");
+      const [value, setValue] = useState(defaultValue || "");
 
-    useImperativeHandle(ref, () => ({
-      getMarkdown: () => valueRef.current,
-      clearContent: () => {
-        valueRef.current = "";
-        setValue("");
-      },
-      uploadFile: vi.fn(),
-      focus: vi.fn(),
-    }));
+      useImperativeHandle(ref, () => ({
+        getMarkdown: () => valueRef.current,
+        clearContent: () => {
+          valueRef.current = "";
+          setValue("");
+        },
+        uploadFile: vi.fn(),
+        focus: vi.fn(),
+      }));
 
-    return (
-      <textarea
-        value={value}
-        placeholder={placeholder}
-        onChange={(e) => {
-          valueRef.current = e.target.value;
-          setValue(e.target.value);
-          onUpdate?.(e.target.value);
-        }}
-        onKeyDown={(e) => {
-          if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
-            onSubmit?.();
-          }
-        }}
-      />
-    );
-  });
+      return (
+        <textarea
+          value={value}
+          placeholder={placeholder}
+          onChange={(e) => {
+            valueRef.current = e.target.value;
+            setValue(e.target.value);
+            onUpdate?.(e.target.value);
+          }}
+          onKeyDown={(e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === "Enter") {
+              onSubmit?.();
+            }
+          }}
+        />
+      );
+    },
+  );
   ContentEditor.displayName = "ContentEditor";
 
   return {
@@ -176,12 +178,22 @@ vi.mock("@multica/ui/components/ui/dropdown-menu", () => ({
   DropdownMenuTrigger: ({ render }: { render: ReactNode }) => <>{render}</>,
   DropdownMenuContent: ({ children }: { children: ReactNode }) => <>{children}</>,
   DropdownMenuItem: ({ children, onClick }: { children: ReactNode; onClick?: () => void }) => (
-    <button type="button" onClick={onClick}>{children}</button>
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
   ),
 }));
 
 vi.mock("@multica/ui/components/ui/button", () => ({
-  Button: ({ children, disabled, onClick }: { children: ReactNode; disabled?: boolean; onClick?: () => void }) => (
+  Button: ({
+    children,
+    disabled,
+    onClick,
+  }: {
+    children: ReactNode;
+    disabled?: boolean;
+    onClick?: () => void;
+  }) => (
     <button type="button" disabled={disabled} onClick={onClick}>
       {children}
     </button>
@@ -189,7 +201,13 @@ vi.mock("@multica/ui/components/ui/button", () => ({
 }));
 
 vi.mock("@multica/ui/components/ui/switch", () => ({
-  Switch: ({ checked, onCheckedChange }: { checked: boolean; onCheckedChange: (v: boolean) => void }) => (
+  Switch: ({
+    checked,
+    onCheckedChange,
+  }: {
+    checked: boolean;
+    onCheckedChange: (v: boolean) => void;
+  }) => (
     <input
       aria-label="Create another"
       type="checkbox"

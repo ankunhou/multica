@@ -7,11 +7,7 @@ import { toast } from "sonner";
 import { api } from "@multica/core/api";
 import { issueKeys } from "@multica/core/issues/queries";
 import type { AgentTask, TaskFailureReason } from "@multica/core/types";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { SidebarSection } from "../../common/sidebar-section";
 import { TranscriptButton } from "../../common/task-transcript";
@@ -28,8 +24,7 @@ import { TerminateTaskConfirmDialog } from "./terminate-task-confirm-dialog";
 // ellipsis cut.
 const TRIGGER_MASK_STYLE: React.CSSProperties = {
   maskImage: "linear-gradient(to right, black calc(100% - 12px), transparent)",
-  WebkitMaskImage:
-    "linear-gradient(to right, black calc(100% - 12px), transparent)",
+  WebkitMaskImage: "linear-gradient(to right, black calc(100% - 12px), transparent)",
 };
 
 // Right-panel section that lists every agent run for this issue. Active
@@ -87,28 +82,20 @@ export function ExecutionLogSection({ issueId }: ExecutionLogSectionProps) {
   const activeTasks = useMemo(
     () =>
       tasks.filter(
-        (t) =>
-          t.status === "queued" ||
-          t.status === "dispatched" ||
-          t.status === "running",
+        (t) => t.status === "queued" || t.status === "dispatched" || t.status === "running",
       ),
     [tasks],
   );
 
   const pastTasks = useMemo(() => {
     const past = tasks.filter(
-      (t) =>
-        t.status === "completed" ||
-        t.status === "failed" ||
-        t.status === "cancelled",
+      (t) => t.status === "completed" || t.status === "failed" || t.status === "cancelled",
     );
     // Stable sort: failed first, cancelled second, completed last.
     // Within group: newest completed_at first (fall back to created_at
     // for malformed rows missing completed_at).
     return [...past].sort((a, b) => {
-      const rankDiff =
-        (PAST_STATUS_RANK[a.status] ?? 99) -
-        (PAST_STATUS_RANK[b.status] ?? 99);
+      const rankDiff = (PAST_STATUS_RANK[a.status] ?? 99) - (PAST_STATUS_RANK[b.status] ?? 99);
       if (rankDiff !== 0) return rankDiff;
       const at = a.completed_at ?? a.created_at;
       const bt = b.completed_at ?? b.created_at;
@@ -139,9 +126,7 @@ export function ExecutionLogSection({ issueId }: ExecutionLogSectionProps) {
 
       {pastTasks.length > 0 && (
         <>
-          {activeTasks.length > 0 && (
-            <div className="my-1.5 border-t border-border/60" />
-          )}
+          {activeTasks.length > 0 && <div className="my-1.5 border-t border-border/60" />}
           <button
             type="button"
             onClick={() => setShowPast(!showPast)}
@@ -235,12 +220,18 @@ function useTriggerText(task: AgentTask): string {
 function useStatusLabel(status: AgentTask["status"]): string {
   const { t } = useT("issues");
   switch (status) {
-    case "queued": return t(($) => $.execution_log.status_queued);
-    case "dispatched": return t(($) => $.execution_log.status_dispatched);
-    case "running": return t(($) => $.execution_log.status_running);
-    case "completed": return t(($) => $.execution_log.status_completed);
-    case "failed": return t(($) => $.execution_log.status_failed);
-    case "cancelled": return t(($) => $.execution_log.status_cancelled);
+    case "queued":
+      return t(($) => $.execution_log.status_queued);
+    case "dispatched":
+      return t(($) => $.execution_log.status_dispatched);
+    case "running":
+      return t(($) => $.execution_log.status_running);
+    case "completed":
+      return t(($) => $.execution_log.status_completed);
+    case "failed":
+      return t(($) => $.execution_log.status_failed);
+    case "cancelled":
+      return t(($) => $.execution_log.status_cancelled);
   }
 }
 
@@ -368,7 +359,11 @@ function PastRow({ task, issueId }: { task: AgentTask; issueId: string }) {
         <span className="text-muted-foreground"> · {time}</span>
       </span>
       <RowActions>
-        <TranscriptButton task={task} agentName="" title={t(($) => $.execution_log.transcript_tooltip)} />
+        <TranscriptButton
+          task={task}
+          agentName=""
+          title={t(($) => $.execution_log.transcript_tooltip)}
+        />
         {canRetry && (
           <Tooltip>
             <TooltipTrigger
@@ -398,24 +393,13 @@ function PastRow({ task, issueId }: { task: AgentTask; issueId: string }) {
 
 // ─── Shared row chrome ─────────────────────────────────────────────────────
 
-function RowShell({
-  task,
-  children,
-}: {
-  task: AgentTask;
-  children: React.ReactNode;
-}) {
+function RowShell({ task, children }: { task: AgentTask; children: React.ReactNode }) {
   // `relative` so the absolute-positioned RowActions slot anchors to this
   // row instead of an outer container.
   return (
     <div className="group relative flex items-center gap-2 rounded px-1 py-1.5 transition-colors hover:bg-accent/40">
       {task.agent_id ? (
-        <ActorAvatar
-          actorType="agent"
-          actorId={task.agent_id}
-          size={20}
-          enableHoverCard
-        />
+        <ActorAvatar actorType="agent" actorId={task.agent_id} size={20} enableHoverCard />
       ) : (
         <span className="inline-block h-5 w-5 shrink-0 rounded-full bg-muted" />
       )}

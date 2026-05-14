@@ -21,7 +21,6 @@ import { useDaemonIPCBridge } from "./platform/daemon-ipc-bridge";
 import { createDesktopLocaleAdapter } from "./platform/i18n-adapter";
 import { RESOURCES } from "@multica/views/locales";
 
-
 function AppContent() {
   const user = useAuthStore((s) => s.user);
   const isLoading = useAuthStore((s) => s.isLoading);
@@ -148,8 +147,7 @@ function AppContent() {
         .listMyInvitations()
         .then((invites) => {
           if (cancelled) return;
-          const { overlay: latestOverlay, open: latestOpen } =
-            useWindowOverlayStore.getState();
+          const { overlay: latestOverlay, open: latestOpen } = useWindowOverlayStore.getState();
           if (latestOverlay) return;
           if (invites.length > 0) {
             qc.setQueryData(workspaceKeys.myInvitations(), invites);
@@ -160,8 +158,7 @@ function AppContent() {
         })
         .catch(() => {
           if (cancelled) return;
-          const { overlay: latestOverlay, open: latestOpen } =
-            useWindowOverlayStore.getState();
+          const { overlay: latestOverlay, open: latestOpen } = useWindowOverlayStore.getState();
           if (latestOverlay) return;
           latestOpen({ type: "onboarding" });
         });
@@ -241,9 +238,7 @@ function BlockingRuntimeConfigError({ message }: { message: string }) {
   return (
     <div className="flex h-screen items-center justify-center bg-background p-8 text-foreground">
       <div className="max-w-xl rounded-lg border bg-card p-6 shadow-sm">
-        <h1 className="text-lg font-semibold">
-          {t(($) => $.config_error.title)}
-        </h1>
+        <h1 className="text-lg font-semibold">{t(($) => $.config_error.title)}</h1>
         <p className="mt-3 text-sm text-muted-foreground">
           {t(($) => $.config_error.description_prefix)}
           <code>{t(($) => $.config_error.description_path)}</code>
@@ -283,21 +278,12 @@ export default function App() {
   const runtimeConfigResult = window.desktopAPI.runtimeConfig;
   // Stable identity reference so downstream effects (WS reconnect) don't
   // tear down on every parent render.
-  const identity = useMemo(
-    () => ({ platform: "desktop", version, os }),
-    [version, os],
-  );
+  const identity = useMemo(() => ({ platform: "desktop", version, os }), [version, os]);
   // Locale resolution happens once at app boot. Switching language goes
   // through window.location.reload() to avoid hydration mismatch.
-  const localeAdapter = useMemo(
-    () => createDesktopLocaleAdapter(systemLocale),
-    [systemLocale],
-  );
+  const localeAdapter = useMemo(() => createDesktopLocaleAdapter(systemLocale), [systemLocale]);
   const locale = useMemo(() => pickLocale(localeAdapter), [localeAdapter]);
-  const resources = useMemo(
-    () => ({ [locale]: RESOURCES[locale] }),
-    [locale],
-  );
+  const resources = useMemo(() => ({ [locale]: RESOURCES[locale] }), [locale]);
 
   // React to OS-level language changes detected by main on focus regain.
   // Only act when the user is following the system signal (no explicit
@@ -308,8 +294,7 @@ export default function App() {
       if (localeAdapter.getUserChoice()) return;
       const next = pickLocale({
         ...localeAdapter,
-        getSystemPreferences: () =>
-          nextSystemLocale ? [nextSystemLocale] : [],
+        getSystemPreferences: () => (nextSystemLocale ? [nextSystemLocale] : []),
       });
       if (next === locale) return;
       localeAdapter.persist(next);

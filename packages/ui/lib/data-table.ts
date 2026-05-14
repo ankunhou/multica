@@ -35,10 +35,8 @@ export function getCellStyle<TData>(
   }
 
   const withBorder = options?.withBorder ?? false;
-  const isLastLeftPinned =
-    isPinned === "left" && column.getIsLastColumn("left");
-  const isFirstRightPinned =
-    isPinned === "right" && column.getIsFirstColumn("right");
+  const isLastLeftPinned = isPinned === "left" && column.getIsLastColumn("left");
+  const isFirstRightPinned = isPinned === "right" && column.getIsFirstColumn("right");
 
   return {
     width,

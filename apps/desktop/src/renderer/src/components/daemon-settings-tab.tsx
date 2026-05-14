@@ -4,10 +4,7 @@ import { Switch } from "@multica/ui/components/ui/switch";
 import { cn } from "@multica/ui/lib/utils";
 import { useT } from "@multica/views/i18n";
 import type { DaemonPrefs, DaemonStatus } from "../../../shared/daemon-types";
-import {
-  DAEMON_STATE_COLORS,
-  formatUptime,
-} from "../../../shared/daemon-types";
+import { DAEMON_STATE_COLORS, formatUptime } from "../../../shared/daemon-types";
 
 function SettingRow({
   label,
@@ -44,10 +41,7 @@ function DiagnosticsRow({
     <div className="grid grid-cols-[140px_minmax(0,1fr)] items-baseline gap-3 py-1.5">
       <span className="text-xs text-muted-foreground">{label}</span>
       <span
-        className={cn(
-          "min-w-0 truncate text-sm",
-          mono && "font-mono text-xs",
-        )}
+        className={cn("min-w-0 truncate text-sm", mono && "font-mono text-xs")}
         title={typeof value === "string" ? value : undefined}
       >
         {value}
@@ -70,24 +64,17 @@ export function DaemonSettingsTab() {
     return window.daemonAPI.onStatusChange(setStatus);
   }, []);
 
-  const updatePref = useCallback(
-    async (key: keyof DaemonPrefs, value: boolean) => {
-      setSaving(true);
-      const updated = await window.daemonAPI.setPrefs({ [key]: value });
-      setPrefs(updated);
-      setSaving(false);
-    },
-    [],
-  );
+  const updatePref = useCallback(async (key: keyof DaemonPrefs, value: boolean) => {
+    setSaving(true);
+    const updated = await window.daemonAPI.setPrefs({ [key]: value });
+    setPrefs(updated);
+    setSaving(false);
+  }, []);
 
   return (
     <div>
-      <h2 className="text-lg font-semibold">
-        {t(($) => $.daemon.title)}
-      </h2>
-      <p className="text-sm text-muted-foreground mt-1">
-        {t(($) => $.daemon.description)}
-      </p>
+      <h2 className="text-lg font-semibold">{t(($) => $.daemon.title)}</h2>
+      <p className="text-sm text-muted-foreground mt-1">{t(($) => $.daemon.description)}</p>
 
       <div className="mt-6 divide-y">
         <SettingRow
@@ -113,9 +100,7 @@ export function DaemonSettingsTab() {
         </SettingRow>
 
         <div className="py-4">
-          <p className="text-sm font-medium">
-            {t(($) => $.daemon.cli_status.title)}
-          </p>
+          <p className="text-sm font-medium">{t(($) => $.daemon.cli_status.title)}</p>
           <p className="text-sm text-muted-foreground mt-1">
             {cliInstalled === null
               ? t(($) => $.daemon.cli_status.checking)
@@ -144,9 +129,7 @@ export function DaemonSettingsTab() {
           on logs. These fields matter for support tickets and bug reports,
           not for everyday use. */}
       <div className="mt-8">
-        <h3 className="text-sm font-semibold">
-          {t(($) => $.daemon.diagnostics.title)}
-        </h3>
+        <h3 className="text-sm font-semibold">{t(($) => $.daemon.diagnostics.title)}</h3>
         <p className="text-xs text-muted-foreground mt-1">
           {t(($) => $.daemon.diagnostics.description)}
         </p>
@@ -155,12 +138,7 @@ export function DaemonSettingsTab() {
             label={t(($) => $.daemon.diagnostics.state)}
             value={
               <span className="inline-flex items-center gap-1.5">
-                <span
-                  className={cn(
-                    "size-1.5 rounded-full",
-                    DAEMON_STATE_COLORS[status.state],
-                  )}
-                />
+                <span className={cn("size-1.5 rounded-full", DAEMON_STATE_COLORS[status.state])} />
                 {t(($) => $.daemon.state[status.state])}
               </span>
             }
@@ -194,11 +172,7 @@ export function DaemonSettingsTab() {
           />
           <DiagnosticsRow
             label={t(($) => $.daemon.diagnostics.workspaces)}
-            value={
-              typeof status.workspaceCount === "number"
-                ? status.workspaceCount
-                : "—"
-            }
+            value={typeof status.workspaceCount === "number" ? status.workspaceCount : "—"}
           />
         </div>
       </div>

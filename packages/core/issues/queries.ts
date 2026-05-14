@@ -1,10 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { api } from "../api";
-import type {
-  IssueStatus,
-  ListIssuesParams,
-  ListIssuesCache,
-} from "../types";
+import type { IssueStatus, ListIssuesParams, ListIssuesCache } from "../types";
 import { BOARD_STATUSES } from "./config";
 
 export const issueKeys = {
@@ -15,18 +11,13 @@ export const issueKeys = {
   /** Per-scope "my issues" list with filter identity baked into the key. */
   myList: (wsId: string, scope: string, filter: MyIssuesFilter) =>
     [...issueKeys.myAll(wsId), scope, filter] as const,
-  detail: (wsId: string, id: string) =>
-    [...issueKeys.all(wsId), "detail", id] as const,
-  children: (wsId: string, id: string) =>
-    [...issueKeys.all(wsId), "children", id] as const,
-  childProgress: (wsId: string) =>
-    [...issueKeys.all(wsId), "child-progress"] as const,
+  detail: (wsId: string, id: string) => [...issueKeys.all(wsId), "detail", id] as const,
+  children: (wsId: string, id: string) => [...issueKeys.all(wsId), "children", id] as const,
+  childProgress: (wsId: string) => [...issueKeys.all(wsId), "child-progress"] as const,
   /** Full-issue timeline (single TanStack Query, no cursor). */
-  timeline: (issueId: string) =>
-    ["issues", "timeline", issueId] as const,
+  timeline: (issueId: string) => ["issues", "timeline", issueId] as const,
   reactions: (issueId: string) => ["issues", "reactions", issueId] as const,
-  subscribers: (issueId: string) =>
-    ["issues", "subscribers", issueId] as const,
+  subscribers: (issueId: string) => ["issues", "subscribers", issueId] as const,
   usage: (issueId: string) => ["issues", "usage", issueId] as const,
   /** Issue-level attachments — used by the description editor so its
    *  inline file-card / image NodeViews can re-sign download URLs at
@@ -96,11 +87,7 @@ export function issueListOptions(wsId: string) {
  * Server-filtered issue list for the My Issues page.
  * Each scope gets its own cache entry so switching tabs is instant after first load.
  */
-export function myIssueListOptions(
-  wsId: string,
-  scope: string,
-  filter: MyIssuesFilter,
-) {
+export function myIssueListOptions(wsId: string, scope: string, filter: MyIssuesFilter) {
   return queryOptions({
     queryKey: issueKeys.myList(wsId, scope, filter),
     queryFn: () => fetchFirstPages(filter),

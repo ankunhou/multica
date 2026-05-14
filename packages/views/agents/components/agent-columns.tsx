@@ -8,11 +8,7 @@ import {
   type AgentPresenceDetail,
   summarizeActivityWindow,
 } from "@multica/core/agents";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { AgentRowActions } from "./agent-row-actions";
 import { AgentAvailabilityBadge, AgentWorkloadBadge } from "./agent-state-badges";
@@ -67,7 +63,10 @@ const COL_WIDTHS = {
 
 type ColumnHeaderT = ReturnType<typeof useT<"agents">>["t"];
 
-function makeHeaderRenderer(t: ColumnHeaderT, key: "agent" | "status" | "workload" | "runtime" | "activity_7d" | "runs") {
+function makeHeaderRenderer(
+  t: ColumnHeaderT,
+  key: "agent" | "status" | "workload" | "runtime" | "activity_7d" | "runs",
+) {
   return key === "runs"
     ? () => <div className="text-right">{t(($) => $.columns.runs)}</div>
     : () => t(($) => $.columns[key]);
@@ -129,9 +128,7 @@ export function createAgentColumns({
       size: COL_WIDTHS.runs,
       cell: ({ row }) => (
         <div className="text-right font-mono text-xs tabular-nums text-muted-foreground">
-          {row.original.runCount == null
-            ? "—"
-            : row.original.runCount.toLocaleString()}
+          {row.original.runCount == null ? "—" : row.original.runCount.toLocaleString()}
         </div>
       ),
     },
@@ -181,22 +178,16 @@ function AgentNameCell({ row }: { row: AgentRow }) {
       <div className="min-w-0 flex-1">
         <div className="flex min-w-0 items-center gap-2">
           <span
-            className={`min-w-0 truncate font-medium ${
-              isArchived ? "text-muted-foreground" : ""
-            }`}
+            className={`min-w-0 truncate font-medium ${isArchived ? "text-muted-foreground" : ""}`}
           >
             {agent.name}
           </span>
           {isPrivate && !isArchived && (
             <Tooltip>
               <TooltipTrigger
-                render={
-                  <Lock className="h-3 w-3 shrink-0 text-muted-foreground/60" />
-                }
+                render={<Lock className="h-3 w-3 shrink-0 text-muted-foreground/60" />}
               />
-              <TooltipContent>
-                {t(($) => $.visibility.private.tooltip)}
-              </TooltipContent>
+              <TooltipContent>{t(($) => $.visibility.private.tooltip)}</TooltipContent>
             </Tooltip>
           )}
           {isOwnedByMe && !ownerIdToShow && (
@@ -204,13 +195,7 @@ function AgentNameCell({ row }: { row: AgentRow }) {
               {t(($) => $.row.you)}
             </span>
           )}
-          {ownerIdToShow && (
-            <ActorAvatar
-              actorType="member"
-              actorId={ownerIdToShow}
-              size={14}
-            />
-          )}
+          {ownerIdToShow && <ActorAvatar actorType="member" actorId={ownerIdToShow} size={14} />}
           {isArchived && (
             <span className="shrink-0 rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
               {t(($) => $.row.archived)}
@@ -219,9 +204,7 @@ function AgentNameCell({ row }: { row: AgentRow }) {
         </div>
         <div
           className={`mt-0.5 truncate text-xs ${
-            agent.description
-              ? "text-muted-foreground"
-              : "italic text-muted-foreground/50"
+            agent.description ? "text-muted-foreground" : "italic text-muted-foreground/50"
           }`}
         >
           {agent.description || t(($) => $.row.no_description)}
@@ -231,19 +214,11 @@ function AgentNameCell({ row }: { row: AgentRow }) {
   );
 }
 
-function AvailabilityCell({
-  presence,
-}: {
-  presence: AgentPresenceDetail | null | undefined;
-}) {
+function AvailabilityCell({ presence }: { presence: AgentPresenceDetail | null | undefined }) {
   return <AgentAvailabilityBadge detail={presence} />;
 }
 
-function WorkloadCell({
-  presence,
-}: {
-  presence: AgentPresenceDetail | null | undefined;
-}) {
+function WorkloadCell({ presence }: { presence: AgentPresenceDetail | null | undefined }) {
   return <AgentWorkloadBadge detail={presence} countStyle="inline" />;
 }
 
@@ -252,17 +227,15 @@ function RuntimeCell({ row }: { row: AgentRow }) {
   const { agent, runtime } = row;
   const isCloud = agent.runtime_mode === "cloud";
   const RuntimeIcon = isCloud ? Cloud : Monitor;
-  const runtimeLabel = runtime?.name ?? (isCloud ? t(($) => $.row.fallback_runtime_cloud) : t(($) => $.row.fallback_runtime_local));
+  const runtimeLabel =
+    runtime?.name ??
+    (isCloud ? t(($) => $.row.fallback_runtime_cloud) : t(($) => $.row.fallback_runtime_local));
 
   return (
     <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
       <RuntimeIcon className="h-3 w-3 shrink-0" />
       <Tooltip>
-        <TooltipTrigger
-          render={
-            <span className="block min-w-0 truncate">{runtimeLabel}</span>
-          }
-        />
+        <TooltipTrigger render={<span className="block min-w-0 truncate">{runtimeLabel}</span>} />
         <TooltipContent>{runtimeLabel}</TooltipContent>
       </Tooltip>
     </div>

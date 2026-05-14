@@ -9,11 +9,7 @@ import { issueDetailOptions } from "@multica/core/issues/queries";
 import { projectDetailOptions } from "@multica/core/projects/queries";
 import { inboxListOptions } from "@multica/core/inbox/queries";
 import { Button } from "@multica/ui/components/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { IssueChip } from "../../issues/components/issue-chip";
 import { ProjectChip } from "../../projects/components/project-chip";
 import { AppLink, useNavigation } from "../../navigation";
@@ -53,9 +49,7 @@ export function useRouteAnchorCandidate(wsId: string): {
   const isInbox = /^\/[^/]+\/inbox$/.test(pathname);
 
   const routeIssueId = issueMatch ? decodeURIComponent(issueMatch[1]!) : null;
-  const routeProjectId = projectMatch
-    ? decodeURIComponent(projectMatch[1]!)
-    : null;
+  const routeProjectId = projectMatch ? decodeURIComponent(projectMatch[1]!) : null;
 
   // Inbox: the anchor is the issue behind the currently selected notification.
   const { data: inboxItems = [] } = useQuery({
@@ -65,8 +59,7 @@ export function useRouteAnchorCandidate(wsId: string): {
   const inboxKey = isInbox ? searchParams.get("issue") : null;
   const inboxSelectedIssueId =
     isInbox && inboxKey
-      ? inboxItems.find((i) => (i.issue_id ?? i.id) === inboxKey)?.issue_id ??
-        null
+      ? (inboxItems.find((i) => (i.issue_id ?? i.id) === inboxKey)?.issue_id ?? null)
       : null;
 
   // One issue fetch covers both /issues/:id and inbox-derived anchors.

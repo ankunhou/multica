@@ -22,16 +22,23 @@ export interface IssueFilters {
  * - When both → show matching assignees + unassigned
  */
 export function filterIssues(issues: Issue[], filters: IssueFilters): Issue[] {
-  const { statusFilters, priorityFilters, assigneeFilters, includeNoAssignee, creatorFilters, projectFilters, includeNoProject, labelFilters } = filters;
+  const {
+    statusFilters,
+    priorityFilters,
+    assigneeFilters,
+    includeNoAssignee,
+    creatorFilters,
+    projectFilters,
+    includeNoProject,
+    labelFilters,
+  } = filters;
   const hasAssigneeFilter = assigneeFilters.length > 0 || includeNoAssignee;
   const hasProjectFilter = projectFilters.length > 0 || includeNoProject;
 
   return issues.filter((issue) => {
-    if (statusFilters.length > 0 && !statusFilters.includes(issue.status))
-      return false;
+    if (statusFilters.length > 0 && !statusFilters.includes(issue.status)) return false;
 
-    if (priorityFilters.length > 0 && !priorityFilters.includes(issue.priority))
-      return false;
+    if (priorityFilters.length > 0 && !priorityFilters.includes(issue.priority)) return false;
 
     if (hasAssigneeFilter) {
       if (!issue.assignee_id) {
@@ -39,9 +46,10 @@ export function filterIssues(issues: Issue[], filters: IssueFilters): Issue[] {
         if (!includeNoAssignee) return false;
       } else if (assigneeFilters.length > 0) {
         // Assigned issue — show only if assignee is in the filter list
-        if (!assigneeFilters.some(
-          (f) => f.type === issue.assignee_type && f.id === issue.assignee_id,
-        )) return false;
+        if (
+          !assigneeFilters.some((f) => f.type === issue.assignee_type && f.id === issue.assignee_id)
+        )
+          return false;
       } else {
         // Only "No assignee" is checked, no specific assignees → hide assigned issues
         return false;
@@ -50,9 +58,7 @@ export function filterIssues(issues: Issue[], filters: IssueFilters): Issue[] {
 
     if (
       creatorFilters.length > 0 &&
-      !creatorFilters.some(
-        (f) => f.type === issue.creator_type && f.id === issue.creator_id,
-      )
+      !creatorFilters.some((f) => f.type === issue.creator_type && f.id === issue.creator_id)
     ) {
       return false;
     }

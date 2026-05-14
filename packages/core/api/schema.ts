@@ -43,13 +43,10 @@ export function parseWithFallback<T>(
 ): T {
   const result = schema.safeParse(data);
   if (result.success) return result.data as T;
-  schemaLogger.warn(
-    `API response failed schema validation: ${opts.endpoint}`,
-    {
-      endpoint: opts.endpoint,
-      issues: result.error.issues,
-      received: data,
-    },
-  );
+  schemaLogger.warn(`API response failed schema validation: ${opts.endpoint}`, {
+    endpoint: opts.endpoint,
+    issues: result.error.issues,
+    received: data,
+  });
   return fallback;
 }

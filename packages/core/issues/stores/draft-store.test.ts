@@ -21,8 +21,7 @@ describe("issue draft store — last assignee", () => {
   });
 
   it("clearDraft prefills the next draft with the remembered assignee", () => {
-    const { setDraft, setLastAssignee, clearDraft } =
-      useIssueDraftStore.getState();
+    const { setDraft, setLastAssignee, clearDraft } = useIssueDraftStore.getState();
 
     setDraft({ title: "first", assigneeType: "member", assigneeId: "alice" });
     setLastAssignee("member", "alice");

@@ -24,11 +24,7 @@ export function generateStaticParams() {
   return i18n.languages.map((lang) => ({ lang }));
 }
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ lang: string }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ lang: string }> }) {
   const { lang: rawLang } = await params;
   const lang = asLang(rawLang);
   const page = source.getPage([], lang);
@@ -44,9 +40,7 @@ export default async function Page({
         title={
           <>
             {copy.titleLead}
-            <em className="font-medium not-italic text-[var(--primary)]">
-              {copy.titleAccent}
-            </em>
+            <em className="font-medium not-italic text-[var(--primary)]">{copy.titleAccent}</em>
           </>
         }
         subtitle={page.data.description}

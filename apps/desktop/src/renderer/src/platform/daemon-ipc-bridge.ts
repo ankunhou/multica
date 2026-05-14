@@ -58,7 +58,11 @@ export function useDaemonIPCBridge(wsId: string | undefined): void {
   useEffect(() => {
     if (!wsId) return;
     if (typeof window === "undefined") return;
-    const daemonAPI = (window as unknown as { daemonAPI?: { onStatusChange?: (cb: (s: DaemonStatusLike) => void) => () => void } }).daemonAPI;
+    const daemonAPI = (
+      window as unknown as {
+        daemonAPI?: { onStatusChange?: (cb: (s: DaemonStatusLike) => void) => () => void };
+      }
+    ).daemonAPI;
     if (!daemonAPI?.onStatusChange) return;
 
     const unsubscribe = daemonAPI.onStatusChange((status) => {

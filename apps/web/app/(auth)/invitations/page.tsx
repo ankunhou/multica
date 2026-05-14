@@ -16,9 +16,7 @@ export default function InvitationsRoutePage() {
   // its own listMyInvitations() check and route them here again.
   useEffect(() => {
     if (!isLoading && !user) {
-      router.replace(
-        `${paths.login()}?next=${encodeURIComponent(paths.invitations())}`,
-      );
+      router.replace(`${paths.login()}?next=${encodeURIComponent(paths.invitations())}`);
     }
   }, [isLoading, user, router]);
 

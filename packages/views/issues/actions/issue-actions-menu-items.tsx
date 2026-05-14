@@ -18,10 +18,7 @@ import {
 } from "lucide-react";
 import type { AgentTask, Issue } from "@multica/core/types";
 import { api } from "@multica/core/api";
-import {
-  ALL_STATUSES,
-  PRIORITY_ORDER,
-} from "@multica/core/issues/config";
+import { ALL_STATUSES, PRIORITY_ORDER } from "@multica/core/issues/config";
 import { issueKeys } from "@multica/core/issues/queries";
 import { StatusIcon } from "../components/status-icon";
 import { PriorityIcon } from "../components/priority-icon";
@@ -186,11 +183,7 @@ export function IssueActionsMenuItems({
           {t(($) => $.actions.assignee)}
         </P.SubTrigger>
         <P.SubContent>
-          <P.Item
-            onClick={() =>
-              updateField({ assignee_type: null, assignee_id: null })
-            }
-          >
+          <P.Item onClick={() => updateField({ assignee_type: null, assignee_id: null })}>
             <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
             {t(($) => $.actions.unassigned)}
             {!issue.assignee_type && (
@@ -200,24 +193,19 @@ export function IssueActionsMenuItems({
           {members.map((m) => (
             <P.Item
               key={m.user_id}
-              onClick={() =>
-                updateField({ assignee_type: "member", assignee_id: m.user_id })
-              }
+              onClick={() => updateField({ assignee_type: "member", assignee_id: m.user_id })}
             >
               <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
               {m.name}
-              {issue.assignee_type === "member" &&
-                issue.assignee_id === m.user_id && (
-                  <span className="ml-auto text-xs text-muted-foreground">{"✓"}</span>
-                )}
+              {issue.assignee_type === "member" && issue.assignee_id === m.user_id && (
+                <span className="ml-auto text-xs text-muted-foreground">{"✓"}</span>
+              )}
             </P.Item>
           ))}
           {agents.map((a) => (
             <P.Item
               key={a.id}
-              onClick={() =>
-                updateField({ assignee_type: "agent", assignee_id: a.id })
-              }
+              onClick={() => updateField({ assignee_type: "agent", assignee_id: a.id })}
             >
               <ActorAvatar actorType="agent" actorId={a.id} size={16} />
               {a.name}
@@ -259,11 +247,7 @@ export function IssueActionsMenuItems({
       <P.Separator />
 
       <P.Item onClick={togglePin}>
-        {isPinned ? (
-          <PinOff className="h-3.5 w-3.5" />
-        ) : (
-          <Pin className="h-3.5 w-3.5" />
-        )}
+        {isPinned ? <PinOff className="h-3.5 w-3.5" /> : <Pin className="h-3.5 w-3.5" />}
         {isPinned ? t(($) => $.actions.unpin_from_sidebar) : t(($) => $.actions.pin_to_sidebar)}
       </P.Item>
       <P.Item onClick={copyLink}>
@@ -302,10 +286,7 @@ export function IssueActionsMenuItems({
 
       <P.Separator />
 
-      <P.Item
-        variant="destructive"
-        onClick={() => openDeleteConfirm({ onDeletedNavigateTo })}
-      >
+      <P.Item variant="destructive" onClick={() => openDeleteConfirm({ onDeletedNavigateTo })}>
         <Trash2 className="h-3.5 w-3.5" />
         {t(($) => $.actions.delete_issue)}
       </P.Item>

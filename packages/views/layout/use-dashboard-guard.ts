@@ -69,9 +69,7 @@ export function useDashboardGuard() {
   // changes (workspace deleted, user kicked, user left).
   useEffect(() => {
     if (!workspaceListFetched) return;
-    useRecentIssuesStore
-      .getState()
-      .pruneWorkspaces(workspaces.map((w) => w.id));
+    useRecentIssuesStore.getState().pruneWorkspaces(workspaces.map((w) => w.id));
   }, [workspaceListFetched, workspaces]);
 
   return { user, isLoading, workspace };

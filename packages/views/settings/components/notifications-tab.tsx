@@ -65,7 +65,9 @@ export function NotificationsTab() {
                   className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
                 >
                   <div className="space-y-0.5 pr-4">
-                    <p className="text-sm font-medium">{t(($) => $.notifications.groups[key].label)}</p>
+                    <p className="text-sm font-medium">
+                      {t(($) => $.notifications.groups[key].label)}
+                    </p>
                     <p className="text-xs text-muted-foreground">
                       {t(($) => $.notifications.groups[key].description)}
                     </p>

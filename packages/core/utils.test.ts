@@ -25,7 +25,9 @@ describe("utils id helpers", () => {
   });
 
   it("createRequestId defaults to length 8 and respects custom length", () => {
-    vi.spyOn(globalThis.crypto, "randomUUID").mockReturnValue("12345678-1234-4abc-8def-1234567890ab");
+    vi.spyOn(globalThis.crypto, "randomUUID").mockReturnValue(
+      "12345678-1234-4abc-8def-1234567890ab",
+    );
 
     expect(createRequestId()).toBe("12345678");
     expect(createRequestId(12)).toBe("123456781234");

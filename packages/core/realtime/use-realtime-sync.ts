@@ -27,7 +27,12 @@ import {
   onIssueDeleted,
   onIssueLabelsChanged,
 } from "../issues/ws-updaters";
-import { onInboxNew, onInboxInvalidate, onInboxIssueStatusChanged, onInboxIssueDeleted } from "../inbox/ws-updaters";
+import {
+  onInboxNew,
+  onInboxInvalidate,
+  onInboxIssueStatusChanged,
+  onInboxIssueDeleted,
+} from "../inbox/ws-updaters";
 import { inboxKeys } from "../inbox/queries";
 import { notificationPreferenceOptions } from "../notification-preferences/queries";
 import { workspaceKeys, workspaceListOptions } from "../workspace/queries";
@@ -212,16 +217,29 @@ export function useRealtimeSync(
 
     // Event types handled by specific handlers below -- skip generic refresh
     const specificEvents = new Set([
-      "issue:updated", "issue:created", "issue:deleted", "issue_labels:changed", "inbox:new",
-      "comment:created", "comment:updated", "comment:deleted",
-      "comment:resolved", "comment:unresolved",
+      "issue:updated",
+      "issue:created",
+      "issue:deleted",
+      "issue_labels:changed",
+      "inbox:new",
+      "comment:created",
+      "comment:updated",
+      "comment:deleted",
+      "comment:resolved",
+      "comment:unresolved",
       "activity:created",
-      "reaction:added", "reaction:removed",
-      "issue_reaction:added", "issue_reaction:removed",
-      "subscriber:added", "subscriber:removed",
+      "reaction:added",
+      "reaction:removed",
+      "issue_reaction:added",
+      "issue_reaction:removed",
+      "subscriber:added",
+      "subscriber:removed",
       "daemon:heartbeat",
       // Chat events are handled explicitly below; do not double-invalidate.
-      "chat:message", "chat:done", "chat:session_read", "chat:session_deleted",
+      "chat:message",
+      "chat:done",
+      "chat:session_read",
+      "chat:session_deleted",
       // task:message stays out of the prefix path because it fires per
       // streamed message during a long run — invalidating the snapshot on
       // every message would flood the network. Specific chat handlers below
@@ -439,10 +457,7 @@ export function useRealtimeSync(
         staleTime: 0,
       });
       const remaining = wsList.filter((w) => w.id !== lostWsId);
-      const target = resolvePostAuthDestination(
-        remaining,
-        hasOnboardedRef.current,
-      );
+      const target = resolvePostAuthDestination(remaining, hasOnboardedRef.current);
       if (typeof window !== "undefined") {
         window.location.assign(target);
       }
@@ -483,10 +498,7 @@ export function useRealtimeSync(
       if (member.user_id === myUserId) {
         qc.invalidateQueries({ queryKey: workspaceKeys.list() });
         qc.invalidateQueries({ queryKey: workspaceKeys.myInvitations() });
-        onToast?.(
-          `You joined ${workspace_name ?? "a workspace"}`,
-          "info",
-        );
+        onToast?.(`You joined ${workspace_name ?? "a workspace"}`, "info");
       }
     });
 
@@ -494,10 +506,7 @@ export function useRealtimeSync(
     const unsubInvitationCreated = ws.on("invitation:created", (p) => {
       const { workspace_name } = p as InvitationCreatedPayload;
       qc.invalidateQueries({ queryKey: workspaceKeys.myInvitations() });
-      onToast?.(
-        `You were invited to ${workspace_name ?? "a workspace"}`,
-        "info",
-      );
+      onToast?.(`You were invited to ${workspace_name ?? "a workspace"}`, "info");
     });
 
     // invitation:accepted / declined / revoked — refresh invitation lists
@@ -531,13 +540,10 @@ export function useRealtimeSync(
 
     const unsubTaskMessage = ws.on("task:message", (p) => {
       const payload = p as TaskMessagePayload;
-      qc.setQueryData<TaskMessagePayload[]>(
-        ["task-messages", payload.task_id],
-        (old = []) => {
-          if (old.some((m) => m.seq === payload.seq)) return old;
-          return [...old, payload].sort((a, b) => a.seq - b.seq);
-        },
-      );
+      qc.setQueryData<TaskMessagePayload[]>(["task-messages", payload.task_id], (old = []) => {
+        if (old.some((m) => m.seq === payload.seq)) return old;
+        return [...old, payload].sort((a, b) => a.seq - b.seq);
+      });
       chatWsLogger.debug("task:message (global)", {
         task_id: payload.task_id,
         seq: payload.seq,
@@ -593,14 +599,11 @@ export function useRealtimeSync(
     const unsubTaskQueued = ws.on("task:queued", (p) => {
       const payload = p as TaskQueuedPayload;
       if (!payload.chat_session_id) return;
-      qc.setQueryData<ChatPendingTask>(
-        chatKeys.pendingTask(payload.chat_session_id),
-        (old) => ({
-          ...(old ?? {}),
-          task_id: payload.task_id,
-          status: "queued",
-        }),
-      );
+      qc.setQueryData<ChatPendingTask>(chatKeys.pendingTask(payload.chat_session_id), (old) => ({
+        ...(old ?? {}),
+        task_id: payload.task_id,
+        status: "queued",
+      }));
       invalidatePendingAggregate();
     });
 
@@ -613,13 +616,10 @@ export function useRealtimeSync(
     const unsubTaskDispatch = ws.on("task:dispatch", (p) => {
       const payload = p as TaskDispatchPayload;
       if (!payload.chat_session_id) return;
-      qc.setQueryData<ChatPendingTask>(
-        chatKeys.pendingTask(payload.chat_session_id),
-        (old) => {
-          if (!old || old.task_id !== payload.task_id) return old;
-          return { ...old, status: "running" };
-        },
-      );
+      qc.setQueryData<ChatPendingTask>(chatKeys.pendingTask(payload.chat_session_id), (old) => {
+        if (!old || old.task_id !== payload.task_id) return old;
+        return { ...old, status: "running" };
+      });
     });
 
     // task:cancelled reaches us when:

@@ -24,8 +24,7 @@ const mocks = vi.hoisted(() => ({
 // (rendered inside the fork) reaches for, while replacing the network
 // call we want to assert on.
 vi.mock("@multica/core/onboarding", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@multica/core/onboarding")>();
+  const actual = await importOriginal<typeof import("@multica/core/onboarding")>();
   return {
     ...actual,
     joinCloudWaitlist: mocks.joinCloudWaitlist,
@@ -59,9 +58,7 @@ function makeRuntime(overrides: Partial<AgentRuntime> = {}): AgentRuntime {
   } as unknown as AgentRuntime;
 }
 
-function renderFork(
-  overrides: Partial<React.ComponentProps<typeof StepPlatformFork>> = {},
-) {
+function renderFork(overrides: Partial<React.ComponentProps<typeof StepPlatformFork>> = {}) {
   const onNext = vi.fn();
   render(
     <I18nProvider locale="en" resources={TEST_RESOURCES}>
@@ -103,17 +100,11 @@ describe("StepPlatformFork", () => {
 
   it("footer: Skip only + explanatory hint (no Continue)", () => {
     renderFork();
-    expect(
-      screen.getByRole("button", { name: /skip for now/i }),
-    ).toBeEnabled();
+    expect(screen.getByRole("button", { name: /skip for now/i })).toBeEnabled();
     // Continue is gone — it lived in the footer before; now advancement
     // for the CLI path is owned by the CLI dialog's own button.
-    expect(
-      screen.queryByRole("button", { name: /^continue$/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.getByText(/pick a path above — or skip and configure/i),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^continue$/i })).not.toBeInTheDocument();
+    expect(screen.getByText(/pick a path above — or skip and configure/i)).toBeInTheDocument();
   });
 
   it("Skip is always enabled and calls onNext(null)", async () => {
@@ -133,14 +124,8 @@ describe("StepPlatformFork", () => {
 
     // Routes to the new /download page (not GitHub releases) so the
     // user lands on the OS auto-detect surface.
-    expect(openSpy).toHaveBeenCalledWith(
-      "/download",
-      "_blank",
-      "noopener,noreferrer",
-    );
-    expect(
-      screen.getByText(/continuing on the download page/i),
-    ).toBeInTheDocument();
+    expect(openSpy).toHaveBeenCalledWith("/download", "_blank", "noopener,noreferrer");
+    expect(screen.getByText(/continuing on the download page/i)).toBeInTheDocument();
   });
 
   it("CLI dialog: opens with instructions + 'waiting' and a disabled Connect button", async () => {
@@ -151,13 +136,9 @@ describe("StepPlatformFork", () => {
 
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByTestId("cli-instructions")).toBeInTheDocument();
-    expect(
-      within(dialog).getByText(/listening for your daemon/i),
-    ).toBeInTheDocument();
+    expect(within(dialog).getByText(/listening for your daemon/i)).toBeInTheDocument();
     // Connect & continue stays disabled while no runtime is selected.
-    expect(
-      within(dialog).getByRole("button", { name: /connect & continue/i }),
-    ).toBeDisabled();
+    expect(within(dialog).getByRole("button", { name: /connect & continue/i })).toBeDisabled();
   });
 
   it("CLI dialog with a selected runtime: Connect enables and fires onNext(runtime)", async () => {
@@ -175,9 +156,7 @@ describe("StepPlatformFork", () => {
 
     const dialog = await screen.findByRole("dialog");
     expect(within(dialog).getByText(/1 runtime connected/i)).toBeInTheDocument();
-    expect(
-      within(dialog).getByText(/selected: claude code/i),
-    ).toBeInTheDocument();
+    expect(within(dialog).getByText(/selected: claude code/i)).toBeInTheDocument();
 
     const connect = within(dialog).getByRole("button", {
       name: /connect & continue/i,
@@ -206,9 +185,7 @@ describe("StepPlatformFork", () => {
     await user.click(screen.getByRole("button", { name: /^join waitlist$/i }));
     const dialog = await screen.findByRole("dialog");
     await user.type(within(dialog).getByLabelText(/email/i), "a@b.co");
-    await user.click(
-      within(dialog).getByRole("button", { name: /^join waitlist$/i }),
-    );
+    await user.click(within(dialog).getByRole("button", { name: /^join waitlist$/i }));
 
     expect(mocks.joinCloudWaitlist).toHaveBeenCalled();
     expect(onNext).not.toHaveBeenCalled();
@@ -222,25 +199,15 @@ describe("StepPlatformFork", () => {
     await user.click(screen.getByRole("button", { name: /^join waitlist$/i }));
     const dialog = await screen.findByRole("dialog");
     await user.type(within(dialog).getByLabelText(/email/i), "a@b.co");
-    await user.type(
-      within(dialog).getByLabelText(/why cloud/i),
-      "running agents overnight",
-    );
-    await user.click(
-      within(dialog).getByRole("button", { name: /^join waitlist$/i }),
-    );
+    await user.type(within(dialog).getByLabelText(/why cloud/i), "running agents overnight");
+    await user.click(within(dialog).getByRole("button", { name: /^join waitlist$/i }));
 
     expect(mocks.joinCloudWaitlist).toHaveBeenCalledTimes(1);
-    expect(mocks.joinCloudWaitlist).toHaveBeenCalledWith(
-      "a@b.co",
-      "running agents overnight",
-    );
+    expect(mocks.joinCloudWaitlist).toHaveBeenCalledWith("a@b.co", "running agents overnight");
     // Cloud submit is pure side effect — it must NOT advance the flow.
     expect(onNext).not.toHaveBeenCalled();
     // Form button locks out after submit.
-    expect(
-      within(dialog).getByRole("button", { name: /you're on the list/i }),
-    ).toBeDisabled();
+    expect(within(dialog).getByRole("button", { name: /you're on the list/i })).toBeDisabled();
     // Footer hint flips to reflect submitted state.
     expect(
       screen.getByText(/you're on the waitlist — pick skip to keep exploring/i),
@@ -254,18 +221,10 @@ describe("StepPlatformFork", () => {
 
     await user.click(screen.getByRole("button", { name: /^join waitlist$/i }));
     const dialog = await screen.findByRole("dialog");
-    await user.type(
-      within(dialog).getByLabelText(/email/i),
-      "solo@example.com",
-    );
-    await user.click(
-      within(dialog).getByRole("button", { name: /^join waitlist$/i }),
-    );
+    await user.type(within(dialog).getByLabelText(/email/i), "solo@example.com");
+    await user.click(within(dialog).getByRole("button", { name: /^join waitlist$/i }));
 
-    expect(mocks.joinCloudWaitlist).toHaveBeenCalledWith(
-      "solo@example.com",
-      "",
-    );
+    expect(mocks.joinCloudWaitlist).toHaveBeenCalledWith("solo@example.com", "");
   });
 
   it("Cloud submit stays disabled until email is valid", async () => {
@@ -283,10 +242,7 @@ describe("StepPlatformFork", () => {
     expect(submit).toBeDisabled();
 
     await user.clear(within(dialog).getByLabelText(/email/i));
-    await user.type(
-      within(dialog).getByLabelText(/email/i),
-      "someone@example.com",
-    );
+    await user.type(within(dialog).getByLabelText(/email/i), "someone@example.com");
     expect(submit).toBeEnabled();
   });
 });

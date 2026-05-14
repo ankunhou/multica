@@ -1,10 +1,4 @@
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts";
 import {
   ChartContainer,
   ChartTooltip,
@@ -77,18 +71,8 @@ export function DailyCostChart({ data }: { data: DailyCostStackData[] }) {
         {/* Legend is intentionally rendered by the parent (in the chart card
             header, top-right) so the chart body stays clean and gets the full
             vertical real estate. */}
-        <Bar
-          dataKey="input"
-          stackId="cost"
-          fill="var(--color-input)"
-          radius={[0, 0, 0, 0]}
-        />
-        <Bar
-          dataKey="output"
-          stackId="cost"
-          fill="var(--color-output)"
-          radius={[0, 0, 0, 0]}
-        />
+        <Bar dataKey="input" stackId="cost" fill="var(--color-input)" radius={[0, 0, 0, 0]} />
+        <Bar dataKey="output" stackId="cost" fill="var(--color-output)" radius={[0, 0, 0, 0]} />
         <Bar
           dataKey="cacheWrite"
           stackId="cost"

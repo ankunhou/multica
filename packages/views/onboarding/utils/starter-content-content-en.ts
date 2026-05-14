@@ -10,8 +10,7 @@ import type { ImportStarterIssuePayload } from "@multica/core/api";
 
 export const PROJECT = {
   title: "Getting Started",
-  description:
-    "A few things to try in Multica. Work through them at your own pace.",
+  description: "A few things to try in Multica. Work through them at your own pace.",
 };
 
 interface WelcomeIssueText {
@@ -19,10 +18,7 @@ interface WelcomeIssueText {
   description: string;
 }
 
-export function buildWelcomeIssueText(
-  q: QuestionnaireAnswers,
-  userName: string,
-): WelcomeIssueText {
+export function buildWelcomeIssueText(q: QuestionnaireAnswers, userName: string): WelcomeIssueText {
   const name = userName.trim() || "there";
 
   const header = [
@@ -101,9 +97,7 @@ export function buildWelcomeIssueText(
   }
 }
 
-export function buildAgentGuidedSubIssues(
-  q: QuestionnaireAnswers,
-): ImportStarterIssuePayload[] {
+export function buildAgentGuidedSubIssues(q: QuestionnaireAnswers): ImportStarterIssuePayload[] {
   const tier1: ImportStarterIssuePayload[] = [
     {
       status: "todo",
@@ -348,9 +342,7 @@ export function buildAgentGuidedSubIssues(
   return [...tier1, ...tier2, ...tier3];
 }
 
-export function buildSelfServeSubIssues(
-  q: QuestionnaireAnswers,
-): ImportStarterIssuePayload[] {
+export function buildSelfServeSubIssues(q: QuestionnaireAnswers): ImportStarterIssuePayload[] {
   const tier1: ImportStarterIssuePayload[] = [
     {
       status: "todo",

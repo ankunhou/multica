@@ -72,10 +72,7 @@ describe("deriveRuntimeHealth", () => {
   it("treats null last_seen_at as long-offline (about_to_gc)", () => {
     // last_seen_at = null means lastSeen = 0 (epoch), so offlineFor is huge.
     expect(
-      deriveRuntimeHealth(
-        makeRuntime({ status: "offline", last_seen_at: null }),
-        FIXED_NOW,
-      ),
+      deriveRuntimeHealth(makeRuntime({ status: "offline", last_seen_at: null }), FIXED_NOW),
     ).toBe("about_to_gc");
   });
 

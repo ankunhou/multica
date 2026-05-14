@@ -20,10 +20,9 @@ vi.mock("@multica/ui/components/common/theme-provider", () => ({
 }));
 
 vi.mock("@multica/core/i18n/react", async () => {
-  const actual =
-    await vi.importActual<typeof import("@multica/core/i18n/react")>(
-      "@multica/core/i18n/react",
-    );
+  const actual = await vi.importActual<typeof import("@multica/core/i18n/react")>(
+    "@multica/core/i18n/react",
+  );
   return {
     ...actual,
     useLocaleAdapter: () => ({
@@ -43,10 +42,7 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("@multica/core/auth", async () => {
-  const actual =
-    await vi.importActual<typeof import("@multica/core/auth")>(
-      "@multica/core/auth",
-    );
+  const actual = await vi.importActual<typeof import("@multica/core/auth")>("@multica/core/auth");
   const useAuthStore = Object.assign(
     (sel?: (s: { user: typeof userRef.current }) => unknown) =>
       sel ? sel({ user: userRef.current }) : { user: userRef.current },

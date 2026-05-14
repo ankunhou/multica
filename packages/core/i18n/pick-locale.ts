@@ -9,11 +9,7 @@ import {
 export function matchLocale(candidates: string[]): SupportedLocale {
   if (candidates.length === 0) return DEFAULT_LOCALE;
   try {
-    return match(
-      candidates,
-      SUPPORTED_LOCALES,
-      DEFAULT_LOCALE,
-    ) as SupportedLocale;
+    return match(candidates, SUPPORTED_LOCALES, DEFAULT_LOCALE) as SupportedLocale;
   } catch {
     return DEFAULT_LOCALE;
   }

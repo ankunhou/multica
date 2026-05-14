@@ -84,12 +84,7 @@ export function IssuePickerModal({
   );
 
   return (
-    <CommandDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      title={title}
-      description={description}
-    >
+    <CommandDialog open={open} onOpenChange={onOpenChange} title={title} description={description}>
       <Command shouldFilter={false}>
         <CommandInput
           placeholder={t(($) => $.issue_picker.search_placeholder)}

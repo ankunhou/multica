@@ -5,11 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@multica/ui/components/ui/sonner";
 import { cn } from "@multica/ui/lib/utils";
 import { WebProviders } from "@/components/web-providers";
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
-  type SupportedLocale,
-} from "@multica/core/i18n";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from "@multica/core/i18n";
 import { RESOURCES } from "@multica/views/locales";
 import "./globals.css";
 
@@ -110,11 +106,7 @@ const HTML_LANG: Record<SupportedLocale, string> = {
   "zh-Hans": "zh-CN",
 };
 
-export default async function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const h = await headers();
   const locale = localeFromHeader(h.get("x-multica-locale"));
   const resources = { [locale]: RESOURCES[locale] };
@@ -123,7 +115,12 @@ export default async function RootLayout({
     <html
       lang={HTML_LANG[locale]}
       suppressHydrationWarning
-      className={cn("antialiased font-sans h-full", inter.variable, geistMono.variable, sourceSerif.variable)}
+      className={cn(
+        "antialiased font-sans h-full",
+        inter.variable,
+        geistMono.variable,
+        sourceSerif.variable,
+      )}
     >
       <body className="h-full overflow-hidden" suppressHydrationWarning>
         <ThemeProvider>

@@ -231,7 +231,9 @@ describe("SearchCommand", () => {
 
     await waitFor(() => {
       // HighlightText splits text, so use a function matcher
-      expect(screen.getByText((_, el) => el?.textContent === "Settings" && el?.tagName === "SPAN")).toBeInTheDocument();
+      expect(
+        screen.getByText((_, el) => el?.textContent === "Settings" && el?.tagName === "SPAN"),
+      ).toBeInTheDocument();
     });
     expect(screen.queryByText("Inbox")).not.toBeInTheDocument();
   });
@@ -339,8 +341,7 @@ describe("SearchCommand", () => {
     const input2 = screen.getByPlaceholderText("Type a command or search...");
     await user.type(input2, "copy");
     const idItem = await screen.findByText(
-      (_, el) =>
-        el?.textContent === "Copy Identifier (MUL-42)" && el?.tagName === "SPAN",
+      (_, el) => el?.textContent === "Copy Identifier (MUL-42)" && el?.tagName === "SPAN",
     );
     await user.click(idItem);
     expect(mockClipboardWrite).toHaveBeenCalledWith("MUL-42");
@@ -359,7 +360,9 @@ describe("SearchCommand", () => {
     await waitFor(() => {
       expect(screen.getByText("Commands")).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN"),
+        screen.getByText(
+          (_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN",
+        ),
       ).toBeInTheDocument();
     });
     expect(screen.queryByText("Switch to Light Theme")).not.toBeInTheDocument();
@@ -393,13 +396,19 @@ describe("SearchCommand", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Light Theme" && el?.tagName === "SPAN"),
+        screen.getByText(
+          (_, el) => el?.textContent === "Switch to Light Theme" && el?.tagName === "SPAN",
+        ),
       ).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN"),
+        screen.getByText(
+          (_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN",
+        ),
       ).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Use System Theme" && el?.tagName === "SPAN"),
+        screen.getByText(
+          (_, el) => el?.textContent === "Use System Theme" && el?.tagName === "SPAN",
+        ),
       ).toBeInTheDocument();
     });
     expect(screen.getByLabelText("Current theme")).toBeInTheDocument();

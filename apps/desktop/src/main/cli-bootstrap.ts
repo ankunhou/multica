@@ -14,8 +14,7 @@ import { selectPlatformReleaseAssetName } from "./cli-release-asset";
 // same-repo builds, but it can also repair or bootstrap a managed copy in
 // userData on first launch when the bundled binary is missing or unusable.
 
-const GITHUB_LATEST_BASE =
-  "https://github.com/multica-ai/multica/releases/latest/download";
+const GITHUB_LATEST_BASE = "https://github.com/multica-ai/multica/releases/latest/download";
 
 function binaryName(): string {
   return process.platform === "win32" ? "multica.exe" : "multica";
@@ -48,9 +47,7 @@ async function fetchChecksums(): Promise<Map<string, string>> {
   const url = `${GITHUB_LATEST_BASE}/checksums.txt`;
   const res = await fetch(url, { redirect: "follow" });
   if (!res.ok) {
-    throw new Error(
-      `checksums.txt fetch failed: ${res.status} ${res.statusText}`,
-    );
+    throw new Error(`checksums.txt fetch failed: ${res.status} ${res.statusText}`);
   }
   const text = await res.text();
   const map = new Map<string, string>();
@@ -76,9 +73,7 @@ async function verifyChecksum(
 ): Promise<void> {
   const actual = await sha256OfFile(archivePath);
   if (actual.toLowerCase() !== expected) {
-    throw new Error(
-      `checksum mismatch for ${assetName}: expected ${expected}, got ${actual}`,
-    );
+    throw new Error(`checksum mismatch for ${assetName}: expected ${expected}, got ${actual}`);
   }
 }
 
@@ -118,9 +113,7 @@ async function installFresh(): Promise<string> {
 
     const extractedBin = join(workDir, binaryName());
     if (!existsSync(extractedBin)) {
-      throw new Error(
-        `archive ${assetName} did not contain ${binaryName()} at its root`,
-      );
+      throw new Error(`archive ${assetName} did not contain ${binaryName()} at its root`);
     }
 
     await mkdir(dirname(target), { recursive: true });
@@ -148,9 +141,7 @@ async function installFresh(): Promise<string> {
  * the managed userData location, returns it immediately. Otherwise downloads
  * the latest release asset for the current platform and installs it.
  */
-export async function ensureManagedCli(
-  options: { forceInstall?: boolean } = {},
-): Promise<string> {
+export async function ensureManagedCli(options: { forceInstall?: boolean } = {}): Promise<string> {
   const target = managedCliPath();
   if (existsSync(target) && !options.forceInstall) return target;
   return installFresh();

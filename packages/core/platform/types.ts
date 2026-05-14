@@ -1,8 +1,4 @@
-import type {
-  LocaleAdapter,
-  LocaleResources,
-  SupportedLocale,
-} from "../i18n";
+import type { LocaleAdapter, LocaleResources, SupportedLocale } from "../i18n";
 import type { StorageAdapter } from "../types/storage";
 
 /** Identifies the calling client to the server. Threaded through to

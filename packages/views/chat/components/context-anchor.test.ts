@@ -9,9 +9,7 @@ describe("buildAnchorMarkdown", () => {
       label: "MUL-42",
       subtitle: "Fix login redirect",
     });
-    expect(md).toBe(
-      'Context: [MUL-42](mention://issue/uuid-123) — "Fix login redirect"',
-    );
+    expect(md).toBe('Context: [MUL-42](mention://issue/uuid-123) — "Fix login redirect"');
   });
 
   it("omits the subtitle clause when none is provided", () => {

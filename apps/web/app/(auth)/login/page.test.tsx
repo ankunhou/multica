@@ -21,26 +21,21 @@ function createWrapper() {
   );
 }
 
-const {
-  mockSendCode,
-  mockVerifyCode,
-  mockIssueCliToken,
-  searchParamsState,
-  authStateRef,
-} = vi.hoisted(() => ({
-  mockSendCode: vi.fn(),
-  mockVerifyCode: vi.fn(),
-  mockIssueCliToken: vi.fn(),
-  searchParamsState: { params: new URLSearchParams() },
-  authStateRef: {
-    state: {
-      sendCode: vi.fn(),
-      verifyCode: vi.fn(),
-      user: null as null | { id: string; email: string },
-      isLoading: false,
+const { mockSendCode, mockVerifyCode, mockIssueCliToken, searchParamsState, authStateRef } =
+  vi.hoisted(() => ({
+    mockSendCode: vi.fn(),
+    mockVerifyCode: vi.fn(),
+    mockIssueCliToken: vi.fn(),
+    searchParamsState: { params: new URLSearchParams() },
+    authStateRef: {
+      state: {
+        sendCode: vi.fn(),
+        verifyCode: vi.fn(),
+        user: null as null | { id: string; email: string },
+        isLoading: false,
+      },
     },
-  },
-}));
+  }));
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -54,15 +49,11 @@ vi.mock("next/navigation", () => ({
 // sanitizeNextUrl so the redirect-sanitization rules are exercised rather
 // than silently drifting behind a mock reimplementation.
 vi.mock("@multica/core/auth", async () => {
-  const actual =
-    await vi.importActual<typeof import("@multica/core/auth")>(
-      "@multica/core/auth",
-    );
+  const actual = await vi.importActual<typeof import("@multica/core/auth")>("@multica/core/auth");
   authStateRef.state.sendCode = mockSendCode;
   authStateRef.state.verifyCode = mockVerifyCode;
   const useAuthStore = Object.assign(
-    (selector: (s: typeof authStateRef.state) => unknown) =>
-      selector(authStateRef.state),
+    (selector: (s: typeof authStateRef.state) => unknown) => selector(authStateRef.state),
     { getState: () => authStateRef.state },
   );
   return { ...actual, useAuthStore };
@@ -100,9 +91,7 @@ describe("LoginPage", () => {
     expect(screen.getByText("Sign in to Multica")).toBeInTheDocument();
     expect(screen.getByText("Enter your email to get a login code")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Continue" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Continue" })).toBeInTheDocument();
   });
 
   it("does not call sendCode when email is empty", async () => {
@@ -172,15 +161,18 @@ describe("LoginPage", () => {
   it("mints a token and deep-links to Desktop when already logged in with platform=desktop", async () => {
     searchParamsState.params = new URLSearchParams({ platform: "desktop" });
     authStateRef.state.user = { id: "u1", email: "test@multica.ai" };
-    mockIssueCliToken.mockImplementation(() =>
-      Promise.resolve({ token: "handoff-jwt" }),
-    );
+    mockIssueCliToken.mockImplementation(() => Promise.resolve({ token: "handoff-jwt" }));
 
     const hrefSetter = vi.fn();
     const originalLocation = window.location;
     Object.defineProperty(window, "location", {
       configurable: true,
-      value: { ...originalLocation, set href(value: string) { hrefSetter(value); } },
+      value: {
+        ...originalLocation,
+        set href(value: string) {
+          hrefSetter(value);
+        },
+      },
     });
 
     try {
@@ -190,9 +182,7 @@ describe("LoginPage", () => {
         expect(mockIssueCliToken).toHaveBeenCalledTimes(1);
       });
       await waitFor(() => {
-        expect(hrefSetter).toHaveBeenCalledWith(
-          "multica://auth/callback?token=handoff-jwt",
-        );
+        expect(hrefSetter).toHaveBeenCalledWith("multica://auth/callback?token=handoff-jwt");
       });
       expect(
         await screen.findByRole("button", { name: "Open Multica Desktop" }),

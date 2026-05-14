@@ -10,8 +10,10 @@ import pg from "pg";
 // `||` (not `??`) so an empty `NEXT_PUBLIC_API_URL=` in .env still falls
 // back to localhost. dotenv sets unset-vs-empty both as "" — treating them
 // the same matches user intent.
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.PORT || "8080"}`;
-const DATABASE_URL = process.env.DATABASE_URL ?? "postgres://multica:multica@localhost:5432/multica?sslmode=disable";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL || `http://localhost:${process.env.PORT || "8080"}`;
+const DATABASE_URL =
+  process.env.DATABASE_URL ?? "postgres://multica:multica@localhost:5432/multica?sslmode=disable";
 
 interface TestWorkspace {
   id: string;
@@ -78,9 +80,7 @@ export class TestApiClient {
 
       return data;
     } finally {
-      await client
-        .query("SELECT pg_advisory_unlock(hashtext($1))", [email])
-        .catch(() => {});
+      await client.query("SELECT pg_advisory_unlock(hashtext($1))", [email]).catch(() => {});
       await client.end();
     }
   }

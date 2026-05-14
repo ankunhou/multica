@@ -58,8 +58,7 @@ export const landingMetadata = {
   zh: {
     home: {
       title: "Multica - 面向人类与智能体团队的项目管理",
-      description:
-        "开源平台，把编码智能体变成真正的队友。分配任务、跟踪进度、积累 skill。",
+      description: "开源平台，把编码智能体变成真正的队友。分配任务、跟踪进度、积累 skill。",
       ogDescription: "在一个地方管理你的人类 + 智能体团队。",
     },
     homepage: {
@@ -84,11 +83,9 @@ export const landingMetadata = {
     },
     download: {
       title: "下载 Multica",
-      description:
-        "下载 macOS、Windows 或 Linux 版 Multica，或者为服务器和远程开发环境安装 CLI。",
+      description: "下载 macOS、Windows 或 Linux 版 Multica，或者为服务器和远程开发环境安装 CLI。",
       ogTitle: "下载 Multica",
-      ogDescription:
-        "获取内置守护进程的 Multica 桌面应用，或者为服务器和远程开发环境安装 CLI。",
+      ogDescription: "获取内置守护进程的 Multica 桌面应用，或者为服务器和远程开发环境安装 CLI。",
     },
     jsonLdDescription: "开源项目管理平台，把编码智能体变成真正的队友。",
   },

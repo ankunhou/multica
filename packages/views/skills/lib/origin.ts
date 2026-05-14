@@ -15,9 +15,7 @@ export type OriginInfo = {
 };
 
 export function readOrigin(skill: SkillSummary): OriginInfo {
-  const raw = (skill.config?.origin ?? null) as
-    | (OriginInfo & Record<string, unknown>)
-    | null;
+  const raw = (skill.config?.origin ?? null) as (OriginInfo & Record<string, unknown>) | null;
   if (raw?.type === "runtime_local") return raw;
   if (raw?.type === "clawhub") return raw;
   if (raw?.type === "skills_sh") return raw;

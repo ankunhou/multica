@@ -47,12 +47,7 @@ const BASELINE_OPACITY = 0.25;
  * doesn't earn (Tufte data-ink); the tooltip carries "Created N days ago"
  * where it actually matters.
  */
-export function Sparkline({
-  buckets,
-  width,
-  height,
-  className,
-}: SparklineProps) {
+export function Sparkline({ buckets, width, height, className }: SparklineProps) {
   const n = buckets.length;
   if (n === 0) {
     return (
@@ -104,19 +99,13 @@ export function Sparkline({
       {buckets.map((b, i) => {
         if (b.total === 0) return null;
         const x = offsetX + i * (colWidth + gap);
-        const totalH = Math.max(
-          1,
-          Math.round((usableH * b.total) / scaleDenominator),
-        );
+        const totalH = Math.max(1, Math.round((usableH * b.total) / scaleDenominator));
         // 1px floor on the failed segment so a single failure is still
         // visible; clamp by total so 1-of-1 doesn't make the failed
         // segment taller than the column itself.
         const failedH =
           b.failed > 0
-            ? Math.min(
-                totalH,
-                Math.max(1, Math.round((usableH * b.failed) / scaleDenominator)),
-              )
+            ? Math.min(totalH, Math.max(1, Math.round((usableH * b.failed) / scaleDenominator)))
             : 0;
         const successH = totalH - failedH;
         const colTop = baselineY - totalH;
@@ -133,13 +122,7 @@ export function Sparkline({
               />
             )}
             {failedH > 0 && (
-              <rect
-                x={x}
-                y={colTop}
-                width={colWidth}
-                height={failedH}
-                fill={FAILED_FILL}
-              />
+              <rect x={x} y={colTop} width={colWidth} height={failedH} fill={FAILED_FILL} />
             )}
           </g>
         );

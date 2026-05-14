@@ -4,10 +4,7 @@ import { useMemo, useState } from "react";
 import { Cloud, Lock, Monitor } from "lucide-react";
 import type { AgentRuntime, MemberWithUser } from "@multica/core/types";
 import { ActorAvatar } from "../../../common/actor-avatar";
-import {
-  PickerItem,
-  PropertyPicker,
-} from "../../../issues/components/pickers";
+import { PickerItem, PropertyPicker } from "../../../issues/components/pickers";
 import { ProviderLogo } from "../../../runtimes/components/provider-logo";
 import { CHIP_CLASS } from "./chip";
 import { useT } from "../../../i18n";
@@ -104,7 +101,7 @@ export function RuntimePicker({
   const hasOtherRuntimes = runtimes.some((r) => r.owner_id !== currentUserId);
 
   const getOwner = (id: string | null) =>
-    id ? members.find((m) => m.user_id === id) ?? null : null;
+    id ? (members.find((m) => m.user_id === id) ?? null) : null;
 
   const select = async (id: string) => {
     setOpen(false);
@@ -118,13 +115,7 @@ export function RuntimePicker({
       width="w-auto min-w-[18rem] max-w-md"
       align="start"
       tooltip={triggerTitle}
-      triggerRender={
-        <button
-          type="button"
-          className={CHIP_CLASS}
-          aria-label={triggerTitle}
-        />
-      }
+      triggerRender={<button type="button" className={CHIP_CLASS} aria-label={triggerTitle} />}
       trigger={
         <>
           <Icon className="h-3 w-3 shrink-0 text-muted-foreground" />
@@ -142,16 +133,10 @@ export function RuntimePicker({
         hasOtherRuntimes ? (
           <div className="p-2">
             <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
-              <FilterButton
-                active={filter === "mine"}
-                onClick={() => setFilter("mine")}
-              >
+              <FilterButton active={filter === "mine"} onClick={() => setFilter("mine")}>
                 {t(($) => $.scope.mine)}
               </FilterButton>
-              <FilterButton
-                active={filter === "all"}
-                onClick={() => setFilter("all")}
-              >
+              <FilterButton active={filter === "all"} onClick={() => setFilter("all")}>
                 {t(($) => $.scope.all)}
               </FilterButton>
             </div>
@@ -187,15 +172,10 @@ export function RuntimePicker({
               }}
               tooltip={tooltip}
             >
-              <ProviderLogo
-                provider={rt.provider}
-                className="h-4 w-4 shrink-0"
-              />
+              <ProviderLogo provider={rt.provider} className="h-4 w-4 shrink-0" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-1.5">
-                  <span className="truncate text-sm font-medium">
-                    {rt.name}
-                  </span>
+                  <span className="truncate text-sm font-medium">{rt.name}</span>
                   {rt.runtime_mode === "cloud" && (
                     <span className="shrink-0 rounded bg-info/10 px-1 text-[10px] font-medium text-info">
                       {t(($) => $.create_dialog.runtime_cloud_badge)}
@@ -211,21 +191,13 @@ export function RuntimePicker({
                 <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
                   {owner && (
                     <span className="flex min-w-0 items-center gap-1">
-                      <ActorAvatar
-                        actorType="member"
-                        actorId={owner.user_id}
-                        size={12}
-                      />
+                      <ActorAvatar actorType="member" actorId={owner.user_id} size={12} />
                       <span className="truncate">{owner.name}</span>
                     </span>
                   )}
-                  {owner && rt.device_info && (
-                    <span className="text-muted-foreground/40">·</span>
-                  )}
+                  {owner && rt.device_info && <span className="text-muted-foreground/40">·</span>}
                   {rt.device_info && (
-                    <span className="truncate font-mono text-[10px]">
-                      {rt.device_info}
-                    </span>
+                    <span className="truncate font-mono text-[10px]">{rt.device_info}</span>
                   )}
                 </div>
               </div>
@@ -233,7 +205,11 @@ export function RuntimePicker({
                 className={`h-1.5 w-1.5 shrink-0 rounded-full ${
                   rtOnline ? "bg-success" : "bg-muted-foreground/40"
                 }`}
-                aria-label={rtOnline ? t(($) => $.pickers.runtime_online) : t(($) => $.pickers.runtime_offline)}
+                aria-label={
+                  rtOnline
+                    ? t(($) => $.pickers.runtime_online)
+                    : t(($) => $.pickers.runtime_offline)
+                }
               />
             </PickerItem>
           );

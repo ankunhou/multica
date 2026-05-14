@@ -13,23 +13,17 @@ export function ViewStoreProvider({
   store: StoreApi<IssueViewState>;
   children: React.ReactNode;
 }) {
-  return (
-    <ViewStoreContext.Provider value={store}>
-      {children}
-    </ViewStoreContext.Provider>
-  );
+  return <ViewStoreContext.Provider value={store}>{children}</ViewStoreContext.Provider>;
 }
 
 export function useViewStore<T>(selector: (state: IssueViewState) => T): T {
   const store = useContext(ViewStoreContext);
-  if (!store)
-    throw new Error("useViewStore must be used within ViewStoreProvider");
+  if (!store) throw new Error("useViewStore must be used within ViewStoreProvider");
   return useStore(store, selector);
 }
 
 export function useViewStoreApi(): StoreApi<IssueViewState> {
   const store = useContext(ViewStoreContext);
-  if (!store)
-    throw new Error("useViewStoreApi must be used within ViewStoreProvider");
+  if (!store) throw new Error("useViewStoreApi must be used within ViewStoreProvider");
   return store;
 }

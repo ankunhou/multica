@@ -14,11 +14,7 @@ vi.mock("../routes", () => ({
   createTabRouter: createTabRouterMock,
 }));
 
-import {
-  sanitizeTabPath,
-  migrateV1ToV2,
-  useTabStore,
-} from "./tab-store";
+import { sanitizeTabPath, migrateV1ToV2, useTabStore } from "./tab-store";
 
 beforeEach(() => {
   createTabRouterMock.mockClear();
@@ -142,9 +138,7 @@ describe("useTabStore actions", () => {
     store.switchWorkspace("acme", "/acme/issues");
     const s = useTabStore.getState();
     expect(s.byWorkspace.acme.tabs).toHaveLength(2); // no duplicate created
-    const activeTab = s.byWorkspace.acme.tabs.find(
-      (t) => t.id === s.byWorkspace.acme.activeTabId,
-    );
+    const activeTab = s.byWorkspace.acme.tabs.find((t) => t.id === s.byWorkspace.acme.activeTabId);
     expect(activeTab?.path).toBe("/acme/issues");
   });
 
@@ -154,9 +148,7 @@ describe("useTabStore actions", () => {
     store.switchWorkspace("acme", "/acme/issues/bug-42");
     const s = useTabStore.getState();
     expect(s.byWorkspace.acme.tabs).toHaveLength(2);
-    const activeTab = s.byWorkspace.acme.tabs.find(
-      (t) => t.id === s.byWorkspace.acme.activeTabId,
-    );
+    const activeTab = s.byWorkspace.acme.tabs.find((t) => t.id === s.byWorkspace.acme.activeTabId);
     expect(activeTab?.path).toBe("/acme/issues/bug-42");
   });
 

@@ -38,8 +38,7 @@ export function memberListOptions(wsId: string) {
 export function agentListOptions(wsId: string) {
   return queryOptions({
     queryKey: workspaceKeys.agents(wsId),
-    queryFn: () =>
-      api.listAgents({ workspace_id: wsId, include_archived: true }),
+    queryFn: () => api.listAgents({ workspace_id: wsId, include_archived: true }),
   });
 }
 
@@ -70,9 +69,7 @@ export function skillDetailOptions(wsId: string, skillId: string) {
  * which returned a new Map every subscription tick and triggered cascading
  * re-renders on every `agent:updated` WS event.
  */
-export function selectSkillAssignments(
-  agents: Agent[] | undefined,
-): Map<string, Agent[]> {
+export function selectSkillAssignments(agents: Agent[] | undefined): Map<string, Agent[]> {
   const map = new Map<string, Agent[]>();
   if (!agents) return map;
   for (const a of agents) {

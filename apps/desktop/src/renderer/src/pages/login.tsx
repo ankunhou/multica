@@ -17,9 +17,7 @@ export function DesktopLoginPage() {
   const handleGoogleLogin = () => {
     // Open web login page in the default browser with platform=desktop flag.
     // The web callback will redirect back via multica:// deep link with the token.
-    window.desktopAPI.openExternal(
-      `${webUrl}/login?platform=desktop`,
-    );
+    window.desktopAPI.openExternal(`${webUrl}/login?platform=desktop`);
   };
 
   return (

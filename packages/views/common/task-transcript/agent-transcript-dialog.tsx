@@ -20,7 +20,11 @@ import {
 } from "lucide-react";
 import { cn } from "@multica/ui/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@multica/ui/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@multica/ui/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -68,11 +72,23 @@ function getEventColor(item: TimelineItem): EventColor {
 }
 
 const colorClasses: Record<EventColor, { bg: string; bgActive: string; label: string }> = {
-  agent: { bg: "bg-success/60", bgActive: "bg-success", label: "bg-success text-success-foreground" },
+  agent: {
+    bg: "bg-success/60",
+    bgActive: "bg-success",
+    label: "bg-success text-success-foreground",
+  },
   thinking: { bg: "bg-brand/50", bgActive: "bg-brand", label: "bg-brand/15 text-brand" },
   tool: { bg: "bg-info/60", bgActive: "bg-info", label: "bg-info/15 text-info" },
-  result: { bg: "bg-muted-foreground/30", bgActive: "bg-muted-foreground/50", label: "bg-muted text-muted-foreground" },
-  error: { bg: "bg-destructive/60", bgActive: "bg-destructive", label: "bg-destructive/15 text-destructive" },
+  result: {
+    bg: "bg-muted-foreground/30",
+    bgActive: "bg-muted-foreground/50",
+    label: "bg-muted text-muted-foreground",
+  },
+  error: {
+    bg: "bg-destructive/60",
+    bgActive: "bg-destructive",
+    label: "bg-destructive/15 text-destructive",
+  },
 };
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -211,20 +227,28 @@ export function AgentTranscriptDialog({
     let cancelled = false;
 
     if (task.agent_id) {
-      api.getAgent(task.agent_id).then((agent) => {
-        if (!cancelled) setAgentInfo(agent);
-      }).catch(() => {});
+      api
+        .getAgent(task.agent_id)
+        .then((agent) => {
+          if (!cancelled) setAgentInfo(agent);
+        })
+        .catch(() => {});
     }
 
     if (task.runtime_id) {
-      api.listRuntimes().then((runtimes) => {
-        if (cancelled) return;
-        const rt = runtimes.find((r) => r.id === task.runtime_id);
-        if (rt) setRuntimeInfo(rt);
-      }).catch(() => {});
+      api
+        .listRuntimes()
+        .then((runtimes) => {
+          if (cancelled) return;
+          const rt = runtimes.find((r) => r.id === task.runtime_id);
+          if (rt) setRuntimeInfo(rt);
+        })
+        .catch(() => {});
     }
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [open, task.agent_id, task.runtime_id]);
 
   // Elapsed time for live tasks
@@ -373,7 +397,11 @@ export function AgentTranscriptDialog({
                 className="flex items-center gap-1 rounded px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
               >
                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-                {copied ? t(($) => $.transcript.copied) : selectedTools.size > 0 ? t(($) => $.transcript.copy_filtered) : t(($) => $.transcript.copy_all)}
+                {copied
+                  ? t(($) => $.transcript.copied)
+                  : selectedTools.size > 0
+                    ? t(($) => $.transcript.copy_filtered)
+                    : t(($) => $.transcript.copy_all)}
               </button>
               <button
                 onClick={() => onOpenChange(false)}
@@ -396,25 +424,33 @@ export function AgentTranscriptDialog({
             {/* Runtime environment */}
             {runtimeInfo && (
               <MetadataChip
-                icon={runtimeInfo.runtime_mode === "cloud" ? <Cloud className="h-3 w-3" /> : <Monitor className="h-3 w-3" />}
+                icon={
+                  runtimeInfo.runtime_mode === "cloud" ? (
+                    <Cloud className="h-3 w-3" />
+                  ) : (
+                    <Monitor className="h-3 w-3" />
+                  )
+                }
               >
                 {runtimeInfo.name}
-                <span className="text-muted-foreground/60 ml-0.5">({runtimeInfo.runtime_mode})</span>
+                <span className="text-muted-foreground/60 ml-0.5">
+                  ({runtimeInfo.runtime_mode})
+                </span>
               </MetadataChip>
             )}
 
             {/* Agent type / description */}
             {agentInfo?.description && (
               <MetadataChip icon={<Bot className="h-3 w-3" />}>
-                {agentInfo.description.length > 40 ? agentInfo.description.slice(0, 40) + "..." : agentInfo.description}
+                {agentInfo.description.length > 40
+                  ? agentInfo.description.slice(0, 40) + "..."
+                  : agentInfo.description}
               </MetadataChip>
             )}
 
             {/* Duration */}
             {duration && (
-              <MetadataChip icon={<Clock className="h-3 w-3" />}>
-                {duration}
-              </MetadataChip>
+              <MetadataChip icon={<Clock className="h-3 w-3" />}>{duration}</MetadataChip>
             )}
 
             {/* Event counts */}
@@ -423,7 +459,10 @@ export function AgentTranscriptDialog({
             )}
             <MetadataChip>
               {selectedTools.size > 0
-                ? t(($) => $.transcript.events_filtered, { shown: filteredItems.length, total: items.length })
+                ? t(($) => $.transcript.events_filtered, {
+                    shown: filteredItems.length,
+                    total: items.length,
+                  })
                 : t(($) => $.transcript.events, { count: items.length })}
             </MetadataChip>
 
@@ -454,10 +493,7 @@ export function AgentTranscriptDialog({
         )}
 
         {/* ── Event list ─────────────────────────────────────────── */}
-        <div
-          ref={scrollContainerRef}
-          className="flex-1 overflow-y-auto min-h-0"
-        >
+        <div ref={scrollContainerRef} className="flex-1 overflow-y-auto min-h-0">
           {filteredItems.length === 0 ? (
             <div className="flex items-center justify-center h-full text-sm text-muted-foreground">
               {isLive ? (
@@ -533,20 +569,36 @@ function TimelineBar({
     const color = getEventColor(item);
     if (color !== currentColor) {
       if (currentColor !== null) {
-        segments.push({ startIdx: currentStart, endIdx: i - 1, color: currentColor, count: i - currentStart });
+        segments.push({
+          startIdx: currentStart,
+          endIdx: i - 1,
+          color: currentColor,
+          count: i - currentStart,
+        });
       }
       currentColor = color;
       currentStart = i;
     }
   }
   if (currentColor !== null) {
-    segments.push({ startIdx: currentStart, endIdx: items.length - 1, color: currentColor, count: items.length - currentStart });
+    segments.push({
+      startIdx: currentStart,
+      endIdx: items.length - 1,
+      color: currentColor,
+      count: items.length - currentStart,
+    });
   }
 
   return (
-    <div className="flex gap-0.5 h-5 rounded overflow-hidden" role="navigation" aria-label={t(($) => $.transcript.timeline_aria)}>
+    <div
+      className="flex gap-0.5 h-5 rounded overflow-hidden"
+      role="navigation"
+      aria-label={t(($) => $.transcript.timeline_aria)}
+    >
       {segments.map((seg) => {
-        const isSelected = selectedSeq !== null && items.slice(seg.startIdx, seg.endIdx + 1).some((i) => i.seq === selectedSeq);
+        const isSelected =
+          selectedSeq !== null &&
+          items.slice(seg.startIdx, seg.endIdx + 1).some((i) => i.seq === selectedSeq);
         const color = colorClasses[seg.color];
         const widthPercent = (seg.count / items.length) * 100;
 
@@ -565,7 +617,9 @@ function TimelineBar({
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10 pointer-events-none">
               <div className="rounded bg-popover border px-2 py-1 text-[10px] text-popover-foreground shadow-md whitespace-nowrap">
                 {getEventLabel(items[seg.startIdx]!, t)}
-                {seg.count > 1 && <span className="text-muted-foreground ml-1">+{seg.count - 1}</span>}
+                {seg.count > 1 && (
+                  <span className="text-muted-foreground ml-1">+{seg.count - 1}</span>
+                )}
               </div>
             </div>
           </button>
@@ -601,13 +655,7 @@ const TranscriptEventRow = ({
     (item.type === "error" && item.content && item.content.length > 0);
 
   return (
-    <div
-      ref={ref}
-      className={cn(
-        "group transition-colors",
-        isSelected && "bg-accent/50",
-      )}
-    >
+    <div ref={ref} className={cn("group transition-colors", isSelected && "bg-accent/50")}>
       <Collapsible open={expanded} onOpenChange={setExpanded}>
         <div className="flex items-start gap-2 px-4 py-2">
           {/* Type label badge */}

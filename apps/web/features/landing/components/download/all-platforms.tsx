@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  captureDownloadInitiated,
-  type DownloadInitiatedPayload,
-} from "@multica/core/analytics";
+import { captureDownloadInitiated, type DownloadInitiatedPayload } from "@multica/core/analytics";
 import { useLocale } from "../../i18n";
 import type { DetectResult } from "../../utils/os-detect";
 import type { DownloadAssets } from "../../utils/parse-release-assets";
@@ -29,12 +26,7 @@ interface Props {
  * regardless of which platform the Hero resolved to — lets power
  * users grab any build directly.
  */
-export function AllPlatforms({
-  assets,
-  fallbackHref,
-  version,
-  detected,
-}: Props) {
+export function AllPlatforms({ assets, fallbackHref, version, detected }: Props) {
   const { t } = useLocale();
   const d = t.download.allPlatforms;
 
@@ -50,18 +42,12 @@ export function AllPlatforms({
       // True only when the row matches what we guessed client-side.
       // Lets us measure detect accuracy from the miss rate on this
       // event alone (no need to cross-join to download_page_viewed).
-      matched_detect:
-        !!detected &&
-        detected.os === platform &&
-        detected.arch === arch,
+      matched_detect: !!detected && detected.os === platform && detected.arch === arch,
     });
   };
 
   return (
-    <section
-      id="all-platforms"
-      className="bg-white py-20 text-[#0a0d12] sm:py-24"
-    >
+    <section id="all-platforms" className="bg-white py-20 text-[#0a0d12] sm:py-24">
       <div className="mx-auto max-w-[920px] px-4 sm:px-6 lg:px-8">
         <h2 className="font-[family-name:var(--font-serif)] text-[2.2rem] leading-[1.1] tracking-[-0.03em] sm:text-[2.6rem]">
           {d.title}

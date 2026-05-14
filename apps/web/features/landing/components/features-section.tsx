@@ -44,11 +44,7 @@ function MockAvatar({
       className="inline-flex shrink-0 items-center justify-center rounded-full font-medium overflow-hidden bg-muted text-muted-foreground"
       style={{ width: size, height: size, fontSize: size * 0.45 }}
     >
-      {type === "agent" ? (
-        <Bot style={{ width: size * 0.55, height: size * 0.55 }} />
-      ) : (
-        initials
-      )}
+      {type === "agent" ? <Bot style={{ width: size * 0.55, height: size * 0.55 }} /> : initials}
     </div>
   );
 }
@@ -61,9 +57,7 @@ function PropRow({ label, children }: { label: string; children: React.ReactNode
   return (
     <div className="flex min-h-8 items-center gap-2 rounded-md px-2 -mx-2">
       <span className="w-16 shrink-0 text-xs text-muted-foreground">{label}</span>
-      <div className="flex min-w-0 flex-1 items-center gap-1.5 text-xs truncate">
-        {children}
-      </div>
+      <div className="flex min-w-0 flex-1 items-center gap-1.5 text-xs truncate">{children}</div>
     </div>
   );
 }
@@ -87,7 +81,10 @@ const allAssignees: Assignee[] = [
   { type: "agent", id: "tina", name: "Tina-dev" },
 ];
 
-type DemoIssueStatus = Extract<IssueStatus, "backlog" | "todo" | "in_progress" | "in_review" | "done">;
+type DemoIssueStatus = Extract<
+  IssueStatus,
+  "backlog" | "todo" | "in_progress" | "in_review" | "done"
+>;
 
 const statusCycle: DemoIssueStatus[] = ["backlog", "todo", "in_progress", "in_review", "done"];
 const priorityCycle: IssuePriority[] = ["none", "low", "medium", "high", "urgent"];
@@ -175,9 +172,7 @@ function TeammatesVisual() {
           <h3 className="text-lg font-bold leading-snug tracking-tight">
             {copy.common.issueTitle}
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {copy.common.issueDescription}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{copy.common.issueDescription}</p>
 
           <div className="my-4 border-t" />
 
@@ -237,7 +232,10 @@ function TeammatesVisual() {
                   <PropRow label={copy.teammates.status}>
                     <button
                       className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
-                      onClick={() => { setStatusOpen(!statusOpen); setPriorityOpen(false); }}
+                      onClick={() => {
+                        setStatusOpen(!statusOpen);
+                        setPriorityOpen(false);
+                      }}
                     >
                       <StatusIcon status={status} className="h-3.5 w-3.5 shrink-0" />
                       <span>{copy.common.status[status]}</span>
@@ -252,7 +250,10 @@ function TeammatesVisual() {
                             "flex w-full items-center gap-2 px-3 py-1.5 text-xs hover:bg-accent transition-colors",
                             s === status && "bg-accent",
                           )}
-                          onClick={() => { setStatus(s); setStatusOpen(false); }}
+                          onClick={() => {
+                            setStatus(s);
+                            setStatusOpen(false);
+                          }}
                         >
                           <StatusIcon status={s} className="h-3.5 w-3.5 shrink-0" />
                           {copy.common.status[s]}
@@ -268,7 +269,10 @@ function TeammatesVisual() {
                   <PropRow label={copy.teammates.priority}>
                     <button
                       className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
-                      onClick={() => { setPriorityOpen(!priorityOpen); setStatusOpen(false); }}
+                      onClick={() => {
+                        setPriorityOpen(!priorityOpen);
+                        setStatusOpen(false);
+                      }}
                     >
                       <PriorityIcon priority={priority} />
                       <span>{copy.common.priority[priority]}</span>
@@ -283,7 +287,10 @@ function TeammatesVisual() {
                             "flex w-full items-center gap-2 px-3 py-1.5 text-xs hover:bg-accent transition-colors",
                             p === priority && "bg-accent",
                           )}
-                          onClick={() => { setPriority(p); setPriorityOpen(false); }}
+                          onClick={() => {
+                            setPriority(p);
+                            setPriorityOpen(false);
+                          }}
                         >
                           <PriorityIcon priority={p} />
                           {copy.common.priority[p]}
@@ -298,7 +305,11 @@ function TeammatesVisual() {
                 <PropRow label={copy.teammates.assignee}>
                   <button
                     className="flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
-                    onClick={() => { setPickerOpen(!pickerOpen); setStatusOpen(false); setPriorityOpen(false); }}
+                    onClick={() => {
+                      setPickerOpen(!pickerOpen);
+                      setStatusOpen(false);
+                      setPriorityOpen(false);
+                    }}
                   >
                     {assignee.type ? (
                       <>
@@ -325,7 +336,10 @@ function TeammatesVisual() {
                       "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs text-muted-foreground hover:bg-accent transition-colors",
                       !assignee.type && "bg-accent",
                     )}
-                    onClick={() => { setAssignee(allAssignees[0]!); setPickerOpen(false); }}
+                    onClick={() => {
+                      setAssignee(allAssignees[0]!);
+                      setPickerOpen(false);
+                    }}
                   >
                     <UserMinus className="h-3.5 w-3.5" />
                     <span>{copy.teammates.unassigned}</span>
@@ -333,44 +347,58 @@ function TeammatesVisual() {
                   </button>
                 </div>
                 <div className="px-3 py-0.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{copy.teammates.members}</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {copy.teammates.members}
+                  </span>
                 </div>
                 <div className="p-1 pt-0">
-                  {allAssignees.filter((a) => a.type === "member").map((m) => (
-                    <button
-                      key={m.id}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors",
-                        assignee.id === m.id && "bg-accent",
-                      )}
-                      onClick={() => { setAssignee(m); setPickerOpen(false); }}
-                    >
-                      <MockAvatar type="member" initials={m.initials} size={16} />
-                      <span>{m.name}</span>
-                      {assignee.id === m.id && <Check className="ml-auto h-3.5 w-3.5" />}
-                    </button>
-                  ))}
+                  {allAssignees
+                    .filter((a) => a.type === "member")
+                    .map((m) => (
+                      <button
+                        key={m.id}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors",
+                          assignee.id === m.id && "bg-accent",
+                        )}
+                        onClick={() => {
+                          setAssignee(m);
+                          setPickerOpen(false);
+                        }}
+                      >
+                        <MockAvatar type="member" initials={m.initials} size={16} />
+                        <span>{m.name}</span>
+                        {assignee.id === m.id && <Check className="ml-auto h-3.5 w-3.5" />}
+                      </button>
+                    ))}
                 </div>
                 <div className="px-3 py-0.5">
-                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">{copy.teammates.agents}</span>
+                  <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                    {copy.teammates.agents}
+                  </span>
                 </div>
                 <div className="p-1 pt-0">
-                  {allAssignees.filter((a) => a.type === "agent").map((a) => (
-                    <button
-                      key={a.id}
-                      className={cn(
-                        "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors",
-                        assignee.id === a.id && "bg-accent",
-                      )}
-                      onClick={() => { setAssignee(a); setPickerOpen(false); }}
-                    >
-                      <div className="inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-info/10 text-info">
-                        <Bot className="size-2.5" />
-                      </div>
-                      <span>{a.name}</span>
-                      {assignee.id === a.id && <Check className="ml-auto h-3.5 w-3.5" />}
-                    </button>
-                  ))}
+                  {allAssignees
+                    .filter((a) => a.type === "agent")
+                    .map((a) => (
+                      <button
+                        key={a.id}
+                        className={cn(
+                          "flex w-full items-center gap-2 rounded-sm px-2 py-1 text-xs hover:bg-accent transition-colors",
+                          assignee.id === a.id && "bg-accent",
+                        )}
+                        onClick={() => {
+                          setAssignee(a);
+                          setPickerOpen(false);
+                        }}
+                      >
+                        <div className="inline-flex size-4 shrink-0 items-center justify-center rounded-full bg-info/10 text-info">
+                          <Bot className="size-2.5" />
+                        </div>
+                        <span>{a.name}</span>
+                        {assignee.id === a.id && <Check className="ml-auto h-3.5 w-3.5" />}
+                      </button>
+                    ))}
                 </div>
               </div>
             )}
@@ -398,13 +426,29 @@ function AutonomousVisual() {
     { type: "thinking" as const, content: copy.autonomous.toolTimeline.checkingComments },
     { type: "tool_use" as const, tool: "Read", summary: "server/internal/handler/comment.go" },
     { type: "tool_result" as const, preview: copy.autonomous.toolTimeline.commentPreview },
-    { type: "tool_use" as const, tool: "Bash", summary: "go test ./internal/handler/ -run TestErrorResponses" },
+    {
+      type: "tool_use" as const,
+      tool: "Bash",
+      summary: "go test ./internal/handler/ -run TestErrorResponses",
+    },
     { type: "tool_result" as const, preview: copy.autonomous.toolTimeline.testsPassed },
   ];
   const taskHistory = [
-    { status: "completed" as const, title: copy.autonomous.historyItems.setupTypes, duration: "2m 14s" },
-    { status: "completed" as const, title: copy.autonomous.historyItems.migrateIssue, duration: "3m 41s" },
-    { status: "running" as const, title: copy.autonomous.historyItems.migrateComment, duration: "1m 22s" },
+    {
+      status: "completed" as const,
+      title: copy.autonomous.historyItems.setupTypes,
+      duration: "2m 14s",
+    },
+    {
+      status: "completed" as const,
+      title: copy.autonomous.historyItems.migrateIssue,
+      duration: "3m 41s",
+    },
+    {
+      status: "running" as const,
+      title: copy.autonomous.historyItems.migrateComment,
+      duration: "1m 22s",
+    },
   ];
 
   return (
@@ -448,7 +492,12 @@ function AutonomousVisual() {
                     className="flex w-full items-center gap-2 rounded px-2 py-1 text-xs hover:bg-info/5 transition-colors"
                     onClick={() => setExpanded(isExpanded ? null : i)}
                   >
-                    <ChevronRight className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform", isExpanded && "rotate-90")} />
+                    <ChevronRight
+                      className={cn(
+                        "h-3 w-3 shrink-0 text-muted-foreground transition-transform",
+                        isExpanded && "rotate-90",
+                      )}
+                    />
                     <Brain className="h-3 w-3 shrink-0 text-info/60" />
                     <span className="truncate italic text-muted-foreground">{item.content}</span>
                   </button>
@@ -462,7 +511,12 @@ function AutonomousVisual() {
                     className="flex w-full items-center gap-2 rounded px-2 py-1 text-xs hover:bg-info/5 transition-colors"
                     onClick={() => setExpanded(isExpanded ? null : i)}
                   >
-                    <ChevronRight className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform", isExpanded && "rotate-90")} />
+                    <ChevronRight
+                      className={cn(
+                        "h-3 w-3 shrink-0 text-muted-foreground transition-transform",
+                        isExpanded && "rotate-90",
+                      )}
+                    />
                     <span className="shrink-0 font-semibold">{item.tool}</span>
                     <span className="truncate text-muted-foreground">{item.summary}</span>
                   </button>
@@ -476,7 +530,12 @@ function AutonomousVisual() {
                   className="flex w-full items-center gap-2 rounded px-2 py-1 text-xs hover:bg-accent/50 transition-colors"
                   onClick={() => setExpanded(isExpanded ? null : i)}
                 >
-                  <ChevronRight className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform", isExpanded && "rotate-90")} />
+                  <ChevronRight
+                    className={cn(
+                      "h-3 w-3 shrink-0 text-muted-foreground transition-transform",
+                      isExpanded && "rotate-90",
+                    )}
+                  />
                   <span className="shrink-0 text-muted-foreground">{copy.autonomous.result}</span>
                   <span className="truncate text-muted-foreground">{item.preview}</span>
                 </button>
@@ -487,7 +546,9 @@ function AutonomousVisual() {
 
         {/* Task run history */}
         <div className="mt-4">
-          <span className="text-xs font-medium text-muted-foreground">{copy.autonomous.history}</span>
+          <span className="text-xs font-medium text-muted-foreground">
+            {copy.autonomous.history}
+          </span>
           <div className="mt-2 space-y-1.5">
             {taskHistory.map((task, i) => (
               <div key={i} className="flex items-center gap-2 text-xs">
@@ -496,7 +557,9 @@ function AutonomousVisual() {
                 ) : (
                   <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin text-info" />
                 )}
-                <span className={task.status === "running" ? "font-medium" : "text-muted-foreground"}>
+                <span
+                  className={task.status === "running" ? "font-medium" : "text-muted-foreground"}
+                >
                   {task.title}
                 </span>
                 <span className="ml-auto text-muted-foreground tabular-nums">{task.duration}</span>
@@ -558,7 +621,9 @@ function SkillsVisual() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-xs font-medium">{skill.name}</div>
-                  <div className="truncate text-[10px] text-muted-foreground">{skill.description}</div>
+                  <div className="truncate text-[10px] text-muted-foreground">
+                    {skill.description}
+                  </div>
                 </div>
               </button>
             ))}
@@ -571,7 +636,9 @@ function SkillsVisual() {
           <div className="flex items-center gap-2 border-b px-4 py-2.5">
             <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
             <span className="text-sm font-medium">{skills[selectedSkill]?.name}</span>
-            <span className="ml-2 text-xs text-muted-foreground">{skills[selectedSkill]?.description}</span>
+            <span className="ml-2 text-xs text-muted-foreground">
+              {skills[selectedSkill]?.description}
+            </span>
           </div>
 
           {/* File browser */}
@@ -579,7 +646,9 @@ function SkillsVisual() {
             {/* File tree */}
             <div className="w-44 shrink-0 border-r">
               <div className="flex items-center justify-between border-b px-3 py-1.5">
-                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{copy.skills.files}</span>
+                <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  {copy.skills.files}
+                </span>
               </div>
               <div className="py-1">
                 {mockFileTree.map((f) => (
@@ -587,15 +656,28 @@ function SkillsVisual() {
                     key={f.name}
                     className={cn(
                       "flex w-full items-center gap-1.5 py-1 text-xs transition-colors",
-                      selectedFile === f.name && !f.isDir ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
+                      selectedFile === f.name && !f.isDir
+                        ? "bg-accent text-accent-foreground"
+                        : "hover:bg-accent/50",
                     )}
                     style={{ paddingLeft: f.isDir ? f.depth * 12 + 8 : f.depth * 12 + 24 }}
-                    onClick={() => { if (!f.isDir) setSelectedFile(f.name); }}
+                    onClick={() => {
+                      if (!f.isDir) setSelectedFile(f.name);
+                    }}
                   >
                     {f.isDir ? (
                       <>
-                        <ChevronRight className={cn("h-3 w-3 shrink-0 transition-transform", f.open && "rotate-90")} />
-                        {f.open ? <FolderOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" /> : <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />}
+                        <ChevronRight
+                          className={cn(
+                            "h-3 w-3 shrink-0 transition-transform",
+                            f.open && "rotate-90",
+                          )}
+                        />
+                        {f.open ? (
+                          <FolderOpen className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        ) : (
+                          <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                        )}
                       </>
                     ) : f.icon === "md" ? (
                       <FileText className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -641,7 +723,7 @@ function SkillsVisual() {
                   </div>
                 ) : (
                   <pre className="text-xs font-mono text-muted-foreground">
-{`CREATE TABLE IF NOT EXISTS notifications (
+                    {`CREATE TABLE IF NOT EXISTS notifications (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id),
   issue_id UUID REFERENCES issues(id),
@@ -665,21 +747,61 @@ function SkillsVisual() {
 /* ------------------------------------------------------------------ */
 
 const mockRuntimeList = [
-  { name: "MacBook Pro", mode: "local" as const, status: "online" as const, device: "arm64 / macOS 15.2", lastSeen: "Just now" },
-  { name: "Cloud (Anthropic)", mode: "cloud" as const, status: "online" as const, device: "api.anthropic.com", lastSeen: "Just now" },
-  { name: "Linux Server", mode: "local" as const, status: "offline" as const, device: "x86_64 / Ubuntu 24.04", lastSeen: "3h ago" },
+  {
+    name: "MacBook Pro",
+    mode: "local" as const,
+    status: "online" as const,
+    device: "arm64 / macOS 15.2",
+    lastSeen: "Just now",
+  },
+  {
+    name: "Cloud (Anthropic)",
+    mode: "cloud" as const,
+    status: "online" as const,
+    device: "api.anthropic.com",
+    lastSeen: "Just now",
+  },
+  {
+    name: "Linux Server",
+    mode: "local" as const,
+    status: "offline" as const,
+    device: "x86_64 / Ubuntu 24.04",
+    lastSeen: "3h ago",
+  },
 ];
 
 /* Mock usage data — deterministic seed values to avoid SSR/hydration mismatch */
 const USAGE_SEEDS = [
-  [72, 38, 54, 12], [45, 22, 41, 8], [88, 44, 63, 15], [61, 31, 48, 10],
-  [93, 47, 58, 14], [55, 28, 39, 9], [79, 40, 52, 13], [67, 34, 46, 11],
-  [84, 42, 60, 14], [50, 25, 35, 7], [91, 46, 57, 13], [58, 29, 43, 10],
-  [76, 38, 51, 12], [63, 32, 44, 9], [87, 44, 59, 14], [52, 26, 37, 8],
-  [95, 48, 62, 15], [70, 35, 49, 11], [82, 41, 55, 13], [48, 24, 33, 7],
-  [89, 45, 61, 14], [65, 33, 47, 10], [78, 39, 53, 12], [56, 28, 40, 9],
-  [92, 46, 58, 14], [60, 30, 42, 8], [85, 43, 56, 13], [73, 37, 50, 11],
-  [80, 40, 54, 12], [68, 34, 45, 10],
+  [72, 38, 54, 12],
+  [45, 22, 41, 8],
+  [88, 44, 63, 15],
+  [61, 31, 48, 10],
+  [93, 47, 58, 14],
+  [55, 28, 39, 9],
+  [79, 40, 52, 13],
+  [67, 34, 46, 11],
+  [84, 42, 60, 14],
+  [50, 25, 35, 7],
+  [91, 46, 57, 13],
+  [58, 29, 43, 10],
+  [76, 38, 51, 12],
+  [63, 32, 44, 9],
+  [87, 44, 59, 14],
+  [52, 26, 37, 8],
+  [95, 48, 62, 15],
+  [70, 35, 49, 11],
+  [82, 41, 55, 13],
+  [48, 24, 33, 7],
+  [89, 45, 61, 14],
+  [65, 33, 47, 10],
+  [78, 39, 53, 12],
+  [56, 28, 40, 9],
+  [92, 46, 58, 14],
+  [60, 30, 42, 8],
+  [85, 43, 56, 13],
+  [73, 37, 50, 11],
+  [80, 40, 54, 12],
+  [68, 34, 45, 10],
 ];
 const mockUsageData = USAGE_SEEDS.map((s, i) => ({
   date: `2026-03-${String(i + 2).padStart(2, "0")}`,
@@ -688,7 +810,6 @@ const mockUsageData = USAGE_SEEDS.map((s, i) => ({
   cache_read_tokens: s[2]! * 1000,
   cache_write_tokens: s[3]! * 1000,
 }));
-
 
 /* Heatmap color helper — same as real ActivityHeatmap */
 function getHeatmapColor(level: number): string {
@@ -714,9 +835,7 @@ function buildHeatmapCells() {
     const day = d.getDay();
     // Weekends (0=Sun, 6=Sat) get lower activity
     const isWeekend = day === 0 || day === 6;
-    const level = isWeekend
-      ? seed[i % seed.length]! > 2 ? 1 : 0
-      : seed[i % seed.length]!;
+    const level = isWeekend ? (seed[i % seed.length]! > 2 ? 1 : 0) : seed[i % seed.length]!;
     cells.push({ week, day, level, date: d.toISOString().slice(0, 10) });
   }
   return cells;
@@ -740,7 +859,11 @@ function DailyCostBars({ data }: { data: typeof mockUsageData }) {
   const maxCost = Math.max(...costs);
   const chartH = 64;
   return (
-    <svg viewBox={`0 0 ${data.length * 10} ${chartH}`} className="h-[72px] w-full" preserveAspectRatio="none">
+    <svg
+      viewBox={`0 0 ${data.length * 10} ${chartH}`}
+      className="h-[72px] w-full"
+      preserveAspectRatio="none"
+    >
       {costs.map((cost, i) => {
         const h = maxCost > 0 ? (cost / maxCost) * (chartH - 4) : 0;
         return (
@@ -826,8 +949,15 @@ function RuntimesVisual() {
                     <span className="truncate text-xs font-medium">{rt.name}</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className={cn("h-1.5 w-1.5 rounded-full", rt.status === "online" ? "bg-success" : "bg-muted-foreground/40")} />
-                    <span className="text-[10px] text-muted-foreground">{runtimeStatusLabels[rt.status]}</span>
+                    <span
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full",
+                        rt.status === "online" ? "bg-success" : "bg-muted-foreground/40",
+                      )}
+                    />
+                    <span className="text-[10px] text-muted-foreground">
+                      {runtimeStatusLabels[rt.status]}
+                    </span>
                   </div>
                 </div>
               </button>
@@ -848,14 +978,23 @@ function RuntimesVisual() {
             </div>
             <span className="text-sm font-semibold">{mockRuntimeList[selectedRuntime]?.name}</span>
             <div className="flex items-center gap-1.5">
-              <span className={cn("h-1.5 w-1.5 rounded-full", mockRuntimeList[selectedRuntime]?.status === "online" ? "bg-success" : "bg-muted-foreground/40")} />
+              <span
+                className={cn(
+                  "h-1.5 w-1.5 rounded-full",
+                  mockRuntimeList[selectedRuntime]?.status === "online"
+                    ? "bg-success"
+                    : "bg-muted-foreground/40",
+                )}
+              />
               <span className="text-xs text-muted-foreground">
                 {mockRuntimeList[selectedRuntime]?.status
                   ? runtimeStatusLabels[mockRuntimeList[selectedRuntime].status]
                   : ""}
               </span>
             </div>
-            <span className="text-xs text-muted-foreground">{mockRuntimeList[selectedRuntime]?.device}</span>
+            <span className="text-xs text-muted-foreground">
+              {mockRuntimeList[selectedRuntime]?.device}
+            </span>
           </div>
 
           {/* Usage content */}
@@ -899,12 +1038,28 @@ function RuntimesVisual() {
             <div className="grid grid-cols-2 gap-3">
               {/* Activity Heatmap — mirrors real ActivityHeatmap */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">{copy.runtimes.activity}</h4>
+                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">
+                  {copy.runtimes.activity}
+                </h4>
                 <div className="overflow-x-auto">
                   <svg width={svgWidth} height={svgHeight} className="block">
-                    {["", copy.runtimes.weekdays.mon, "", copy.runtimes.weekdays.wed, "", copy.runtimes.weekdays.fri, ""].map((label, i) =>
+                    {[
+                      "",
+                      copy.runtimes.weekdays.mon,
+                      "",
+                      copy.runtimes.weekdays.wed,
+                      "",
+                      copy.runtimes.weekdays.fri,
+                      "",
+                    ].map((label, i) =>
                       label ? (
-                        <text key={i} x={0} y={12 + i * (CELL_SIZE + CELL_GAP) + CELL_SIZE - 2} className="fill-muted-foreground" fontSize={8}>
+                        <text
+                          key={i}
+                          x={0}
+                          y={12 + i * (CELL_SIZE + CELL_GAP) + CELL_SIZE - 2}
+                          className="fill-muted-foreground"
+                          fontSize={8}
+                        >
                           {label}
                         </text>
                       ) : null,
@@ -925,7 +1080,11 @@ function RuntimesVisual() {
                 <div className="mt-1.5 flex items-center justify-end gap-1 text-[9px] text-muted-foreground">
                   <span>{copy.runtimes.less}</span>
                   {[0, 1, 2, 3, 4].map((level) => (
-                    <div key={level} className="h-[8px] w-[8px] rounded-[2px]" style={{ backgroundColor: getHeatmapColor(level) }} />
+                    <div
+                      key={level}
+                      className="h-[8px] w-[8px] rounded-[2px]"
+                      style={{ backgroundColor: getHeatmapColor(level) }}
+                    />
                   ))}
                   <span>{copy.runtimes.more}</span>
                 </div>
@@ -933,10 +1092,14 @@ function RuntimesVisual() {
 
               {/* Daily Cost — SVG bar chart mirroring real DailyCostChart */}
               <div className="rounded-lg border p-3">
-                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">{copy.runtimes.dailyCost}</h4>
+                <h4 className="text-[10px] font-medium text-muted-foreground mb-2">
+                  {copy.runtimes.dailyCost}
+                </h4>
                 <DailyCostBars data={mockUsageData.slice(-14)} />
                 <div className="mt-1.5 flex justify-between text-[8px] text-muted-foreground">
-                  <span>{copy.runtimes.dateMar18}</span><span>{copy.runtimes.dateMar25}</span><span>{copy.runtimes.dateMar31}</span>
+                  <span>{copy.runtimes.dateMar18}</span>
+                  <span>{copy.runtimes.dateMar25}</span>
+                  <span>{copy.runtimes.dateMar31}</span>
                 </div>
               </div>
             </div>
@@ -950,7 +1113,12 @@ function RuntimesVisual() {
 function buildFeatures(t: LandingDict) {
   const keys = ["teammates", "autonomous", "skills", "runtimes"] as const;
   const visuals = [TeammatesVisual, AutonomousVisual, SkillsVisual, RuntimesVisual];
-  const bgImages = [undefined, "/images/feature-bg-2.jpg", "/images/feature-bg-3.jpg", "/images/feature-bg-4.jpg"];
+  const bgImages = [
+    undefined,
+    "/images/feature-bg-2.jpg",
+    "/images/feature-bg-3.jpg",
+    "/images/feature-bg-4.jpg",
+  ];
 
   return keys.map((key, i) => ({
     ...t.features[key],

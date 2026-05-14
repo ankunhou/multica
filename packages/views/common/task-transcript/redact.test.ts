@@ -9,7 +9,9 @@ describe("redactSecrets", () => {
   });
 
   it("redacts AWS secret key", () => {
-    const result = redactSecrets("aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY");
+    const result = redactSecrets(
+      "aws_secret_access_key = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
+    );
     expect(result).not.toContain("wJalrXUtnFEMI");
   });
 
@@ -43,7 +45,9 @@ describe("redactSecrets", () => {
   });
 
   it("redacts JWT tokens", () => {
-    const result = redactSecrets("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c");
+    const result = redactSecrets(
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    );
     expect(result).not.toContain("eyJhbGci");
     expect(result).toContain("[REDACTED JWT]");
   });
@@ -68,7 +72,9 @@ describe("redactSecrets", () => {
   });
 
   it("redacts multiple secrets in one string", () => {
-    const result = redactSecrets("AKIAIOSFODNN7EXAMPLE and ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn");
+    const result = redactSecrets(
+      "AKIAIOSFODNN7EXAMPLE and ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmn",
+    );
     expect(result).not.toContain("AKIAIOSFODNN7EXAMPLE");
     expect(result).not.toContain("ghp_");
   });

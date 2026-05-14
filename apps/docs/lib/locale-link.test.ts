@@ -8,12 +8,8 @@ describe("prefixLocale", () => {
   });
 
   it("preserves anchors and query strings on prefixed paths", () => {
-    expect(prefixLocale("/providers#claude-code", "zh")).toBe(
-      "/zh/providers#claude-code",
-    );
-    expect(prefixLocale("/agents?from=docs", "zh")).toBe(
-      "/zh/agents?from=docs",
-    );
+    expect(prefixLocale("/providers#claude-code", "zh")).toBe("/zh/providers#claude-code");
+    expect(prefixLocale("/agents?from=docs", "zh")).toBe("/zh/agents?from=docs");
   });
 
   it("rewrites the bare root path to the locale root", () => {
@@ -31,12 +27,8 @@ describe("prefixLocale", () => {
   });
 
   it("leaves external URLs alone", () => {
-    expect(prefixLocale("https://multica.ai/download", "zh")).toBe(
-      "https://multica.ai/download",
-    );
-    expect(prefixLocale("mailto:hello@multica.ai", "zh")).toBe(
-      "mailto:hello@multica.ai",
-    );
+    expect(prefixLocale("https://multica.ai/download", "zh")).toBe("https://multica.ai/download");
+    expect(prefixLocale("mailto:hello@multica.ai", "zh")).toBe("mailto:hello@multica.ai");
     expect(prefixLocale("tel:+1234567890", "zh")).toBe("tel:+1234567890");
   });
 

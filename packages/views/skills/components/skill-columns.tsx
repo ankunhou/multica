@@ -1,26 +1,10 @@
 "use client";
 
-import {
-  ChevronRight,
-  Download,
-  FileText,
-  HardDrive,
-  Lock,
-  Pencil,
-} from "lucide-react";
+import { ChevronRight, Download, FileText, HardDrive, Lock, Pencil } from "lucide-react";
 import type { ColumnDef } from "@tanstack/react-table";
-import type {
-  Agent,
-  AgentRuntime,
-  MemberWithUser,
-  SkillSummary,
-} from "@multica/core/types";
+import type { Agent, AgentRuntime, MemberWithUser, SkillSummary } from "@multica/core/types";
 import { ActorAvatar } from "@multica/ui/components/common/actor-avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { readOrigin, totalFileCount } from "../lib/origin";
 import { useT } from "../../i18n";
 import { useDateTimeFormatters } from "../../i18n/date-time";
@@ -116,13 +100,9 @@ function SkillNameCell({ row }: { row: SkillRow }) {
         {!canEdit && (
           <Tooltip>
             <TooltipTrigger
-              render={
-                <Lock className="h-3 w-3 shrink-0 text-muted-foreground/60" />
-              }
+              render={<Lock className="h-3 w-3 shrink-0 text-muted-foreground/60" />}
             />
-            <TooltipContent>
-              {t(($) => $.table.lock_tooltip)}
-            </TooltipContent>
+            <TooltipContent>{t(($) => $.table.lock_tooltip)}</TooltipContent>
           </Tooltip>
         )}
         <span className="inline-flex shrink-0 items-center gap-0.5 font-mono text-xs text-muted-foreground/70">
@@ -132,9 +112,7 @@ function SkillNameCell({ row }: { row: SkillRow }) {
       </div>
       <div
         className={`mt-0.5 max-w-xl truncate text-xs ${
-          skill.description
-            ? "text-muted-foreground"
-            : "italic text-muted-foreground/50"
+          skill.description ? "text-muted-foreground" : "italic text-muted-foreground/50"
         }`}
       >
         {skill.description || t(($) => $.table.no_description)}

@@ -6,7 +6,10 @@ import { ChevronRight, ListTodo } from "lucide-react";
 import type { IssueStatus } from "@multica/core/types";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
-import { useIssueViewStore, useClearFiltersOnWorkspaceChange } from "@multica/core/issues/stores/view-store";
+import {
+  useIssueViewStore,
+  useClearFiltersOnWorkspaceChange,
+} from "@multica/core/issues/stores/view-store";
 import { useIssuesScopeStore } from "@multica/core/issues/stores/issues-scope-store";
 import { ViewStoreProvider } from "@multica/core/issues/stores/view-store-context";
 import { filterIssues } from "../utils/filter";
@@ -50,16 +53,34 @@ export function IssuesPage() {
 
   // Scope pre-filter: narrow by assignee type
   const scopedIssues = useMemo(() => {
-    if (scope === "members")
-      return allIssues.filter((i) => i.assignee_type === "member");
-    if (scope === "agents")
-      return allIssues.filter((i) => i.assignee_type === "agent");
+    if (scope === "members") return allIssues.filter((i) => i.assignee_type === "member");
+    if (scope === "agents") return allIssues.filter((i) => i.assignee_type === "agent");
     return allIssues;
   }, [allIssues, scope]);
 
   const issues = useMemo(
-    () => filterIssues(scopedIssues, { statusFilters, priorityFilters, assigneeFilters, includeNoAssignee, creatorFilters, projectFilters, includeNoProject, labelFilters }),
-    [scopedIssues, statusFilters, priorityFilters, assigneeFilters, includeNoAssignee, creatorFilters, projectFilters, includeNoProject, labelFilters],
+    () =>
+      filterIssues(scopedIssues, {
+        statusFilters,
+        priorityFilters,
+        assigneeFilters,
+        includeNoAssignee,
+        creatorFilters,
+        projectFilters,
+        includeNoProject,
+        labelFilters,
+      }),
+    [
+      scopedIssues,
+      statusFilters,
+      priorityFilters,
+      assigneeFilters,
+      includeNoAssignee,
+      creatorFilters,
+      projectFilters,
+      includeNoProject,
+      labelFilters,
+    ],
   );
 
   // Fetch sub-issue progress from the backend so counts are accurate
@@ -67,8 +88,7 @@ export function IssuesPage() {
   const { data: childProgressMap = new Map() } = useQuery(childIssueProgressOptions(wsId));
 
   const visibleStatuses = useMemo(() => {
-    if (statusFilters.length > 0)
-      return BOARD_STATUSES.filter((s) => statusFilters.includes(s));
+    if (statusFilters.length > 0) return BOARD_STATUSES.filter((s) => statusFilters.includes(s));
     return BOARD_STATUSES;
   }, [statusFilters]);
 
@@ -166,7 +186,11 @@ export function IssuesPage() {
                 childProgressMap={childProgressMap}
               />
             ) : (
-              <ListView issues={issues} visibleStatuses={visibleStatuses} childProgressMap={childProgressMap} />
+              <ListView
+                issues={issues}
+                visibleStatuses={visibleStatuses}
+                childProgressMap={childProgressMap}
+              />
             )}
           </div>
         )}

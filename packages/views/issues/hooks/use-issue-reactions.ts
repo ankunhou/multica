@@ -3,12 +3,12 @@
 import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient, useMutationState } from "@tanstack/react-query";
 import type { IssueReaction } from "@multica/core/types";
-import type {
-  IssueReactionAddedPayload,
-  IssueReactionRemovedPayload,
-} from "@multica/core/types";
+import type { IssueReactionAddedPayload, IssueReactionRemovedPayload } from "@multica/core/types";
 import { issueReactionsOptions, issueKeys } from "@multica/core/issues/queries";
-import { useToggleIssueReaction, type ToggleIssueReactionVars } from "@multica/core/issues/mutations";
+import {
+  useToggleIssueReaction,
+  type ToggleIssueReactionVars,
+} from "@multica/core/issues/mutations";
 import { useWSEvent, useWSReconnect } from "@multica/core/realtime";
 
 export function useIssueReactions(issueId: string, userId?: string) {
@@ -34,14 +34,11 @@ export function useIssueReactions(issueId: string, userId?: string) {
       (payload: unknown) => {
         const { reaction, issue_id } = payload as IssueReactionAddedPayload;
         if (issue_id !== issueId) return;
-        qc.setQueryData<IssueReaction[]>(
-          issueKeys.reactions(issueId),
-          (old) => {
-            if (!old) return old;
-            if (old.some((r) => r.id === reaction.id)) return old;
-            return [...old, reaction];
-          },
-        );
+        qc.setQueryData<IssueReaction[]>(issueKeys.reactions(issueId), (old) => {
+          if (!old) return old;
+          if (old.some((r) => r.id === reaction.id)) return old;
+          return [...old, reaction];
+        });
       },
       [qc, issueId],
     ),
@@ -53,17 +50,11 @@ export function useIssueReactions(issueId: string, userId?: string) {
       (payload: unknown) => {
         const p = payload as IssueReactionRemovedPayload;
         if (p.issue_id !== issueId) return;
-        qc.setQueryData<IssueReaction[]>(
-          issueKeys.reactions(issueId),
-          (old) =>
-            old?.filter(
-              (r) =>
-                !(
-                  r.emoji === p.emoji &&
-                  r.actor_type === p.actor_type &&
-                  r.actor_id === p.actor_id
-                ),
-            ),
+        qc.setQueryData<IssueReaction[]>(issueKeys.reactions(issueId), (old) =>
+          old?.filter(
+            (r) =>
+              !(r.emoji === p.emoji && r.actor_type === p.actor_type && r.actor_id === p.actor_id),
+          ),
         );
       },
       [qc, issueId],
@@ -79,8 +70,7 @@ export function useIssueReactions(issueId: string, userId?: string) {
       mutationKey: ["toggleIssueReaction", issueId],
       status: "pending",
     },
-    select: (m) =>
-      m.state.variables as ToggleIssueReactionVars | undefined,
+    select: (m) => m.state.variables as ToggleIssueReactionVars | undefined,
   });
 
   const reactions = useMemo(() => {
@@ -95,10 +85,7 @@ export function useIssueReactions(issueId: string, userId?: string) {
       } else {
         // Pending add — skip if server already has it (WS arrived first)
         const alreadyExists = result.some(
-          (r) =>
-            r.emoji === vars.emoji &&
-            r.actor_type === "member" &&
-            r.actor_id === userId,
+          (r) => r.emoji === vars.emoji && r.actor_type === "member" && r.actor_id === userId,
         );
         if (!alreadyExists) {
           result = [
@@ -124,10 +111,7 @@ export function useIssueReactions(issueId: string, userId?: string) {
     async (emoji: string) => {
       if (!userId) return;
       const existing = serverReactions.find(
-        (r) =>
-          r.emoji === emoji &&
-          r.actor_type === "member" &&
-          r.actor_id === userId,
+        (r) => r.emoji === emoji && r.actor_type === "member" && r.actor_id === userId,
       );
       toggleMutation.mutate({ emoji, existing });
     },

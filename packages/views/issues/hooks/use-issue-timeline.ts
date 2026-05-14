@@ -1,16 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback, useMemo } from "react";
-import {
-  useQuery,
-  useQueryClient,
-  useMutationState,
-} from "@tanstack/react-query";
-import type {
-  Comment,
-  TimelineEntry,
-  Reaction,
-} from "@multica/core/types";
+import { useQuery, useQueryClient, useMutationState } from "@tanstack/react-query";
+import type { Comment, TimelineEntry, Reaction } from "@multica/core/types";
 import type {
   CommentCreatedPayload,
   CommentUpdatedPayload,
@@ -21,10 +13,7 @@ import type {
   ReactionAddedPayload,
   ReactionRemovedPayload,
 } from "@multica/core/types";
-import {
-  issueTimelineOptions,
-  issueKeys,
-} from "@multica/core/issues/queries";
+import { issueTimelineOptions, issueKeys } from "@multica/core/issues/queries";
 import {
   useCreateComment,
   useUpdateComment,
@@ -114,9 +103,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
         const { comment } = payload as CommentUpdatedPayload;
         if (comment.issue_id !== issueId) return;
         qc.setQueryData<TLCache>(issueKeys.timeline(issueId), (old) =>
-          old?.map((e) =>
-            e.id === comment.id ? commentToTimelineEntry(comment) : e,
-          ),
+          old?.map((e) => (e.id === comment.id ? commentToTimelineEntry(comment) : e)),
         );
       },
       [qc, issueId],
@@ -136,9 +123,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
         const { comment } = payload as CommentResolvedPayload;
         if (comment.issue_id !== issueId) return;
         qc.setQueryData<TLCache>(issueKeys.timeline(issueId), (old) =>
-          old?.map((e) =>
-            e.id === comment.id ? commentToTimelineEntry(comment) : e,
-          ),
+          old?.map((e) => (e.id === comment.id ? commentToTimelineEntry(comment) : e)),
         );
       },
       [qc, issueId],
@@ -152,9 +137,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
         const { comment } = payload as CommentUnresolvedPayload;
         if (comment.issue_id !== issueId) return;
         qc.setQueryData<TLCache>(issueKeys.timeline(issueId), (old) =>
-          old?.map((e) =>
-            e.id === comment.id ? commentToTimelineEntry(comment) : e,
-          ),
+          old?.map((e) => (e.id === comment.id ? commentToTimelineEntry(comment) : e)),
         );
       },
       [qc, issueId],
@@ -176,11 +159,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
           while (changed) {
             changed = false;
             for (const e of old) {
-              if (
-                e.parent_id &&
-                idsToRemove.has(e.parent_id) &&
-                !idsToRemove.has(e.id)
-              ) {
+              if (e.parent_id && idsToRemove.has(e.parent_id) && !idsToRemove.has(e.id)) {
                 idsToRemove.add(e.id);
                 changed = true;
               }
@@ -337,17 +316,14 @@ export function useIssueTimeline(issueId: string, userId?: string) {
       mutationKey: ["toggleCommentReaction", issueId],
       status: "pending",
     },
-    select: (m) =>
-      m.state.variables as ToggleCommentReactionVars | undefined,
+    select: (m) => m.state.variables as ToggleCommentReactionVars | undefined,
   });
 
   const optimisticTimeline = useMemo(() => {
     if (pendingReactionVars.length === 0) return timeline;
 
     return timeline.map((entry) => {
-      const pendingForEntry = pendingReactionVars.filter(
-        (v) => v && v.commentId === entry.id,
-      );
+      const pendingForEntry = pendingReactionVars.filter((v) => v && v.commentId === entry.id);
       if (pendingForEntry.length === 0) return entry;
 
       let reactions = entry.reactions ?? [];
@@ -357,10 +333,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
           reactions = reactions.filter((r) => r.id !== vars.existing!.id);
         } else {
           const alreadyExists = reactions.some(
-            (r) =>
-              r.emoji === vars.emoji &&
-              r.actor_type === "member" &&
-              r.actor_id === userId,
+            (r) => r.emoji === vars.emoji && r.actor_type === "member" && r.actor_id === userId,
           );
           if (!alreadyExists) {
             reactions = [
@@ -395,10 +368,7 @@ export function useIssueTimeline(issueId: string, userId?: string) {
       if (!userId) return;
       const entry = timelineRef.current.find((e) => e.id === commentId);
       const existing: Reaction | undefined = (entry?.reactions ?? []).find(
-        (r) =>
-          r.emoji === emoji &&
-          r.actor_type === "member" &&
-          r.actor_id === userId,
+        (r) => r.emoji === emoji && r.actor_type === "member" && r.actor_id === userId,
       );
       toggleCommentReaction({ commentId, emoji, existing });
     },

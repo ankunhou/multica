@@ -22,28 +22,55 @@ import {
 import { PageHeader } from "../../layout/page-header";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { Button } from "@multica/ui/components/ui/button";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@multica/ui/components/ui/resizable";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@multica/ui/components/ui/resizable";
 import { Sheet, SheetContent } from "@multica/ui/components/ui/sheet";
 import { useIsMobile } from "@multica/ui/hooks/use-mobile";
-import { ContentEditor, type ContentEditorRef, TitleEditor, useFileDropZone, FileDropOverlay } from "../../editor";
-import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+  ContentEditor,
+  type ContentEditorRef,
+  TitleEditor,
+  useFileDropZone,
+  FileDropOverlay,
+} from "../../editor";
+import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Checkbox } from "@multica/ui/components/ui/checkbox";
-import { Command, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem } from "@multica/ui/components/ui/command";
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@multica/ui/components/ui/command";
 import { AvatarGroup, AvatarGroupCount } from "@multica/ui/components/ui/avatar";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { PropRow } from "../../common/prop-row";
 import { SidebarSection } from "../../common/sidebar-section";
-import type { Issue, IssueStatus, IssuePriority, TimelineEntry, UpdateIssueRequest } from "@multica/core/types";
+import type {
+  Issue,
+  IssueStatus,
+  IssuePriority,
+  TimelineEntry,
+  UpdateIssueRequest,
+} from "@multica/core/types";
 import { STATUS_CONFIG, PRIORITY_CONFIG } from "@multica/core/issues/config";
 import { useUpdateIssue } from "@multica/core/issues/mutations";
 import { toast } from "sonner";
-import { StatusIcon, PriorityIcon, StatusPicker, PriorityPicker, DueDatePicker, AssigneePicker, LabelPicker } from ".";
+import {
+  StatusIcon,
+  PriorityIcon,
+  StatusPicker,
+  PriorityPicker,
+  DueDatePicker,
+  AssigneePicker,
+  LabelPicker,
+} from ".";
 import { IssueActionsDropdown, useIssueActions } from "../actions";
 import { ProjectPicker } from "../../projects/components/project-picker";
 import { CommentCard } from "./comment-card";
@@ -58,7 +85,13 @@ import { useAuthStore } from "@multica/core/auth";
 import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
 import { useActorName } from "@multica/core/workspace/hooks";
 import { useWorkspaceId } from "@multica/core/hooks";
-import { issueListOptions, issueDetailOptions, childIssuesOptions, issueUsageOptions, issueAttachmentsOptions } from "@multica/core/issues/queries";
+import {
+  issueListOptions,
+  issueDetailOptions,
+  childIssuesOptions,
+  issueUsageOptions,
+  issueAttachmentsOptions,
+} from "@multica/core/issues/queries";
 import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
 import { useRecentIssuesStore } from "@multica/core/issues/stores";
 import { useIssueSelectionStore } from "@multica/core/issues/stores/selection-store";
@@ -114,9 +147,10 @@ function formatActivity(
     case "assignee_changed": {
       const isSelfAssign = details.to_type === entry.actor_type && details.to_id === entry.actor_id;
       if (isSelfAssign) return t(($) => $.activity.self_assigned);
-      const toName = details.to_id && details.to_type && resolveActorName
-        ? resolveActorName(details.to_type, details.to_id)
-        : null;
+      const toName =
+        details.to_id && details.to_type && resolveActorName
+          ? resolveActorName(details.to_type, details.to_id)
+          : null;
       if (toName) return t(($) => $.activity.assigned_to, { name: toName });
       if (details.from_id && !details.to_id) return t(($) => $.activity.removed_assignee);
       return t(($) => $.activity.changed_assignee);
@@ -141,7 +175,6 @@ function formatActivity(
       return entry.action ?? "";
   }
 }
-
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -280,12 +313,7 @@ function SubIssueRow({ child }: { child: Issue }) {
         status={child.status}
         onUpdate={handleUpdate}
         align="start"
-        trigger={
-          <StatusIcon
-            status={child.status}
-            className="h-[15px] w-[15px] shrink-0"
-          />
-        }
+        trigger={<StatusIcon status={child.status} className="h-[15px] w-[15px] shrink-0" />}
       />
       <AppLink
         href={paths.issueDetail(child.id)}
@@ -297,9 +325,7 @@ function SubIssueRow({ child }: { child: Issue }) {
         <span
           className={cn(
             "text-sm truncate flex-1",
-            isDone
-              ? "text-muted-foreground"
-              : "group-hover/row:text-foreground",
+            isDone ? "text-muted-foreground" : "group-hover/row:text-foreground",
           )}
         >
           {child.title}
@@ -349,7 +375,14 @@ interface IssueDetailProps {
 // IssueDetail
 // ---------------------------------------------------------------------------
 
-export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = true, layoutId = "multica_issue_detail_layout", highlightCommentId }: IssueDetailProps) {
+export function IssueDetail({
+  issueId,
+  onDelete,
+  onDone,
+  defaultSidebarOpen = true,
+  layoutId = "multica_issue_detail_layout",
+  highlightCommentId,
+}: IssueDetailProps) {
   const { t } = useT("issues");
   const { shortDate, relativeTime, dateTime } = useDateTimeFormatters();
   const id = issueId;
@@ -365,10 +398,8 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   // Workspace owners and admins moderate any comment authored by anyone
   // (mirrors backend `comment.go:507-512`). Computed here so per-comment
   // rendering doesn't have to re-derive it for every row.
-  const currentUserRole =
-    members.find((m) => m.user_id === user?.id)?.role ?? null;
-  const canModerateComments =
-    currentUserRole === "owner" || currentUserRole === "admin";
+  const currentUserRole = members.find((m) => m.user_id === user?.id)?.role ?? null;
+  const canModerateComments = currentUserRole === "owner" || currentUserRole === "admin";
   const { data: allIssues = [] } = useQuery(issueListOptions(wsId));
   const { getActorName } = useActorName();
   const { uploadWithToast } = useFileUpload(api);
@@ -451,12 +482,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       firedDeleteCallbackRef.current = false;
       return;
     }
-    if (
-      hadIssueRef.current &&
-      !issueLoading &&
-      !firedDeleteCallbackRef.current &&
-      onDelete
-    ) {
+    if (hadIssueRef.current && !issueLoading && !firedDeleteCallbackRef.current && onDelete) {
       firedDeleteCallbackRef.current = true;
       onDelete();
     }
@@ -464,9 +490,14 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
 
   // Custom hooks — encapsulate timeline, reactions, subscribers
   const {
-    timeline, loading: timelineLoading,
-    submitComment, submitReply,
-    editComment, deleteComment, toggleResolveComment, toggleReaction: handleToggleReaction,
+    timeline,
+    loading: timelineLoading,
+    submitComment,
+    submitReply,
+    editComment,
+    deleteComment,
+    toggleResolveComment,
+    toggleReaction: handleToggleReaction,
   } = useIssueTimeline(id, user?.id);
 
   // Resolve / unresolve must always clear the per-session expand entry so
@@ -497,9 +528,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     // bucketed under their parent's id and rendered nested inside CommentCard.
     // No orphan rescue needed: the timeline is fetched in full, so every
     // reply's parent is always in the same array.
-    const topLevel = timeline.filter(
-      (e) => e.type === "activity" || !e.parent_id,
-    );
+    const topLevel = timeline.filter((e) => e.type === "activity" || !e.parent_id);
     const repliesByParent = new Map<string, TimelineEntry[]>();
     for (const e of timeline) {
       if (e.type === "comment" && e.parent_id) {
@@ -540,9 +569,13 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           prev.actor_type === entry.actor_type &&
           prev.actor_id === entry.actor_id &&
           (NO_TIME_LIMIT_ACTIONS.has(entry.action!) ||
-            Math.abs(new Date(entry.created_at).getTime() - new Date(prev.created_at).getTime()) <= COALESCE_MS)
+            Math.abs(new Date(entry.created_at).getTime() - new Date(prev.created_at).getTime()) <=
+              COALESCE_MS)
         ) {
-          coalesced[coalesced.length - 1] = { ...entry, coalesced_count: (prev.coalesced_count ?? 1) + 1 };
+          coalesced[coalesced.length - 1] = {
+            ...entry,
+            coalesced_count: (prev.coalesced_count ?? 1) + 1,
+          };
           continue;
         }
       }
@@ -601,13 +634,14 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     return items.findIndex((it) => it.id === rootId);
   }, [items, highlightCommentId, replyToRoot]);
 
-  const {
-    reactions: issueReactions,
-    toggleReaction: handleToggleIssueReaction,
-  } = useIssueReactions(id, user?.id);
+  const { reactions: issueReactions, toggleReaction: handleToggleIssueReaction } =
+    useIssueReactions(id, user?.id);
 
   const {
-    subscribers, isSubscribed, toggleSubscribe: handleToggleSubscribe, toggleSubscriber,
+    subscribers,
+    isSubscribed,
+    toggleSubscribe: handleToggleSubscribe,
+    toggleSubscriber,
   } = useIssueSubscribers(id, user?.id);
 
   // Token usage
@@ -651,9 +685,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   }, [id, clearSelection]);
 
   const childIssueIds = useMemo(() => childIssues.map((c) => c.id), [childIssues]);
-  const childSelectedCount = childIssueIds.filter((cid) =>
-    selectedIds.has(cid),
-  ).length;
+  const childSelectedCount = childIssueIds.filter((cid) => selectedIds.has(cid)).length;
   const allChildrenSelected =
     childIssueIds.length > 0 && childSelectedCount === childIssueIds.length;
   const someChildrenSelected = childSelectedCount > 0;
@@ -683,11 +715,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
     if (didHighlightRef.current === highlightCommentId) return;
 
     const rootId = replyToRoot.get(highlightCommentId);
-    if (
-      rootId &&
-      rootId !== highlightCommentId &&
-      items[targetIdx]?.kind === "resolved-bar"
-    ) {
+    if (rootId && rootId !== highlightCommentId && items[targetIdx]?.kind === "resolved-bar") {
       toggleResolvedExpand(rootId, true);
       return;
     }
@@ -716,9 +744,12 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       if (sessionStorage.getItem(flagKey)) return;
       e.preventDefault();
       sessionStorage.setItem(flagKey, "1");
-      toast.message(t(($) => $.detail.cmdf_toast_title), {
-        description: t(($) => $.detail.cmdf_toast_description),
-      });
+      toast.message(
+        t(($) => $.detail.cmdf_toast_title),
+        {
+          description: t(($) => $.detail.cmdf_toast_description),
+        },
+      );
     };
     document.addEventListener("keydown", handler);
     return () => document.removeEventListener("keydown", handler);
@@ -825,24 +856,29 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
         onOpenChange={setPropertiesOpen}
         contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
       >
-          <PropRow label={t(($) => $.detail.prop_status)}>
-            <StatusPicker status={issue.status} onUpdate={handleUpdateField} align="start" />
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_priority)}>
-            <PriorityPicker priority={issue.priority} onUpdate={handleUpdateField} align="start" />
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_assignee)}>
-            <AssigneePicker assigneeType={issue.assignee_type} assigneeId={issue.assignee_id} onUpdate={handleUpdateField} align="start" />
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_due_date)}>
-            <DueDatePicker dueDate={issue.due_date} onUpdate={handleUpdateField} />
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_project)}>
-            <ProjectPicker projectId={issue.project_id} onUpdate={handleUpdateField} />
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_labels)}>
-            <LabelPicker issueId={issue.id} align="start" />
-          </PropRow>
+        <PropRow label={t(($) => $.detail.prop_status)}>
+          <StatusPicker status={issue.status} onUpdate={handleUpdateField} align="start" />
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_priority)}>
+          <PriorityPicker priority={issue.priority} onUpdate={handleUpdateField} align="start" />
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_assignee)}>
+          <AssigneePicker
+            assigneeType={issue.assignee_type}
+            assigneeId={issue.assignee_id}
+            onUpdate={handleUpdateField}
+            align="start"
+          />
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_due_date)}>
+          <DueDatePicker dueDate={issue.due_date} onUpdate={handleUpdateField} />
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_project)}>
+          <ProjectPicker projectId={issue.project_id} onUpdate={handleUpdateField} />
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_labels)}>
+          <LabelPicker issueId={issue.id} align="start" />
+        </PropRow>
       </SidebarSection>
 
       {/* Parent issue */}
@@ -853,14 +889,14 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           onOpenChange={setParentIssueOpen}
           contentClassName="pl-2"
         >
-            <AppLink
-              href={paths.issueDetail(parentIssue.id)}
-              className="flex items-center gap-1.5 rounded-md px-2 py-1.5 -mx-2 text-xs hover:bg-accent/50 transition-colors group"
-            >
-              <StatusIcon status={parentIssue.status} className="h-3.5 w-3.5 shrink-0" />
-              <span className="text-muted-foreground shrink-0">{parentIssue.identifier}</span>
-              <span className="truncate group-hover:text-foreground">{parentIssue.title}</span>
-            </AppLink>
+          <AppLink
+            href={paths.issueDetail(parentIssue.id)}
+            className="flex items-center gap-1.5 rounded-md px-2 py-1.5 -mx-2 text-xs hover:bg-accent/50 transition-colors group"
+          >
+            <StatusIcon status={parentIssue.status} className="h-3.5 w-3.5 shrink-0" />
+            <span className="text-muted-foreground shrink-0">{parentIssue.identifier}</span>
+            <span className="truncate group-hover:text-foreground">{parentIssue.title}</span>
+          </AppLink>
         </SidebarSection>
       )}
 
@@ -881,16 +917,23 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
         onOpenChange={setDetailsOpen}
         contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
       >
-          <PropRow label={t(($) => $.detail.prop_created_by)}>
-            <ActorAvatar actorType={issue.creator_type} actorId={issue.creator_id} size={18} enableHoverCard />
-            <span className="cursor-pointer truncate">{getActorName(issue.creator_type, issue.creator_id)}</span>
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_created)}>
-            <span className="text-muted-foreground">{shortDate(issue.created_at)}</span>
-          </PropRow>
-          <PropRow label={t(($) => $.detail.prop_updated)}>
-            <span className="text-muted-foreground">{shortDate(issue.updated_at)}</span>
-          </PropRow>
+        <PropRow label={t(($) => $.detail.prop_created_by)}>
+          <ActorAvatar
+            actorType={issue.creator_type}
+            actorId={issue.creator_id}
+            size={18}
+            enableHoverCard
+          />
+          <span className="cursor-pointer truncate">
+            {getActorName(issue.creator_type, issue.creator_id)}
+          </span>
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_created)}>
+          <span className="text-muted-foreground">{shortDate(issue.created_at)}</span>
+        </PropRow>
+        <PropRow label={t(($) => $.detail.prop_updated)}>
+          <span className="text-muted-foreground">{shortDate(issue.updated_at)}</span>
+        </PropRow>
       </SidebarSection>
 
       {/* Execution log — active runs + collapsed past runs. Self-contained;
@@ -907,10 +950,14 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
           contentClassName="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5 pl-2"
         >
           <PropRow label={t(($) => $.detail.prop_input)}>
-            <span className="text-muted-foreground">{formatTokenCount(usage.total_input_tokens)}</span>
+            <span className="text-muted-foreground">
+              {formatTokenCount(usage.total_input_tokens)}
+            </span>
           </PropRow>
           <PropRow label={t(($) => $.detail.prop_output)}>
-            <span className="text-muted-foreground">{formatTokenCount(usage.total_output_tokens)}</span>
+            <span className="text-muted-foreground">
+              {formatTokenCount(usage.total_output_tokens)}
+            </span>
           </PropRow>
           {(usage.total_cache_read_tokens > 0 || usage.total_cache_write_tokens > 0) && (
             <PropRow label={t(($) => $.detail.prop_cache)}>
@@ -977,23 +1024,31 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
 
           let leadIcon: React.ReactNode;
           if (isStatusChange && details.to) {
-            leadIcon = <StatusIcon status={details.to as IssueStatus} className="h-4 w-4 shrink-0" />;
+            leadIcon = (
+              <StatusIcon status={details.to as IssueStatus} className="h-4 w-4 shrink-0" />
+            );
           } else if (isPriorityChange && details.to) {
-            leadIcon = <PriorityIcon priority={details.to as IssuePriority} className="h-4 w-4 shrink-0" />;
+            leadIcon = (
+              <PriorityIcon priority={details.to as IssuePriority} className="h-4 w-4 shrink-0" />
+            );
           } else if (isDueDateChange) {
             leadIcon = <Calendar className="h-4 w-4 shrink-0 text-muted-foreground" />;
           } else {
-            leadIcon = <ActorAvatar actorType={entry.actor_type} actorId={entry.actor_id} size={16} />;
+            leadIcon = (
+              <ActorAvatar actorType={entry.actor_type} actorId={entry.actor_id} size={16} />
+            );
           }
 
           return (
             <div key={entry.id} className="flex items-center text-xs text-muted-foreground">
-              <div className="mr-2 flex w-4 shrink-0 justify-center">
-                {leadIcon}
-              </div>
+              <div className="mr-2 flex w-4 shrink-0 justify-center">{leadIcon}</div>
               <div className="flex min-w-0 flex-1 items-center gap-1">
-                <span className="shrink-0 font-medium">{getActorName(entry.actor_type, entry.actor_id)}</span>
-                <span className="truncate">{formatActivity(entry, t, getActorName, shortDate)}</span>
+                <span className="shrink-0 font-medium">
+                  {getActorName(entry.actor_type, entry.actor_id)}
+                </span>
+                <span className="truncate">
+                  {formatActivity(entry, t, getActorName, shortDate)}
+                </span>
                 {(entry.coalesced_count ?? 1) > 1 &&
                   entry.action !== "task_completed" &&
                   entry.action !== "task_failed" && (
@@ -1009,9 +1064,7 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
                       </span>
                     }
                   />
-                  <TooltipContent side="top">
-                    {dateTime(entry.created_at)}
-                  </TooltipContent>
+                  <TooltipContent side="top">{dateTime(entry.created_at)}</TooltipContent>
                 </Tooltip>
               </div>
             </div>
@@ -1023,121 +1076,121 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
 
   const detailContent = (
     <div className="flex h-full min-w-0 flex-1 flex-col">
-        <PageHeader className="gap-2 bg-background text-sm">
-          <div className="flex flex-1 items-center gap-1.5 min-w-0">
-            {workspace && (
-              <>
-                <AppLink
-                  href={paths.issues()}
-                  className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
-                >
-                  {workspace.name}
-                </AppLink>
-                <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-              </>
-            )}
-            {parentIssue && (
-              <>
-                <AppLink
-                  href={paths.issueDetail(parentIssue.id)}
-                  className="text-muted-foreground hover:text-foreground transition-colors truncate shrink-0"
-                >
-                  {parentIssue.identifier}
-                </AppLink>
-                <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
-              </>
-            )}
-            <span className="text-muted-foreground tabular-nums shrink-0">
-              {issue.identifier}
-            </span>
-            <span className="truncate font-medium text-foreground">
-              {issue.title}
-            </span>
-          </div>
-          <div className="flex items-center gap-1 shrink-0">
-            {onDone && issue.status !== "done" && issue.status !== "cancelled" && (
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground"
-                      onClick={() => { handleUpdateField({ status: "done" }); onDone?.(); }}
-                    >
-                      <CircleCheck />
-                    </Button>
-                  }
-                />
-                <TooltipContent side="bottom">{t(($) => $.detail.mark_done_tooltip)}</TooltipContent>
-              </Tooltip>
-            )}
-            {onDone && issue.status === "done" && (
-              <Tooltip>
-                <TooltipTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground"
-                      onClick={() => { onDone(); }}
-                    >
-                      <Archive />
-                    </Button>
-                  }
-                />
-                <TooltipContent side="bottom">{t(($) => $.detail.archive_tooltip)}</TooltipContent>
-              </Tooltip>
-            )}
+      <PageHeader className="gap-2 bg-background text-sm">
+        <div className="flex flex-1 items-center gap-1.5 min-w-0">
+          {workspace && (
+            <>
+              <AppLink
+                href={paths.issues()}
+                className="text-muted-foreground hover:text-foreground transition-colors shrink-0"
+              >
+                {workspace.name}
+              </AppLink>
+              <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+            </>
+          )}
+          {parentIssue && (
+            <>
+              <AppLink
+                href={paths.issueDetail(parentIssue.id)}
+                className="text-muted-foreground hover:text-foreground transition-colors truncate shrink-0"
+              >
+                {parentIssue.identifier}
+              </AppLink>
+              <ChevronRight className="h-3 w-3 text-muted-foreground/50 shrink-0" />
+            </>
+          )}
+          <span className="text-muted-foreground tabular-nums shrink-0">{issue.identifier}</span>
+          <span className="truncate font-medium text-foreground">{issue.title}</span>
+        </div>
+        <div className="flex items-center gap-1 shrink-0">
+          {onDone && issue.status !== "done" && issue.status !== "cancelled" && (
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
                     variant="ghost"
                     size="icon-sm"
-                    className={cn("text-muted-foreground", actions.isPinned && "text-foreground")}
-                    onClick={actions.togglePin}
+                    className="text-muted-foreground"
+                    onClick={() => {
+                      handleUpdateField({ status: "done" });
+                      onDone?.();
+                    }}
                   >
-                    {actions.isPinned ? <PinOff /> : <Pin />}
+                    <CircleCheck />
                   </Button>
                 }
               />
-              <TooltipContent side="bottom">{actions.isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}</TooltipContent>
+              <TooltipContent side="bottom">{t(($) => $.detail.mark_done_tooltip)}</TooltipContent>
             </Tooltip>
-            <IssueActionsDropdown
-              issue={issue}
-              align="end"
-              // When a parent passes `onDelete`, we detect deletion via effect
-              // above and skip navigation. Otherwise the modal navigates for us.
-              onDeletedNavigateTo={onDelete ? undefined : paths.issues()}
-              trigger={
-                <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
-                  <MoreHorizontal />
-                </Button>
-              }
-            />
+          )}
+          {onDone && issue.status === "done" && (
             <Tooltip>
               <TooltipTrigger
                 render={
                   <Button
-                    variant={sidebarOpen ? "secondary" : "ghost"}
+                    variant="ghost"
                     size="icon-sm"
-                    className={sidebarOpen ? "" : "text-muted-foreground"}
-                    onClick={handleToggleSidebar}
+                    className="text-muted-foreground"
+                    onClick={() => {
+                      onDone();
+                    }}
                   >
-                    <PanelRight />
+                    <Archive />
                   </Button>
                 }
               />
-              <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
+              <TooltipContent side="bottom">{t(($) => $.detail.archive_tooltip)}</TooltipContent>
             </Tooltip>
-          </div>
-        </PageHeader>
+          )}
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className={cn("text-muted-foreground", actions.isPinned && "text-foreground")}
+                  onClick={actions.togglePin}
+                >
+                  {actions.isPinned ? <PinOff /> : <Pin />}
+                </Button>
+              }
+            />
+            <TooltipContent side="bottom">
+              {actions.isPinned ? t(($) => $.detail.unpin_tooltip) : t(($) => $.detail.pin_tooltip)}
+            </TooltipContent>
+          </Tooltip>
+          <IssueActionsDropdown
+            issue={issue}
+            align="end"
+            // When a parent passes `onDelete`, we detect deletion via effect
+            // above and skip navigation. Otherwise the modal navigates for us.
+            onDeletedNavigateTo={onDelete ? undefined : paths.issues()}
+            trigger={
+              <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
+                <MoreHorizontal />
+              </Button>
+            }
+          />
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant={sidebarOpen ? "secondary" : "ghost"}
+                  size="icon-sm"
+                  className={sidebarOpen ? "" : "text-muted-foreground"}
+                  onClick={handleToggleSidebar}
+                >
+                  <PanelRight />
+                </Button>
+              }
+            />
+            <TooltipContent side="bottom">{t(($) => $.detail.sidebar_tooltip)}</TooltipContent>
+          </Tooltip>
+        </div>
+      </PageHeader>
 
-        <div
-          ref={setScrollContainerEl}
-          className="relative flex-1 overflow-y-auto"
-        >
+      <div ref={setScrollContainerEl} className="relative flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-4xl px-8 py-8">
           <TitleEditor
             key={`title-${id}`}
@@ -1161,17 +1214,18 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
               <span className="truncate group-hover/parent:text-foreground">
                 {parentIssue.title}
               </span>
-              {parentChildIssues.length > 0 && (() => {
-                const done = parentChildIssues.filter((c) => c.status === "done").length;
-                return (
-                  <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-muted/60 px-1.5 py-0.5 shrink-0">
-                    <ProgressRing done={done} total={parentChildIssues.length} size={11} />
-                    <span className="tabular-nums text-[10.5px] font-medium">
-                      {done}/{parentChildIssues.length}
+              {parentChildIssues.length > 0 &&
+                (() => {
+                  const done = parentChildIssues.filter((c) => c.status === "done").length;
+                  return (
+                    <span className="ml-1 inline-flex items-center gap-1 rounded-full bg-muted/60 px-1.5 py-0.5 shrink-0">
+                      <ProgressRing done={done} total={parentChildIssues.length} size={11} />
+                      <span className="tabular-nums text-[10.5px] font-medium">
+                        {done}/{parentChildIssues.length}
+                      </span>
                     </span>
-                  </span>
-                );
-              })()}
+                  );
+                })()}
             </AppLink>
           )}
 
@@ -1216,78 +1270,81 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
               </button>
             </div>
           )}
-          {childIssues.length > 0 && (() => {
-            const doneCount = childIssues.filter((c) => c.status === "done").length;
-            return (
-              <div className="mt-10 group/sub-issues">
-                {/* Header */}
-                <div className="flex items-center gap-2 mb-2">
-                  <button
-                    type="button"
-                    onClick={() => setSubIssuesCollapsed((v) => !v)}
-                    className="flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
-                  >
-                    <ChevronDown
+          {childIssues.length > 0 &&
+            (() => {
+              const doneCount = childIssues.filter((c) => c.status === "done").length;
+              return (
+                <div className="mt-10 group/sub-issues">
+                  {/* Header */}
+                  <div className="flex items-center gap-2 mb-2">
+                    <button
+                      type="button"
+                      onClick={() => setSubIssuesCollapsed((v) => !v)}
+                      className="flex items-center gap-1.5 text-sm font-medium text-foreground hover:text-foreground/80 transition-colors"
+                    >
+                      <ChevronDown
+                        className={cn(
+                          "h-3.5 w-3.5 text-muted-foreground transition-transform",
+                          subIssuesCollapsed && "-rotate-90",
+                        )}
+                      />
+                      <span>{t(($) => $.detail.sub_issues_label)}</span>
+                    </button>
+                    <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/60 px-2 py-0.5">
+                      <ProgressRing done={doneCount} total={childIssues.length} size={11} />
+                      <span className="text-[11px] text-muted-foreground tabular-nums font-medium">
+                        {doneCount}/{childIssues.length}
+                      </span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={allChildrenSelected}
+                      ref={(el) => {
+                        if (el) el.indeterminate = someChildrenSelected && !allChildrenSelected;
+                      }}
+                      onChange={handleToggleSelectAllChildren}
+                      aria-label={t(($) => $.detail.select_all_sub_issues_aria)}
                       className={cn(
-                        "h-3.5 w-3.5 text-muted-foreground transition-transform",
-                        subIssuesCollapsed && "-rotate-90",
+                        "ml-1 cursor-pointer accent-primary transition-opacity",
+                        someChildrenSelected
+                          ? "opacity-100"
+                          : "opacity-0 group-hover/sub-issues:opacity-100 focus-visible:opacity-100",
                       )}
                     />
-                    <span>{t(($) => $.detail.sub_issues_label)}</span>
-                  </button>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-muted/60 px-2 py-0.5">
-                    <ProgressRing done={doneCount} total={childIssues.length} size={11} />
-                    <span className="text-[11px] text-muted-foreground tabular-nums font-medium">
-                      {doneCount}/{childIssues.length}
-                    </span>
+                    <Tooltip>
+                      <TooltipTrigger
+                        render={
+                          <button
+                            type="button"
+                            className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                            onClick={() => actions.openCreateSubIssue()}
+                            aria-label={t(($) => $.detail.add_sub_issue_aria)}
+                          >
+                            <Plus className="h-4 w-4" />
+                          </button>
+                        }
+                      />
+                      <TooltipContent side="bottom">
+                        {t(($) => $.detail.add_sub_issue_tooltip)}
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
-                  <input
-                    type="checkbox"
-                    checked={allChildrenSelected}
-                    ref={(el) => {
-                      if (el) el.indeterminate = someChildrenSelected && !allChildrenSelected;
-                    }}
-                    onChange={handleToggleSelectAllChildren}
-                    aria-label={t(($) => $.detail.select_all_sub_issues_aria)}
-                    className={cn(
-                      "ml-1 cursor-pointer accent-primary transition-opacity",
-                      someChildrenSelected
-                        ? "opacity-100"
-                        : "opacity-0 group-hover/sub-issues:opacity-100 focus-visible:opacity-100",
-                    )}
-                  />
-                  <Tooltip>
-                    <TooltipTrigger
-                      render={
-                        <button
-                          type="button"
-                          className="ml-auto inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-                          onClick={() => actions.openCreateSubIssue()}
-                          aria-label={t(($) => $.detail.add_sub_issue_aria)}
-                        >
-                          <Plus className="h-4 w-4" />
-                        </button>
-                      }
-                    />
-                    <TooltipContent side="bottom">{t(($) => $.detail.add_sub_issue_tooltip)}</TooltipContent>
-                  </Tooltip>
-                </div>
 
-                {/* Inline batch toolbar — appears next to the rows when
+                  {/* Inline batch toolbar — appears next to the rows when
                     selections exist, instead of as a far-away fixed bar. */}
-                <BatchActionToolbar placement="inline" />
+                  <BatchActionToolbar placement="inline" />
 
-                {/* List */}
-                {!subIssuesCollapsed && (
-                  <div className="overflow-hidden rounded-lg border bg-card/30 divide-y divide-border/60">
-                    {childIssues.map((child) => (
-                      <SubIssueRow key={child.id} child={child} />
-                    ))}
-                  </div>
-                )}
-              </div>
-            );
-          })()}
+                  {/* List */}
+                  {!subIssuesCollapsed && (
+                    <div className="overflow-hidden rounded-lg border bg-card/30 divide-y divide-border/60">
+                      {childIssues.map((child) => (
+                        <SubIssueRow key={child.id} child={child} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
           <div className="my-8 border-t" />
 
@@ -1329,47 +1386,62 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
                   </PopoverTrigger>
                   <PopoverContent align="end" className="w-64 p-0">
                     <Command>
-                      <CommandInput placeholder={t(($) => $.detail.change_subscribers_placeholder)} />
+                      <CommandInput
+                        placeholder={t(($) => $.detail.change_subscribers_placeholder)}
+                      />
                       <CommandList className="max-h-64">
                         <CommandEmpty>{t(($) => $.detail.no_subscribers_results)}</CommandEmpty>
                         {members.length > 0 && (
                           <CommandGroup heading={t(($) => $.detail.members_group)}>
-                            {members.filter((m, i, arr) => arr.findIndex((x) => x.user_id === m.user_id) === i).map((m) => {
-                              const sub = subscribers.find((s) => s.user_type === "member" && s.user_id === m.user_id);
-                              const isSubbed = !!sub;
-                              return (
-                                <CommandItem
-                                  key={`member-${m.user_id}`}
-                                  onSelect={() => toggleSubscriber(m.user_id, "member", isSubbed)}
-                                  className="flex items-center gap-2.5"
-                                >
-                                  <Checkbox checked={isSubbed} className="pointer-events-none" />
-                                  <ActorAvatar actorType="member" actorId={m.user_id} size={22} />
-                                  <span className="truncate flex-1">{m.name}</span>
-
-                                </CommandItem>
-                              );
-                            })}
+                            {members
+                              .filter(
+                                (m, i, arr) => arr.findIndex((x) => x.user_id === m.user_id) === i,
+                              )
+                              .map((m) => {
+                                const sub = subscribers.find(
+                                  (s) => s.user_type === "member" && s.user_id === m.user_id,
+                                );
+                                const isSubbed = !!sub;
+                                return (
+                                  <CommandItem
+                                    key={`member-${m.user_id}`}
+                                    onSelect={() => toggleSubscriber(m.user_id, "member", isSubbed)}
+                                    className="flex items-center gap-2.5"
+                                  >
+                                    <Checkbox checked={isSubbed} className="pointer-events-none" />
+                                    <ActorAvatar actorType="member" actorId={m.user_id} size={22} />
+                                    <span className="truncate flex-1">{m.name}</span>
+                                  </CommandItem>
+                                );
+                              })}
                           </CommandGroup>
                         )}
                         {agents.filter((a) => !a.archived_at).length > 0 && (
                           <CommandGroup heading={t(($) => $.detail.agents_group)}>
-                            {agents.filter((a) => !a.archived_at).map((a) => {
-                              const sub = subscribers.find((s) => s.user_type === "agent" && s.user_id === a.id);
-                              const isSubbed = !!sub;
-                              return (
-                                <CommandItem
-                                  key={`agent-${a.id}`}
-                                  onSelect={() => toggleSubscriber(a.id, "agent", isSubbed)}
-                                  className="flex items-center gap-2.5"
-                                >
-                                  <Checkbox checked={isSubbed} className="pointer-events-none" />
-                                  <ActorAvatar actorType="agent" actorId={a.id} size={22} showStatusDot />
-                                  <span className="truncate flex-1">{a.name}</span>
-
-                                </CommandItem>
-                              );
-                            })}
+                            {agents
+                              .filter((a) => !a.archived_at)
+                              .map((a) => {
+                                const sub = subscribers.find(
+                                  (s) => s.user_type === "agent" && s.user_id === a.id,
+                                );
+                                const isSubbed = !!sub;
+                                return (
+                                  <CommandItem
+                                    key={`agent-${a.id}`}
+                                    onSelect={() => toggleSubscriber(a.id, "agent", isSubbed)}
+                                    className="flex items-center gap-2.5"
+                                  >
+                                    <Checkbox checked={isSubbed} className="pointer-events-none" />
+                                    <ActorAvatar
+                                      actorType="agent"
+                                      actorId={a.id}
+                                      size={22}
+                                      showStatusDot
+                                    />
+                                    <span className="truncate flex-1">{a.name}</span>
+                                  </CommandItem>
+                                );
+                              })}
                           </CommandGroup>
                         )}
                       </CommandList>
@@ -1399,55 +1471,51 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
                 miscomputes total-height on first paint. */}
             {timelineLoading && timelineView.groups.length === 0 ? (
               <TimelineSkeleton />
-            ) : (
-              // Two render modes:
-              //   - `highlightCommentId` set (came from inbox deep-link) →
-              //     render flat. Every comment mounts, every height is real,
-              //     the target id is in the DOM the instant the useEffect
-              //     above runs `scrollIntoView`. No virtualization estimate
-              //     errors, no spacer reflow drift. Pays cold-mount cost
-              //     proportional to items.length (markdown + lowlight per
-              //     comment), which is acceptable in the deep-link case —
-              //     the user has explicit intent to land on a specific item.
-              //   - otherwise → Virtuoso. Browsing mode, virtualization
-              //     wins on first-paint perf for long timelines.
-              //
-              // The split is deliberate: virtualization and "land precisely
-              // on a target" have fundamentally opposed contracts (estimated
-              // heights vs real heights). Trying to satisfy both in one
-              // path is what produced the bug history this PR closes.
-              !highlightCommentId ? (
-                !scrollContainerEl ? (
-                  // Skeleton while the callback ref populates so the gap
-                  // between IssueDetail mount and Virtuoso mount doesn't
-                  // flash empty.
-                  <TimelineSkeleton />
-                ) : (
-                  <div className="mt-4">
-                    <Virtuoso
-                      key={`${wsId}:${id}`}
-                      customScrollParent={scrollContainerEl}
-                      data={items}
-                      increaseViewportBy={{ top: 800, bottom: 800 }}
-                      computeItemKey={(_i, item) => `${item.kind}:${item.id}`}
-                      skipAnimationFrameInResizeObserver
-                      // followOutput intentionally NOT set. Virtuoso treats
-                      // it as a sticky "is at bottom" flag and resets
-                      // scrollTop to maxScrollTop on every height-change
-                      // tick — issue-detail is document-shaped, not chat.
-                      itemContent={renderItem}
-                    />
-                  </div>
-                )
+            ) : // Two render modes:
+            //   - `highlightCommentId` set (came from inbox deep-link) →
+            //     render flat. Every comment mounts, every height is real,
+            //     the target id is in the DOM the instant the useEffect
+            //     above runs `scrollIntoView`. No virtualization estimate
+            //     errors, no spacer reflow drift. Pays cold-mount cost
+            //     proportional to items.length (markdown + lowlight per
+            //     comment), which is acceptable in the deep-link case —
+            //     the user has explicit intent to land on a specific item.
+            //   - otherwise → Virtuoso. Browsing mode, virtualization
+            //     wins on first-paint perf for long timelines.
+            //
+            // The split is deliberate: virtualization and "land precisely
+            // on a target" have fundamentally opposed contracts (estimated
+            // heights vs real heights). Trying to satisfy both in one
+            // path is what produced the bug history this PR closes.
+            !highlightCommentId ? (
+              !scrollContainerEl ? (
+                // Skeleton while the callback ref populates so the gap
+                // between IssueDetail mount and Virtuoso mount doesn't
+                // flash empty.
+                <TimelineSkeleton />
               ) : (
                 <div className="mt-4">
-                  {items.map((item, i) => (
-                    <Fragment key={`${item.kind}:${item.id}`}>
-                      {renderItem(i, item)}
-                    </Fragment>
-                  ))}
+                  <Virtuoso
+                    key={`${wsId}:${id}`}
+                    customScrollParent={scrollContainerEl}
+                    data={items}
+                    increaseViewportBy={{ top: 800, bottom: 800 }}
+                    computeItemKey={(_i, item) => `${item.kind}:${item.id}`}
+                    skipAnimationFrameInResizeObserver
+                    // followOutput intentionally NOT set. Virtuoso treats
+                    // it as a sticky "is at bottom" flag and resets
+                    // scrollTop to maxScrollTop on every height-change
+                    // tick — issue-detail is document-shaped, not chat.
+                    itemContent={renderItem}
+                  />
                 </div>
               )
+            ) : (
+              <div className="mt-4">
+                {items.map((item, i) => (
+                  <Fragment key={`${item.kind}:${item.id}`}>{renderItem(i, item)}</Fragment>
+                ))}
+              </div>
             )}
 
             {/* Bottom comment input — no avatar, full width */}
@@ -1461,8 +1529,8 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
             </div>
           </div>
         </div>
-        </div>
       </div>
+    </div>
   );
 
   if (isMobile) {
@@ -1470,7 +1538,11 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
       <div className="flex flex-1 min-h-0">
         {detailContent}
         <Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
-          <SheetContent side="right" showCloseButton={false} className="w-[320px] overflow-y-auto p-4">
+          <SheetContent
+            side="right"
+            showCloseButton={false}
+            className="w-[320px] overflow-y-auto p-4"
+          >
             {sidebarContent}
           </SheetContent>
         </Sheet>
@@ -1479,7 +1551,12 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
   }
 
   return (
-    <ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0" defaultLayout={defaultLayout} onLayoutChanged={onLayoutChanged}>
+    <ResizablePanelGroup
+      orientation="horizontal"
+      className="flex-1 min-h-0"
+      defaultLayout={defaultLayout}
+      onLayoutChanged={onLayoutChanged}
+    >
       <ResizablePanel id="content" minSize="50%">
         {detailContent}
       </ResizablePanel>
@@ -1494,11 +1571,9 @@ export function IssueDetail({ issueId, onDelete, onDone, defaultSidebarOpen = tr
         panelRef={sidebarRef}
         onResize={(size) => setDesktopSidebarOpen(size.inPixels > 0)}
       >
-      <div className="overflow-y-auto border-l h-full">
-        <div className="p-4">
-          {sidebarContent}
+        <div className="overflow-y-auto border-l h-full">
+          <div className="p-4">{sidebarContent}</div>
         </div>
-      </div>
       </ResizablePanel>
     </ResizablePanelGroup>
   );

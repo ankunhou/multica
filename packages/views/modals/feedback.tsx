@@ -2,19 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@multica/ui/components/ui/dialog";
 import { Button } from "@multica/ui/components/ui/button";
-import {
-  ContentEditor,
-  type ContentEditorRef,
-  useFileDropZone,
-  FileDropOverlay,
-} from "../editor";
+import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay } from "../editor";
 import { useCreateFeedback, useFeedbackDraftStore } from "@multica/core/feedback";
 import { useCurrentWorkspace } from "@multica/core/paths";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
@@ -50,9 +40,7 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
   }, []);
 
   const canSubmit =
-    message.trim().length > 0 &&
-    message.length <= MAX_MESSAGE_LEN &&
-    !mutation.isPending;
+    message.trim().length > 0 && message.length <= MAX_MESSAGE_LEN && !mutation.isPending;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -80,9 +68,7 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
       onClose();
     } catch (err) {
       const msg =
-        err instanceof Error && err.message
-          ? err.message
-          : t(($) => $.feedback.toast_failed);
+        err instanceof Error && err.message ? err.message : t(($) => $.feedback.toast_failed);
       toast.error(msg);
     }
   };
@@ -114,7 +100,10 @@ export function FeedbackModal({ onClose }: { onClose: () => void }) {
               ref={editorRef}
               defaultValue={draft.message}
               placeholder={t(($) => $.feedback.placeholder)}
-              onUpdate={(md) => { setMessage(md); setDraft({ message: md }); }}
+              onUpdate={(md) => {
+                setMessage(md);
+                setDraft({ message: md });
+              }}
               onUploadFile={uploadWithToast}
               onSubmit={handleSubmit}
               debounceMs={150}

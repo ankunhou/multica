@@ -23,9 +23,7 @@ export function CliSection() {
         <h2 className="font-[family-name:var(--font-serif)] text-[2.2rem] leading-[1.1] tracking-[-0.03em] sm:text-[2.6rem]">
           {d.title}
         </h2>
-        <p className="mt-4 max-w-[620px] text-[15px] leading-7 text-[#0a0d12]/72">
-          {d.sub}
-        </p>
+        <p className="mt-4 max-w-[620px] text-[15px] leading-7 text-[#0a0d12]/72">{d.sub}</p>
 
         <div className="mt-10 flex flex-col gap-5">
           <CommandBlock
@@ -77,13 +75,8 @@ function CommandBlock({
         {label}
       </p>
       <div className="flex items-start gap-3 rounded-xl border border-[#0a0d12]/10 bg-white px-4 py-3 font-mono text-[13.5px]">
-        <Terminal
-          className="mt-0.5 size-4 shrink-0 text-[#0a0d12]/55"
-          aria-hidden
-        />
-        <code className="min-w-0 flex-1 whitespace-pre-wrap break-all">
-          {cmd}
-        </code>
+        <Terminal className="mt-0.5 size-4 shrink-0 text-[#0a0d12]/55" aria-hidden />
+        <code className="min-w-0 flex-1 whitespace-pre-wrap break-all">{cmd}</code>
         <button
           type="button"
           onClick={onCopy}

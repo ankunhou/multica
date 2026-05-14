@@ -1,9 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Download } from "lucide-react";
-import {
-  captureDownloadInitiated,
-  type DownloadInitiatedPayload,
-} from "@multica/core/analytics";
+import { captureDownloadInitiated, type DownloadInitiatedPayload } from "@multica/core/analytics";
 import { useLocale } from "../../i18n";
 import type { DetectResult } from "../../utils/os-detect";
 import type { DownloadAssets } from "../../utils/parse-release-assets";
@@ -25,12 +22,7 @@ interface Props {
  * placeholder (SEO + flash-before-hydration), then swaps to a
  * platform-specific CTA once the client detection resolves.
  */
-export function DownloadHero({
-  detected,
-  assets,
-  versionUnavailable,
-  version,
-}: Props) {
+export function DownloadHero({ detected, assets, versionUnavailable, version }: Props) {
   const { t } = useLocale();
   const d = t.download.hero;
 
@@ -71,9 +63,7 @@ export function DownloadHero({
             >
               <Download className="size-4" aria-hidden />
               {content.primary.label}
-              {!content.primary.disabled && (
-                <ArrowRight className="size-4" aria-hidden />
-              )}
+              {!content.primary.disabled && <ArrowRight className="size-4" aria-hidden />}
             </PrimaryCta>
           ) : null}
           {content.alt ? (
@@ -88,9 +78,7 @@ export function DownloadHero({
         </div>
 
         {content.hint ? (
-          <p className="mx-auto mt-5 max-w-[520px] text-[13px] text-white/64">
-            {content.hint}
-          </p>
+          <p className="mx-auto mt-5 max-w-[520px] text-[13px] text-white/64">{content.hint}</p>
         ) : null}
 
         {versionUnavailable ? (
@@ -107,10 +95,7 @@ export function DownloadHero({
 // Content resolver — maps (detect, assets) → CTA props
 // ------------------------------------------------------------
 
-type HeroTracking = Pick<
-  DownloadInitiatedPayload,
-  "platform" | "arch" | "format"
->;
+type HeroTracking = Pick<DownloadInitiatedPayload, "platform" | "arch" | "format">;
 
 interface HeroContent {
   title: string;
@@ -214,9 +199,7 @@ function resolveContent(
   // when we're not confident. Linux ARM has no binary emulation so
   // the hint matters more here than on Windows.
   const isArmLinux = detected.arch === "arm64";
-  const primaryUrl = isArmLinux
-    ? assets.linuxArm64AppImage
-    : assets.linuxAmd64AppImage;
+  const primaryUrl = isArmLinux ? assets.linuxArm64AppImage : assets.linuxAmd64AppImage;
   return {
     title: d.linux.title,
     sub: d.linux.sub,

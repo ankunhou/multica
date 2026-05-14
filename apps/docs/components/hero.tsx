@@ -42,11 +42,7 @@ export function DocsHero({
  * <NumberedCards>/<NumberedCard> from editorial.tsx for showpiece pages.
  */
 export function DocsFeatureGrid({ children }: { children: ReactNode }) {
-  return (
-    <div className="not-prose my-8 grid grid-cols-1 gap-3 md:grid-cols-3">
-      {children}
-    </div>
-  );
+  return <div className="not-prose my-8 grid grid-cols-1 gap-3 md:grid-cols-3">{children}</div>;
 }
 
 export function DocsFeatureCard({
@@ -72,9 +68,7 @@ export function DocsFeatureCard({
         <span className="font-[family-name:var(--font-serif)] text-[1.0625rem] font-medium tracking-[-0.01em] text-foreground">
           {title}
         </span>
-        <p className="text-sm leading-[1.55] text-muted-foreground">
-          {description}
-        </p>
+        <p className="text-sm leading-[1.55] text-muted-foreground">{description}</p>
       </div>
     </Link>
   );

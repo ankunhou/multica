@@ -78,9 +78,7 @@ test.describe("Issues", () => {
     // Should show Properties panel
     await expect(page.locator("text=Properties")).toBeVisible();
     // Should show breadcrumb link back to Issues
-    await expect(
-      page.locator("a", { hasText: "Issues" }).first(),
-    ).toBeVisible();
+    await expect(page.locator("a", { hasText: "Issues" }).first()).toBeVisible();
   });
 
   test("can dismiss issue creation", async ({ page }) => {

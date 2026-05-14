@@ -1,22 +1,10 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Camera, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import type {
-  Agent,
-  AgentRuntime,
-  MemberWithUser,
-} from "@multica/core/types";
-import {
-  AGENT_DESCRIPTION_MAX_LENGTH,
-  type AgentPresenceDetail,
-} from "@multica/core/agents";
+import type { Agent, AgentRuntime, MemberWithUser } from "@multica/core/types";
+import { AGENT_DESCRIPTION_MAX_LENGTH, type AgentPresenceDetail } from "@multica/core/agents";
 import { api } from "@multica/core/api";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import { isImeComposing } from "@multica/core/utils";
@@ -31,11 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@multica/ui/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@multica/ui/components/ui/popover";
 import { PropRow } from "../../common/prop-row";
 import { AgentAvailabilityBadge } from "./agent-state-badges";
 import { CharCounter } from "./char-counter";
@@ -102,11 +86,7 @@ export function AgentDetailInspector({
       {/* Identity */}
       <div className="flex flex-col gap-3 px-6 pb-5 pt-6">
         <AvatarEditor agent={agent} canEdit={canEdit} onUpdate={update} />
-        <NameAndDescription
-          agent={agent}
-          canEdit={canEdit}
-          onUpdate={update}
-        />
+        <NameAndDescription agent={agent} canEdit={canEdit} onUpdate={update} />
         <PresenceBadge presence={presence} />
       </div>
 
@@ -154,24 +134,16 @@ export function AgentDetailInspector({
         {owner && (
           <PropRow label={t(($) => $.inspector.prop_owner)} interactive={false}>
             <span className="flex min-w-0 items-center gap-1.5">
-              <ActorAvatar
-                actorType="member"
-                actorId={owner.user_id}
-                size={14}
-              />
+              <ActorAvatar actorType="member" actorId={owner.user_id} size={14} />
               <span className="truncate">{owner.name}</span>
             </span>
           </PropRow>
         )}
         <PropRow label={t(($) => $.inspector.prop_created)} interactive={false}>
-          <span className="text-muted-foreground">
-            {relativeTime(agent.created_at)}
-          </span>
+          <span className="text-muted-foreground">{relativeTime(agent.created_at)}</span>
         </PropRow>
         <PropRow label={t(($) => $.inspector.prop_updated)} interactive={false}>
-          <span className="text-muted-foreground">
-            {relativeTime(agent.updated_at)}
-          </span>
+          <span className="text-muted-foreground">{relativeTime(agent.updated_at)}</span>
         </PropRow>
       </Section>
 
@@ -205,21 +177,13 @@ export function AgentDetailInspector({
 // Layout helpers
 // ---------------------------------------------------------------------------
 
-function Section({
-  label,
-  children,
-}: {
-  label: string;
-  children: ReactNode;
-}) {
+function Section({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div className="mx-3 mb-2 rounded-2xl bg-muted/20 px-3 py-3">
       <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
         {label}
       </div>
-      <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">
-        {children}
-      </div>
+      <div className="grid grid-cols-[auto_1fr] gap-x-2 gap-y-0.5">{children}</div>
     </div>
   );
 }
@@ -245,12 +209,7 @@ function AvatarEditor({
   if (!canEdit) {
     return (
       <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-muted">
-        <ActorAvatar
-          actorType="agent"
-          actorId={agent.id}
-          size={56}
-          className="rounded-none"
-        />
+        <ActorAvatar actorType="agent" actorId={agent.id} size={56} className="rounded-none" />
       </div>
     );
   }
@@ -269,7 +228,9 @@ function AvatarEditor({
       await onUpdate({ avatar_url: result.link });
       toast.success(t(($) => $.inspector.avatar_updated_toast));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t(($) => $.inspector.avatar_upload_failed_toast));
+      toast.error(
+        err instanceof Error ? err.message : t(($) => $.inspector.avatar_upload_failed_toast),
+      );
     }
   };
 
@@ -284,12 +245,7 @@ function AvatarEditor({
         disabled={uploading}
         aria-label={t(($) => $.inspector.change_avatar_aria)}
       >
-        <ActorAvatar
-          actorType="agent"
-          actorId={agent.id}
-          size={56}
-          className="rounded-none"
-        />
+        <ActorAvatar actorType="agent" actorId={agent.id} size={56} className="rounded-none" />
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
           {uploading ? (
             <Loader2 className="h-4 w-4 animate-spin text-white" />
@@ -336,13 +292,9 @@ function NameAndDescription({
   if (!canEdit) {
     return (
       <div className="flex flex-col gap-1">
-        <span className="text-base font-semibold leading-tight">
-          {agent.name}
-        </span>
+        <span className="text-base font-semibold leading-tight">{agent.name}</span>
         {agent.description ? (
-          <span className="text-xs leading-relaxed text-muted-foreground">
-            {agent.description}
-          </span>
+          <span className="text-xs leading-relaxed text-muted-foreground">{agent.description}</span>
         ) : (
           <span className="text-xs italic leading-relaxed text-muted-foreground/50">
             {t(($) => $.inspector.no_description_placeholder)}
@@ -366,7 +318,7 @@ function NameAndDescription({
           <button
             type="button"
             {...triggerProps}
-        className="group -mx-1 inline-flex items-center gap-1.5 self-start rounded-lg px-1 text-left text-base font-semibold leading-tight transition-colors hover:bg-accent/35"
+            className="group -mx-1 inline-flex items-center gap-1.5 self-start rounded-lg px-1 text-left text-base font-semibold leading-tight transition-colors hover:bg-accent/35"
           >
             <span>{agent.name}</span>
             <Pencil className="h-3 w-3 shrink-0 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground" />
@@ -414,7 +366,9 @@ function DescriptionEditor({
         {value ? (
           <span className="text-muted-foreground">{value}</span>
         ) : (
-          <span className="italic text-muted-foreground/50">{t(($) => $.inspector.no_description_placeholder)}</span>
+          <span className="italic text-muted-foreground/50">
+            {t(($) => $.inspector.no_description_placeholder)}
+          </span>
         )}
         <Pencil className="mt-0.5 h-3 w-3 shrink-0 text-muted-foreground/0 transition-colors group-hover:text-muted-foreground" />
       </button>
@@ -492,26 +446,16 @@ function DescriptionEditorBody({
         <CharCounter length={length} max={AGENT_DESCRIPTION_MAX_LENGTH} />
       </div>
       <DialogFooter>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          disabled={saving}
-        >
+        <Button variant="ghost" size="sm" onClick={onClose} disabled={saving}>
           {t(($) => $.inspector.cancel)}
         </Button>
-        <Button
-          size="sm"
-          onClick={() => void commit()}
-          disabled={saving || overLimit || !dirty}
-        >
+        <Button size="sm" onClick={() => void commit()} disabled={saving || overLimit || !dirty}>
           {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : t(($) => $.inspector.save)}
         </Button>
       </DialogFooter>
     </>
   );
 }
-
 
 // Generic single-field popover editor used for name / description. Keeps the
 // trigger styling fully in the caller's hands by using a render prop.
@@ -530,9 +474,7 @@ function InlineEditPopover({
   title: string;
   placeholder?: string;
   validate?: (v: string) => string | null;
-  children: (triggerProps: {
-    onClick: (e: React.MouseEvent) => void;
-  }) => ReactNode;
+  children: (triggerProps: { onClick: (e: React.MouseEvent) => void }) => ReactNode;
 }) {
   const { t } = useT("agents");
   const [open, setOpen] = useState(false);
@@ -571,9 +513,7 @@ function InlineEditPopover({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={children({ onClick: () => setOpen(true) }) as React.ReactElement}
-      />
+      <PopoverTrigger render={children({ onClick: () => setOpen(true) }) as React.ReactElement} />
       <PopoverContent align="start" className="w-72 p-3">
         <div className="space-y-2">
           <p className="text-xs font-medium">{title}</p>
@@ -625,19 +565,10 @@ function InlineEditPopover({
           )}
           {error && <p className="text-xs text-destructive">{error}</p>}
           <div className="flex items-center justify-end gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setOpen(false)}
-              disabled={saving}
-            >
+            <Button variant="ghost" size="sm" onClick={() => setOpen(false)} disabled={saving}>
               {t(($) => $.inspector.cancel)}
             </Button>
-            <Button
-              size="sm"
-              onClick={() => void commit()}
-              disabled={saving || draft === value}
-            >
+            <Button size="sm" onClick={() => void commit()} disabled={saving || draft === value}>
               {saving ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
               ) : (
@@ -655,22 +586,13 @@ function InlineEditPopover({
 // Presence badge — unchanged from the previous version
 // ---------------------------------------------------------------------------
 
-function PresenceBadge({
-  presence,
-}: {
-  presence: AgentPresenceDetail | null | undefined;
-}) {
+function PresenceBadge({ presence }: { presence: AgentPresenceDetail | null | undefined }) {
   if (!presence) {
-    return (
-      <span className="inline-flex h-5 w-20 animate-pulse rounded-md bg-muted" />
-    );
+    return <span className="inline-flex h-5 w-20 animate-pulse rounded-md bg-muted" />;
   }
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <AgentAvailabilityBadge
-        detail={presence}
-        className="rounded-xl px-2 py-0.5"
-      />
+      <AgentAvailabilityBadge detail={presence} className="rounded-xl px-2 py-0.5" />
     </div>
   );
 }

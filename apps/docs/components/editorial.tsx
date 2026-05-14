@@ -18,9 +18,7 @@ export function Byline({ items }: { items: string[] }) {
     <div className="not-prose mb-9 flex items-center gap-3.5 border-y border-[var(--docs-rule)] py-3.5 text-xs uppercase tracking-[0.08em] text-muted-foreground">
       {items.map((item, i) => (
         <span key={i} className="flex items-center gap-3.5">
-          {i > 0 ? (
-            <span className="size-[3px] rounded-full bg-[var(--docs-faint)]" />
-          ) : null}
+          {i > 0 ? <span className="size-[3px] rounded-full bg-[var(--docs-faint)]" /> : null}
           <span>{item}</span>
         </span>
       ))}
@@ -71,9 +69,7 @@ export function NumberedCard({
       <div className="font-[family-name:var(--font-serif)] text-[1.375rem] leading-[1.25] tracking-[-0.015em] text-foreground transition-colors group-hover:text-[var(--primary)]">
         {title}
       </div>
-      <div className="text-[0.84375rem] leading-[1.55] text-muted-foreground">
-        {children}
-      </div>
+      <div className="text-[0.84375rem] leading-[1.55] text-muted-foreground">{children}</div>
       {tag ? (
         <div className="mt-1 font-mono text-[0.625rem] uppercase tracking-[0.06em] text-[var(--primary)]">
           {tag}
@@ -109,9 +105,7 @@ export function Step({
         <div className="mb-1 font-[family-name:var(--font-serif)] text-[1.25rem] leading-[1.3] tracking-[-0.01em] text-foreground">
           {title}
         </div>
-        <div className="text-[0.9375rem] leading-[1.6] text-muted-foreground">
-          {children}
-        </div>
+        <div className="text-[0.9375rem] leading-[1.6] text-muted-foreground">{children}</div>
       </div>
     </div>
   );

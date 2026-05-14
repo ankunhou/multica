@@ -249,9 +249,9 @@ type piAssistantMessageEvent struct {
 }
 
 type piMessage struct {
-	Role    string   `json:"role,omitempty"`
-	Model   string   `json:"model,omitempty"`
-	Usage   *piUsage `json:"usage,omitempty"`
+	Role  string   `json:"role,omitempty"`
+	Model string   `json:"model,omitempty"`
+	Usage *piUsage `json:"usage,omitempty"`
 }
 
 type piUsage struct {

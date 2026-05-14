@@ -145,8 +145,7 @@ vi.mock("@multica/ui/components/common/emoji-picker", () => ({
 }));
 
 vi.mock("@multica/ui/lib/utils", () => ({
-  cn: (...values: Array<string | false | null | undefined>) =>
-    values.filter(Boolean).join(" "),
+  cn: (...values: Array<string | false | null | undefined>) => values.filter(Boolean).join(" "),
 }));
 
 vi.mock("sonner", () => ({

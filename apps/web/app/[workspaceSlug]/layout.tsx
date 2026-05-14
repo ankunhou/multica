@@ -83,9 +83,5 @@ export default function WorkspaceLayout({
     return <NoAccessPage />;
   }
 
-  return (
-    <WorkspaceSlugProvider slug={workspaceSlug}>
-      {children}
-    </WorkspaceSlugProvider>
-  );
+  return <WorkspaceSlugProvider slug={workspaceSlug}>{children}</WorkspaceSlugProvider>;
 }

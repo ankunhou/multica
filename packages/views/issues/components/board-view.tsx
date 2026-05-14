@@ -111,11 +111,7 @@ export function BoardView({
   issues: Issue[];
   visibleStatuses: IssueStatus[];
   hiddenStatuses: IssueStatus[];
-  onMoveIssue: (
-    issueId: string,
-    newStatus: IssueStatus,
-    newPosition?: number
-  ) => void;
+  onMoveIssue: (issueId: string, newStatus: IssueStatus, newPosition?: number) => void;
   childProgressMap?: Map<string, ChildProgress>;
   /** When set, per-status load-more targets the scoped cache instead of the workspace one. */
   myIssuesScope?: string;
@@ -176,17 +172,14 @@ export function BoardView({
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 5 },
-    })
+    }),
   );
 
-  const handleDragStart = useCallback(
-    (event: DragStartEvent) => {
-      isDraggingRef.current = true;
-      const issue = issueMapRef.current.get(event.active.id as string) ?? null;
-      setActiveIssue(issue);
-    },
-    [],
-  );
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    isDraggingRef.current = true;
+    const issue = issueMapRef.current.get(event.active.id as string) ?? null;
+    setActiveIssue(issue);
+  }, []);
 
   const handleDragOver = useCallback(
     (event: DragOverEvent) => {
@@ -297,17 +290,17 @@ export function BoardView({
         ))}
 
         {hiddenStatuses.length > 0 && (
-          <HiddenColumnsPanel
-            hiddenStatuses={hiddenStatuses}
-            myIssuesOpts={myIssuesOpts}
-          />
+          <HiddenColumnsPanel hiddenStatuses={hiddenStatuses} myIssuesOpts={myIssuesOpts} />
         )}
       </div>
 
       <DragOverlay dropAnimation={null}>
         {activeIssue ? (
           <div className="w-[280px] rotate-2 scale-105 cursor-grabbing opacity-90 shadow-lg shadow-black/10">
-            <BoardCardContent issue={activeIssue} childProgress={childProgressMap.get(activeIssue.id)} />
+            <BoardCardContent
+              issue={activeIssue}
+              childProgress={childProgressMap.get(activeIssue.id)}
+            />
           </div>
         ) : null}
       </DragOverlay>
@@ -330,10 +323,7 @@ function PaginatedBoardColumn({
   myIssuesOpts?: { scope: string; filter: MyIssuesFilter };
   projectId?: string;
 }) {
-  const { loadMore, hasMore, isLoading, total } = useLoadMoreByStatus(
-    status,
-    myIssuesOpts,
-  );
+  const { loadMore, hasMore, isLoading, total } = useLoadMoreByStatus(status, myIssuesOpts);
   return (
     <BoardColumn
       status={status}
@@ -343,9 +333,7 @@ function PaginatedBoardColumn({
       totalCount={total}
       projectId={projectId}
       footer={
-        hasMore ? (
-          <InfiniteScrollSentinel onVisible={loadMore} loading={isLoading} />
-        ) : undefined
+        hasMore ? <InfiniteScrollSentinel onVisible={loadMore} loading={isLoading} /> : undefined
       }
     />
   );
@@ -368,11 +356,7 @@ function HiddenColumnsPanel({
       </div>
       <div className="flex-1 space-y-0.5">
         {hiddenStatuses.map((status) => (
-          <HiddenColumnRow
-            key={status}
-            status={status}
-            myIssuesOpts={myIssuesOpts}
-          />
+          <HiddenColumnRow key={status} status={status} myIssuesOpts={myIssuesOpts} />
         ))}
       </div>
     </div>
@@ -400,19 +384,13 @@ function HiddenColumnRow({
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                className="rounded-xl text-muted-foreground"
-              >
+              <Button variant="ghost" size="icon-sm" className="rounded-xl text-muted-foreground">
                 <MoreHorizontal className="size-3.5" />
               </Button>
             }
           />
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => viewStoreApi.getState().showStatus(status)}
-            >
+            <DropdownMenuItem onClick={() => viewStoreApi.getState().showStatus(status)}>
               <Eye className="size-3.5" />
               {t(($) => $.board.show_column)}
             </DropdownMenuItem>

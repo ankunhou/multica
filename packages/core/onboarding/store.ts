@@ -13,9 +13,7 @@ import type { OnboardingCompletionPath, QuestionnaireAnswers } from "./types";
  * progress that survives a re-entry — it pre-fills Step 1 so the
  * user doesn't re-answer.
  */
-export async function saveQuestionnaire(
-  answers: Partial<QuestionnaireAnswers>,
-): Promise<void> {
+export async function saveQuestionnaire(answers: Partial<QuestionnaireAnswers>): Promise<void> {
   const user = await api.patchOnboarding({ questionnaire: answers });
   useAuthStore.getState().setUser(user);
   // Mirror the three cohort signals into person properties so every
@@ -61,9 +59,6 @@ export async function completeOnboarding(
  * user-visible field (`onboarded_at`, anything in `UserResponse`)
  * actually changes here.
  */
-export async function joinCloudWaitlist(
-  email: string,
-  reason: string,
-): Promise<void> {
+export async function joinCloudWaitlist(email: string, reason: string): Promise<void> {
   await api.joinCloudWaitlist({ email, reason });
 }

@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  AlertCircle,
-  Copy,
-  MoreHorizontal,
-  RotateCcw,
-  Square,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, Copy, MoreHorizontal, RotateCcw, Square, Trash2 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import type { Agent } from "@multica/core/types";
@@ -59,12 +52,7 @@ interface AgentRowActionsProps {
  * All triggers stop event propagation so clicks don't bubble up to the
  * row's navigate-to-detail handler.
  */
-export function AgentRowActions({
-  agent,
-  presence,
-  canManage,
-  onDuplicate,
-}: AgentRowActionsProps) {
+export function AgentRowActions({ agent, presence, canManage, onDuplicate }: AgentRowActionsProps) {
   const { t } = useT("agents");
   const wsId = useWorkspaceId();
   const qc = useQueryClient();
@@ -153,9 +141,7 @@ export function AgentRowActions({
           onClick={(e) => e.stopPropagation()}
         >
           {showStop && (
-            <DropdownMenuItem
-              onClick={() => setConfirmCancel(true)}
-            >
+            <DropdownMenuItem onClick={() => setConfirmCancel(true)}>
               <Square className="h-3.5 w-3.5" />
               {t(($) => $.row_actions.cancel_all_tasks)}
             </DropdownMenuItem>

@@ -10,12 +10,8 @@ export default function NotFound() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 py-24 text-center">
       <p className="text-sm font-medium text-muted-foreground">404</p>
-      <h1 className="text-2xl font-semibold tracking-tight">
-        {t(($) => $.not_found.title)}
-      </h1>
-      <p className="max-w-md text-sm text-muted-foreground">
-        {t(($) => $.not_found.description)}
-      </p>
+      <h1 className="text-2xl font-semibold tracking-tight">{t(($) => $.not_found.title)}</h1>
+      <p className="max-w-md text-sm text-muted-foreground">{t(($) => $.not_found.description)}</p>
       <Link href="/" className={buttonVariants({ className: "mt-2" })}>
         {t(($) => $.not_found.back_home)}
       </Link>

@@ -22,9 +22,7 @@ export function LandingFooter() {
           <div className="lg:w-[340px] lg:shrink-0">
             <Link href="#product" className="flex items-center gap-3">
               <MulticaIcon className="size-5 text-white" noSpin />
-              <span className="text-[18px] font-semibold tracking-[0.04em] lowercase">
-                multica
-              </span>
+              <span className="text-[18px] font-semibold tracking-[0.04em] lowercase">multica</span>
             </Link>
             <p className="mt-4 max-w-[300px] text-[14px] leading-[1.7] text-white/50 sm:text-[15px]">
               {t.footer.tagline}
@@ -92,10 +90,7 @@ export function LandingFooter() {
         {/* Bottom: copyright + language switcher */}
         <div className="flex items-center justify-between py-6">
           <p className="text-[13px] text-white/36">
-            {t.footer.copyright.replace(
-              "{year}",
-              String(new Date().getFullYear()),
-            )}
+            {t.footer.copyright.replace("{year}", String(new Date().getFullYear()))}
           </p>
           <div className="flex items-center">
             {locales.map((l, i) => (
@@ -104,9 +99,7 @@ export function LandingFooter() {
                 onClick={() => setLocale(l)}
                 className={cn(
                   "px-1.5 py-1 text-[12px] font-medium transition-colors",
-                  l === locale
-                    ? "text-white/70"
-                    : "text-white/30 hover:text-white/50",
+                  l === locale ? "text-white/70" : "text-white/30 hover:text-white/50",
                   i > 0 && "border-l border-white/16",
                 )}
               >
@@ -119,10 +112,7 @@ export function LandingFooter() {
         {/* Giant logo */}
         <div className="relative overflow-hidden pb-4">
           <div className="flex items-end gap-6 sm:gap-8">
-            <MulticaIcon
-              className="size-[clamp(4rem,12vw,10rem)] shrink-0 text-white"
-              noSpin
-            />
+            <MulticaIcon className="size-[clamp(4rem,12vw,10rem)] shrink-0 text-white" noSpin />
             <span className="font-[family-name:var(--font-serif)] text-[clamp(6rem,22vw,16rem)] font-normal leading-[0.82] tracking-[-0.04em] text-white lowercase">
               multica
             </span>

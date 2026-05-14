@@ -39,8 +39,7 @@ export function useUpdateLabel() {
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string } & UpdateLabelRequest) =>
-      api.updateLabel(id, data),
+    mutationFn: ({ id, ...data }: { id: string } & UpdateLabelRequest) => api.updateLabel(id, data),
     onMutate: async ({ id, ...data }) => {
       await qc.cancelQueries({ queryKey: labelKeys.list(wsId) });
       const prevList = qc.getQueryData<ListLabelsResponse>(labelKeys.list(wsId));
@@ -78,9 +77,7 @@ export function useDeleteLabel() {
       await qc.cancelQueries({ queryKey: labelKeys.list(wsId) });
       const prev = qc.getQueryData<ListLabelsResponse>(labelKeys.list(wsId));
       qc.setQueryData<ListLabelsResponse>(labelKeys.list(wsId), (old) =>
-        old
-          ? { ...old, labels: old.labels.filter((l) => l.id !== id), total: old.total - 1 }
-          : old,
+        old ? { ...old, labels: old.labels.filter((l) => l.id !== id), total: old.total - 1 } : old,
       );
       return { prev };
     },

@@ -11,11 +11,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@multica/ui/components/ui/collapsible";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { ChevronRight, ChevronDown, Brain, AlertCircle, AlertTriangle, Copy } from "lucide-react";
 import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
 import { useAutoScroll } from "@multica/ui/hooks/use-auto-scroll";
@@ -23,7 +19,12 @@ import { taskMessagesOptions } from "@multica/core/chat/queries";
 import { Markdown } from "@multica/views/common/markdown";
 import { copyMarkdown } from "../../editor";
 import type { AgentAvailability } from "@multica/core/agents";
-import type { ChatMessage, ChatPendingTask, TaskMessagePayload, TaskFailureReason } from "@multica/core/types";
+import type {
+  ChatMessage,
+  ChatPendingTask,
+  TaskMessagePayload,
+  TaskFailureReason,
+} from "@multica/core/types";
 import type { ChatTimelineItem } from "@multica/core/chat";
 import { useFailureReasonLabel } from "../../agents/components/tabs/task-failure";
 import { TaskStatusPill } from "./task-status-pill";
@@ -44,11 +45,7 @@ interface ChatMessageListProps {
   availability: AgentAvailability | undefined;
 }
 
-export function ChatMessageList({
-  messages,
-  pendingTask,
-  availability,
-}: ChatMessageListProps) {
+export function ChatMessageList({ messages, pendingTask, availability }: ChatMessageListProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const fadeStyle = useScrollFade(scrollRef);
   useAutoScroll(scrollRef);
@@ -59,9 +56,8 @@ export function ChatMessageList({
   // messages list, AssistantMessage owns its rendering — suppress the live
   // timeline (and pill) to avoid rendering the same content in two places
   // during the invalidate → refetch window.
-  const pendingAlreadyPersisted = !!pendingTaskId && messages.some(
-    (m) => m.role === "assistant" && m.task_id === pendingTaskId,
-  );
+  const pendingAlreadyPersisted =
+    !!pendingTaskId && messages.some((m) => m.role === "assistant" && m.task_id === pendingTaskId);
 
   // Live timeline for the in-flight task. useRealtimeSync keeps this cache
   // current via setQueryData on task:message events.
@@ -165,13 +161,7 @@ function MessageBubble({ message, isPending }: { message: ChatMessage; isPending
   return <AssistantMessage message={message} isPending={isPending} />;
 }
 
-function AssistantMessage({
-  message,
-  isPending,
-}: {
-  message: ChatMessage;
-  isPending: boolean;
-}) {
+function AssistantMessage({ message, isPending }: { message: ChatMessage; isPending: boolean }) {
   const taskId = message.task_id;
 
   // Use the shared taskMessagesOptions so this cache entry is the same one
@@ -208,11 +198,7 @@ function AssistantMessage({
           <Markdown>{message.content}</Markdown>
         </div>
       )}
-      <MessageFooter
-        message={message}
-        timeline={timeline}
-        isPending={isPending}
-      />
+      <MessageFooter message={message} timeline={timeline} isPending={isPending} />
     </div>
   );
 }
@@ -274,9 +260,7 @@ function MessageCopyButton({
       >
         <Copy />
       </TooltipTrigger>
-      <TooltipContent side="top">
-        {t(($) => $.message_list.copy_action)}
-      </TooltipContent>
+      <TooltipContent side="top">{t(($) => $.message_list.copy_action)}</TooltipContent>
     </Tooltip>
   );
 }
@@ -300,11 +284,7 @@ function ElapsedCaption({
     variant === "replied"
       ? t(($) => $.message_list.replied_in, { elapsed: formatElapsedMs(elapsedMs) })
       : t(($) => $.message_list.failed_after, { elapsed: formatElapsedMs(elapsedMs) });
-  return (
-    <div className={cn("text-xs text-muted-foreground/80", className)}>
-      {text}
-    </div>
-  );
+  return <div className={cn("text-xs text-muted-foreground/80", className)}>{text}</div>;
 }
 
 function isTaskFailureReason(reason: string): reason is TaskFailureReason {
@@ -334,10 +314,9 @@ function FailureBubble({
   // Map the back-end enum to copy via the shared label table; an unknown
   // reason (e.g. a future enum value the front-end doesn't ship yet)
   // falls back to a generic translated label.
-  const label =
-    isTaskFailureReason(reason)
-      ? failureLabelOf(reason)
-      : t(($) => $.message_list.task_failed_fallback);
+  const label = isTaskFailureReason(reason)
+    ? failureLabelOf(reason)
+    : t(($) => $.message_list.task_failed_fallback);
 
   return (
     <div className="w-full space-y-1.5">
@@ -353,11 +332,7 @@ function FailureBubble({
           {rawError.trim() && (
             <Collapsible open={open} onOpenChange={setOpen}>
               <CollapsibleTrigger className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                {open ? (
-                  <ChevronDown className="size-3" />
-                ) : (
-                  <ChevronRight className="size-3" />
-                )}
+                {open ? <ChevronDown className="size-3" /> : <ChevronRight className="size-3" />}
                 <span>{t(($) => $.message_list.show_details)}</span>
               </CollapsibleTrigger>
               <CollapsibleContent>
@@ -370,9 +345,7 @@ function FailureBubble({
         </div>
       </div>
       {timeline.length > 0 && <TimelineView items={timeline} />}
-      {elapsedMs != null && (
-        <ElapsedCaption variant="failed" elapsedMs={elapsedMs} />
-      )}
+      {elapsedMs != null && <ElapsedCaption variant="failed" elapsedMs={elapsedMs} />}
     </div>
   );
 }
@@ -407,9 +380,7 @@ function TimelineView({
           <Markdown>{preface.map((t) => t.content ?? "").join("")}</Markdown>
         </div>
       )}
-      {middle.length > 0 && (
-        <OuterProcessFold items={middle} defaultOpen={!!isStreaming} />
-      )}
+      {middle.length > 0 && <OuterProcessFold items={middle} defaultOpen={!!isStreaming} />}
       {final.length > 0 && (
         <div className="text-sm leading-relaxed prose prose-sm dark:prose-invert max-w-none">
           <Markdown>{final.map((t) => t.content ?? "").join("")}</Markdown>
@@ -558,10 +529,14 @@ function ToolResultRow({ item }: { item: ChatTimelineItem }) {
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger className="flex w-full items-start gap-1.5 rounded px-1 -mx-1 py-0.5 text-xs hover:bg-accent/30 transition-colors">
         <ChevronRight
-          className={cn("h-3 w-3 shrink-0 text-muted-foreground transition-transform mt-0.5", open && "rotate-90")}
+          className={cn(
+            "h-3 w-3 shrink-0 text-muted-foreground transition-transform mt-0.5",
+            open && "rotate-90",
+          )}
         />
         <span className="text-muted-foreground/70 truncate">
-          {labelPrefix}{preview}
+          {labelPrefix}
+          {preview}
         </span>
       </CollapsibleTrigger>
       <CollapsibleContent>
@@ -605,4 +580,3 @@ function ErrorRow({ item }: { item: ChatTimelineItem }) {
 }
 
 // ─── Shared ──────────────────────────────────────────────────────────────
-

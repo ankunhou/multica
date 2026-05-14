@@ -20,11 +20,7 @@ function isNewer(latest: string, current: string): boolean {
   return false;
 }
 
-function runtimeNeedsUpdate(
-  rt: AgentRuntime,
-  latestVersion: string,
-  userId: string,
-): boolean {
+function runtimeNeedsUpdate(rt: AgentRuntime, latestVersion: string, userId: string): boolean {
   if (rt.runtime_mode !== "local") return false;
   // Only show to the user who owns this runtime.
   if (rt.owner_id !== userId) return false;
@@ -34,9 +30,7 @@ function runtimeNeedsUpdate(
     return false;
   }
   const cliVersion =
-    rt.metadata && typeof rt.metadata.cli_version === "string"
-      ? rt.metadata.cli_version
-      : null;
+    rt.metadata && typeof rt.metadata.cli_version === "string" ? rt.metadata.cli_version : null;
   if (!cliVersion) return false;
   return isNewer(latestVersion, cliVersion);
 }

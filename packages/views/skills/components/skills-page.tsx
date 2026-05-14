@@ -1,19 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  AlertCircle,
-  AlertTriangle,
-  BookOpen,
-  Plus,
-  Search,
-} from "lucide-react";
-import type {
-  AgentRuntime,
-  MemberWithUser,
-  Skill,
-  SkillSummary,
-} from "@multica/core/types";
+import { AlertCircle, AlertTriangle, BookOpen, Plus, Search } from "lucide-react";
+import type { AgentRuntime, MemberWithUser, Skill, SkillSummary } from "@multica/core/types";
 import { useQuery } from "@tanstack/react-query";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useAuthStore } from "@multica/core/auth";
@@ -30,11 +19,7 @@ import { Button } from "@multica/ui/components/ui/button";
 import { DataTable } from "@multica/ui/components/ui/data-table";
 import { Input } from "@multica/ui/components/ui/input";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { useNavigation } from "../../navigation";
 import { PageHeader } from "../../layout/page-header";
 import { canEditSkill } from "../hooks/use-can-edit-skill";
@@ -52,13 +37,7 @@ const SCOPE_KEYS: FilterKey[] = ["all", "used", "unused", "mine"];
 // h-12 chrome stay consistent with every other dashboard list page.
 // ---------------------------------------------------------------------------
 
-function PageHeaderBar({
-  totalCount,
-  onCreate,
-}: {
-  totalCount: number;
-  onCreate: () => void;
-}) {
+function PageHeaderBar({ totalCount, onCreate }: { totalCount: number; onCreate: () => void }) {
   const { t } = useT("skills");
   return (
     <PageHeader className="justify-between px-5">
@@ -184,24 +163,15 @@ export default function SkillsPage() {
     error: listError,
     refetch: refetchList,
   } = useQuery(skillListOptions(wsId));
-  const { data: agents = [], error: agentsError } = useQuery(
-    agentListOptions(wsId),
-  );
-  const { data: members = [], error: membersError } = useQuery(
-    memberListOptions(wsId),
-  );
-  const { data: runtimes = [], error: runtimesError } = useQuery(
-    runtimeListOptions(wsId),
-  );
+  const { data: agents = [], error: agentsError } = useQuery(agentListOptions(wsId));
+  const { data: members = [], error: membersError } = useQuery(memberListOptions(wsId));
+  const { data: runtimes = [], error: runtimesError } = useQuery(runtimeListOptions(wsId));
 
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterKey>("all");
   const [createOpen, setCreateOpen] = useState(false);
 
-  const assignments = useMemo(
-    () => selectSkillAssignments(agents),
-    [agents],
-  );
+  const assignments = useMemo(() => selectSkillAssignments(agents), [agents]);
 
   const membersById = useMemo(() => {
     const map = new Map<string, MemberWithUser>();
@@ -215,20 +185,14 @@ export default function SkillsPage() {
     return map;
   }, [runtimes]);
 
-  const myRole =
-    members.find((m) => m.user_id === currentUserId)?.role ?? null;
+  const myRole = members.find((m) => m.user_id === currentUserId)?.role ?? null;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    const byAssignment = (s: SkillSummary) =>
-      (assignments.get(s.id)?.length ?? 0) > 0;
+    const byAssignment = (s: SkillSummary) => (assignments.get(s.id)?.length ?? 0) > 0;
 
     return skills.filter((s) => {
-      if (
-        q &&
-        !s.name.toLowerCase().includes(q) &&
-        !s.description.toLowerCase().includes(q)
-      ) {
+      if (q && !s.name.toLowerCase().includes(q) && !s.description.toLowerCase().includes(q)) {
         return false;
       }
       if (filter === "used" && !byAssignment(s)) return false;
@@ -247,14 +211,12 @@ export default function SkillsPage() {
       const origin = readOrigin(skill);
       const runtime =
         origin.type === "runtime_local" && origin.runtime_id
-          ? runtimesById.get(origin.runtime_id) ?? null
+          ? (runtimesById.get(origin.runtime_id) ?? null)
           : null;
       return {
         skill,
         agents: assignments.get(skill.id) ?? [],
-        creator: skill.created_by
-          ? membersById.get(skill.created_by) ?? null
-          : null,
+        creator: skill.created_by ? (membersById.get(skill.created_by) ?? null) : null,
         runtime,
         canEdit: canEditSkill(skill, {
           userId: currentUserId,
@@ -262,14 +224,7 @@ export default function SkillsPage() {
         }),
       };
     });
-  }, [
-    filtered,
-    assignments,
-    membersById,
-    runtimesById,
-    currentUserId,
-    myRole,
-  ]);
+  }, [filtered, assignments, membersById, runtimesById, currentUserId, myRole]);
 
   const columns = useSkillColumns();
 
@@ -316,21 +271,14 @@ export default function SkillsPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
           <AlertCircle className="h-8 w-8 text-destructive" />
           <div>
-            <p className="text-sm font-medium">
-              {t(($) => $.page.list_error.title)}
-            </p>
+            <p className="text-sm font-medium">{t(($) => $.page.list_error.title)}</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {listError instanceof Error
                 ? listError.message
                 : t(($) => $.page.list_error.fallback)}
             </p>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => refetchList()}
-          >
+          <Button type="button" variant="outline" size="sm" onClick={() => refetchList()}>
             {t(($) => $.page.list_error.retry)}
           </Button>
         </div>
@@ -340,15 +288,11 @@ export default function SkillsPage() {
 
   const totalCount = skills.length;
   const showEmpty = totalCount === 0;
-  const supportingQueryDown =
-    !!agentsError || !!membersError || !!runtimesError;
+  const supportingQueryDown = !!agentsError || !!membersError || !!runtimesError;
 
   return (
     <div className="flex flex-1 min-h-0 flex-col">
-      <PageHeaderBar
-        totalCount={totalCount}
-        onCreate={() => setCreateOpen(true)}
-      />
+      <PageHeaderBar totalCount={totalCount} onCreate={() => setCreateOpen(true)} />
 
       {supportingQueryDown && (
         <div
@@ -404,9 +348,7 @@ export default function SkillsPage() {
             ) : (
               <DataTable
                 table={table}
-                onRowClick={(row) =>
-                  navigation.push(paths.skillDetail(row.original.skill.id))
-                }
+                onRowClick={(row) => navigation.push(paths.skillDetail(row.original.skill.id))}
               />
             )}
           </div>
@@ -414,10 +356,7 @@ export default function SkillsPage() {
       </div>
 
       {createOpen && (
-        <CreateSkillDialog
-          onClose={() => setCreateOpen(false)}
-          onCreated={handleCreated}
-        />
+        <CreateSkillDialog onClose={() => setCreateOpen(false)} onCreated={handleCreated} />
       )}
     </div>
   );

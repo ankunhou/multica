@@ -11,9 +11,7 @@ export function createBrowserCookieLocaleAdapter(): LocaleAdapter {
   return {
     getUserChoice() {
       if (typeof document === "undefined") return null;
-      const m = document.cookie.match(
-        new RegExp(`(?:^|;\\s*)${LOCALE_COOKIE}=([^;]+)`),
-      );
+      const m = document.cookie.match(new RegExp(`(?:^|;\\s*)${LOCALE_COOKIE}=([^;]+)`));
       const value = m?.[1];
       return value ? decodeURIComponent(value) : null;
     },
@@ -24,9 +22,7 @@ export function createBrowserCookieLocaleAdapter(): LocaleAdapter {
     persist(locale: SupportedLocale) {
       if (typeof document === "undefined") return;
       const secure =
-        typeof location !== "undefined" && location.protocol === "https:"
-          ? ";Secure"
-          : "";
+        typeof location !== "undefined" && location.protocol === "https:" ? ";Secure" : "";
       document.cookie =
         `${LOCALE_COOKIE}=${encodeURIComponent(locale)};` +
         `path=/;max-age=${COOKIE_MAX_AGE};SameSite=Lax${secure}`;

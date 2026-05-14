@@ -31,10 +31,7 @@ function item(overrides: Partial<InboxItem>): InboxItem {
 describe("inbox display helpers", () => {
   it("removes legacy quick-create created prefixes from list titles", () => {
     expect(
-      stripQuickCreatePrefix(
-        "Created MUL-1583: Fix agent list column widths",
-        "MUL-1583",
-      ),
+      stripQuickCreatePrefix("Created MUL-1583: Fix agent list column widths", "MUL-1583"),
     ).toBe("Fix agent list column widths");
   });
 
@@ -45,9 +42,7 @@ describe("inbox display helpers", () => {
       details: { identifier: "MUL-1583" },
     });
 
-    expect(getInboxDisplayTitle(quickCreateItem)).toBe(
-      "Fix agent list column widths",
-    );
+    expect(getInboxDisplayTitle(quickCreateItem)).toBe("Fix agent list column widths");
   });
 
   it("uses the original prompt as the failed quick-create row title", () => {
@@ -73,8 +68,6 @@ describe("inbox display helpers", () => {
       details: { error: "CLI failed\nwith exit status 1" },
     });
 
-    expect(getQuickCreateFailureDetail(failedItem)).toBe(
-      "CLI failed with exit status 1",
-    );
+    expect(getQuickCreateFailureDetail(failedItem)).toBe("CLI failed with exit status 1");
   });
 });

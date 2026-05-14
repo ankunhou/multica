@@ -20,7 +20,11 @@ import { ListView } from "../../issues/components/list-view";
 import { BatchActionToolbar } from "../../issues/components/batch-action-toolbar";
 import { useClearFiltersOnWorkspaceChange } from "@multica/core/issues/stores/view-store";
 import { useWorkspaceId } from "@multica/core/hooks";
-import { myIssueListOptions, childIssueProgressOptions, type MyIssuesFilter } from "@multica/core/issues/queries";
+import {
+  myIssueListOptions,
+  childIssueProgressOptions,
+  type MyIssuesFilter,
+} from "@multica/core/issues/queries";
 import { useUpdateIssue } from "@multica/core/issues/mutations";
 import { myIssuesViewStore } from "@multica/core/issues/stores/my-issues-view-store";
 import { PageHeader } from "../../layout/page-header";
@@ -92,8 +96,7 @@ export function MyIssuesPage() {
   const { data: childProgressMap = new Map() } = useQuery(childIssueProgressOptions(wsId));
 
   const visibleStatuses = useMemo(() => {
-    if (statusFilters.length > 0)
-      return BOARD_STATUSES.filter((s) => statusFilters.includes(s));
+    if (statusFilters.length > 0) return BOARD_STATUSES.filter((s) => statusFilters.includes(s));
     return BOARD_STATUSES;
   }, [statusFilters]);
 

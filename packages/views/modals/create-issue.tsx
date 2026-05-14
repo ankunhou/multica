@@ -17,10 +17,7 @@ import {
 import { cn } from "@multica/ui/lib/utils";
 import { toast } from "sonner";
 import type { Issue, IssueStatus, IssuePriority, IssueAssigneeType } from "@multica/core/types";
-import {
-  DialogContent,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+import { DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,8 +28,20 @@ import {
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { Button } from "@multica/ui/components/ui/button";
 import { Switch } from "@multica/ui/components/ui/switch";
-import { ContentEditor, type ContentEditorRef, TitleEditor, useFileDropZone, FileDropOverlay } from "../editor";
-import { StatusIcon, StatusPicker, PriorityPicker, AssigneePicker, DueDatePicker } from "../issues/components";
+import {
+  ContentEditor,
+  type ContentEditorRef,
+  TitleEditor,
+  useFileDropZone,
+  FileDropOverlay,
+} from "../editor";
+import {
+  StatusIcon,
+  StatusPicker,
+  PriorityPicker,
+  AssigneePicker,
+  DueDatePicker,
+} from "../issues/components";
 import { BacklogAgentHintContent } from "../issues/components/backlog-agent-hint-dialog";
 import { ProjectPicker } from "../projects/components/project-picker";
 import { useCurrentWorkspace, useWorkspacePaths } from "@multica/core/paths";
@@ -100,7 +109,9 @@ export function ManualCreatePanel({
   const [status, setStatus] = useState<IssueStatus>((data?.status as IssueStatus) || draft.status);
   const [priority, setPriority] = useState<IssuePriority>(draft.priority);
   const [submitting, setSubmitting] = useState(false);
-  const [assigneeType, setAssigneeType] = useState<IssueAssigneeType | undefined>(draft.assigneeType);
+  const [assigneeType, setAssigneeType] = useState<IssueAssigneeType | undefined>(
+    draft.assigneeType,
+  );
   const [assigneeId, setAssigneeId] = useState<string | undefined>(draft.assigneeId);
   const [dueDate, setDueDate] = useState<string | null>(draft.dueDate);
   const [projectId, setProjectId] = useState<string | undefined>(
@@ -134,14 +145,27 @@ export function ManualCreatePanel({
   };
 
   // Sync field changes to draft store
-  const updateTitle = (v: string) => { setTitle(v); setDraft({ title: v }); };
-  const updateStatus = (v: IssueStatus) => { setStatus(v); setDraft({ status: v }); };
-  const updatePriority = (v: IssuePriority) => { setPriority(v); setDraft({ priority: v }); };
+  const updateTitle = (v: string) => {
+    setTitle(v);
+    setDraft({ title: v });
+  };
+  const updateStatus = (v: IssueStatus) => {
+    setStatus(v);
+    setDraft({ status: v });
+  };
+  const updatePriority = (v: IssuePriority) => {
+    setPriority(v);
+    setDraft({ priority: v });
+  };
   const updateAssignee = (type?: IssueAssigneeType, id?: string) => {
-    setAssigneeType(type); setAssigneeId(id);
+    setAssigneeType(type);
+    setAssigneeId(id);
     setDraft({ assigneeType: type, assigneeId: id });
   };
-  const updateDueDate = (v: string | null) => { setDueDate(v); setDraft({ dueDate: v }); };
+  const updateDueDate = (v: string | null) => {
+    setDueDate(v);
+    setDraft({ dueDate: v });
+  };
 
   const createIssueMutation = useCreateIssue();
   const updateIssueMutation = useUpdateIssue();
@@ -213,7 +237,9 @@ export function ManualCreatePanel({
       setLastMode("manual");
       clearDraft();
       const shouldShowBacklogHint =
-        status === "backlog" && assigneeType === "agent" && assigneeId &&
+        status === "backlog" &&
+        assigneeType === "agent" &&
+        assigneeId &&
         localStorage.getItem("multica:backlog-agent-hint-dismissed") !== "true";
 
       if (shouldShowBacklogHint) {
@@ -225,30 +251,37 @@ export function ManualCreatePanel({
       }
 
       if (!shouldShowBacklogHint) {
-        toast.custom((toastId) => (
-          <div className="bg-popover text-popover-foreground border rounded-lg shadow-lg p-4 w-[360px]">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="flex items-center justify-center size-5 rounded-full bg-success/15 text-success">
-                <Check className="size-3" />
+        toast.custom(
+          (toastId) => (
+            <div className="bg-popover text-popover-foreground border rounded-lg shadow-lg p-4 w-[360px]">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="flex items-center justify-center size-5 rounded-full bg-success/15 text-success">
+                  <Check className="size-3" />
+                </div>
+                <span className="text-sm font-medium">
+                  {t(($) => $.create_issue.toast_created)}
+                </span>
               </div>
-              <span className="text-sm font-medium">{t(($) => $.create_issue.toast_created)}</span>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground ml-7">
+                <StatusIcon status={issue.status} className="size-3.5 shrink-0" />
+                <span className="truncate">
+                  {issue.identifier} – {issue.title}
+                </span>
+              </div>
+              <button
+                type="button"
+                className="ml-7 mt-2 text-sm text-primary hover:underline cursor-pointer"
+                onClick={() => {
+                  router.push(p.issueDetail(issue.id));
+                  toast.dismiss(toastId);
+                }}
+              >
+                {t(($) => $.create_issue.view_issue)}
+              </button>
             </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground ml-7">
-              <StatusIcon status={issue.status} className="size-3.5 shrink-0" />
-              <span className="truncate">{issue.identifier} – {issue.title}</span>
-            </div>
-            <button
-              type="button"
-              className="ml-7 mt-2 text-sm text-primary hover:underline cursor-pointer"
-              onClick={() => {
-                router.push(p.issueDetail(issue.id));
-                toast.dismiss(toastId);
-              }}
-            >
-              {t(($) => $.create_issue.view_issue)}
-            </button>
-          </div>
-        ), { duration: 5000 });
+          ),
+          { duration: 5000 },
+        );
       }
     } catch {
       toast.error(t(($) => $.create_issue.toast_failed));
@@ -271,305 +304,311 @@ export function ManualCreatePanel({
     setLastMode("agent");
     onSwitchMode?.({
       prompt,
-      ...(assigneeType === "agent" && assigneeId
-        ? { agent_id: assigneeId }
-        : {}),
+      ...(assigneeType === "agent" && assigneeId ? { agent_id: assigneeId } : {}),
       ...(projectId ? { project_id: projectId } : {}),
     });
   };
 
   return (
     <>
-        {backlogHintIssueId ? (
-          <BacklogAgentHintContent
-            onKeepInBacklog={() => {
-              setBacklogHintIssueId(null);
-              onClose();
-            }}
-            onDismissPermanently={() => {
-              localStorage.setItem("multica:backlog-agent-hint-dismissed", "true");
-            }}
-            onMoveToTodo={() => {
-              updateIssueMutation.mutate(
-                { id: backlogHintIssueId, status: "todo" },
-                { onError: () => toast.error(t(($) => $.backlog_hint.toast_status_failed)) },
-              );
-              setBacklogHintIssueId(null);
-              onClose();
-            }}
-          />
-        ) : (
-          <>
-            <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_manual)}</DialogTitle>
+      {backlogHintIssueId ? (
+        <BacklogAgentHintContent
+          onKeepInBacklog={() => {
+            setBacklogHintIssueId(null);
+            onClose();
+          }}
+          onDismissPermanently={() => {
+            localStorage.setItem("multica:backlog-agent-hint-dismissed", "true");
+          }}
+          onMoveToTodo={() => {
+            updateIssueMutation.mutate(
+              { id: backlogHintIssueId, status: "todo" },
+              { onError: () => toast.error(t(($) => $.backlog_hint.toast_status_failed)) },
+            );
+            setBacklogHintIssueId(null);
+            onClose();
+          }}
+        />
+      ) : (
+        <>
+          <DialogTitle className="sr-only">{t(($) => $.create_issue.sr_manual)}</DialogTitle>
 
-            {/* Header */}
-            <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
-              <div className="flex items-center gap-1.5 text-xs">
-                <span className="text-muted-foreground">{workspaceName}</span>
-                <ChevronRight className="size-3 text-muted-foreground/50" />
-                <span className="font-medium">{t(($) => $.create_issue.manual_breadcrumb)}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
-                      >
-                        {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
-                      </button>
-                    }
-                  />
-                  <TooltipContent side="bottom">
-                    {isExpanded
-                      ? t(($) => $.common.collapse_tooltip)
-                      : t(($) => $.common.expand_tooltip)}
-                  </TooltipContent>
-                </Tooltip>
-                <Tooltip>
-                  <TooltipTrigger
-                    render={
-                      <button
-                        onClick={onClose}
-                        className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
-                      >
-                        <XIcon className="size-4" />
-                      </button>
-                    }
-                  />
-                  <TooltipContent side="bottom">{t(($) => $.common.close)}</TooltipContent>
-                </Tooltip>
-              </div>
+          {/* Header */}
+          <div className="flex items-center justify-between px-7 pt-5 pb-3 shrink-0">
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="text-muted-foreground">{workspaceName}</span>
+              <ChevronRight className="size-3 text-muted-foreground/50" />
+              <span className="font-medium">{t(($) => $.create_issue.manual_breadcrumb)}</span>
             </div>
-
-            {/* Title */}
-            <div className="px-7 pb-3 shrink-0">
-              <TitleEditor
-                key={formResetKey}
-                autoFocus
-                defaultValue={draft.title}
-                placeholder={t(($) => $.create_issue.title_placeholder)}
-                className="text-2xl font-semibold tracking-tight"
-                onChange={(v) => updateTitle(v)}
-                onSubmit={handleSubmit}
-              />
-            </div>
-
-            {/* Description — takes remaining space */}
-            <div {...descDropZoneProps} className="relative mx-7 flex flex-1 min-h-0 overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]">
-              <ContentEditor
-                ref={descEditorRef}
-                defaultValue={draft.description}
-                placeholder={t(($) => $.create_issue.description_placeholder)}
-                onUpdate={(md) => setDraft({ description: md })}
-                onUploadFile={handleUpload}
-                debounceMs={500}
-              />
-              {descDragOver && <FileDropOverlay />}
-            </div>
-
-            {/* Property toolbar */}
-            <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
-              {/* Status */}
-              <StatusPicker
-                status={status}
-                onUpdate={(u) => { if (u.status) updateStatus(u.status); }}
-                triggerRender={<PillButton />}
-                align="start"
-              />
-
-              {/* Priority */}
-              <PriorityPicker
-                priority={priority}
-                onUpdate={(u) => { if (u.priority) updatePriority(u.priority); }}
-                triggerRender={<PillButton />}
-                align="start"
-              />
-
-              {/* Assignee */}
-              <AssigneePicker
-                assigneeType={assigneeType ?? null}
-                assigneeId={assigneeId ?? null}
-                onUpdate={(u) => updateAssignee(
-                  u.assignee_type ?? undefined,
-                  u.assignee_id ?? undefined,
-                )}
-                triggerRender={<PillButton />}
-                align="start"
-              />
-
-              {/* Due date */}
-              <DueDatePicker
-                dueDate={dueDate}
-                onUpdate={(u) => updateDueDate(u.due_date ?? null)}
-                triggerRender={<PillButton />}
-                align="start"
-              />
-
-              {/* Project */}
-              <ProjectPicker
-                projectId={projectId ?? null}
-                onUpdate={(u) => setProjectId(u.project_id ?? undefined)}
-                triggerRender={<PillButton />}
-                align="start"
-              />
-
-              {/* Parent chip — appears when parent is set.
-                  Placed before the ⋯ so it wraps to a new line with ⋯ if
-                  space is tight, but ⋯ always stays last in DOM order. */}
-              {parentIssueId && parentIssue && (
-                <div className="inline-flex items-center rounded-full border text-xs transition-colors hover:bg-accent/60">
-                  <button
-                    type="button"
-                    onClick={() => setParentPickerOpen(true)}
-                    className="flex items-center gap-1.5 py-1 pl-2.5 cursor-pointer"
-                  >
-                    <ArrowUp className="size-3 text-muted-foreground" />
-                    <span>
-                      {t(($) => $.create_issue.subissue_of, { identifier: parentIssue.identifier })}
-                    </span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setParentIssueId(undefined)}
-                    className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
-                    aria-label={t(($) => $.create_issue.remove_parent_aria)}
-                  >
-                    <XIcon className="size-3" />
-                  </button>
-                </div>
-              )}
-
-              {/* Child chips — one per queued sub-issue. Links are deferred
-                  until create resolves (see handleSubmit). */}
-              {childIssues.map((c) => (
-                <div
-                  key={c.id}
-                  className="inline-flex items-center rounded-full border text-xs transition-colors hover:bg-accent/60"
-                >
-                  <div className="flex items-center gap-1.5 py-1 pl-2.5">
-                    <ArrowDown className="size-3 text-muted-foreground" />
-                    <span>{t(($) => $.create_issue.subissue_chip, { identifier: c.identifier })}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setChildIssues((prev) => prev.filter((x) => x.id !== c.id))
-                    }
-                    className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
-                    aria-label={t(($) => $.create_issue.remove_subissue_aria, { identifier: c.identifier })}
-                  >
-                    <XIcon className="size-3" />
-                  </button>
-                </div>
-              ))}
-
-              {/* Overflow — always the last child so DOM order keeps it at the
-                  end of the wrap flow, no matter how many chips are present. */}
-              <DropdownMenu>
-                <DropdownMenuTrigger
+            <div className="flex items-center gap-1">
+              <Tooltip>
+                <TooltipTrigger
                   render={
-                    <PillButton aria-label={t(($) => $.create_issue.more_options_aria)}>
-                      <MoreHorizontal className="size-3.5" />
-                    </PillButton>
+                    <button
+                      onClick={() => setIsExpanded(!isExpanded)}
+                      className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                    >
+                      {isExpanded ? (
+                        <Minimize2 className="size-4" />
+                      ) : (
+                        <Maximize2 className="size-4" />
+                      )}
+                    </button>
                   }
                 />
-                <DropdownMenuContent align="start" className="w-auto">
-                  {parentIssueId && parentIssue ? (
-                    <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
-                      <ArrowUp className="h-3.5 w-3.5" />
-                      {t(($) => $.create_issue.parent_with_id, { identifier: parentIssue.identifier })}
-                    </DropdownMenuItem>
-                  ) : (
-                    <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
-                      <ArrowUp className="h-3.5 w-3.5" />
-                      {t(($) => $.create_issue.set_parent)}
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuItem onClick={() => setChildPickerOpen(true)}>
-                    <ArrowDown className="h-3.5 w-3.5" />
-                    {t(($) => $.create_issue.add_subissue)}
-                  </DropdownMenuItem>
-                  {parentIssueId && parentIssue && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        variant="destructive"
-                        onClick={() => setParentIssueId(undefined)}
-                      >
-                        <XIcon className="h-3.5 w-3.5" />
-                        {t(($) => $.create_issue.remove_parent)}
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            {/* Parent / child pickers — rendered inline so they stack over this
-                modal instead of replacing it via useModalStore. */}
-            <IssuePickerModal
-              open={parentPickerOpen}
-              onOpenChange={setParentPickerOpen}
-              title={t(($) => $.create_issue.set_parent_picker.title)}
-              description={t(($) => $.create_issue.set_parent_picker.description)}
-              excludeIds={[
-                ...childIssues.map((c) => c.id),
-                ...(parentIssueId ? [parentIssueId] : []),
-              ]}
-              onSelect={(selected) => {
-                setParentIssueId(selected.id);
-              }}
-            />
-            <IssuePickerModal
-              open={childPickerOpen}
-              onOpenChange={setChildPickerOpen}
-              title={t(($) => $.create_issue.add_subissue_picker.title)}
-              description={t(($) => $.create_issue.add_subissue_picker.description)}
-              excludeIds={[
-                ...childIssues.map((c) => c.id),
-                ...(parentIssueId ? [parentIssueId] : []),
-              ]}
-              onSelect={(selected) => {
-                setChildIssues((prev) =>
-                  prev.some((x) => x.id === selected.id) ? prev : [...prev, selected],
-                );
-              }}
-            />
-
-            {/* Footer */}
-            <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex min-h-7 items-center gap-2">
-                <FileUploadButton
-                  onSelect={(file) => descEditorRef.current?.uploadFile(file)}
+                <TooltipContent side="bottom">
+                  {isExpanded
+                    ? t(($) => $.common.collapse_tooltip)
+                    : t(($) => $.common.expand_tooltip)}
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <button
+                      onClick={onClose}
+                      className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
+                    >
+                      <XIcon className="size-4" />
+                    </button>
+                  }
                 />
-              </div>
-              <div className="flex flex-wrap items-center justify-end gap-2">
+                <TooltipContent side="bottom">{t(($) => $.common.close)}</TooltipContent>
+              </Tooltip>
+            </div>
+          </div>
+
+          {/* Title */}
+          <div className="px-7 pb-3 shrink-0">
+            <TitleEditor
+              key={formResetKey}
+              autoFocus
+              defaultValue={draft.title}
+              placeholder={t(($) => $.create_issue.title_placeholder)}
+              className="text-2xl font-semibold tracking-tight"
+              onChange={(v) => updateTitle(v)}
+              onSubmit={handleSubmit}
+            />
+          </div>
+
+          {/* Description — takes remaining space */}
+          <div
+            {...descDropZoneProps}
+            className="relative mx-7 flex flex-1 min-h-0 overflow-y-auto rounded-2xl border border-border/70 bg-background px-4 py-3 shadow-inner shadow-black/[0.02]"
+          >
+            <ContentEditor
+              ref={descEditorRef}
+              defaultValue={draft.description}
+              placeholder={t(($) => $.create_issue.description_placeholder)}
+              onUpdate={(md) => setDraft({ description: md })}
+              onUploadFile={handleUpload}
+              debounceMs={500}
+            />
+            {descDragOver && <FileDropOverlay />}
+          </div>
+
+          {/* Property toolbar */}
+          <div className="flex items-center gap-1.5 px-6 py-3 shrink-0 flex-wrap">
+            {/* Status */}
+            <StatusPicker
+              status={status}
+              onUpdate={(u) => {
+                if (u.status) updateStatus(u.status);
+              }}
+              triggerRender={<PillButton />}
+              align="start"
+            />
+
+            {/* Priority */}
+            <PriorityPicker
+              priority={priority}
+              onUpdate={(u) => {
+                if (u.priority) updatePriority(u.priority);
+              }}
+              triggerRender={<PillButton />}
+              align="start"
+            />
+
+            {/* Assignee */}
+            <AssigneePicker
+              assigneeType={assigneeType ?? null}
+              assigneeId={assigneeId ?? null}
+              onUpdate={(u) =>
+                updateAssignee(u.assignee_type ?? undefined, u.assignee_id ?? undefined)
+              }
+              triggerRender={<PillButton />}
+              align="start"
+            />
+
+            {/* Due date */}
+            <DueDatePicker
+              dueDate={dueDate}
+              onUpdate={(u) => updateDueDate(u.due_date ?? null)}
+              triggerRender={<PillButton />}
+              align="start"
+            />
+
+            {/* Project */}
+            <ProjectPicker
+              projectId={projectId ?? null}
+              onUpdate={(u) => setProjectId(u.project_id ?? undefined)}
+              triggerRender={<PillButton />}
+              align="start"
+            />
+
+            {/* Parent chip — appears when parent is set.
+                  Placed before the ⋯ so it wraps to a new line with ⋯ if
+                  space is tight, but ⋯ always stays last in DOM order. */}
+            {parentIssueId && parentIssue && (
+              <div className="inline-flex items-center rounded-full border text-xs transition-colors hover:bg-accent/60">
                 <button
                   type="button"
-                  onClick={switchToAgent}
-                  title={t(($) => $.create_issue.switch_to_agent_tooltip)}
-                  className="border-beam group flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground bg-brand/5 hover:bg-brand/10 hover:text-foreground transition-colors cursor-pointer"
+                  onClick={() => setParentPickerOpen(true)}
+                  className="flex items-center gap-1.5 py-1 pl-2.5 cursor-pointer"
                 >
-                  <ArrowLeftRight className="size-3.5 text-brand/80 transition-transform duration-300 group-hover:rotate-180" />
-                  {t(($) => $.create_issue.switch_to_agent)}
+                  <ArrowUp className="size-3 text-muted-foreground" />
+                  <span>
+                    {t(($) => $.create_issue.subissue_of, { identifier: parentIssue.identifier })}
+                  </span>
                 </button>
-                <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
-                  <Switch
-                    size="sm"
-                    checked={keepOpen}
-                    onCheckedChange={setKeepOpen}
-                  />
-                  {t(($) => $.create_issue.create_another)}
-                </label>
-                <Button size="sm" onClick={handleSubmit} disabled={!title.trim() || submitting}>
-                  {submitting ? t(($) => $.create_issue.submitting) : t(($) => $.create_issue.submit)}
-                </Button>
+                <button
+                  type="button"
+                  onClick={() => setParentIssueId(undefined)}
+                  className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
+                  aria-label={t(($) => $.create_issue.remove_parent_aria)}
+                >
+                  <XIcon className="size-3" />
+                </button>
               </div>
+            )}
+
+            {/* Child chips — one per queued sub-issue. Links are deferred
+                  until create resolves (see handleSubmit). */}
+            {childIssues.map((c) => (
+              <div
+                key={c.id}
+                className="inline-flex items-center rounded-full border text-xs transition-colors hover:bg-accent/60"
+              >
+                <div className="flex items-center gap-1.5 py-1 pl-2.5">
+                  <ArrowDown className="size-3 text-muted-foreground" />
+                  <span>
+                    {t(($) => $.create_issue.subissue_chip, { identifier: c.identifier })}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setChildIssues((prev) => prev.filter((x) => x.id !== c.id))}
+                  className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
+                  aria-label={t(($) => $.create_issue.remove_subissue_aria, {
+                    identifier: c.identifier,
+                  })}
+                >
+                  <XIcon className="size-3" />
+                </button>
+              </div>
+            ))}
+
+            {/* Overflow — always the last child so DOM order keeps it at the
+                  end of the wrap flow, no matter how many chips are present. */}
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <PillButton aria-label={t(($) => $.create_issue.more_options_aria)}>
+                    <MoreHorizontal className="size-3.5" />
+                  </PillButton>
+                }
+              />
+              <DropdownMenuContent align="start" className="w-auto">
+                {parentIssueId && parentIssue ? (
+                  <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
+                    <ArrowUp className="h-3.5 w-3.5" />
+                    {t(($) => $.create_issue.parent_with_id, {
+                      identifier: parentIssue.identifier,
+                    })}
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
+                    <ArrowUp className="h-3.5 w-3.5" />
+                    {t(($) => $.create_issue.set_parent)}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={() => setChildPickerOpen(true)}>
+                  <ArrowDown className="h-3.5 w-3.5" />
+                  {t(($) => $.create_issue.add_subissue)}
+                </DropdownMenuItem>
+                {parentIssueId && parentIssue && (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => setParentIssueId(undefined)}
+                    >
+                      <XIcon className="h-3.5 w-3.5" />
+                      {t(($) => $.create_issue.remove_parent)}
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Parent / child pickers — rendered inline so they stack over this
+                modal instead of replacing it via useModalStore. */}
+          <IssuePickerModal
+            open={parentPickerOpen}
+            onOpenChange={setParentPickerOpen}
+            title={t(($) => $.create_issue.set_parent_picker.title)}
+            description={t(($) => $.create_issue.set_parent_picker.description)}
+            excludeIds={[
+              ...childIssues.map((c) => c.id),
+              ...(parentIssueId ? [parentIssueId] : []),
+            ]}
+            onSelect={(selected) => {
+              setParentIssueId(selected.id);
+            }}
+          />
+          <IssuePickerModal
+            open={childPickerOpen}
+            onOpenChange={setChildPickerOpen}
+            title={t(($) => $.create_issue.add_subissue_picker.title)}
+            description={t(($) => $.create_issue.add_subissue_picker.description)}
+            excludeIds={[
+              ...childIssues.map((c) => c.id),
+              ...(parentIssueId ? [parentIssueId] : []),
+            ]}
+            onSelect={(selected) => {
+              setChildIssues((prev) =>
+                prev.some((x) => x.id === selected.id) ? prev : [...prev, selected],
+              );
+            }}
+          />
+
+          {/* Footer */}
+          <div className="flex flex-col gap-2 border-t border-border/70 bg-background/80 px-6 py-4 shrink-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex min-h-7 items-center gap-2">
+              <FileUploadButton onSelect={(file) => descEditorRef.current?.uploadFile(file)} />
             </div>
-          </>
-        )}
+            <div className="flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={switchToAgent}
+                title={t(($) => $.create_issue.switch_to_agent_tooltip)}
+                className="border-beam group flex shrink-0 items-center gap-1.5 text-xs px-2.5 py-1.5 rounded-xl text-muted-foreground bg-brand/5 hover:bg-brand/10 hover:text-foreground transition-colors cursor-pointer"
+              >
+                <ArrowLeftRight className="size-3.5 text-brand/80 transition-transform duration-300 group-hover:rotate-180" />
+                {t(($) => $.create_issue.switch_to_agent)}
+              </button>
+              <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+                <Switch size="sm" checked={keepOpen} onCheckedChange={setKeepOpen} />
+                {t(($) => $.create_issue.create_another)}
+              </label>
+              <Button size="sm" onClick={handleSubmit} disabled={!title.trim() || submitting}>
+                {submitting ? t(($) => $.create_issue.submitting) : t(($) => $.create_issue.submit)}
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -577,10 +616,7 @@ export function ManualCreatePanel({
 /** className for DialogContent in manual mode — depends on isExpanded and the
  *  backlog-hint sub-state. Exported so the shell (which now owns the
  *  DialogContent) can apply the same visual treatment without duplicating it. */
-export function manualDialogContentClass(
-  isExpanded: boolean,
-  backlogHintIssueId: string | null,
-) {
+export function manualDialogContentClass(isExpanded: boolean, backlogHintIssueId: string | null) {
   return cn(
     "p-0 gap-0 flex flex-col overflow-hidden rounded-3xl bg-popover/95 shadow-2xl backdrop-blur-sm",
     "!top-1/2 !left-1/2 !-translate-x-1/2",
@@ -607,7 +643,12 @@ export function CreateIssueModal(props: {
   const [isExpanded, setIsExpanded] = useState(false);
   const [backlogHintIssueId, setBacklogHintIssueId] = useState<string | null>(null);
   return (
-    <DialogRoot open onOpenChange={(v) => { if (!v) props.onClose(); }}>
+    <DialogRoot
+      open
+      onOpenChange={(v) => {
+        if (!v) props.onClose();
+      }}
+    >
       <DialogContent
         finalFocus={false}
         showCloseButton={false}

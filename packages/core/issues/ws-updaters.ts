@@ -10,11 +10,7 @@ import {
 import type { Issue, IssueLabelsResponse, Label } from "../types";
 import type { ListIssuesCache } from "../types";
 
-export function onIssueCreated(
-  qc: QueryClient,
-  wsId: string,
-  issue: Issue,
-) {
+export function onIssueCreated(qc: QueryClient, wsId: string, issue: Issue) {
   qc.setQueryData<ListIssuesCache>(issueKeys.list(wsId), (old) =>
     old ? addIssueToBuckets(old, issue) : old,
   );
@@ -41,8 +37,7 @@ export function onIssueUpdated(
     null;
   // The NEW parent comes from the WS payload when parent_issue_id changed
   const newParentId = issue.parent_issue_id ?? null;
-  const parentChanged =
-    issue.parent_issue_id !== undefined && newParentId !== oldParentId;
+  const parentChanged = issue.parent_issue_id !== undefined && newParentId !== oldParentId;
 
   qc.setQueryData<ListIssuesCache>(issueKeys.list(wsId), (old) =>
     old ? patchIssueInBuckets(old, issue.id, issue) : old,
@@ -102,11 +97,7 @@ export function onIssueLabelsChanged(
   qc.invalidateQueries({ queryKey: issueKeys.myAll(wsId) });
 }
 
-export function onIssueDeleted(
-  qc: QueryClient,
-  wsId: string,
-  issueId: string,
-) {
+export function onIssueDeleted(qc: QueryClient, wsId: string, issueId: string) {
   // Look up the issue before removing it to check for parent_issue_id
   const listData = qc.getQueryData<ListIssuesCache>(issueKeys.list(wsId));
   const deleted = listData ? findIssueLocation(listData, issueId)?.issue : undefined;

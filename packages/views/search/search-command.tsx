@@ -79,13 +79,7 @@ function HighlightText({ text, query }: { text: string; query: string }) {
   return (
     <>
       {parts.map((part, i) =>
-        part.highlight ? (
-          <Highlight key={i}>
-            {part.text}
-          </Highlight>
-        ) : (
-          part.text
-        ),
+        part.highlight ? <Highlight key={i}>{part.text}</Highlight> : part.text,
       )}
     </>
   );
@@ -132,14 +126,54 @@ export function SearchCommand() {
   const issueStatusLabels = useIssueStatusLabels();
   const projectStatusLabels = useProjectStatusLabels();
   const navPages: NavPage[] = [
-    { key: "inbox", label: t(($) => $.pages.inbox), icon: Inbox, keywords: ["inbox", "notifications", "收件箱"] },
-    { key: "myIssues", label: t(($) => $.pages.my_issues), icon: CircleUser, keywords: ["my", "issues", "assigned", "我的"] },
-    { key: "issues", label: t(($) => $.pages.issues), icon: ListTodo, keywords: ["issues", "tasks", "bugs"] },
-    { key: "projects", label: t(($) => $.pages.projects), icon: FolderKanban, keywords: ["projects", "kanban", "项目"] },
-    { key: "agents", label: t(($) => $.pages.agents), icon: Bot, keywords: ["agents", "bots", "ai"] },
-    { key: "runtimes", label: t(($) => $.pages.runtimes), icon: Monitor, keywords: ["runtimes", "environments"] },
-    { key: "skills", label: t(($) => $.pages.skills), icon: BookOpenText, keywords: ["skills", "library"] },
-    { key: "settings", label: t(($) => $.pages.settings), icon: Settings, keywords: ["settings", "config", "preferences", "设置"] },
+    {
+      key: "inbox",
+      label: t(($) => $.pages.inbox),
+      icon: Inbox,
+      keywords: ["inbox", "notifications", "收件箱"],
+    },
+    {
+      key: "myIssues",
+      label: t(($) => $.pages.my_issues),
+      icon: CircleUser,
+      keywords: ["my", "issues", "assigned", "我的"],
+    },
+    {
+      key: "issues",
+      label: t(($) => $.pages.issues),
+      icon: ListTodo,
+      keywords: ["issues", "tasks", "bugs"],
+    },
+    {
+      key: "projects",
+      label: t(($) => $.pages.projects),
+      icon: FolderKanban,
+      keywords: ["projects", "kanban", "项目"],
+    },
+    {
+      key: "agents",
+      label: t(($) => $.pages.agents),
+      icon: Bot,
+      keywords: ["agents", "bots", "ai"],
+    },
+    {
+      key: "runtimes",
+      label: t(($) => $.pages.runtimes),
+      icon: Monitor,
+      keywords: ["runtimes", "environments"],
+    },
+    {
+      key: "skills",
+      label: t(($) => $.pages.skills),
+      icon: BookOpenText,
+      keywords: ["skills", "library"],
+    },
+    {
+      key: "settings",
+      label: t(($) => $.pages.settings),
+      icon: Settings,
+      keywords: ["settings", "config", "preferences", "设置"],
+    },
   ];
   const { push, pathname, getShareableUrl } = useNavigation();
   const open = useSearchStore((s) => s.open);
@@ -159,8 +193,7 @@ export function SearchCommand() {
     queries: recentItems.map((item) => issueDetailOptions(wsId, item.id)),
   });
   const recentIssues = useMemo(
-    () =>
-      recentDetailQueries.flatMap((q) => (q.data ? [q.data] : [])),
+    () => recentDetailQueries.flatMap((q) => (q.data ? [q.data] : [])),
     [recentDetailQueries],
   );
 
@@ -174,9 +207,7 @@ export function SearchCommand() {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return navPages.filter(
-      (page) =>
-        page.label.toLowerCase().includes(q) ||
-        page.keywords.some((kw) => kw.includes(q)),
+      (page) => page.label.toLowerCase().includes(q) || page.keywords.some((kw) => kw.includes(q)),
     );
   }, [query]);
 
@@ -298,9 +329,7 @@ export function SearchCommand() {
     // types, leaving the empty-state space to Recent.
     if (!q) return commands.filter((c) => c.key === "new-issue");
     return commands.filter(
-      (c) =>
-        c.label.toLowerCase().includes(q) ||
-        c.keywords.some((kw) => kw.includes(q)),
+      (c) => c.label.toLowerCase().includes(q) || c.keywords.some((kw) => kw.includes(q)),
     );
   }, [commands, query]);
 
@@ -310,13 +339,9 @@ export function SearchCommand() {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     const others = workspaces.filter((w) => w.id !== currentWorkspace?.id);
-    const wantsAll =
-      q.length >= 2 && ("workspace".startsWith(q) || "switch".startsWith(q));
+    const wantsAll = q.length >= 2 && ("workspace".startsWith(q) || "switch".startsWith(q));
     return others.filter(
-      (w) =>
-        wantsAll ||
-        w.name.toLowerCase().includes(q) ||
-        w.slug.toLowerCase().includes(q),
+      (w) => wantsAll || w.name.toLowerCase().includes(q) || w.slug.toLowerCase().includes(q),
     );
   }, [workspaces, currentWorkspace?.id, query]);
 
@@ -455,9 +480,7 @@ export function SearchCommand() {
       >
         <DialogHeader className="sr-only">
           <DialogTitle>{t(($) => $.title)}</DialogTitle>
-          <DialogDescription>
-            {t(($) => $.description)}
-          </DialogDescription>
+          <DialogDescription>{t(($) => $.description)}</DialogDescription>
         </DialogHeader>
         <CommandPrimitive
           shouldFilter={false}
@@ -589,17 +612,13 @@ export function SearchCommand() {
                         {projectStatusLabels[project.status as ProjectStatus] ?? project.status}
                       </span>
                     </div>
-                    {project.match_source === "description" &&
-                      project.matched_snippet && (
-                        <div className="flex items-start gap-2 pl-[26px]">
-                          <span className="text-xs text-muted-foreground truncate">
-                            <HighlightText
-                              text={project.matched_snippet}
-                              query={query}
-                            />
-                          </span>
-                        </div>
-                      )}
+                    {project.match_source === "description" && project.matched_snippet && (
+                      <div className="flex items-start gap-2 pl-[26px]">
+                        <span className="text-xs text-muted-foreground truncate">
+                          <HighlightText text={project.matched_snippet} query={query} />
+                        </span>
+                      </div>
+                    )}
                   </CommandPrimitive.Item>
                 ))}
               </CommandPrimitive.Group>
@@ -618,10 +637,7 @@ export function SearchCommand() {
                     className="flex cursor-default select-none flex-col gap-1 rounded-lg px-3 py-2.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-accent"
                   >
                     <div className="flex items-center gap-2.5">
-                      <StatusIcon
-                        status={issue.status}
-                        className="size-4 shrink-0"
-                      />
+                      <StatusIcon status={issue.status} className="size-4 shrink-0" />
                       <span className="text-xs text-muted-foreground shrink-0">
                         {issue.identifier}
                       </span>
@@ -634,18 +650,14 @@ export function SearchCommand() {
                         {issueStatusLabels[issue.status]}
                       </span>
                     </div>
-                    {issue.match_source === "comment" &&
-                      issue.matched_snippet && (
-                        <div className="flex items-start gap-2 pl-[26px]">
-                          <MessageSquare className="size-3 shrink-0 text-muted-foreground mt-0.5" />
-                          <span className="text-xs text-muted-foreground truncate">
-                            <HighlightText
-                              text={issue.matched_snippet}
-                              query={query}
-                            />
-                          </span>
-                        </div>
-                      )}
+                    {issue.match_source === "comment" && issue.matched_snippet && (
+                      <div className="flex items-start gap-2 pl-[26px]">
+                        <MessageSquare className="size-3 shrink-0 text-muted-foreground mt-0.5" />
+                        <span className="text-xs text-muted-foreground truncate">
+                          <HighlightText text={issue.matched_snippet} query={query} />
+                        </span>
+                      </div>
+                    )}
                   </CommandPrimitive.Item>
                 ))}
               </CommandPrimitive.Group>
@@ -664,10 +676,7 @@ export function SearchCommand() {
                     onSelect={handleSelect}
                     className="flex cursor-default select-none items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm outline-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-selected:bg-accent"
                   >
-                    <StatusIcon
-                      status={item.status}
-                      className="size-4 shrink-0"
-                    />
+                    <StatusIcon status={item.status} className="size-4 shrink-0" />
                     <span className="text-xs text-muted-foreground shrink-0">
                       {item.identifier}
                     </span>

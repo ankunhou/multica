@@ -1,14 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  ChevronRight,
-  ChevronDown,
-  FileText,
-  File,
-  Folder,
-  FolderOpen,
-} from "lucide-react";
+import { ChevronRight, ChevronDown, FileText, File, Folder, FolderOpen } from "lucide-react";
 import { cn } from "@multica/ui/lib/utils";
 import { useT } from "../../i18n";
 
@@ -131,9 +124,7 @@ function TreeNodeItem({
       onClick={() => onSelect(node.path)}
       className={cn(
         "flex w-full items-center gap-1.5 py-1 text-left text-xs rounded-sm",
-        isSelected
-          ? "bg-accent text-accent-foreground"
-          : "hover:bg-accent/50",
+        isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/50",
       )}
       style={{ paddingLeft: `${depth * 12 + 8 + 16}px` }}
     >
@@ -171,12 +162,7 @@ export function FileTree({
   return (
     <div className="py-1 px-1">
       {tree.map((node) => (
-        <TreeNodeItem
-          key={node.path}
-          node={node}
-          selectedPath={selectedPath}
-          onSelect={onSelect}
-        />
+        <TreeNodeItem key={node.path} node={node} selectedPath={selectedPath} onSelect={onSelect} />
       ))}
     </div>
   );

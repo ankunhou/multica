@@ -64,9 +64,7 @@ export function useMarkAllInboxRead() {
       await qc.cancelQueries({ queryKey: inboxKeys.list(wsId) });
       const prev = qc.getQueryData<InboxItem[]>(inboxKeys.list(wsId));
       qc.setQueryData<InboxItem[]>(inboxKeys.list(wsId), (old) =>
-        old?.map((item) =>
-          !item.archived ? { ...item, read: true } : item,
-        ),
+        old?.map((item) => (!item.archived ? { ...item, read: true } : item)),
       );
       return { prev };
     },

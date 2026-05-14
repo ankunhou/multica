@@ -17,13 +17,7 @@ export type MarkdownProps = MarkdownBaseProps;
  * Default renderMention that delegates to IssueMentionCard for issue mentions
  * and renders a styled span for other mention types.
  */
-function defaultRenderMention({
-  type,
-  id,
-}: {
-  type: string;
-  id: string;
-}): React.ReactNode {
+function defaultRenderMention({ type, id }: { type: string; id: string }): React.ReactNode {
   if (type === "issue") {
     return <IssueMentionCard issueId={id} />;
   }

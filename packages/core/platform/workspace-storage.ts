@@ -77,9 +77,7 @@ export function getCurrentWsId(): string | null {
  * Subscribe to changes of the current workspace slug. Returns an unsubscribe
  * function. Designed for React's `useSyncExternalStore` (WSProvider reconnect).
  */
-export function subscribeToCurrentSlug(
-  fn: (slug: string | null) => void,
-): () => void {
+export function subscribeToCurrentSlug(fn: (slug: string | null) => void): () => void {
   _slugSubscribers.add(fn);
   return () => {
     _slugSubscribers.delete(fn);
@@ -105,8 +103,7 @@ export function registerForWorkspaceRehydration(fn: () => void) {
  */
 export function createWorkspaceAwareStorage(adapter: StorageAdapter): StateStorage {
   return {
-    getItem: (key) =>
-      _currentSlug ? adapter.getItem(`${key}:${_currentSlug}`) : null,
+    getItem: (key) => (_currentSlug ? adapter.getItem(`${key}:${_currentSlug}`) : null),
     setItem: (key, value) => {
       if (_currentSlug) adapter.setItem(`${key}:${_currentSlug}`, value);
     },

@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { Globe, Lock } from "lucide-react";
 import type { AgentVisibility } from "@multica/core/types";
-import {
-  PickerItem,
-  PropertyPicker,
-} from "../../../issues/components/pickers";
+import { PickerItem, PropertyPicker } from "../../../issues/components/pickers";
 import { VisibilityBadge } from "../visibility-badge";
 import { CHIP_CLASS } from "./chip";
 import { useT } from "../../../i18n";
@@ -44,9 +41,7 @@ export function VisibilityPicker({
       width="w-auto min-w-[12rem]"
       align="start"
       tooltip={tooltip}
-      triggerRender={
-        <button type="button" className={CHIP_CLASS} aria-label={tooltip} />
-      }
+      triggerRender={<button type="button" className={CHIP_CLASS} aria-label={tooltip} />}
       trigger={
         <>
           <Icon className="h-3 w-3 shrink-0 text-muted-foreground" />
@@ -54,10 +49,7 @@ export function VisibilityPicker({
         </>
       }
     >
-      <PickerItem
-        selected={value === "workspace"}
-        onClick={() => select("workspace")}
-      >
+      <PickerItem selected={value === "workspace"} onClick={() => select("workspace")}>
         <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         <div className="text-left">
           <div className="font-medium">{t(($) => $.visibility.workspace.label)}</div>
@@ -66,10 +58,7 @@ export function VisibilityPicker({
           </div>
         </div>
       </PickerItem>
-      <PickerItem
-        selected={value === "private"}
-        onClick={() => select("private")}
-      >
+      <PickerItem selected={value === "private"} onClick={() => select("private")}>
         <Lock className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
         <div className="text-left">
           <div className="font-medium">{t(($) => $.visibility.private.label)}</div>

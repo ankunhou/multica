@@ -1,14 +1,8 @@
 import { test, expect } from "@playwright/test";
-import {
-  loginAsDefault,
-  minimizeChatIfOpen,
-  workspaceSwitcherButton,
-} from "./helpers";
+import { loginAsDefault, minimizeChatIfOpen, workspaceSwitcherButton } from "./helpers";
 
 test.describe("Settings", () => {
-  test("updating workspace name reflects in sidebar immediately", async ({
-    page,
-  }) => {
+  test("updating workspace name reflects in sidebar immediately", async ({ page }) => {
     await loginAsDefault(page);
 
     // Read the current workspace name from the sidebar
@@ -37,16 +31,12 @@ test.describe("Settings", () => {
     });
 
     // Sidebar should reflect the new name WITHOUT page refresh
-    await expect(
-      page.getByRole("button", { name: new RegExp(newName) }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: new RegExp(newName) })).toBeVisible();
 
     // Restore original name so other tests aren't affected
     await nameInput.clear();
     await nameInput.fill(originalName);
     await generalPanel.getByRole("button", { name: "Save" }).click();
-    await expect(
-      page.getByRole("button", { name: originalName }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: originalName })).toBeVisible();
   });
 });

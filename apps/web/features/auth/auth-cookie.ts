@@ -1,9 +1,7 @@
 const COOKIE_NAME = "multica_logged_in";
 
 export function hasLoggedInCookie(): boolean {
-  return document.cookie
-    .split("; ")
-    .some((cookie) => cookie.startsWith(`${COOKIE_NAME}=`));
+  return document.cookie.split("; ").some((cookie) => cookie.startsWith(`${COOKIE_NAME}=`));
 }
 
 export function setLoggedInCookie() {

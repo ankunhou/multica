@@ -51,9 +51,7 @@ export function openLink(href: string, currentSlug?: string | null): void {
       // "/acme/issues") or something unknown (e.g. "/foo"). Leave it alone —
       // the user wrote what they meant.
     }
-    window.dispatchEvent(
-      new CustomEvent("multica:navigate", { detail: { path } }),
-    );
+    window.dispatchEvent(new CustomEvent("multica:navigate", { detail: { path } }));
   } else {
     window.open(href, "_blank", "noopener,noreferrer");
   }

@@ -15,7 +15,10 @@ import { useT } from "../../i18n";
 
 const STATE_ICON: Record<
   GitHubPullRequestState,
-  { icon: React.ComponentType<{ className?: string }>; tone: "success" | "muted" | "brand" | "destructive" }
+  {
+    icon: React.ComponentType<{ className?: string }>;
+    tone: "success" | "muted" | "brand" | "destructive";
+  }
 > = {
   open: { icon: GitPullRequestArrow, tone: "success" },
   draft: { icon: GitPullRequestDraft, tone: "muted" },
@@ -29,13 +32,15 @@ export function PullRequestList({ issueId }: { issueId: string }) {
   const prs = data?.pull_requests ?? [];
 
   if (isLoading) {
-    return <p className="text-xs text-muted-foreground px-2">{t(($) => $.detail.pull_requests_loading)}</p>;
+    return (
+      <p className="text-xs text-muted-foreground px-2">
+        {t(($) => $.detail.pull_requests_loading)}
+      </p>
+    );
   }
   if (prs.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground px-2">
-        {t(($) => $.detail.pull_requests_empty)}
-      </p>
+      <p className="text-xs text-muted-foreground px-2">{t(($) => $.detail.pull_requests_empty)}</p>
     );
   }
 

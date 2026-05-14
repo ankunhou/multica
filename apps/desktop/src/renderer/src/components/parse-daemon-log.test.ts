@@ -7,8 +7,7 @@ import { parseLogLine } from "./parse-daemon-log";
 
 describe("parseLogLine", () => {
   it("parses tint's 3-letter INF level", () => {
-    const line =
-      "17:52:35.587 INF task completed component=daemon task=c45266e5 status=completed";
+    const line = "17:52:35.587 INF task completed component=daemon task=c45266e5 status=completed";
     const r = parseLogLine(line, 1);
     expect(r.timestamp).toBe("17:52:35.587");
     expect(r.level).toBe("INFO");
@@ -22,7 +21,9 @@ describe("parseLogLine", () => {
 
   it("parses 3-letter DBG / WRN / ERR levels", () => {
     expect(parseLogLine("17:53:06.644 DBG agent component=daemon", 1).level).toBe("DEBUG");
-    expect(parseLogLine("07:48:09.391 WRN claim task failed component=daemon", 1).level).toBe("WARN");
+    expect(parseLogLine("07:48:09.391 WRN claim task failed component=daemon", 1).level).toBe(
+      "WARN",
+    );
     expect(parseLogLine("12:00:00.000 ERR something bad component=daemon", 1).level).toBe("ERROR");
   });
 
@@ -42,10 +43,7 @@ describe("parseLogLine", () => {
 
   it("preserves message text containing colons and special chars", () => {
     // Real sample: "tool #1: Skill component=daemon task=..."
-    const r = parseLogLine(
-      "17:52:54.578 INF tool #1: Skill component=daemon task=8791b717",
-      1,
-    );
+    const r = parseLogLine("17:52:54.578 INF tool #1: Skill component=daemon task=8791b717", 1);
     expect(r.message).toBe("tool #1: Skill");
     expect(r.fields).toEqual({ component: "daemon", task: "8791b717" });
   });

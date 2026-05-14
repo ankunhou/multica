@@ -4,15 +4,8 @@ import { useState, type ReactNode } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@multica/core/api";
 import { useAuthStore } from "@multica/core/auth";
-import {
-  workspaceKeys,
-  workspaceListOptions,
-} from "@multica/core/workspace/queries";
-import {
-  paths,
-  resolvePostAuthDestination,
-  useHasOnboarded,
-} from "@multica/core/paths";
+import { workspaceKeys, workspaceListOptions } from "@multica/core/workspace/queries";
+import { paths, resolvePostAuthDestination, useHasOnboarded } from "@multica/core/paths";
 import { useNavigation } from "../navigation";
 import { useLogout } from "../auth";
 import { DragStrip } from "../platform";
@@ -49,7 +42,11 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<"accepted" | "declined" | null>(null);
 
-  const { data: invitation, isLoading, error: fetchError } = useQuery({
+  const {
+    data: invitation,
+    isLoading,
+    error: fetchError,
+  } = useQuery({
     queryKey: ["invitation", invitationId],
     queryFn: () => api.getInvitation(invitationId),
   });
@@ -84,9 +81,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
       qc.invalidateQueries({ queryKey: workspaceKeys.myInvitations() });
       // Navigate into the joined workspace. The [workspaceSlug]/layout will
       // sync api client, stores, and the last_workspace_slug cookie from the URL.
-      const dest = joined
-        ? paths.workspace(joined.slug).issues()
-        : fallbackDest;
+      const dest = joined ? paths.workspace(joined.slug).issues() : fallbackDest;
       setTimeout(() => push(dest), 1000);
     } catch (e) {
       setError(e instanceof Error ? e.message : t(($) => $.errors.accept_failed));
@@ -156,9 +151,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
             <h2 className="text-lg font-semibold">
               {t(($) => $.accepted.title, { workspace_name: invitation.workspace_name })}
             </h2>
-            <p className="text-sm text-muted-foreground">
-              {t(($) => $.accepted.redirecting)}
-            </p>
+            <p className="text-sm text-muted-foreground">{t(($) => $.accepted.redirecting)}</p>
           </CardContent>
         </Card>
       </InviteShell>
@@ -195,7 +188,8 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
           <div className="text-center space-y-2">
             <h2 className="text-xl font-semibold">
               {t(($) => $.main.join_title, {
-                workspace_name: invitation.workspace_name ?? t(($) => $.main.fallback_workspace_name),
+                workspace_name:
+                  invitation.workspace_name ?? t(($) => $.main.fallback_workspace_name),
               })}
             </h2>
             <p className="text-sm text-muted-foreground">
@@ -213,9 +207,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
                 : t(($) => $.main.already_handled_declined)}
             </div>
           ) : isExpired ? (
-            <div className="text-sm text-muted-foreground">
-              {t(($) => $.main.expired)}
-            </div>
+            <div className="text-sm text-muted-foreground">{t(($) => $.main.expired)}</div>
           ) : (
             <div className="flex gap-3 w-full">
               <Button
@@ -226,19 +218,13 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
               >
                 {declining ? t(($) => $.main.declining) : t(($) => $.main.decline)}
               </Button>
-              <Button
-                className="flex-1"
-                onClick={handleAccept}
-                disabled={accepting || declining}
-              >
+              <Button className="flex-1" onClick={handleAccept} disabled={accepting || declining}>
                 {accepting ? t(($) => $.main.joining) : t(($) => $.main.accept)}
               </Button>
             </div>
           )}
 
-          {error && (
-            <p className="text-sm text-destructive text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive text-center">{error}</p>}
         </CardContent>
       </Card>
     </InviteShell>
@@ -250,13 +236,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
  * default, accepted, declined). Keeps Back + Log out buttons in a
  * consistent position across all branches and across platforms.
  */
-function InviteShell({
-  onBack,
-  children,
-}: {
-  onBack?: () => void;
-  children: ReactNode;
-}) {
+function InviteShell({ onBack, children }: { onBack?: () => void; children: ReactNode }) {
   const { t } = useT("invite");
   const logout = useLogout();
   return (
@@ -282,9 +262,7 @@ function InviteShell({
         <LogOut />
         {t(($) => $.header.log_out)}
       </Button>
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
-        {children}
-      </div>
+      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">{children}</div>
     </div>
   );
 }

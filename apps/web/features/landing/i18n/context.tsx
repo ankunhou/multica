@@ -31,26 +31,17 @@ export function LocaleProvider({
 }) {
   const [locale, setLocaleState] = useState<Locale>(initialLocale);
   const allowSignup = useConfigStore((state) => state.allowSignup);
-  const t = useMemo(
-    () => dictionaryFactories[locale](allowSignup),
-    [allowSignup, locale],
-  );
+  const t = useMemo(() => dictionaryFactories[locale](allowSignup), [allowSignup, locale]);
 
   const setLocale = useCallback((l: Locale) => {
     setLocaleState(l);
     const secure =
-      typeof location !== "undefined" && location.protocol === "https:"
-        ? "; Secure"
-        : "";
+      typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
     document.cookie = `${LOCALE_COOKIE}=${l}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Lax${secure}`;
   }, []);
 
   return (
-    <LocaleContext.Provider
-      value={{ locale, t, setLocale }}
-    >
-      {children}
-    </LocaleContext.Provider>
+    <LocaleContext.Provider value={{ locale, t, setLocale }}>{children}</LocaleContext.Provider>
   );
 }
 

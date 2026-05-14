@@ -46,12 +46,7 @@ function FileUploadButton({
       >
         <Paperclip className={iconSize} />
       </button>
-      <input
-        ref={inputRef}
-        type="file"
-        className="hidden"
-        onChange={handleChange}
-      />
+      <input ref={inputRef} type="file" className="hidden" onChange={handleChange} />
     </>
   );
 }

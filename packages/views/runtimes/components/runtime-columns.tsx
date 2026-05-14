@@ -1,22 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  ArrowUpCircle,
-  Globe,
-  Lock,
-  MoreHorizontal,
-  Trash2,
-} from "lucide-react";
+import { ArrowUpCircle, Globe, Lock, MoreHorizontal, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import type { ColumnDef } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
 import type { AgentRuntime, MemberWithUser } from "@multica/core/types";
 import { deriveWorkload } from "@multica/core/agents";
-import {
-  deriveRuntimeHealth,
-  runtimeUsageOptions,
-} from "@multica/core/runtimes";
+import { deriveRuntimeHealth, runtimeUsageOptions } from "@multica/core/runtimes";
 import { useDeleteRuntime } from "@multica/core/runtimes/mutations";
 import {
   AlertDialog,
@@ -35,21 +26,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@multica/ui/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { workloadConfig } from "../../agents/presence";
 import { ProviderLogo } from "./provider-logo";
 import { HealthIcon, useHealthLabel } from "./shared";
-import {
-  computeCostInWindow,
-  formatLastSeen,
-  isVersionNewer,
-  pctChange,
-} from "../utils";
+import { computeCostInWindow, formatLastSeen, isVersionNewer, pctChange } from "../utils";
 import { useT } from "../../i18n";
 
 // Per-row data assembled at the page level. The columns reach into
@@ -111,9 +93,7 @@ export function createRuntimeColumns({
       header: () => t(($) => $.list.col_health),
       size: COL_WIDTHS.health,
       meta: { grow: true },
-      cell: ({ row }) => (
-        <HealthCell runtime={row.original.runtime} now={now} />
-      ),
+      cell: ({ row }) => <HealthCell runtime={row.original.runtime} now={now} />,
     },
   ];
 
@@ -125,11 +105,7 @@ export function createRuntimeColumns({
       cell: ({ row }) =>
         row.original.ownerMember ? (
           <span className="inline-flex min-w-0 items-center gap-1.5">
-            <ActorAvatar
-              actorType="member"
-              actorId={row.original.ownerMember.user_id}
-              size={18}
-            />
+            <ActorAvatar actorType="member" actorId={row.original.ownerMember.user_id} size={18} />
             <span className="truncate text-xs text-muted-foreground">
               {row.original.ownerMember.name}
             </span>
@@ -145,9 +121,7 @@ export function createRuntimeColumns({
       id: "agents",
       header: () => t(($) => $.list.col_agents),
       size: COL_WIDTHS.agents,
-      cell: ({ row }) => (
-        <AgentStack agentIds={row.original.workload.agentIds} />
-      ),
+      cell: ({ row }) => <AgentStack agentIds={row.original.workload.agentIds} />,
     },
     {
       id: "workload",
@@ -177,10 +151,7 @@ export function createRuntimeColumns({
       size: COL_WIDTHS.cli,
       meta: { grow: true },
       cell: ({ row }) => (
-        <CliCell
-          runtime={row.original.runtime}
-          latestCliVersion={latestCliVersion}
-        />
+        <CliCell runtime={row.original.runtime} latestCliVersion={latestCliVersion} />
       ),
     },
     {
@@ -189,10 +160,7 @@ export function createRuntimeColumns({
       size: COL_WIDTHS.actions,
       enableResizing: false,
       cell: ({ row }) => (
-        <div
-          className="flex justify-end"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
           <RuntimeRowActions
             runtime={row.original.runtime}
             wsId={wsId}
@@ -235,9 +203,7 @@ function RuntimeNameCell({ runtime }: { runtime: AgentRuntime }) {
         <ProviderLogo provider={runtime.provider} className="h-5 w-5" />
       </div>
       <div className="flex min-w-0 flex-1 items-center gap-1.5">
-        <span className="block min-w-0 truncate text-sm font-medium">
-          {baseName}
-        </span>
+        <span className="block min-w-0 truncate text-sm font-medium">{baseName}</span>
         {hostname && (
           <Tooltip>
             <TooltipTrigger
@@ -275,9 +241,7 @@ function VisibilityBadge({ runtime }: { runtime: AgentRuntime }) {
         render={
           <span
             className={`shrink-0 inline-flex items-center gap-0.5 rounded px-1 text-[10px] font-medium ${
-              isPublic
-                ? "bg-info/10 text-info"
-                : "bg-muted text-muted-foreground"
+              isPublic ? "bg-info/10 text-info" : "bg-muted text-muted-foreground"
             }`}
           >
             <Icon className="h-2.5 w-2.5" />
@@ -290,13 +254,7 @@ function VisibilityBadge({ runtime }: { runtime: AgentRuntime }) {
   );
 }
 
-function HealthCell({
-  runtime,
-  now,
-}: {
-  runtime: AgentRuntime;
-  now: number;
-}) {
+function HealthCell({ runtime, now }: { runtime: AgentRuntime; now: number }) {
   const labelOf = useHealthLabel();
   const health = deriveRuntimeHealth(runtime, now);
   const lastSeen = formatLastSeen(runtime.last_seen_at);
@@ -353,9 +311,7 @@ function WorkloadCell({
       )}
       <span className={`shrink-0 ${wl.textClass}`}>{tAgents(($) => $.workload[workload])}</span>
       {counts && (
-        <span className="truncate font-mono tabular-nums text-muted-foreground">
-          {counts}
-        </span>
+        <span className="truncate font-mono tabular-nums text-muted-foreground">{counts}</span>
       )}
     </span>
   );
@@ -373,14 +329,9 @@ const COST_CELL_DAYS = 14;
 
 function CostCell({ runtimeId }: { runtimeId: string }) {
   const { t } = useT("runtimes");
-  const { data: usage = [] } = useQuery(
-    runtimeUsageOptions(runtimeId, COST_CELL_DAYS),
-  );
+  const { data: usage = [] } = useQuery(runtimeUsageOptions(runtimeId, COST_CELL_DAYS));
   const cost7d = useMemo(() => computeCostInWindow(usage, 7), [usage]);
-  const costPrev7d = useMemo(
-    () => computeCostInWindow(usage, 7, 7),
-    [usage],
-  );
+  const costPrev7d = useMemo(() => computeCostInWindow(usage, 7, 7), [usage]);
   const delta = pctChange(cost7d, costPrev7d);
 
   if (usage.length === 0) {
@@ -408,11 +359,7 @@ function CostCell({ runtimeId }: { runtimeId: string }) {
   return (
     <div className="flex flex-col items-end leading-tight">
       <span className="text-sm font-medium tabular-nums">{fmt}</span>
-      {deltaLabel && (
-        <span className={`text-[11px] tabular-nums ${deltaTone}`}>
-          {deltaLabel}
-        </span>
-      )}
+      {deltaLabel && <span className={`text-[11px] tabular-nums ${deltaTone}`}>{deltaLabel}</span>}
     </div>
   );
 }
@@ -429,10 +376,8 @@ function CliCell({
     return <span className="text-xs text-muted-foreground/50">—</span>;
   }
   const meta = runtime.metadata as Record<string, unknown> | null;
-  const cliVersion =
-    meta && typeof meta.cli_version === "string" ? meta.cli_version : null;
-  const launchedBy =
-    meta && typeof meta.launched_by === "string" ? meta.launched_by : null;
+  const cliVersion = meta && typeof meta.cli_version === "string" ? meta.cli_version : null;
+  const launchedBy = meta && typeof meta.launched_by === "string" ? meta.launched_by : null;
   const isManaged = launchedBy === "desktop";
 
   if (!cliVersion) {
@@ -443,9 +388,7 @@ function CliCell({
   // Electron app ships and replaces the binary), so the upgrade marker
   // would lie — suppress regardless of version comparison.
   const hasUpdate =
-    !isManaged &&
-    !!latestCliVersion &&
-    isVersionNewer(latestCliVersion, cliVersion);
+    !isManaged && !!latestCliVersion && isVersionNewer(latestCliVersion, cliVersion);
 
   return (
     <div className="flex min-w-0 items-center gap-1 text-xs">
@@ -455,9 +398,7 @@ function CliCell({
         </span>
       )}
       <span
-        className={`truncate font-mono ${
-          hasUpdate ? "text-warning" : "text-muted-foreground"
-        }`}
+        className={`truncate font-mono ${hasUpdate ? "text-warning" : "text-muted-foreground"}`}
       >
         {cliVersion}
       </span>
@@ -492,16 +433,8 @@ function AgentStack({ agentIds }: { agentIds: string[] }) {
   return (
     <div className="flex items-center -space-x-1.5">
       {visible.map((id) => (
-        <span
-          key={id}
-          className="inline-flex rounded-full ring-2 ring-background"
-        >
-          <ActorAvatar
-            actorType="agent"
-            actorId={id}
-            size={22}
-            enableHoverCard
-          />
+        <span key={id} className="inline-flex rounded-full ring-2 ring-background">
+          <ActorAvatar actorType="agent" actorId={id} size={22} enableHoverCard />
         </span>
       ))}
       {extra > 0 && (
@@ -537,9 +470,7 @@ export function RuntimeRowActions({
         setDeleteOpen(false);
       },
       onError: (e) => {
-        toast.error(
-          e instanceof Error ? e.message : t(($) => $.detail.toast_delete_failed),
-        );
+        toast.error(e instanceof Error ? e.message : t(($) => $.detail.toast_delete_failed));
       },
     });
   };
@@ -560,11 +491,7 @@ export function RuntimeRowActions({
         >
           <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="w-40"
-          onClick={(e) => e.stopPropagation()}
-        >
+        <DropdownMenuContent align="end" className="w-40" onClick={(e) => e.stopPropagation()}>
           <DropdownMenuItem
             variant="destructive"
             onClick={() => setDeleteOpen(true)}
@@ -599,7 +526,9 @@ export function RuntimeRowActions({
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? t(($) => $.detail.delete_dialog.deleting) : t(($) => $.detail.delete_dialog.confirm)}
+              {deleteMutation.isPending
+                ? t(($) => $.detail.delete_dialog.deleting)
+                : t(($) => $.detail.delete_dialog.confirm)}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

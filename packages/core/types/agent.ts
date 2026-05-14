@@ -299,12 +299,7 @@ export interface RuntimeUsageByHour {
   task_count: number;
 }
 
-export type RuntimeUpdateStatus =
-  | "pending"
-  | "running"
-  | "completed"
-  | "failed"
-  | "timeout";
+export type RuntimeUpdateStatus = "pending" | "running" | "completed" | "failed" | "timeout";
 
 export interface RuntimeUpdate {
   id: string;
@@ -324,12 +319,7 @@ export interface RuntimeModel {
   default?: boolean;
 }
 
-export type RuntimeModelListStatus =
-  | "pending"
-  | "running"
-  | "completed"
-  | "failed"
-  | "timeout";
+export type RuntimeModelListStatus = "pending" | "running" | "completed" | "failed" | "timeout";
 
 export interface RuntimeModelListRequest {
   id: string;
@@ -350,12 +340,7 @@ export interface RuntimeModelsResult {
   supported: boolean;
 }
 
-export type RuntimeLocalSkillStatus =
-  | "pending"
-  | "running"
-  | "completed"
-  | "failed"
-  | "timeout";
+export type RuntimeLocalSkillStatus = "pending" | "running" | "completed" | "failed" | "timeout";
 
 export interface RuntimeLocalSkillSummary {
   key: string;

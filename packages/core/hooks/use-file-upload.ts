@@ -17,10 +17,7 @@ export interface UploadContext {
   chatSessionId?: string;
 }
 
-export function useFileUpload(
-  api: ApiClient,
-  onError?: (error: Error) => void,
-) {
+export function useFileUpload(api: ApiClient, onError?: (error: Error) => void) {
   const [uploading, setUploading] = useState(false);
 
   const upload = useCallback(

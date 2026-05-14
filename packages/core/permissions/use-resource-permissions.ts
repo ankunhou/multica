@@ -2,12 +2,7 @@
 
 import type { Agent, Skill } from "../types";
 import { useCurrentMember } from "./use-current-member";
-import {
-  canAssignAgentToIssue,
-  canDeleteSkill,
-  canEditAgent,
-  canEditSkill,
-} from "./rules";
+import { canAssignAgentToIssue, canDeleteSkill, canEditAgent, canEditSkill } from "./rules";
 import { deny, type Decision } from "./types";
 
 const PENDING: Decision = deny("unknown", "");

@@ -49,8 +49,5 @@ export const config = {
   // and `robots.txt` MUST be excluded — they're not under `[lang]/`, so
   // routing them through the locale rewrite would 404 the sitemap that
   // robots.txt advertises to crawlers.
-  matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
-    "/",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)", "/"],
 };

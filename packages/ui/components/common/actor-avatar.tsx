@@ -37,7 +37,7 @@ function ActorAvatar({
       className={cn(
         "inline-flex shrink-0 items-center justify-center rounded-full font-medium overflow-hidden",
         "bg-muted text-muted-foreground",
-        className
+        className,
       )}
       style={{ width: size, height: size, fontSize: size * 0.45 }}
       title={name}

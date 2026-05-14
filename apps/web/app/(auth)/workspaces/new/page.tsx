@@ -26,8 +26,7 @@ export default function Page() {
   // Back goes to the root path — the workspace layout redirects from
   // there to the user's default workspace. Only show Back when there's
   // somewhere to go back to (user already has at least one workspace).
-  const onBack =
-    wsList.length > 0 ? () => router.push(paths.root()) : undefined;
+  const onBack = wsList.length > 0 ? () => router.push(paths.root()) : undefined;
 
   return (
     <NewWorkspacePage

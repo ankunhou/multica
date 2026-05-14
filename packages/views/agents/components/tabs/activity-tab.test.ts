@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AgentTask } from "@multica/core/types";
-import {
-  deriveAvgDurationLast30d,
-  formatDurationMs,
-} from "./activity-tab";
+import { deriveAvgDurationLast30d, formatDurationMs } from "./activity-tab";
 
 const NOW = new Date("2026-04-28T12:00:00Z").getTime();
 const HOUR = 60 * 60 * 1000;

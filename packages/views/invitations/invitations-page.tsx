@@ -81,9 +81,7 @@ export function InvitationsPage() {
         acceptedIds.push(id);
       }
 
-      const firstAcceptedInvite = invitations?.find(
-        (inv) => inv.id === acceptedIds[0],
-      );
+      const firstAcceptedInvite = invitations?.find((inv) => inv.id === acceptedIds[0]);
 
       // markOnboardingComplete is a frontend-side belt to the backend braces:
       // each AcceptInvitation transaction already sets onboarded_at via
@@ -111,15 +109,9 @@ export function InvitationsPage() {
       // refetched), fall back to the resolver. Don't blindly route to
       // wsList[0]: that could teleport the user into an unrelated old
       // workspace they happen to also belong to.
-      push(
-        targetWs ? paths.workspace(targetWs.slug).issues() : paths.newWorkspace(),
-      );
+      push(targetWs ? paths.workspace(targetWs.slug).issues() : paths.newWorkspace());
     } catch (e) {
-      setError(
-        e instanceof Error
-          ? e.message
-          : t(($) => $.batch.error_generic),
-      );
+      setError(e instanceof Error ? e.message : t(($) => $.batch.error_generic));
       // Partial success: any accepts that landed before the failure ALREADY
       // set onboarded_at on the backend (the AcceptInvitation transaction
       // is atomic per invite). Refresh local user + workspace state so the
@@ -127,7 +119,10 @@ export function InvitationsPage() {
       // stale `onboarded_at == null` view. The next submit is safe — the
       // server returns 4xx on re-accept and the catch path will surface that.
       if (acceptedIds.length > 0) {
-        await useAuthStore.getState().refreshMe().catch(() => {});
+        await useAuthStore
+          .getState()
+          .refreshMe()
+          .catch(() => {});
         qc.invalidateQueries({ queryKey: workspaceKeys.list() });
       }
       qc.invalidateQueries({ queryKey: workspaceKeys.myInvitations() });
@@ -190,12 +185,8 @@ export function InvitationsPage() {
               <Users className="h-6 w-6 text-primary" />
             </div>
             <div className="space-y-1">
-              <h2 className="text-xl font-semibold">
-                {t(($) => $.batch.title)}
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                {t(($) => $.batch.subtitle)}
-              </p>
+              <h2 className="text-xl font-semibold">{t(($) => $.batch.title)}</h2>
+              <p className="text-sm text-muted-foreground">{t(($) => $.batch.subtitle)}</p>
             </div>
           </div>
 
@@ -210,17 +201,11 @@ export function InvitationsPage() {
             ))}
           </ul>
 
-          <Button
-            className="w-full"
-            onClick={handleSubmit}
-            disabled={submitting}
-          >
+          <Button className="w-full" onClick={handleSubmit} disabled={submitting}>
             {submitting ? t(($) => $.batch.joining) : submitLabel}
           </Button>
 
-          {error && (
-            <p className="text-sm text-destructive text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-destructive text-center">{error}</p>}
         </CardContent>
       </Card>
     </InvitationsShell>
@@ -238,30 +223,20 @@ function InvitationRow({
 }) {
   const { t } = useT("invite");
   const inviter =
-    invitation.inviter_name ||
-    invitation.inviter_email ||
-    t(($) => $.batch.row_inviter_fallback);
+    invitation.inviter_name || invitation.inviter_email || t(($) => $.batch.row_inviter_fallback);
   const roleLine =
     invitation.role === "admin"
       ? t(($) => $.batch.row_invited_admin, { inviter })
       : t(($) => $.batch.row_invited_member, { inviter });
   return (
     <li>
-      <label
-        className="flex cursor-pointer items-start gap-3 rounded-md border border-border bg-card p-4 hover:bg-accent/40"
-      >
-        <Checkbox
-          checked={checked}
-          onCheckedChange={onToggle}
-          className="mt-1"
-        />
+      <label className="flex cursor-pointer items-start gap-3 rounded-md border border-border bg-card p-4 hover:bg-accent/40">
+        <Checkbox checked={checked} onCheckedChange={onToggle} className="mt-1" />
         <div className="flex-1 min-w-0 space-y-1">
           <div className="font-medium truncate">
             {invitation.workspace_name ?? t(($) => $.batch.row_workspace_fallback)}
           </div>
-          <div className="text-xs text-muted-foreground truncate">
-            {roleLine}
-          </div>
+          <div className="text-xs text-muted-foreground truncate">{roleLine}</div>
         </div>
       </label>
     </li>
@@ -283,9 +258,7 @@ function InvitationsShell({ children }: { children: ReactNode }) {
         <LogOut />
         {t(($) => $.batch.log_out)}
       </Button>
-      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
-        {children}
-      </div>
+      <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">{children}</div>
     </div>
   );
 }

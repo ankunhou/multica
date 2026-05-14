@@ -1,4 +1,8 @@
-import { preprocessLinks, preprocessMentionShortcodes, preprocessFileCards } from "@multica/ui/markdown";
+import {
+  preprocessLinks,
+  preprocessMentionShortcodes,
+  preprocessFileCards,
+} from "@multica/ui/markdown";
 import { configStore } from "@multica/core/config";
 
 /**

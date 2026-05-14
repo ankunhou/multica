@@ -34,9 +34,7 @@ describe("runtime config", () => {
 
   it("strips the leading api. label when deriving appUrl", () => {
     expect(
-      parseRuntimeConfig(
-        JSON.stringify({ schemaVersion: 1, apiUrl: "https://api.multica.ai" }),
-      ),
+      parseRuntimeConfig(JSON.stringify({ schemaVersion: 1, apiUrl: "https://api.multica.ai" })),
     ).toEqual({
       schemaVersion: 1,
       apiUrl: "https://api.multica.ai",
@@ -125,9 +123,7 @@ describe("runtime config", () => {
     // public web host, not the api host. Multica's convention exposes the
     // api at `api.<web-host>`, so stripping the leading label gives the
     // right web origin without a separate VITE_APP_URL.
-    expect(
-      runtimeConfigFromDevEnv({ apiUrl: "https://api.test.multica.ai" }),
-    ).toEqual({
+    expect(runtimeConfigFromDevEnv({ apiUrl: "https://api.test.multica.ai" })).toEqual({
       schemaVersion: 1,
       apiUrl: "https://api.test.multica.ai",
       wsUrl: "wss://api.test.multica.ai/ws",

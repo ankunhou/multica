@@ -1,13 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Activity,
-  BookOpenText,
-  FileText,
-  KeyRound,
-  Terminal,
-} from "lucide-react";
+import { Activity, BookOpenText, FileText, KeyRound, Terminal } from "lucide-react";
 import type { Agent, AgentRuntime } from "@multica/core/types";
 import {
   AlertDialog,
@@ -26,14 +20,12 @@ import { EnvTab } from "./tabs/env-tab";
 import { CustomArgsTab } from "./tabs/custom-args-tab";
 import { useT } from "../../i18n";
 
-type DetailTab =
-  | "activity"
-  | "instructions"
-  | "skills"
-  | "env"
-  | "custom_args";
+type DetailTab = "activity" | "instructions" | "skills" | "env" | "custom_args";
 
-const TAB_LABEL_KEY: Record<DetailTab, "activity" | "instructions" | "skills" | "environment" | "custom_args"> = {
+const TAB_LABEL_KEY: Record<
+  DetailTab,
+  "activity" | "instructions" | "skills" | "environment" | "custom_args"
+> = {
   activity: "activity",
   instructions: "instructions",
   skills: "skills",
@@ -80,11 +72,7 @@ interface AgentOverviewPaneProps {
  * unsaved edits because each tab manages its own local state and remounts on
  * tab change.
  */
-export function AgentOverviewPane({
-  agent,
-  runtimes,
-  onUpdate,
-}: AgentOverviewPaneProps) {
+export function AgentOverviewPane({ agent, runtimes, onUpdate }: AgentOverviewPaneProps) {
   const { t } = useT("agents");
   const [activeTab, setActiveTab] = useState<DetailTab>("activity");
   const [activeDirty, setActiveDirty] = useState(false);
@@ -94,7 +82,7 @@ export function AgentOverviewPane({
   const [pendingTab, setPendingTab] = useState<DetailTab | null>(null);
 
   const runtime = agent.runtime_id
-    ? runtimes.find((r) => r.id === agent.runtime_id) ?? null
+    ? (runtimes.find((r) => r.id === agent.runtime_id) ?? null)
     : null;
 
   const requestTabChange = (next: DetailTab) => {
@@ -194,10 +182,7 @@ export function AgentOverviewPane({
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>{t(($) => $.tabs.discard_keep)}</AlertDialogCancel>
-              <AlertDialogAction
-                variant="destructive"
-                onClick={commitTabChange}
-              >
+              <AlertDialogAction variant="destructive" onClick={commitTabChange}>
                 {t(($) => $.tabs.discard_confirm)}
               </AlertDialogAction>
             </AlertDialogFooter>
@@ -215,7 +200,5 @@ export function AgentOverviewPane({
 // behave as natural-height blocks; long content (e.g. Settings, long Skills
 // list) still scrolls via the parent's overflow-y-auto.
 function TabContent({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mx-auto flex h-full max-w-2xl flex-col p-5 md:p-7">{children}</div>
-  );
+  return <div className="mx-auto flex h-full max-w-2xl flex-col p-5 md:p-7">{children}</div>;
 }

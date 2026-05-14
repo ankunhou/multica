@@ -37,10 +37,10 @@ func (m *mockStorage) Upload(_ context.Context, key string, _ []byte, _ string, 
 	return fmt.Sprintf("https://cdn.example.com/%s", key), nil
 }
 
-func (m *mockStorage) Delete(_ context.Context, _ string)        {}
-func (m *mockStorage) DeleteKeys(_ context.Context, _ []string)  {}
-func (m *mockStorage) KeyFromURL(rawURL string) string            { return rawURL }
-func (m *mockStorage) CdnDomain() string                         { return "cdn.example.com" }
+func (m *mockStorage) Delete(_ context.Context, _ string)       {}
+func (m *mockStorage) DeleteKeys(_ context.Context, _ []string) {}
+func (m *mockStorage) KeyFromURL(rawURL string) string          { return rawURL }
+func (m *mockStorage) CdnDomain() string                        { return "cdn.example.com" }
 
 func TestUploadFileForeignWorkspace(t *testing.T) {
 	origStorage := testHandler.Storage

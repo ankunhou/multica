@@ -4,10 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@multica/ui/components/ui/button";
-import {
-  completeOnboarding,
-  type OnboardingCompletionPath,
-} from "@multica/core/onboarding";
+import { completeOnboarding, type OnboardingCompletionPath } from "@multica/core/onboarding";
 import { useT } from "../../i18n";
 
 /**
@@ -57,15 +54,10 @@ export function StepFirstIssue({
     started.current = true;
     (async () => {
       try {
-        await completeOnboarding(
-          completionPathRef.current,
-          workspaceIdRef.current,
-        );
+        await completeOnboarding(completionPathRef.current, workspaceIdRef.current);
         onFinishedRef.current();
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : t(($) => $.errors.skip_failed),
-        );
+        setError(err instanceof Error ? err.message : t(($) => $.errors.skip_failed));
       }
     })();
   }, [t]);
@@ -75,14 +67,10 @@ export function StepFirstIssue({
     setRetrying(true);
     setError(null);
     try {
-      await completeOnboarding(
-        completionPathRef.current,
-        workspaceIdRef.current,
-      );
+      await completeOnboarding(completionPathRef.current, workspaceIdRef.current);
       onFinishedRef.current();
     } catch (err) {
-      const msg =
-        err instanceof Error ? err.message : t(($) => $.first_issue.retry_failed);
+      const msg = err instanceof Error ? err.message : t(($) => $.first_issue.retry_failed);
       setError(msg);
       toast.error(msg);
     } finally {
@@ -117,9 +105,7 @@ export function StepFirstIssue({
         <h1 className="text-2xl font-semibold tracking-tight">
           {t(($) => $.first_issue.finishing)}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          {t(($) => $.first_issue.opening)}
-        </p>
+        <p className="text-sm text-muted-foreground">{t(($) => $.first_issue.opening)}</p>
       </div>
     </div>
   );

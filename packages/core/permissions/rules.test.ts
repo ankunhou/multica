@@ -105,19 +105,13 @@ describe("canEditAgent", () => {
   const agent = makeAgent({ owner_id: ALICE });
 
   it("allows the owner", () => {
-    expect(canEditAgent(agent, { userId: ALICE, role: "member" }).allowed).toBe(
-      true,
-    );
+    expect(canEditAgent(agent, { userId: ALICE, role: "member" }).allowed).toBe(true);
   });
   it("allows workspace owner", () => {
-    expect(canEditAgent(agent, { userId: BOB, role: "owner" }).allowed).toBe(
-      true,
-    );
+    expect(canEditAgent(agent, { userId: BOB, role: "owner" }).allowed).toBe(true);
   });
   it("allows workspace admin", () => {
-    expect(canEditAgent(agent, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canEditAgent(agent, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("denies non-owner member", () => {
     const d = canEditAgent(agent, { userId: BOB, role: "member" });
@@ -131,24 +125,18 @@ describe("canEditAgent", () => {
   });
   it("denies when agent owner_id is null and user is plain member", () => {
     const orphan = makeAgent({ owner_id: null });
-    expect(
-      canEditAgent(orphan, { userId: ALICE, role: "member" }).allowed,
-    ).toBe(false);
+    expect(canEditAgent(orphan, { userId: ALICE, role: "member" }).allowed).toBe(false);
   });
   it("admin can still edit an orphan (owner_id null) agent", () => {
     const orphan = makeAgent({ owner_id: null });
-    expect(canEditAgent(orphan, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canEditAgent(orphan, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
 });
 
 describe("canAssignAgentToIssue", () => {
   it("allows any member to assign workspace-visibility agents", () => {
     const a = makeAgent({ visibility: "workspace", owner_id: ALICE });
-    expect(
-      canAssignAgentToIssue(a, { userId: BOB, role: "member" }).allowed,
-    ).toBe(true);
+    expect(canAssignAgentToIssue(a, { userId: BOB, role: "member" }).allowed).toBe(true);
   });
   it("denies non-members from assigning workspace agents", () => {
     const a = makeAgent({ visibility: "workspace", owner_id: ALICE });
@@ -158,15 +146,11 @@ describe("canAssignAgentToIssue", () => {
   });
   it("allows the owner to assign their private agent", () => {
     const a = makeAgent({ visibility: "private", owner_id: ALICE });
-    expect(
-      canAssignAgentToIssue(a, { userId: ALICE, role: "member" }).allowed,
-    ).toBe(true);
+    expect(canAssignAgentToIssue(a, { userId: ALICE, role: "member" }).allowed).toBe(true);
   });
   it("allows workspace admin to assign someone else's private agent", () => {
     const a = makeAgent({ visibility: "private", owner_id: ALICE });
-    expect(
-      canAssignAgentToIssue(a, { userId: BOB, role: "admin" }).allowed,
-    ).toBe(true);
+    expect(canAssignAgentToIssue(a, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("denies a plain member from assigning someone else's private agent", () => {
     const a = makeAgent({ visibility: "private", owner_id: ALICE });
@@ -185,49 +169,35 @@ describe("canAssignAgentToIssue", () => {
 describe("canEditSkill / canDeleteSkill", () => {
   const skill = makeSkill(ALICE);
   it("allows admins", () => {
-    expect(canEditSkill(skill, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canEditSkill(skill, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("allows the creator", () => {
-    expect(canEditSkill(skill, { userId: ALICE, role: "member" }).allowed)
-      .toBe(true);
+    expect(canEditSkill(skill, { userId: ALICE, role: "member" }).allowed).toBe(true);
   });
   it("denies non-creator member", () => {
-    expect(canEditSkill(skill, { userId: BOB, role: "member" }).allowed)
-      .toBe(false);
+    expect(canEditSkill(skill, { userId: BOB, role: "member" }).allowed).toBe(false);
   });
   it("denies when created_by is null and user is plain member", () => {
-    expect(
-      canEditSkill(makeSkill(null), { userId: ALICE, role: "member" }).allowed,
-    ).toBe(false);
+    expect(canEditSkill(makeSkill(null), { userId: ALICE, role: "member" }).allowed).toBe(false);
   });
   it("canDeleteSkill mirrors canEditSkill", () => {
-    expect(canDeleteSkill(skill, { userId: ALICE, role: "member" }).allowed)
-      .toBe(true);
-    expect(canDeleteSkill(skill, { userId: BOB, role: "member" }).allowed)
-      .toBe(false);
+    expect(canDeleteSkill(skill, { userId: ALICE, role: "member" }).allowed).toBe(true);
+    expect(canDeleteSkill(skill, { userId: BOB, role: "member" }).allowed).toBe(false);
   });
 });
 
 describe("canEditComment / canDeleteComment", () => {
   it("allows the author to edit their own comment", () => {
     const c = makeComment({ author_id: ALICE });
-    expect(canEditComment(c, { userId: ALICE, role: "member" }).allowed).toBe(
-      true,
-    );
+    expect(canEditComment(c, { userId: ALICE, role: "member" }).allowed).toBe(true);
   });
   it("allows workspace admin to edit someone else's comment", () => {
     const c = makeComment({ author_id: ALICE });
-    expect(canEditComment(c, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canEditComment(c, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("denies non-author non-admin", () => {
     const c = makeComment({ author_id: ALICE });
-    expect(canEditComment(c, { userId: BOB, role: "member" }).allowed).toBe(
-      false,
-    );
+    expect(canEditComment(c, { userId: BOB, role: "member" }).allowed).toBe(false);
   });
   it("denies edit on agent-authored comments", () => {
     const c = makeComment({ author_type: "agent", author_id: "agt_1" });
@@ -239,66 +209,43 @@ describe("canEditComment / canDeleteComment", () => {
     // delete is broader than edit — admins moderate any comment regardless of
     // author type. Mirrors backend `comment.go:507-512`.
     const c = makeComment({ author_type: "agent", author_id: "agt_1" });
-    expect(canDeleteComment(c, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canDeleteComment(c, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("denies plain member from deleting agent-authored comment", () => {
     const c = makeComment({ author_type: "agent", author_id: "agt_1" });
-    expect(
-      canDeleteComment(c, { userId: BOB, role: "member" }).allowed,
-    ).toBe(false);
+    expect(canDeleteComment(c, { userId: BOB, role: "member" }).allowed).toBe(false);
   });
 });
 
 describe("canDeleteRuntime", () => {
   it("allows the owner", () => {
     const r = makeRuntime(ALICE);
-    expect(canDeleteRuntime(r, { userId: ALICE, role: "member" }).allowed)
-      .toBe(true);
+    expect(canDeleteRuntime(r, { userId: ALICE, role: "member" }).allowed).toBe(true);
   });
   it("allows workspace admin", () => {
     const r = makeRuntime(ALICE);
-    expect(canDeleteRuntime(r, { userId: BOB, role: "admin" }).allowed).toBe(
-      true,
-    );
+    expect(canDeleteRuntime(r, { userId: BOB, role: "admin" }).allowed).toBe(true);
   });
   it("denies non-owner non-admin", () => {
     const r = makeRuntime(ALICE);
-    expect(canDeleteRuntime(r, { userId: BOB, role: "member" }).allowed)
-      .toBe(false);
+    expect(canDeleteRuntime(r, { userId: BOB, role: "member" }).allowed).toBe(false);
   });
 });
 
 describe("workspace-level rules", () => {
   it("only owner can delete workspace", () => {
-    expect(canDeleteWorkspace({ userId: ALICE, role: "owner" }).allowed).toBe(
-      true,
-    );
-    expect(canDeleteWorkspace({ userId: ALICE, role: "admin" }).allowed).toBe(
-      false,
-    );
-    expect(canDeleteWorkspace({ userId: ALICE, role: "member" }).allowed)
-      .toBe(false);
+    expect(canDeleteWorkspace({ userId: ALICE, role: "owner" }).allowed).toBe(true);
+    expect(canDeleteWorkspace({ userId: ALICE, role: "admin" }).allowed).toBe(false);
+    expect(canDeleteWorkspace({ userId: ALICE, role: "member" }).allowed).toBe(false);
   });
   it("owner+admin can update settings, member cannot", () => {
-    expect(
-      canUpdateWorkspaceSettings({ userId: ALICE, role: "owner" }).allowed,
-    ).toBe(true);
-    expect(
-      canUpdateWorkspaceSettings({ userId: ALICE, role: "admin" }).allowed,
-    ).toBe(true);
-    expect(
-      canUpdateWorkspaceSettings({ userId: ALICE, role: "member" }).allowed,
-    ).toBe(false);
+    expect(canUpdateWorkspaceSettings({ userId: ALICE, role: "owner" }).allowed).toBe(true);
+    expect(canUpdateWorkspaceSettings({ userId: ALICE, role: "admin" }).allowed).toBe(true);
+    expect(canUpdateWorkspaceSettings({ userId: ALICE, role: "member" }).allowed).toBe(false);
   });
   it("manage members same gate as settings", () => {
-    expect(canManageMembers({ userId: ALICE, role: "admin" }).allowed).toBe(
-      true,
-    );
-    expect(canManageMembers({ userId: ALICE, role: "member" }).allowed).toBe(
-      false,
-    );
+    expect(canManageMembers({ userId: ALICE, role: "admin" }).allowed).toBe(true);
+    expect(canManageMembers({ userId: ALICE, role: "member" }).allowed).toBe(false);
   });
 });
 

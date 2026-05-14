@@ -11,21 +11,10 @@ import {
 } from "@multica/core/projects";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useCurrentWorkspace } from "@multica/core/paths";
-import type {
-  GithubRepoResourceRef,
-  ProjectResource,
-} from "@multica/core/types";
+import type { GithubRepoResourceRef, ProjectResource } from "@multica/core/types";
 import { Button } from "@multica/ui/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@multica/ui/components/ui/popover";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@multica/ui/components/ui/popover";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { SidebarSection } from "../../common/sidebar-section";
 import { useT } from "../../i18n";
 
@@ -41,9 +30,7 @@ export function ProjectResourcesSection({ projectId }: { projectId: string }) {
   const [open, setOpen] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
 
-  const { data: resources = [] } = useQuery(
-    projectResourcesOptions(wsId, projectId),
-  );
+  const { data: resources = [] } = useQuery(projectResourcesOptions(wsId, projectId));
   const createResource = useCreateProjectResource(wsId, projectId);
   const deleteResource = useDeleteProjectResource(wsId, projectId);
 
@@ -83,9 +70,7 @@ export function ProjectResourcesSection({ projectId }: { projectId: string }) {
       contentClassName="pl-2 space-y-1.5"
     >
       {resources.length === 0 && (
-        <p className="text-xs text-muted-foreground">
-          {t(($) => $.resources.empty)}
-        </p>
+        <p className="text-xs text-muted-foreground">{t(($) => $.resources.empty)}</p>
       )}
       {resources.map((resource) => (
         <ResourceRow
@@ -134,9 +119,7 @@ export function ProjectResourcesSection({ projectId }: { projectId: string }) {
                     <FolderGit className="size-3.5" />
                     <Tooltip>
                       <TooltipTrigger
-                        render={
-                          <span className="truncate flex-1">{repo.url}</span>
-                        }
+                        render={<span className="truncate flex-1">{repo.url}</span>}
                       />
                       <TooltipContent side="top">{repo.url}</TooltipContent>
                     </Tooltip>
@@ -162,13 +145,7 @@ export function ProjectResourcesSection({ projectId }: { projectId: string }) {
   );
 }
 
-function ResourceRow({
-  resource,
-  onRemove,
-}: {
-  resource: ProjectResource;
-  onRemove: () => void;
-}) {
+function ResourceRow({ resource, onRemove }: { resource: ProjectResource; onRemove: () => void }) {
   const { t } = useT("projects");
   if (resource.resource_type === "github_repo") {
     const ref = resource.resource_ref as GithubRepoResourceRef;
@@ -203,9 +180,7 @@ function ResourceRow({
   }
   return (
     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-      <span className="truncate flex-1">
-        {resource.label || resource.resource_type}
-      </span>
+      <span className="truncate flex-1">{resource.label || resource.resource_type}</span>
       <button
         type="button"
         onClick={onRemove}
@@ -218,11 +193,7 @@ function ResourceRow({
   );
 }
 
-function CustomRepoForm({
-  onSubmit,
-}: {
-  onSubmit: (url: string) => Promise<void> | void;
-}) {
+function CustomRepoForm({ onSubmit }: { onSubmit: (url: string) => Promise<void> | void }) {
   const { t } = useT("projects");
   const [url, setUrl] = useState("");
   const [submitting, setSubmitting] = useState(false);

@@ -83,8 +83,7 @@ export function ChatInput({
   // user would see the image flash on then disappear. Keeping editor
   // identity stable across the lazy-create event is what makes
   // first-upload-creates-session work the same as second-upload.
-  const draftKey =
-    activeSessionId ?? `${DRAFT_NEW_SESSION}:${selectedAgentId ?? ""}`;
+  const draftKey = activeSessionId ?? `${DRAFT_NEW_SESSION}:${selectedAgentId ?? ""}`;
   const editorKey = selectedAgentId ?? "no-agent";
   // Select a primitive — empty-string fallback keeps referential stability.
   const inputDraft = useChatStore((s) => s.inputDrafts[draftKey] ?? "");
@@ -128,7 +127,10 @@ export function ChatInput({
   });
 
   const handleSend = () => {
-    const content = editorRef.current?.getMarkdown()?.replace(/(\n\s*)+$/, "").trim();
+    const content = editorRef.current
+      ?.getMarkdown()
+      ?.replace(/(\n\s*)+$/, "")
+      .trim();
     if (!content || isRunning || disabled || noAgent) {
       logger.debug("input.send skipped", {
         emptyContent: !content,
@@ -240,17 +242,12 @@ export function ChatInput({
           />
         </div>
         {leftAdornment && (
-          <div className="absolute bottom-1.5 left-2 flex items-center">
-            {leftAdornment}
-          </div>
+          <div className="absolute bottom-1.5 left-2 flex items-center">{leftAdornment}</div>
         )}
         <div className="absolute bottom-1.5 right-2 flex items-center gap-1">
           {rightAdornment}
           {uploadEnabled && (
-            <FileUploadButton
-              size="sm"
-              onSelect={(file) => editorRef.current?.uploadFile(file)}
-            />
+            <FileUploadButton size="sm" onSelect={(file) => editorRef.current?.uploadFile(file)} />
           )}
           <SubmitButton
             onClick={handleSend}

@@ -13,10 +13,7 @@ export function stripQuickCreatePrefix(title: string, identifier?: string): stri
   if (!normalized) return "";
 
   if (identifier) {
-    const exactPrefix = new RegExp(
-      `^Created\\s+${escapeRegExp(identifier)}:\\s*`,
-      "i",
-    );
+    const exactPrefix = new RegExp(`^Created\\s+${escapeRegExp(identifier)}:\\s*`, "i");
     const withoutExactPrefix = normalized.replace(exactPrefix, "");
     if (withoutExactPrefix !== normalized) return withoutExactPrefix.trim();
   }

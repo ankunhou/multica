@@ -11,11 +11,7 @@ export interface I18nProviderProps {
   children: ReactNode;
 }
 
-export function I18nProvider({
-  locale,
-  resources,
-  children,
-}: I18nProviderProps) {
+export function I18nProvider({ locale, resources, children }: I18nProviderProps) {
   // Lazy init via useState so the instance survives re-renders.
   // Locale + resources are determined at boot and never change at runtime —
   // language switching goes through window.location.reload().

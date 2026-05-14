@@ -4,10 +4,8 @@ import { api } from "../api";
 export const autopilotKeys = {
   all: (wsId: string) => ["autopilots", wsId] as const,
   list: (wsId: string) => [...autopilotKeys.all(wsId), "list"] as const,
-  detail: (wsId: string, id: string) =>
-    [...autopilotKeys.all(wsId), "detail", id] as const,
-  runs: (wsId: string, id: string) =>
-    [...autopilotKeys.all(wsId), "runs", id] as const,
+  detail: (wsId: string, id: string) => [...autopilotKeys.all(wsId), "detail", id] as const,
+  runs: (wsId: string, id: string) => [...autopilotKeys.all(wsId), "runs", id] as const,
 };
 
 export function autopilotListOptions(wsId: string) {

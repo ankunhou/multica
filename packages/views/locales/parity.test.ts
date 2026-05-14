@@ -34,9 +34,7 @@ function flattenKeys(obj: unknown, prefix = ""): string[] {
   if (obj === null || typeof obj !== "object") return [prefix];
   const entries = Object.entries(obj as Json);
   if (entries.length === 0) return [];
-  return entries.flatMap(([k, v]) =>
-    flattenKeys(v, prefix ? `${prefix}.${k}` : k),
-  );
+  return entries.flatMap(([k, v]) => flattenKeys(v, prefix ? `${prefix}.${k}` : k));
 }
 
 function normalizePlural(key: string): string {

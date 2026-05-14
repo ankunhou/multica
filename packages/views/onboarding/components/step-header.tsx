@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ONBOARDING_STEP_ORDER,
-  type OnboardingStep,
-} from "@multica/core/onboarding";
+import { ONBOARDING_STEP_ORDER, type OnboardingStep } from "@multica/core/onboarding";
 import { cn } from "@multica/ui/lib/utils";
 import { useT } from "../../i18n";
 
@@ -59,7 +56,8 @@ export function StepHeader({ currentStep }: { currentStep: OnboardingStep }) {
               className={cn(
                 "h-2 w-2 rounded-full transition-colors",
                 isDone && "bg-primary",
-                isCurrent && "bg-primary ring-2 ring-primary/30 ring-offset-2 ring-offset-background",
+                isCurrent &&
+                  "bg-primary ring-2 ring-primary/30 ring-offset-2 ring-offset-background",
                 !isDone && !isCurrent && "bg-muted",
               )}
             />

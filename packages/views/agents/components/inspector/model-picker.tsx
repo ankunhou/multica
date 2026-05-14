@@ -5,10 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Loader2, Plus } from "lucide-react";
 import { runtimeModelsOptions } from "@multica/core/runtimes";
 import { Input } from "@multica/ui/components/ui/input";
-import {
-  PickerItem,
-  PropertyPicker,
-} from "../../../issues/components/pickers";
+import { PickerItem, PropertyPicker } from "../../../issues/components/pickers";
 import { CHIP_CLASS } from "./chip";
 import { useT } from "../../../i18n";
 
@@ -41,31 +38,23 @@ export function ModelPicker({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const modelsQuery = useQuery(
-    runtimeModelsOptions(runtimeOnline ? runtimeId : null),
-  );
+  const modelsQuery = useQuery(runtimeModelsOptions(runtimeOnline ? runtimeId : null));
   const supported = modelsQuery.data?.supported ?? true;
   // Memoise the model list so every downstream useMemo gets a stable
   // reference; `?? []` would mint a fresh array on every render and
   // invalidate filters needlessly.
-  const models = useMemo(
-    () => modelsQuery.data?.models ?? [],
-    [modelsQuery.data],
-  );
+  const models = useMemo(() => modelsQuery.data?.models ?? [], [modelsQuery.data]);
 
   const filtered = useMemo(() => {
     const s = search.trim().toLowerCase();
     if (!s) return models;
     return models.filter(
-      (m) =>
-        m.id.toLowerCase().includes(s) || m.label.toLowerCase().includes(s),
+      (m) => m.id.toLowerCase().includes(s) || m.label.toLowerCase().includes(s),
     );
   }, [models, search]);
 
   const trimmedSearch = search.trim();
-  const exactMatch = models.some(
-    (m) => m.id === trimmedSearch || m.label === trimmedSearch,
-  );
+  const exactMatch = models.some((m) => m.id === trimmedSearch || m.label === trimmedSearch);
   const canCreate = trimmedSearch.length > 0 && !exactMatch;
 
   const triggerLabel = value || t(($) => $.pickers.model_default);
@@ -103,18 +92,8 @@ export function ModelPicker({
       width="w-auto min-w-[16rem] max-w-md"
       align="start"
       tooltip={triggerTitle}
-      triggerRender={
-        <button
-          type="button"
-          className={CHIP_CLASS}
-          aria-label={triggerTitle}
-        />
-      }
-      trigger={
-        <span className="min-w-0 truncate font-mono text-[11px]">
-          {triggerLabel}
-        </span>
-      }
+      triggerRender={<button type="button" className={CHIP_CLASS} aria-label={triggerTitle} />}
+      trigger={<span className="min-w-0 truncate font-mono text-[11px]">{triggerLabel}</span>}
       header={
         <div className="p-1.5">
           <Input
@@ -155,9 +134,7 @@ export function ModelPicker({
                 )}
               </div>
               {m.label !== m.id && (
-                <div className="truncate font-mono text-[10px] text-muted-foreground">
-                  {m.id}
-                </div>
+                <div className="truncate font-mono text-[10px] text-muted-foreground">{m.id}</div>
               )}
             </div>
           </PickerItem>

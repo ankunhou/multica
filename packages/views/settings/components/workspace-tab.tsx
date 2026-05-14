@@ -74,8 +74,7 @@ export function WorkspaceTab() {
    *      workspace appears) even though the API hasn't responded yet.
    */
   const navigateAwayFromCurrentWorkspace = () => {
-    const cachedList =
-      qc.getQueryData<Workspace[]>(workspaceListOptions().queryKey) ?? [];
+    const cachedList = qc.getQueryData<Workspace[]>(workspaceListOptions().queryKey) ?? [];
     const remaining = cachedList.filter((w) => w.id !== workspace?.id);
     // Clear the workspace-context singleton BEFORE navigating and BEFORE
     // the mutation fires. Three downstream consumers read it:
@@ -238,13 +237,17 @@ export function WorkspaceTab() {
         <Card>
           <CardContent className="space-y-3">
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.logo_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.workspace.logo_label)}
+              </Label>
               <div className="mt-2 flex items-center gap-3">
-                <label
-                  className="group relative flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border bg-muted text-sm font-semibold text-muted-foreground focus-within:ring-2 focus-within:ring-ring"
-                >
+                <label className="group relative flex h-14 w-14 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-md border bg-muted text-sm font-semibold text-muted-foreground focus-within:ring-2 focus-within:ring-ring">
                   {logoUrl ? (
-                    <img src={logoUrl} alt={t(($) => $.workspace.logo_alt, { name: workspace.name })} className="h-full w-full object-cover" />
+                    <img
+                      src={logoUrl}
+                      alt={t(($) => $.workspace.logo_alt, { name: workspace.name })}
+                      className="h-full w-full object-cover"
+                    />
                   ) : (
                     workspace.name.charAt(0).toUpperCase()
                   )}
@@ -283,7 +286,9 @@ export function WorkspaceTab() {
               </div>
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.name_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.workspace.name_label)}
+              </Label>
               <Input
                 type="text"
                 value={name}
@@ -293,7 +298,9 @@ export function WorkspaceTab() {
               />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.description_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.workspace.description_label)}
+              </Label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -304,7 +311,9 @@ export function WorkspaceTab() {
               />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.context_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.workspace.context_label)}
+              </Label>
               <Textarea
                 value={context}
                 onChange={(e) => setContext(e.target.value)}
@@ -315,7 +324,9 @@ export function WorkspaceTab() {
               />
             </div>
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.workspace.slug_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.workspace.slug_label)}
+              </Label>
               <div className="mt-1 rounded-md border bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
                 {workspace.slug}
               </div>
@@ -331,9 +342,7 @@ export function WorkspaceTab() {
               </Button>
             </div>
             {!canManageWorkspace && (
-              <p className="text-xs text-muted-foreground">
-                {t(($) => $.workspace.manage_hint)}
-              </p>
+              <p className="text-xs text-muted-foreground">{t(($) => $.workspace.manage_hint)}</p>
             )}
           </CardContent>
         </Card>
@@ -343,59 +352,70 @@ export function WorkspaceTab() {
           Delete button and the sole-owner Leave guidance don't flash in
           after mount. */}
       {membersFetched && (
-      <section className="space-y-4">
-        <div className="flex items-center gap-2">
-          <LogOut className="h-4 w-4 text-muted-foreground" />
-          <h2 className="text-sm font-semibold">{t(($) => $.workspace.danger_zone)}</h2>
-        </div>
+        <section className="space-y-4">
+          <div className="flex items-center gap-2">
+            <LogOut className="h-4 w-4 text-muted-foreground" />
+            <h2 className="text-sm font-semibold">{t(($) => $.workspace.danger_zone)}</h2>
+          </div>
 
-        <Card>
-          <CardContent className="space-y-3">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-medium">{t(($) => $.workspace.leave_title)}</p>
-                <p className="text-xs text-muted-foreground">
-                  {isSoleOwner
-                    ? isSoleMember
-                      ? t(($) => $.workspace.leave_sole_member)
-                      : t(($) => $.workspace.leave_sole_owner)
-                    : t(($) => $.workspace.leave_default)}
-                </p>
-              </div>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLeaveWorkspace}
-                disabled={actionId === "leave" || isSoleOwner}
-              >
-                {actionId === "leave" ? t(($) => $.workspace.leaving) : t(($) => $.workspace.leave_button)}
-              </Button>
-            </div>
-
-            {isOwner && (
-              <div className="flex flex-col gap-2 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
+          <Card>
+            <CardContent className="space-y-3">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-medium text-destructive">{t(($) => $.workspace.delete_title)}</p>
+                  <p className="text-sm font-medium">{t(($) => $.workspace.leave_title)}</p>
                   <p className="text-xs text-muted-foreground">
-                    {t(($) => $.workspace.delete_description)}
+                    {isSoleOwner
+                      ? isSoleMember
+                        ? t(($) => $.workspace.leave_sole_member)
+                        : t(($) => $.workspace.leave_sole_owner)
+                      : t(($) => $.workspace.leave_default)}
                   </p>
                 </div>
                 <Button
-                  variant="destructive"
+                  variant="outline"
                   size="sm"
-                  onClick={() => setDeleteDialogOpen(true)}
-                  disabled={actionId === "delete-workspace"}
+                  onClick={handleLeaveWorkspace}
+                  disabled={actionId === "leave" || isSoleOwner}
                 >
-                  {actionId === "delete-workspace" ? t(($) => $.workspace.deleting) : t(($) => $.workspace.delete_button)}
+                  {actionId === "leave"
+                    ? t(($) => $.workspace.leaving)
+                    : t(($) => $.workspace.leave_button)}
                 </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </section>
+
+              {isOwner && (
+                <div className="flex flex-col gap-2 border-t pt-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-destructive">
+                      {t(($) => $.workspace.delete_title)}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t(($) => $.workspace.delete_description)}
+                    </p>
+                  </div>
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => setDeleteDialogOpen(true)}
+                    disabled={actionId === "delete-workspace"}
+                  >
+                    {actionId === "delete-workspace"
+                      ? t(($) => $.workspace.deleting)
+                      : t(($) => $.workspace.delete_button)}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </section>
       )}
 
-      <AlertDialog open={!!confirmAction} onOpenChange={(v) => { if (!v) setConfirmAction(null); }}>
+      <AlertDialog
+        open={!!confirmAction}
+        onOpenChange={(v) => {
+          if (!v) setConfirmAction(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{confirmAction?.title}</AlertDialogTitle>

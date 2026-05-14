@@ -6,8 +6,7 @@
  * real Mac the value is true after hydration. Acceptable trade-off for
  * cosmetic shortcut hints — never gate functional behavior on this.
  */
-export const isMac =
-  typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
+export const isMac = typeof navigator !== "undefined" && /Mac/.test(navigator.platform);
 
 /** Modifier key label — ⌘ on Mac, "Ctrl" elsewhere. */
 export const modKey: string = isMac ? "⌘" : "Ctrl";

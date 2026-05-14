@@ -1,7 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Zap, Play, Clock, Plus, Trash2, CheckCircle2, XCircle, Loader2, Pencil } from "lucide-react";
+import {
+  Zap,
+  Play,
+  Clock,
+  Plus,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Pencil,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { autopilotDetailOptions, autopilotRunsOptions } from "@multica/core/autopilots/queries";
 import {
@@ -23,11 +33,7 @@ import { Switch } from "@multica/ui/components/ui/switch";
 import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
 import { cn } from "@multica/ui/lib/utils";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -38,11 +44,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@multica/ui/components/ui/alert-dialog";
-import {
-  TriggerConfigSection,
-  getDefaultTriggerConfig,
-  toCronExpression,
-} from "./trigger-config";
+import { TriggerConfigSection, getDefaultTriggerConfig, toCronExpression } from "./trigger-config";
 import type { TriggerConfig } from "./trigger-config";
 import type { AutopilotExecutionMode, AutopilotRun, AutopilotTrigger } from "@multica/core/types";
 import type { AgentTask } from "@multica/core/types/agent";
@@ -54,18 +56,29 @@ import { useDateTimeFormatters } from "../../i18n/date-time";
 
 type RunStatus = "issue_created" | "running" | "completed" | "failed";
 
-const RUN_VISUAL: Record<RunStatus, { tone: "info" | "success" | "destructive"; icon: typeof CheckCircle2; spin?: boolean }> = {
+const RUN_VISUAL: Record<
+  RunStatus,
+  { tone: "info" | "success" | "destructive"; icon: typeof CheckCircle2; spin?: boolean }
+> = {
   issue_created: { tone: "info", icon: Clock },
   running: { tone: "info", icon: Loader2, spin: true },
   completed: { tone: "success", icon: CheckCircle2 },
   failed: { tone: "destructive", icon: XCircle },
 };
 
-function RunRow({ run, agentId, agentName }: { run: AutopilotRun; agentId: string; agentName: string }) {
+function RunRow({
+  run,
+  agentId,
+  agentName,
+}: {
+  run: AutopilotRun;
+  agentId: string;
+  agentName: string;
+}) {
   const { t } = useT("autopilots");
   const { dateTime } = useDateTimeFormatters();
   const wsPaths = useWorkspacePaths();
-  const status = (RUN_VISUAL[run.status as RunStatus] ? (run.status as RunStatus) : "issue_created");
+  const status = RUN_VISUAL[run.status as RunStatus] ? (run.status as RunStatus) : "issue_created";
   const visual = RUN_VISUAL[status];
   const StatusIcon = visual.icon;
 
@@ -78,10 +91,13 @@ function RunRow({ run, agentId, agentName }: { run: AutopilotRun; agentId: strin
         runtime_id: "",
         issue_id: "",
         status:
-          run.status === "running" ? "running" :
-          run.status === "completed" ? "completed" :
-          run.status === "failed" ? "failed" :
-          "queued",
+          run.status === "running"
+            ? "running"
+            : run.status === "completed"
+              ? "completed"
+              : run.status === "failed"
+                ? "failed"
+                : "queued",
         priority: 0,
         dispatched_at: null,
         started_at: run.triggered_at || null,
@@ -125,7 +141,8 @@ function RunRow({ run, agentId, agentName }: { run: AutopilotRun; agentId: strin
     </>
   );
 
-  const rowClass = "flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent/30 transition-colors";
+  const rowClass =
+    "flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-accent/30 transition-colors";
 
   if (run.issue_id) {
     return (
@@ -193,7 +210,12 @@ function TriggerRow({ trigger, autopilotId }: { trigger: AutopilotTrigger; autop
       >
         <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
       </Button>
-      <AlertDialog open={confirmOpen} onOpenChange={(v) => { if (!v && !deleting) setConfirmOpen(false); }}>
+      <AlertDialog
+        open={confirmOpen}
+        onOpenChange={(v) => {
+          if (!v && !deleting) setConfirmOpen(false);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t(($) => $.trigger_row.delete_dialog.title)}</AlertDialogTitle>
@@ -299,7 +321,9 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
   const { getActorName } = useActorName();
 
   const { data, isLoading } = useQuery(autopilotDetailOptions(wsId, autopilotId));
-  const { data: runs = [], isLoading: runsLoading } = useQuery(autopilotRunsOptions(wsId, autopilotId));
+  const { data: runs = [], isLoading: runsLoading } = useQuery(
+    autopilotRunsOptions(wsId, autopilotId),
+  );
   const updateAutopilot = useUpdateAutopilot();
   const deleteAutopilot = useDeleteAutopilot();
   const triggerAutopilot = useTriggerAutopilot();
@@ -388,7 +412,10 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
       {/* Header */}
       <PageHeader className="justify-between px-5">
         <div className="flex items-center gap-2">
-          <AppLink href={wsPaths.autopilots()} className="text-muted-foreground hover:text-foreground transition-colors">
+          <AppLink
+            href={wsPaths.autopilots()}
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
             <Zap className="h-4 w-4" />
           </AppLink>
           <span className="text-muted-foreground">/</span>
@@ -423,11 +450,13 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
             <Pencil className="h-3.5 w-3.5 mr-1" />
             {t(($) => $.detail.edit)}
           </Button>
-          <Button size="sm" onClick={handleRunNow} disabled={autopilot.status !== "active" || triggerAutopilot.isPending}>
+          <Button
+            size="sm"
+            onClick={handleRunNow}
+            disabled={autopilot.status !== "active" || triggerAutopilot.isPending}
+          >
             <Play className="h-3.5 w-3.5 mr-1" />
-            {triggerAutopilot.isPending
-              ? t(($) => $.detail.running)
-              : t(($) => $.detail.run_now)}
+            {triggerAutopilot.isPending ? t(($) => $.detail.running) : t(($) => $.detail.run_now)}
           </Button>
         </div>
       </PageHeader>
@@ -441,21 +470,35 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
             </h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <label className="text-xs text-muted-foreground">{t(($) => $.detail.field_agent)}</label>
+                <label className="text-xs text-muted-foreground">
+                  {t(($) => $.detail.field_agent)}
+                </label>
                 <div className="mt-1 flex items-center gap-2">
-                  <ActorAvatar actorType="agent" actorId={autopilot.assignee_id} size={20} enableHoverCard showStatusDot />
-                  <span className="cursor-pointer">{getActorName("agent", autopilot.assignee_id)}</span>
+                  <ActorAvatar
+                    actorType="agent"
+                    actorId={autopilot.assignee_id}
+                    size={20}
+                    enableHoverCard
+                    showStatusDot
+                  />
+                  <span className="cursor-pointer">
+                    {getActorName("agent", autopilot.assignee_id)}
+                  </span>
                 </div>
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">{t(($) => $.detail.field_output_mode)}</label>
+                <label className="text-xs text-muted-foreground">
+                  {t(($) => $.detail.field_output_mode)}
+                </label>
                 <div className="mt-1">
                   {t(($) => $.execution_mode[autopilot.execution_mode as AutopilotExecutionMode])}
                 </div>
               </div>
               {autopilot.description && (
                 <div className="col-span-2">
-                  <label className="text-xs text-muted-foreground">{t(($) => $.detail.field_prompt)}</label>
+                  <label className="text-xs text-muted-foreground">
+                    {t(($) => $.detail.field_prompt)}
+                  </label>
                   <div className="mt-1">
                     <ReadonlyContent content={autopilot.description} />
                   </div>
@@ -506,7 +549,12 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
             ) : (
               <div className="rounded-md border overflow-hidden">
                 {runs.map((run) => (
-                  <RunRow key={run.id} run={run} agentId={autopilot.assignee_id} agentName={getActorName("agent", autopilot.assignee_id)} />
+                  <RunRow
+                    key={run.id}
+                    run={run}
+                    agentId={autopilot.assignee_id}
+                    agentName={getActorName("agent", autopilot.assignee_id)}
+                  />
                 ))}
               </div>
             )}
@@ -547,7 +595,9 @@ export function AutopilotDetailPage({ autopilotId }: { autopilotId: string }) {
       )}
       <AlertDialog
         open={deleteConfirmOpen}
-        onOpenChange={(v) => { if (!v && !deleting) setDeleteConfirmOpen(false); }}
+        onOpenChange={(v) => {
+          if (!v && !deleting) setDeleteConfirmOpen(false);
+        }}
       >
         <AlertDialogContent>
           <AlertDialogHeader>

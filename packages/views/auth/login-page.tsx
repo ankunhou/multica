@@ -14,11 +14,7 @@ import { Input } from "@multica/ui/components/ui/input";
 import { Button } from "@multica/ui/components/ui/button";
 import { Label } from "@multica/ui/components/ui/label";
 import { useTheme } from "@multica/ui/components/common/theme-provider";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@multica/ui/components/ui/input-otp";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@multica/ui/components/ui/input-otp";
 import { useAuthStore } from "@multica/core/auth";
 import { workspaceKeys } from "@multica/core/workspace/queries";
 import { api } from "@multica/core/api";
@@ -70,9 +66,7 @@ interface LoginPageProps {
 
 type CliCallbackTheme = "light" | "dark";
 
-function normalizeCliCallbackTheme(
-  theme: string | undefined,
-): CliCallbackTheme | undefined {
+function normalizeCliCallbackTheme(theme: string | undefined): CliCallbackTheme | undefined {
   return theme === "light" || theme === "dark" ? theme : undefined;
 }
 
@@ -220,12 +214,7 @@ export function LoginPage({
           localStorage.setItem("multica_token", token);
           api.setToken(token);
           onTokenObtained?.();
-          redirectToCliCallback(
-            cliCallback.url,
-            token,
-            cliCallback.state,
-            cliCallbackTheme,
-          );
+          redirectToCliCallback(cliCallback.url, token, cliCallback.state, cliCallbackTheme);
           return;
         }
 
@@ -239,11 +228,7 @@ export function LoginPage({
         onTokenObtained?.();
         onSuccess();
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : t(($) => $.errors.code_invalid),
-        );
+        setError(err instanceof Error ? err.message : t(($) => $.errors.code_invalid));
         setCode("");
         setLoading(false);
       }
@@ -258,9 +243,7 @@ export function LoginPage({
       await useAuthStore.getState().sendCode(email);
       setCooldown(60);
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : t(($) => $.errors.resend_failed),
-      );
+      setError(err instanceof Error ? err.message : t(($) => $.errors.resend_failed));
     }
   };
 
@@ -283,12 +266,7 @@ export function LoginPage({
       }
 
       onTokenObtained?.();
-      redirectToCliCallback(
-        cliCallback.url,
-        token,
-        cliCallback.state,
-        cliCallbackTheme,
-      );
+      redirectToCliCallback(cliCallback.url, token, cliCallback.state, cliCallbackTheme);
     } catch {
       setError(t(($) => $.errors.cli_auth_failed));
       setExistingUser(null);
@@ -325,23 +303,14 @@ export function LoginPage({
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
             {logo && <div className="mx-auto mb-4">{logo}</div>}
-            <CardTitle className="text-2xl">
-              {t(($) => $.cli.title)}
-            </CardTitle>
+            <CardTitle className="text-2xl">{t(($) => $.cli.title)}</CardTitle>
             <CardDescription>
               {t(($) => $.cli.description, { email: existingUser.email })}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-3">
-            <Button
-              onClick={handleCliAuthorize}
-              disabled={loading}
-              className="w-full"
-              size="lg"
-            >
-              {loading
-                ? t(($) => $.cli.authorizing)
-                : t(($) => $.cli.authorize)}
+            <Button onClick={handleCliAuthorize} disabled={loading} className="w-full" size="lg">
+              {loading ? t(($) => $.cli.authorizing) : t(($) => $.cli.authorize)}
             </Button>
             <Button
               variant="ghost"
@@ -369,12 +338,8 @@ export function LoginPage({
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
             {logo && <div className="mx-auto mb-4">{logo}</div>}
-            <CardTitle className="text-2xl">
-              {t(($) => $.verify.title)}
-            </CardTitle>
-            <CardDescription>
-              {t(($) => $.verify.description, { email })}
-            </CardDescription>
+            <CardTitle className="text-2xl">{t(($) => $.verify.title)}</CardTitle>
+            <CardDescription>{t(($) => $.verify.description, { email })}</CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
             <InputOTP
@@ -395,9 +360,7 @@ export function LoginPage({
                 <InputOTPSlot index={5} />
               </InputOTPGroup>
             </InputOTP>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <button
                 type="button"
@@ -439,12 +402,8 @@ export function LoginPage({
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           {logo && <div className="mx-auto mb-4">{logo}</div>}
-          <CardTitle className="text-2xl">
-            {t(($) => $.signin.title)}
-          </CardTitle>
-          <CardDescription>
-            {t(($) => $.signin.description)}
-          </CardDescription>
+          <CardTitle className="text-2xl">{t(($) => $.signin.title)}</CardTitle>
+          <CardDescription>{t(($) => $.signin.description)}</CardDescription>
         </CardHeader>
         <CardContent>
           <form id="login-form" onSubmit={handleSendCode} className="space-y-4">
@@ -460,9 +419,7 @@ export function LoginPage({
                 required
               />
             </div>
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-sm text-destructive">{error}</p>}
           </form>
         </CardContent>
         <CardFooter className="flex flex-col gap-3">
@@ -473,9 +430,7 @@ export function LoginPage({
             size="lg"
             disabled={!email || loading}
           >
-            {loading
-              ? t(($) => $.signin.sending)
-              : t(($) => $.signin.continue)}
+            {loading ? t(($) => $.signin.sending) : t(($) => $.signin.continue)}
           </Button>
           {(google || onGoogleLogin) && (
             <>

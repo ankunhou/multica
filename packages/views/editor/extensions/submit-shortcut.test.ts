@@ -7,9 +7,7 @@ function getShortcuts(
   ext: ReturnType<typeof createSubmitExtension>,
   editor: Partial<Editor>,
 ): Record<string, () => boolean> {
-  const fn = getExtensionField<
-    () => Record<string, () => boolean>
-  >(ext, "addKeyboardShortcuts", {
+  const fn = getExtensionField<() => Record<string, () => boolean>>(ext, "addKeyboardShortcuts", {
     name: "submitShortcut",
     options: {},
     storage: {},
@@ -62,13 +60,10 @@ describe("createSubmitExtension", () => {
 
   it("Enter is suppressed during IME composition", () => {
     const onSubmit = vi.fn(() => true);
-    const shortcuts = getShortcuts(
-      createSubmitExtension(onSubmit, { submitOnEnter: true }),
-      {
-        view: { composing: true } as unknown as Editor["view"],
-        isActive: () => false,
-      },
-    );
+    const shortcuts = getShortcuts(createSubmitExtension(onSubmit, { submitOnEnter: true }), {
+      view: { composing: true } as unknown as Editor["view"],
+      isActive: () => false,
+    });
 
     expect(shortcuts.Enter!()).toBe(false);
     expect(onSubmit).not.toHaveBeenCalled();
@@ -76,13 +71,10 @@ describe("createSubmitExtension", () => {
 
   it("Enter is suppressed inside a code block", () => {
     const onSubmit = vi.fn(() => true);
-    const shortcuts = getShortcuts(
-      createSubmitExtension(onSubmit, { submitOnEnter: true }),
-      {
-        view: { composing: false } as unknown as Editor["view"],
-        isActive: (name: string) => name === "codeBlock",
-      },
-    );
+    const shortcuts = getShortcuts(createSubmitExtension(onSubmit, { submitOnEnter: true }), {
+      view: { composing: false } as unknown as Editor["view"],
+      isActive: (name: string) => name === "codeBlock",
+    });
 
     expect(shortcuts.Enter!()).toBe(false);
     expect(onSubmit).not.toHaveBeenCalled();

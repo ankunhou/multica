@@ -13,11 +13,17 @@ export function useCreateChatSession() {
 
   return useMutation({
     mutationFn: (data: { agent_id: string; title?: string }) => {
-      logger.info("createChatSession.start", { agent_id: data.agent_id, titleLength: data.title?.length ?? 0 });
+      logger.info("createChatSession.start", {
+        agent_id: data.agent_id,
+        titleLength: data.title?.length ?? 0,
+      });
       return api.createChatSession(data);
     },
     onSuccess: (session) => {
-      logger.info("createChatSession.success", { sessionId: session.id, agentId: session.agent_id });
+      logger.info("createChatSession.success", {
+        sessionId: session.id,
+        agentId: session.agent_id,
+      });
     },
     onError: (err) => {
       logger.error("createChatSession.error", err);

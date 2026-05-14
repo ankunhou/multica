@@ -47,9 +47,7 @@ export function InstructionsTab({
     // their natural height, the editor wrapper fills the rest. Without this
     // the Save row scrolls off-screen as the user writes longer prompts.
     <div className="flex h-full flex-col gap-4">
-      <p className="text-xs text-muted-foreground">
-        {t(($) => $.tab_body.instructions.intro)}
-      </p>
+      <p className="text-xs text-muted-foreground">{t(($) => $.tab_body.instructions.intro)}</p>
 
       <div
         // flex-1 min-h-0 so the wrapper claims the leftover height in the
@@ -79,13 +77,11 @@ export function InstructionsTab({
 
       <div className="flex items-center justify-end gap-3">
         {isDirty && (
-          <span className="text-xs text-muted-foreground">{t(($) => $.tab_body.common.unsaved_changes)}</span>
+          <span className="text-xs text-muted-foreground">
+            {t(($) => $.tab_body.common.unsaved_changes)}
+          </span>
         )}
-        <Button
-          size="sm"
-          onClick={handleSave}
-          disabled={!isDirty || saving}
-        >
+        <Button size="sm" onClick={handleSave} disabled={!isDirty || saving}>
           {saving ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           ) : (

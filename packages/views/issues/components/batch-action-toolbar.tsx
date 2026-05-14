@@ -75,9 +75,7 @@ export function BatchActionToolbar({
       <div
         className={cn(
           "z-50 flex items-center gap-1 rounded-lg border bg-background px-2 py-1.5 shadow-lg",
-          placement === "fixed-bottom"
-            ? "fixed bottom-6 left-1/2 -translate-x-1/2"
-            : "mb-2 w-fit",
+          placement === "fixed-bottom" ? "fixed bottom-6 left-1/2 -translate-x-1/2" : "mb-2 w-fit",
         )}
       >
         <div className="flex items-center gap-1.5 pl-1 pr-2 border-r mr-1">
@@ -141,9 +139,7 @@ export function BatchActionToolbar({
       <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t(($) => $.batch.delete_dialog_title, { count })}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t(($) => $.batch.delete_dialog_title, { count })}</AlertDialogTitle>
             <AlertDialogDescription>
               {t(($) => $.batch.delete_dialog_desc, { count })}
               <span className="mt-2 block text-xs text-muted-foreground/80">
@@ -165,4 +161,3 @@ export function BatchActionToolbar({
     </>
   );
 }
-

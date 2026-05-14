@@ -1,12 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { useCustomPricingStore } from "@multica/core/runtimes/custom-pricing-store";
 
-import {
-  aggregateCostByModel,
-  collectUnmappedModels,
-  estimateCost,
-  isModelPriced,
-} from "./utils";
+import { aggregateCostByModel, collectUnmappedModels, estimateCost, isModelPriced } from "./utils";
 
 afterEach(() => {
   // Reset overrides so tests don't bleed pricing state into one another.
@@ -57,12 +52,14 @@ describe("estimateCost", () => {
     // Every dotted minor version is priced independently. The resolver does
     // exact-match-after-date-strip (no startsWith fallback), so each row
     // must exist on its own.
-    expect(
-      estimateCost({ ...zeroUsage, model: "gpt-5.5", input_tokens: 1_000_000 }),
-    ).toBeCloseTo(5, 5);
-    expect(
-      estimateCost({ ...zeroUsage, model: "gpt-5.4", output_tokens: 1_000_000 }),
-    ).toBeCloseTo(15, 5);
+    expect(estimateCost({ ...zeroUsage, model: "gpt-5.5", input_tokens: 1_000_000 })).toBeCloseTo(
+      5,
+      5,
+    );
+    expect(estimateCost({ ...zeroUsage, model: "gpt-5.4", output_tokens: 1_000_000 })).toBeCloseTo(
+      15,
+      5,
+    );
     expect(
       estimateCost({
         ...zeroUsage,

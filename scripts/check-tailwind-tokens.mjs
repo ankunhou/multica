@@ -3,11 +3,7 @@ import path from "node:path";
 
 const repoRoot = process.cwd();
 
-const scanRoots = [
-  "packages/views",
-  "apps/web/app",
-  "apps/desktop/src/renderer/src",
-];
+const scanRoots = ["packages/views", "apps/web/app", "apps/desktop/src/renderer/src"];
 
 const fileExtensions = new Set([".ts", ".tsx", ".css"]);
 

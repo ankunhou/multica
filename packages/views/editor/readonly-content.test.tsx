@@ -68,9 +68,7 @@ describe("ReadonlyContent memoization", () => {
   // reintroduce the perf regression.
   it("is wrapped in React.memo", () => {
     const memoTypeSymbol = Symbol.for("react.memo");
-    expect((ReadonlyContent as unknown as { $$typeof: symbol }).$$typeof).toBe(
-      memoTypeSymbol,
-    );
+    expect((ReadonlyContent as unknown as { $$typeof: symbol }).$$typeof).toBe(memoTypeSymbol);
   });
 });
 
@@ -78,13 +76,7 @@ describe("ReadonlyContent math rendering", () => {
   it("renders inline and block LaTeX with KaTeX markup", () => {
     const { container } = render(
       <ReadonlyContent
-        content={[
-          "Inline math: $E = mc^2$",
-          "",
-          "$$",
-          "\\int_0^1 x^2 \\, dx",
-          "$$",
-        ].join("\n")}
+        content={["Inline math: $E = mc^2$", "", "$$", "\\int_0^1 x^2 \\, dx", "$$"].join("\n")}
       />,
     );
 
@@ -161,9 +153,7 @@ describe("ReadonlyContent Mermaid rendering", () => {
     );
 
     const button = await waitFor(() => {
-      const found = container.querySelector<HTMLButtonElement>(
-        ".mermaid-diagram-toolbar button",
-      );
+      const found = container.querySelector<HTMLButtonElement>(".mermaid-diagram-toolbar button");
       expect(found).not.toBeNull();
       return found!;
     });

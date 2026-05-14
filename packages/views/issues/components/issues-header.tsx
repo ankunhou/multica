@@ -33,16 +33,9 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@multica/ui/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Switch } from "@multica/ui/components/ui/switch";
-import {
-  ALL_STATUSES,
-  PRIORITY_ORDER,
-} from "@multica/core/issues/config";
+import { ALL_STATUSES, PRIORITY_ORDER } from "@multica/core/issues/config";
 import { StatusIcon, PriorityIcon } from ".";
 import { useQuery } from "@tanstack/react-query";
 import { useWorkspaceId } from "@multica/core/hooks";
@@ -183,11 +176,9 @@ function ActorSubContent({
   const { data: members = [] } = useQuery(memberListOptions(wsId));
   const { data: agents = [] } = useQuery(agentListOptions(wsId));
   const query = search.trim().toLowerCase();
-  const filteredMembers = members.filter((m) =>
-    m.name.toLowerCase().includes(query),
-  );
-  const filteredAgents = agents.filter((a) =>
-    !a.archived_at && a.name.toLowerCase().includes(query),
+  const filteredMembers = members.filter((m) => m.name.toLowerCase().includes(query));
+  const filteredAgents = agents.filter(
+    (a) => !a.archived_at && a.name.toLowerCase().includes(query),
   );
 
   const isSelected = (type: "member" | "agent", id: string) =>
@@ -218,9 +209,7 @@ function ActorSubContent({
               <UserMinus className="size-3.5 text-muted-foreground" />
               {t(($) => $.filters.no_assignee)}
               {(noAssigneeCount ?? 0) > 0 && (
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {noAssigneeCount}
-                </span>
+                <span className="ml-auto text-xs text-muted-foreground">{noAssigneeCount}</span>
               )}
             </DropdownMenuCheckboxItem>
           )}
@@ -235,18 +224,14 @@ function ActorSubContent({
                 <DropdownMenuCheckboxItem
                   key={m.user_id}
                   checked={checked}
-                  onCheckedChange={() =>
-                    onToggle({ type: "member", id: m.user_id })
-                  }
+                  onCheckedChange={() => onToggle({ type: "member", id: m.user_id })}
                   className={FILTER_ITEM_CLASS}
                 >
                   <HoverCheck checked={checked} />
                   <ActorAvatar actorType="member" actorId={m.user_id} size={18} />
                   <span className="truncate">{m.name}</span>
                   {count > 0 && (
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {count}
-                    </span>
+                    <span className="ml-auto text-xs text-muted-foreground">{count}</span>
                   )}
                 </DropdownMenuCheckboxItem>
               );
@@ -264,18 +249,14 @@ function ActorSubContent({
                 <DropdownMenuCheckboxItem
                   key={a.id}
                   checked={checked}
-                  onCheckedChange={() =>
-                    onToggle({ type: "agent", id: a.id })
-                  }
+                  onCheckedChange={() => onToggle({ type: "agent", id: a.id })}
                   className={FILTER_ITEM_CLASS}
                 >
                   <HoverCheck checked={checked} />
                   <ActorAvatar actorType="agent" actorId={a.id} size={18} showStatusDot />
                   <span className="truncate">{a.name}</span>
                   {count > 0 && (
-                    <span className="ml-auto text-xs text-muted-foreground">
-                      {count}
-                    </span>
+                    <span className="ml-auto text-xs text-muted-foreground">{count}</span>
                   )}
                 </DropdownMenuCheckboxItem>
               );
@@ -317,9 +298,7 @@ function ProjectSubContent({
   const wsId = useWorkspaceId();
   const { data: projects = [] } = useQuery(projectListOptions(wsId));
   const query = search.trim().toLowerCase();
-  const filtered = projects.filter((p) =>
-    p.title.toLowerCase().includes(query),
-  );
+  const filtered = projects.filter((p) => p.title.toLowerCase().includes(query));
 
   return (
     <>
@@ -345,9 +324,7 @@ function ProjectSubContent({
             <FolderMinus className="size-3.5 text-muted-foreground" />
             {t(($) => $.filters.no_project)}
             {noProjectCount > 0 && (
-              <span className="ml-auto text-xs text-muted-foreground">
-                {noProjectCount}
-              </span>
+              <span className="ml-auto text-xs text-muted-foreground">{noProjectCount}</span>
             )}
           </DropdownMenuCheckboxItem>
         )}
@@ -365,11 +342,7 @@ function ProjectSubContent({
               <HoverCheck checked={checked} />
               <ProjectIcon project={p} size="sm" />
               <span className="truncate">{p.title}</span>
-              {count > 0 && (
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {count}
-                </span>
-              )}
+              {count > 0 && <span className="ml-auto text-xs text-muted-foreground">{count}</span>}
             </DropdownMenuCheckboxItem>
           );
         })}
@@ -430,11 +403,7 @@ function LabelSubContent({
             >
               <HoverCheck checked={checked} />
               <LabelChip label={l} />
-              {count > 0 && (
-                <span className="ml-auto text-xs text-muted-foreground">
-                  {count}
-                </span>
-              )}
+              {count > 0 && <span className="ml-auto text-xs text-muted-foreground">{count}</span>}
             </DropdownMenuCheckboxItem>
           );
         })}
@@ -486,14 +455,26 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
       labelFilters,
     }) > 0;
 
-  const SORT_LABEL_KEY: Record<typeof SORT_OPTIONS[number]["value"], "sort_manual" | "sort_priority" | "sort_due_date" | "sort_created" | "sort_title"> = {
+  const SORT_LABEL_KEY: Record<
+    (typeof SORT_OPTIONS)[number]["value"],
+    "sort_manual" | "sort_priority" | "sort_due_date" | "sort_created" | "sort_title"
+  > = {
     position: "sort_manual",
     priority: "sort_priority",
     due_date: "sort_due_date",
     created_at: "sort_created",
     title: "sort_title",
   };
-  const CARD_PROPERTY_LABEL_KEY: Record<typeof CARD_PROPERTY_OPTIONS[number]["key"], "card_priority" | "card_description" | "card_assignee" | "card_due_date" | "card_project" | "card_labels" | "card_child_progress"> = {
+  const CARD_PROPERTY_LABEL_KEY: Record<
+    (typeof CARD_PROPERTY_OPTIONS)[number]["key"],
+    | "card_priority"
+    | "card_description"
+    | "card_assignee"
+    | "card_due_date"
+    | "card_project"
+    | "card_labels"
+    | "card_child_progress"
+  > = {
     priority: "card_priority",
     description: "card_description",
     assignee: "card_assignee",
@@ -508,7 +489,10 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
     members: "members_label",
     agents: "agents_label",
   };
-  const SCOPE_DESC_KEY: Record<IssuesScope, "all_description" | "members_description" | "agents_description"> = {
+  const SCOPE_DESC_KEY: Record<
+    IssuesScope,
+    "all_description" | "members_description" | "agents_description"
+  > = {
     all: "all_description",
     members: "members_description",
     agents: "agents_description",
@@ -550,7 +534,11 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
               render={
                 <TooltipTrigger
                   render={
-                    <Button variant="outline" size="icon-sm" className="relative text-muted-foreground">
+                    <Button
+                      variant="outline"
+                      size="icon-sm"
+                      className="relative text-muted-foreground"
+                    >
                       <Filter className="size-4" />
                       {hasActiveFilters && (
                         <span className="absolute top-0 right-0 size-1.5 rounded-full bg-brand" />
@@ -569,9 +557,7 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                 <CircleDot className="size-3.5" />
                 <span className="flex-1">{t(($) => $.filters.section_status)}</span>
                 {statusFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {statusFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{statusFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-48">
@@ -605,9 +591,7 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                 <SignalHigh className="size-3.5" />
                 <span className="flex-1">{t(($) => $.filters.section_priority)}</span>
                 {priorityFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {priorityFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{priorityFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-44">
@@ -665,9 +649,7 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                 <UserPen className="size-3.5" />
                 <span className="flex-1">{t(($) => $.filters.section_creator)}</span>
                 {creatorFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {creatorFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{creatorFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-52 p-0">
@@ -708,9 +690,7 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                 <Tag className="size-3.5" />
                 <span className="flex-1">{t(($) => $.filters.section_label)}</span>
                 {labelFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {labelFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{labelFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-52 p-0">
@@ -771,10 +751,7 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                   />
                   <DropdownMenuContent align="start" className="w-auto">
                     {SORT_OPTIONS.map((opt) => (
-                      <DropdownMenuItem
-                        key={opt.value}
-                        onClick={() => act.setSortBy(opt.value)}
-                      >
+                      <DropdownMenuItem key={opt.value} onClick={() => act.setSortBy(opt.value)}>
                         {t(($) => $.display[SORT_LABEL_KEY[opt.value]])}
                       </DropdownMenuItem>
                     ))}
@@ -783,10 +760,12 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  onClick={() =>
-                    act.setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+                  onClick={() => act.setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+                  title={
+                    sortDirection === "asc"
+                      ? t(($) => $.display.ascending_title)
+                      : t(($) => $.display.descending_title)
                   }
-                  title={sortDirection === "asc" ? t(($) => $.display.ascending_title) : t(($) => $.display.descending_title)}
                 >
                   {sortDirection === "asc" ? (
                     <ArrowUp className="size-3.5" />
@@ -803,11 +782,10 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
               </span>
               <div className="mt-2 space-y-2">
                 {CARD_PROPERTY_OPTIONS.map((opt) => (
-                  <label
-                    key={opt.key}
-                    className="flex cursor-pointer items-center justify-between"
-                  >
-                    <span className="text-sm">{t(($) => $.display[CARD_PROPERTY_LABEL_KEY[opt.key]])}</span>
+                  <label key={opt.key} className="flex cursor-pointer items-center justify-between">
+                    <span className="text-sm">
+                      {t(($) => $.display[CARD_PROPERTY_LABEL_KEY[opt.key]])}
+                    </span>
                     <Switch
                       size="sm"
                       checked={cardProperties[opt.key]}
@@ -839,7 +817,9 @@ export function IssuesHeader({ scopedIssues }: { scopedIssues: Issue[] }) {
               }
             />
             <TooltipContent side="bottom">
-              {viewMode === "board" ? t(($) => $.view.tooltip_board) : t(($) => $.view.tooltip_list)}
+              {viewMode === "board"
+                ? t(($) => $.view.tooltip_board)
+                : t(($) => $.view.tooltip_list)}
             </TooltipContent>
           </Tooltip>
           <DropdownMenuContent align="end" className="w-auto">

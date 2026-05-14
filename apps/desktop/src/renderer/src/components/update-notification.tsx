@@ -93,18 +93,14 @@ export function UpdateNotification() {
             <ArrowDownToLine className="size-4 text-primary animate-pulse" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium">
-              {t(($) => $.updates.notification.downloading)}
-            </p>
+            <p className="text-sm font-medium">{t(($) => $.updates.notification.downloading)}</p>
             <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-primary transition-all duration-300"
                 style={{ width: `${Math.round(state.percent)}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {Math.round(state.percent)}%
-            </p>
+            <p className="text-xs text-muted-foreground mt-1">{Math.round(state.percent)}%</p>
           </div>
         </div>
       )}
@@ -115,9 +111,7 @@ export function UpdateNotification() {
             <RefreshCw className="size-4 text-success" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium">
-              {t(($) => $.updates.notification.ready_title)}
-            </p>
+            <p className="text-sm font-medium">{t(($) => $.updates.notification.ready_title)}</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               {t(($) => $.updates.notification.ready_description)}
             </p>

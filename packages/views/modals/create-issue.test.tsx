@@ -76,14 +76,14 @@ vi.mock("@multica/core/issues/queries", () => ({
 vi.mock("@multica/core/issues/stores/draft-store", () => ({
   useIssueDraftStore: Object.assign(
     (selector?: (state: typeof mockDraftStore) => unknown) =>
-      (selector ? selector(mockDraftStore) : mockDraftStore),
+      selector ? selector(mockDraftStore) : mockDraftStore,
     { getState: () => mockDraftStore },
   ),
 }));
 
 vi.mock("@multica/core/issues/stores/quick-create-store", () => ({
   useQuickCreateStore: (selector?: (state: typeof mockQuickCreateStore) => unknown) =>
-    (selector ? selector(mockQuickCreateStore) : mockQuickCreateStore),
+    selector ? selector(mockQuickCreateStore) : mockQuickCreateStore,
 }));
 
 vi.mock("@multica/core/issues/mutations", () => ({
@@ -161,7 +161,9 @@ vi.mock("../projects/components/project-picker", () => ({
 }));
 
 vi.mock("@multica/ui/components/ui/dialog", () => ({
-  Dialog: ({ children }: { children: React.ReactNode }) => <div data-testid="dialog-root">{children}</div>,
+  Dialog: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="dialog-root">{children}</div>
+  ),
   DialogContent: ({ children, className }: { children: React.ReactNode; className?: string }) => (
     <div className={className}>{children}</div>
   ),
@@ -174,8 +176,16 @@ vi.mock("@multica/ui/components/ui/dropdown-menu", () => ({
   DropdownMenu: ({ children }: { children: React.ReactNode }) => <>{children}</>,
   DropdownMenuTrigger: ({ render }: { render: React.ReactNode }) => <>{render}</>,
   DropdownMenuContent: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  DropdownMenuItem: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
-    <button type="button" onClick={onClick}>{children}</button>
+  DropdownMenuItem: ({
+    children,
+    onClick,
+  }: {
+    children: React.ReactNode;
+    onClick?: () => void;
+  }) => (
+    <button type="button" onClick={onClick}>
+      {children}
+    </button>
   ),
   DropdownMenuSeparator: () => null,
 }));
@@ -279,7 +289,10 @@ describe("CreateIssueModal", () => {
 
     renderModal(<CreateIssueModal onClose={onClose} />);
 
-    await user.type(screen.getByPlaceholderText("Issue title"), "  Ship create issue regression coverage  ");
+    await user.type(
+      screen.getByPlaceholderText("Issue title"),
+      "  Ship create issue regression coverage  ",
+    );
     await user.click(screen.getByRole("button", { name: "Create Issue" }));
 
     await waitFor(() => {

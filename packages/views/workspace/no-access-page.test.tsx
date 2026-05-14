@@ -41,9 +41,7 @@ describe("NoAccessPage", () => {
 
   it("renders generic message that doesn't leak existence", () => {
     renderPage();
-    expect(
-      screen.getByText(/doesn't exist or you don't have access/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/doesn't exist or you don't have access/i)).toBeInTheDocument();
   });
 
   it("navigates to root on 'Go to my workspaces'", () => {
@@ -64,9 +62,7 @@ describe("NoAccessPage", () => {
 
   it("fully logs out on 'Sign in as a different user' instead of just navigating", () => {
     renderPage();
-    fireEvent.click(
-      screen.getByRole("button", { name: /sign in as a different user/i }),
-    );
+    fireEvent.click(screen.getByRole("button", { name: /sign in as a different user/i }));
     expect(logout).toHaveBeenCalledTimes(1);
     // Should NOT just navigate to /login — that would leave the session
     // cookie + auth state intact and AuthInitializer would re-auth.

@@ -5,11 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ChevronDown, Cpu, Loader2, Plus, Check, Info } from "lucide-react";
 import { runtimeModelsOptions } from "@multica/core/runtimes";
 import type { RuntimeModel } from "@multica/core/types";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { useT } from "../../i18n";
@@ -38,17 +34,12 @@ export function ModelDropdown({
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
-  const modelsQuery = useQuery(
-    runtimeModelsOptions(runtimeOnline ? runtimeId : null),
-  );
+  const modelsQuery = useQuery(runtimeModelsOptions(runtimeOnline ? runtimeId : null));
 
   const supported = modelsQuery.data?.supported ?? true;
   // Stable reference for the model list — `?? []` would mint a fresh
   // array each render and force every downstream useMemo to invalidate.
-  const models = useMemo(
-    () => modelsQuery.data?.models ?? [],
-    [modelsQuery.data],
-  );
+  const models = useMemo(() => modelsQuery.data?.models ?? [], [modelsQuery.data]);
   const grouped = useMemo(() => groupByProvider(models), [models]);
 
   // When the selected runtime reports it doesn't support per-agent
@@ -66,9 +57,7 @@ export function ModelDropdown({
     const out: Record<string, RuntimeModel[]> = {};
     for (const [provider, list] of Object.entries(grouped)) {
       const matches = list.filter(
-        (m) =>
-          m.id.toLowerCase().includes(needle) ||
-          m.label.toLowerCase().includes(needle),
+        (m) => m.id.toLowerCase().includes(needle) || m.label.toLowerCase().includes(needle),
       );
       if (matches.length > 0) out[provider] = matches;
     }
@@ -76,9 +65,7 @@ export function ModelDropdown({
   }, [grouped, search]);
 
   const trimmedSearch = search.trim();
-  const exactMatch = models.some(
-    (m) => m.id === trimmedSearch || m.label === trimmedSearch,
-  );
+  const exactMatch = models.some((m) => m.id === trimmedSearch || m.label === trimmedSearch);
   const canCreate = trimmedSearch.length > 0 && !exactMatch;
 
   const select = (id: string) => {
@@ -117,7 +104,9 @@ export function ModelDropdown({
       <div className="flex items-center justify-between">
         <Label className="text-xs text-muted-foreground">{t(($) => $.model_dropdown.label)}</Label>
         {modelsQuery.isError && (
-          <span className="text-xs text-muted-foreground">{t(($) => $.model_dropdown.discovery_failed)}</span>
+          <span className="text-xs text-muted-foreground">
+            {t(($) => $.model_dropdown.discovery_failed)}
+          </span>
         )}
       </div>
       <Popover open={open} onOpenChange={setOpen}>
@@ -127,9 +116,7 @@ export function ModelDropdown({
         >
           <Cpu className="h-4 w-4 shrink-0 text-muted-foreground" />
           <div className="min-w-0 flex-1">
-            <div className="truncate font-medium">
-              {triggerLabel}
-            </div>
+            <div className="truncate font-medium">{triggerLabel}</div>
             {value && (
               <div className="truncate text-xs text-muted-foreground">
                 {modelLabel(models, value)}
@@ -140,10 +127,7 @@ export function ModelDropdown({
             className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${open ? "rotate-180" : ""}`}
           />
         </PopoverTrigger>
-        <PopoverContent
-          align="start"
-          className="w-[var(--anchor-width)] p-0 overflow-hidden"
-        >
+        <PopoverContent align="start" className="w-[var(--anchor-width)] p-0 overflow-hidden">
           <div className="border-b border-border p-2">
             <Input
               autoFocus
@@ -187,26 +171,20 @@ export function ModelDropdown({
                           )}
                         </div>
                         {m.label !== m.id && (
-                          <div className="truncate text-xs text-muted-foreground">
-                            {m.id}
-                          </div>
+                          <div className="truncate text-xs text-muted-foreground">{m.id}</div>
                         )}
                       </div>
-                      {m.id === value && (
-                        <Check className="h-4 w-4 shrink-0 text-primary" />
-                      )}
+                      {m.id === value && <Check className="h-4 w-4 shrink-0 text-primary" />}
                     </button>
                   ))}
                 </div>
               ))}
 
-            {!modelsQuery.isLoading &&
-              Object.keys(filtered).length === 0 &&
-              !canCreate && (
-                <div className="px-3 py-6 text-center text-sm text-muted-foreground">
-                  {t(($) => $.pickers.model_empty_with_dot)}
-                </div>
-              )}
+            {!modelsQuery.isLoading && Object.keys(filtered).length === 0 && !canCreate && (
+              <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                {t(($) => $.pickers.model_empty_with_dot)}
+              </div>
+            )}
 
             {canCreate && (
               <button

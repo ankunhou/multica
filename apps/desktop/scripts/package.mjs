@@ -120,8 +120,7 @@ function uniqueOrdered(values) {
 }
 
 export function envWithLocalBins(env = process.env, root = desktopRoot) {
-  const pathKey =
-    Object.keys(env).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
+  const pathKey = Object.keys(env).find((key) => key.toUpperCase() === "PATH") ?? "PATH";
   const existingPath = env[pathKey] ?? "";
   const localBins = uniqueOrdered([
     resolve(root, "node_modules", ".bin"),
@@ -129,9 +128,7 @@ export function envWithLocalBins(env = process.env, root = desktopRoot) {
   ]);
   const mergedPath = uniqueOrdered([
     ...localBins,
-    ...String(existingPath)
-      .split(delimiter)
-      .filter(Boolean),
+    ...String(existingPath).split(delimiter).filter(Boolean),
   ]).join(delimiter);
   return { ...env, [pathKey]: mergedPath };
 }
@@ -145,9 +142,7 @@ function hostPlatformKey(platform = process.platform) {
 
 function hostArchKey(arch = process.arch) {
   if (SUPPORTED_CLI_ARCHS.has(arch)) return arch;
-  throw new Error(
-    `[package] unsupported host architecture for Desktop CLI bundling: ${arch}`,
-  );
+  throw new Error(`[package] unsupported host architecture for Desktop CLI bundling: ${arch}`);
 }
 
 function expandPlatformShorthand(token) {
@@ -236,13 +231,8 @@ export function resolveBuildMatrix(parsed, platform = process.platform, arch = p
   }
 
   const platforms =
-    parsed.requestedPlatforms.length > 0
-      ? parsed.requestedPlatforms
-      : [hostPlatformKey(platform)];
-  const archs =
-    parsed.requestedArchs.length > 0
-      ? parsed.requestedArchs
-      : [hostArchKey(arch)];
+    parsed.requestedPlatforms.length > 0 ? parsed.requestedPlatforms : [hostPlatformKey(platform)];
+  const archs = parsed.requestedArchs.length > 0 ? parsed.requestedArchs : [hostArchKey(arch)];
 
   const unsupported = archs.filter((value) => !SUPPORTED_CLI_ARCHS.has(value));
   if (unsupported.length > 0) {
@@ -268,22 +258,14 @@ export function builderArgsForTarget(
   target,
   parsed,
   version,
-  {
-    disableMacNotarize = false,
-    hostPlatform = process.platform,
-    useScopedOutputDir = false,
-  } = {},
+  { disableMacNotarize = false, hostPlatform = process.platform, useScopedOutputDir = false } = {},
 ) {
   const builderArgs = [];
   if (version) builderArgs.push(`-c.extraMetadata.version=${version}`);
   if (disableMacNotarize) builderArgs.push("-c.mac.notarize=false");
   builderArgs.push(PLATFORM_CONFIG[target.platform].builderFlag);
   const requestedTargets = parsed.platformTargets[target.platform];
-  if (
-    target.platform === "linux" &&
-    hostPlatform !== "linux" &&
-    requestedTargets.length === 0
-  ) {
+  if (target.platform === "linux" && hostPlatform !== "linux" && requestedTargets.length === 0) {
     // electron-builder only guarantees AppImage/Snap when cross-building
     // Linux from macOS/Windows. Keep `package:all` portable by defaulting
     // to AppImage unless the caller explicitly requests Linux targets.
@@ -294,9 +276,7 @@ export function builderArgsForTarget(
   builderArgs.push(`--${target.arch}`);
   builderArgs.push(...parsed.sharedArgs);
   if (useScopedOutputDir) {
-    builderArgs.push(
-      `-c.directories.output=dist/${target.platform}-${target.arch}`,
-    );
+    builderArgs.push(`-c.directories.output=dist/${target.platform}-${target.arch}`);
   }
   // electron-builder's update metadata file is `latest.yml` for Windows
   // regardless of arch (only Linux gets an arch suffix automatically — see
@@ -317,9 +297,7 @@ function main() {
   const passthrough = stripLeadingSeparator(process.argv.slice(2));
   const parsed = parsePackageArgs(passthrough);
   const buildMatrix = resolveBuildMatrix(parsed);
-  console.log(
-    `[package] build matrix → ${buildMatrix.map(formatTarget).join(", ")}`,
-  );
+  console.log(`[package] build matrix → ${buildMatrix.map(formatTarget).join(", ")}`);
 
   // Step 1: build the Electron main/preload/renderer bundles. Without
   // this step electron-builder silently packages whatever is already in
@@ -342,10 +320,7 @@ function main() {
     shell: true,
   });
   if (viteResult.error) {
-    console.error(
-      "[package] failed to spawn electron-vite:",
-      viteResult.error.message,
-    );
+    console.error("[package] failed to spawn electron-vite:", viteResult.error.message);
     process.exit(1);
   }
   if (viteResult.status !== 0) {
@@ -357,9 +332,7 @@ function main() {
   if (version) {
     console.log(`[package] Desktop version → ${version} (from git describe)`);
   } else {
-    console.warn(
-      "[package] could not derive version from git; falling back to package.json",
-    );
+    console.warn("[package] could not derive version from git; falling back to package.json");
   }
 
   const disableMacNotarize = !process.env.APPLE_TEAM_ID;
@@ -408,10 +381,7 @@ function main() {
     });
 
     if (result.error) {
-      console.error(
-        "[package] failed to spawn electron-builder:",
-        result.error.message,
-      );
+      console.error("[package] failed to spawn electron-builder:", result.error.message);
       process.exit(1);
     }
     if (result.status !== 0) {
@@ -421,9 +391,6 @@ function main() {
 }
 
 // Only run when invoked as a CLI, not when imported by a test file.
-if (
-  process.argv[1] &&
-  import.meta.url === pathToFileURL(process.argv[1]).href
-) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main();
 }

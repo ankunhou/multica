@@ -46,8 +46,7 @@ export const metadata: Metadata = {
     template: "%s | Multica Docs",
     default: "Multica Docs",
   },
-  description:
-    "Documentation for Multica — the open-source managed agents platform.",
+  description: "Documentation for Multica — the open-source managed agents platform.",
 };
 
 export function generateStaticParams() {
@@ -74,12 +73,7 @@ export default async function Layout({
     <html
       lang={lang}
       suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        inter.variable,
-        geistMono.variable,
-        sourceSerif.variable,
-      )}
+      className={cn("antialiased", inter.variable, geistMono.variable, sourceSerif.variable)}
     >
       <body className="font-sans">
         <RootProvider

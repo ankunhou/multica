@@ -5,11 +5,7 @@ import { ApiClient } from "../api/client";
 import { setApiInstance, setSchemaLogger } from "../api";
 import { createAuthStore, registerAuthStore } from "../auth";
 import { createChatStore, registerChatStore } from "../chat";
-import {
-  I18nProvider,
-  LocaleAdapterProvider,
-  UserLocaleSync,
-} from "../i18n/react";
+import { I18nProvider, LocaleAdapterProvider, UserLocaleSync } from "../i18n/react";
 import { WSProvider } from "../realtime";
 import { QueryProvider } from "../provider";
 import { createLogger } from "../logger";

@@ -10,9 +10,9 @@ const startFn = tokenizer.start as (src: string) => number;
 const tokenizeFn = tokenizer.tokenize as (
   src: string,
 ) => { type: string; raw: string; attributes: Record<string, string> } | undefined;
-const renderMarkdown = BaseMentionExtension.config.renderMarkdown as (
-  node: { attrs: Record<string, string> },
-) => string;
+const renderMarkdown = BaseMentionExtension.config.renderMarkdown as (node: {
+  attrs: Record<string, string>;
+}) => string;
 
 function tokenize(src: string) {
   const start = startFn(src);
@@ -58,8 +58,7 @@ describe("mention tokenizer", () => {
   });
 
   it("handles multiple ordinary links before a mention", () => {
-    const src =
-      "See [a](https://a.com) and [b](https://b.com) - [@Bot](mention://agent/abc-123)";
+    const src = "See [a](https://a.com) and [b](https://b.com) - [@Bot](mention://agent/abc-123)";
     const start = startFn(src);
     const token = tokenizeFn(src.slice(start));
     expect(token).toBeDefined();

@@ -1,11 +1,7 @@
 import { useEffect, useRef } from "react";
 import { capturePageview } from "@multica/core/analytics";
 import { useAuthStore } from "@multica/core/auth";
-import {
-  getActiveTab,
-  useActiveTabIdentity,
-  useTabStore,
-} from "@/stores/tab-store";
+import { getActiveTab, useActiveTabIdentity, useTabStore } from "@/stores/tab-store";
 import { useWindowOverlayStore, type WindowOverlay } from "@/stores/window-overlay-store";
 
 /**
@@ -92,8 +88,7 @@ export function PageviewTracker() {
 
     if (kind === "tab" && key !== null) {
       const knownPath = observed.get(key);
-      const isReactivation =
-        last.key !== key && knownPath !== undefined && knownPath === path;
+      const isReactivation = last.key !== key && knownPath !== undefined && knownPath === path;
       observed.set(key, path);
       if (isReactivation) {
         lastSurfaceRef.current = next;
@@ -101,8 +96,7 @@ export function PageviewTracker() {
       }
     }
 
-    const unchanged =
-      last.kind === kind && last.key === key && last.path === path;
+    const unchanged = last.kind === kind && last.key === key && last.path === path;
     if (unchanged) return;
 
     capturePageview(path);

@@ -40,9 +40,7 @@ vi.mock("@multica/core/workspace/queries", () => ({
   memberListOptions: () => ({
     queryKey: ["workspaces", "ws-1", "members"],
     queryFn: () =>
-      Promise.resolve([
-        { user_id: "user-1", name: "Test User", email: "t@t.com", role: "admin" },
-      ]),
+      Promise.resolve([{ user_id: "user-1", name: "Test User", email: "t@t.com", role: "admin" }]),
   }),
   agentListOptions: () => ({
     queryKey: ["workspaces", "ws-1", "agents"],
@@ -64,9 +62,7 @@ vi.mock("@multica/core/issues/mutations", () => ({
 }));
 
 vi.mock("@multica/core/paths", async () => {
-  const actual = await vi.importActual<typeof import("@multica/core/paths")>(
-    "@multica/core/paths",
-  );
+  const actual = await vi.importActual<typeof import("@multica/core/paths")>("@multica/core/paths");
   return {
     ...actual,
     useCurrentWorkspace: () => ({ id: "ws-1", name: "Test", slug: "test" }),

@@ -40,15 +40,10 @@ export function splitTimeline(items: ChatTimelineItem[]): {
  * `message.content` for legacy messages without a timeline and for the
  * pathological all-non-text shape so Copy never produces an empty string.
  */
-export function extractCopyText(
-  message: ChatMessage,
-  timeline: ChatTimelineItem[],
-): string {
+export function extractCopyText(message: ChatMessage, timeline: ChatTimelineItem[]): string {
   if (timeline.length === 0) return message.content ?? "";
   const { preface, final } = splitTimeline(timeline);
-  const pieces = [...preface, ...final]
-    .map((i) => i.content ?? "")
-    .filter((s) => s.length > 0);
+  const pieces = [...preface, ...final].map((i) => i.content ?? "").filter((s) => s.length > 0);
   if (pieces.length === 0) return message.content ?? "";
   return pieces.join("\n\n");
 }

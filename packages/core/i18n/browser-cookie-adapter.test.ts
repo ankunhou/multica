@@ -1,9 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import {
-  LOCALE_COOKIE,
-  createBrowserCookieLocaleAdapter,
-} from "./browser-cookie-adapter";
+import { LOCALE_COOKIE, createBrowserCookieLocaleAdapter } from "./browser-cookie-adapter";
 
 function clearCookies() {
   document.cookie

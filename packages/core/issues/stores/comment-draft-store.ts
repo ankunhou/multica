@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createWorkspaceAwareStorage, registerForWorkspaceRehydration } from "../../platform/workspace-storage";
+import {
+  createWorkspaceAwareStorage,
+  registerForWorkspaceRehydration,
+} from "../../platform/workspace-storage";
 import { defaultStorage } from "../../platform/storage";
 
 /**
@@ -16,9 +19,9 @@ import { defaultStorage } from "../../platform/storage";
  */
 
 export type CommentDraftKey =
-  | `new:${string}`              // top-level CommentInput, key = `new:${issueId}`
-  | `reply:${string}:${string}`  // ReplyInput inside a thread, key = `reply:${issueId}:${rootCommentId}`
-  | `edit:${string}:${string}`;  // inline edit on existing comment, key = `edit:${issueId}:${commentId}`
+  | `new:${string}` // top-level CommentInput, key = `new:${issueId}`
+  | `reply:${string}:${string}` // ReplyInput inside a thread, key = `reply:${issueId}:${rootCommentId}`
+  | `edit:${string}:${string}`; // inline edit on existing comment, key = `edit:${issueId}:${commentId}`
 
 interface CommentDraft {
   content: string;

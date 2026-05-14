@@ -1,9 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { DataRouter } from "react-router-dom";
-import {
-  NavigationProvider,
-  type NavigationAdapter,
-} from "@multica/views/navigation";
+import { NavigationProvider, type NavigationAdapter } from "@multica/views/navigation";
 import { useAuthStore } from "@multica/core/auth";
 import { isReservedSlug } from "@multica/core/paths";
 import {
@@ -18,9 +15,7 @@ import { useWindowOverlayStore } from "@/stores/window-overlay-store";
 function requireRuntimeAppUrl(scope: string): string {
   const runtimeConfig = window.desktopAPI.runtimeConfig;
   if (!runtimeConfig.ok) {
-    throw new Error(
-      `Invariant violated: ${scope} rendered before App accepted runtime config`,
-    );
+    throw new Error(`Invariant violated: ${scope} rendered before App accepted runtime config`);
   }
   return runtimeConfig.config.appUrl;
 }
@@ -115,11 +110,7 @@ function tryRouteToOtherWorkspace(path: string): boolean {
  * Reads from the active tab's memory router via router.subscribe().
  * Does NOT use any react-router hooks — it's above all RouterProviders.
  */
-export function DesktopNavigationProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function DesktopNavigationProvider({ children }: { children: React.ReactNode }) {
   const appUrl = requireRuntimeAppUrl("DesktopNavigationProvider");
   // Primitive-only subscriptions so this component doesn't re-render on
   // unrelated store updates (e.g. an inactive tab's router tick). We
@@ -131,12 +122,10 @@ export function DesktopNavigationProvider({
   // can read URL search params. Must stay in sync with TabNavigationProvider
   // below; a partial shape here (just pathname) silently broke focus-mode
   // anchor resolution on `/inbox?issue=…`.
-  const [location, setLocation] = useState<{ pathname: string; search: string }>(
-    () => ({
-      pathname: router?.state.location.pathname ?? "/",
-      search: router?.state.location.search ?? "",
-    }),
-  );
+  const [location, setLocation] = useState<{ pathname: string; search: string }>(() => ({
+    pathname: router?.state.location.pathname ?? "/",
+    search: router?.state.location.search ?? "",
+  }));
 
   useEffect(() => {
     if (!router) {

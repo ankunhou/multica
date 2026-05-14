@@ -4,11 +4,7 @@ import { useState } from "react";
 import { CalendarDays } from "lucide-react";
 import type { UpdateIssueRequest } from "@multica/core/types";
 import { Calendar } from "@multica/ui/components/ui/calendar";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Button } from "@multica/ui/components/ui/button";
 import { useT } from "../../../i18n";
 import { useDateTimeFormatters } from "../../../i18n/date-time";
@@ -35,18 +31,22 @@ export function DueDatePicker({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger
-        className={triggerRender ? undefined : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"}
+        className={
+          triggerRender
+            ? undefined
+            : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors"
+        }
         render={triggerRender}
       >
         {customTrigger ?? (
           <>
             <CalendarDays className="h-3.5 w-3.5 text-muted-foreground" />
             {date ? (
-              <span className={isOverdue ? "text-destructive" : ""}>
-                {shortDate(date)}
-              </span>
+              <span className={isOverdue ? "text-destructive" : ""}>{shortDate(date)}</span>
             ) : (
-              <span className="text-muted-foreground">{t(($) => $.pickers.due_date.trigger_label)}</span>
+              <span className="text-muted-foreground">
+                {t(($) => $.pickers.due_date.trigger_label)}
+              </span>
             )}
           </>
         )}

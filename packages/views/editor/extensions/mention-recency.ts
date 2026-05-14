@@ -87,10 +87,7 @@ export function getRecencyMap(workspaceId: string): RecencyMap {
 // Sorts user-type mention items (member/agent) by recency DESC, with an
 // alphabetical name fallback for items the user has never mentioned. Used to
 // merge the previously-separate member and agent buckets into a single list.
-export function sortUserItemsByRecency(
-  items: MentionItem[],
-  recency: RecencyMap,
-): MentionItem[] {
+export function sortUserItemsByRecency(items: MentionItem[], recency: RecencyMap): MentionItem[] {
   return [...items].sort((a, b) => {
     const ra = recency[recencyKey(a)] ?? 0;
     const rb = recency[recencyKey(b)] ?? 0;

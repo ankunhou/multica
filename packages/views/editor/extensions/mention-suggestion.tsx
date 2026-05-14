@@ -19,23 +19,14 @@ import { useAuthStore } from "@multica/core/auth";
 import { canAssignAgentToIssue } from "@multica/core/permissions";
 import { api } from "@multica/core/api";
 import { isImeComposing } from "@multica/core/utils";
-import type {
-  Issue,
-  ListIssuesCache,
-  MemberWithUser,
-  Agent,
-} from "@multica/core/types";
+import type { Issue, ListIssuesCache, MemberWithUser, Agent } from "@multica/core/types";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { StatusIcon } from "../../issues/components/status-icon";
 import { useT } from "../../i18n";
 import { Badge } from "@multica/ui/components/ui/badge";
 import type { IssueStatus } from "@multica/core/types";
 import type { SuggestionOptions, SuggestionProps } from "@tiptap/suggestion";
-import {
-  getRecencyMap,
-  recordMentionUsage,
-  sortUserItemsByRecency,
-} from "./mention-recency";
+import { getRecencyMap, recordMentionUsage, sortUserItemsByRecency } from "./mention-recency";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -117,167 +108,164 @@ function mergeMentionItems(
   return merged;
 }
 
-export const MentionList = forwardRef<MentionListRef, MentionListProps>(
-  function MentionList({ items, query, command }, ref) {
-    const { t } = useT("editor");
-    const [selectedIndex, setSelectedIndex] = useState(0);
-    const [serverIssueItems, setServerIssueItems] = useState<MentionItem[]>([]);
-    const [isSearchingIssues, setIsSearchingIssues] = useState(false);
-    const [searchedIssueQuery, setSearchedIssueQuery] = useState("");
-    const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
-    const normalizedQuery = query.trim();
+export const MentionList = forwardRef<MentionListRef, MentionListProps>(function MentionList(
+  { items, query, command },
+  ref,
+) {
+  const { t } = useT("editor");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [serverIssueItems, setServerIssueItems] = useState<MentionItem[]>([]);
+  const [isSearchingIssues, setIsSearchingIssues] = useState(false);
+  const [searchedIssueQuery, setSearchedIssueQuery] = useState("");
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const normalizedQuery = query.trim();
 
-    useEffect(() => {
-      const q = normalizedQuery;
-      setServerIssueItems([]);
+  useEffect(() => {
+    const q = normalizedQuery;
+    setServerIssueItems([]);
 
-      if (!q) {
-        setIsSearchingIssues(false);
-        setSearchedIssueQuery("");
-        return;
-      }
-
-      const wsId = getCurrentWsId();
-      if (!wsId) {
-        setIsSearchingIssues(false);
-        setSearchedIssueQuery(q);
-        return;
-      }
-
-      let cancelled = false;
-      const controller = new AbortController();
-      setIsSearchingIssues(true);
-
-      const timer = setTimeout(() => {
-        void (async () => {
-          try {
-            const res = await api.searchIssues({
-              q,
-              limit: SERVER_ISSUE_SEARCH_LIMIT,
-              include_closed: true,
-              signal: controller.signal,
-            });
-            if (!cancelled && !controller.signal.aborted) {
-              setServerIssueItems(res.issues.map(issueToMention));
-            }
-          } catch {
-            // Aborted or network error: keep the synchronous cache results.
-          } finally {
-            if (!cancelled && !controller.signal.aborted) {
-              setSearchedIssueQuery(q);
-              setIsSearchingIssues(false);
-            }
-          }
-        })();
-      }, SERVER_SEARCH_DEBOUNCE_MS);
-
-      return () => {
-        cancelled = true;
-        clearTimeout(timer);
-        controller.abort();
-      };
-    }, [normalizedQuery]);
-
-    const displayItems = useMemo(() => {
-      const currentServerIssueItems =
-        searchedIssueQuery === normalizedQuery ? serverIssueItems : [];
-      return mergeMentionItems(items, currentServerIssueItems).slice(0, MAX_ITEMS);
-    }, [items, normalizedQuery, searchedIssueQuery, serverIssueItems]);
-
-    useEffect(() => {
-      setSelectedIndex(0);
-    }, [displayItems]);
-
-    useEffect(() => {
-      itemRefs.current[selectedIndex]?.scrollIntoView({ block: "nearest" });
-    }, [selectedIndex]);
-
-    const selectItem = useCallback(
-      (index: number) => {
-        const item = displayItems[index];
-        if (!item) return;
-        const wsId = getCurrentWsId();
-        if (wsId) recordMentionUsage(wsId, item);
-        command(item);
-      },
-      [displayItems, command],
-    );
-
-    useImperativeHandle(ref, () => ({
-      onKeyDown: ({ event }) => {
-        // IME is composing — don't intercept Enter/Arrow as picker actions;
-        // those keys belong to the IME (Enter commits composition, etc).
-        if (isImeComposing(event)) return false;
-        if (event.key === "ArrowUp") {
-          if (displayItems.length === 0) return true;
-          setSelectedIndex(
-            (i) => (i + displayItems.length - 1) % displayItems.length,
-          );
-          return true;
-        }
-        if (event.key === "ArrowDown") {
-          if (displayItems.length === 0) return true;
-          setSelectedIndex((i) => (i + 1) % displayItems.length);
-          return true;
-        }
-        if (event.key === "Enter") {
-          if (displayItems.length === 0) return true;
-          selectItem(selectedIndex);
-          return true;
-        }
-        return false;
-      },
-    }));
-
-    if (displayItems.length === 0) {
-      const isWaitingForServer =
-        normalizedQuery !== "" &&
-        (isSearchingIssues || searchedIssueQuery !== normalizedQuery);
-
-      return (
-        <div className="rounded-md border bg-popover p-2 text-xs text-muted-foreground shadow-md">
-          {isWaitingForServer
-            ? t(($) => $.mention.searching)
-            : t(($) => $.mention.no_results)}
-        </div>
-      );
+    if (!q) {
+      setIsSearchingIssues(false);
+      setSearchedIssueQuery("");
+      return;
     }
 
-    const groups = groupItems(displayItems);
-    const groupLabel = (label: string): string => {
-      if (label === "Users") return t(($) => $.mention.group_users);
-      if (label === "Issues") return t(($) => $.mention.group_issues);
-      return label;
-    };
+    const wsId = getCurrentWsId();
+    if (!wsId) {
+      setIsSearchingIssues(false);
+      setSearchedIssueQuery(q);
+      return;
+    }
 
-    // Build a flat index mapping: globalIndex → item
-    let globalIndex = 0;
+    let cancelled = false;
+    const controller = new AbortController();
+    setIsSearchingIssues(true);
+
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const res = await api.searchIssues({
+            q,
+            limit: SERVER_ISSUE_SEARCH_LIMIT,
+            include_closed: true,
+            signal: controller.signal,
+          });
+          if (!cancelled && !controller.signal.aborted) {
+            setServerIssueItems(res.issues.map(issueToMention));
+          }
+        } catch {
+          // Aborted or network error: keep the synchronous cache results.
+        } finally {
+          if (!cancelled && !controller.signal.aborted) {
+            setSearchedIssueQuery(q);
+            setIsSearchingIssues(false);
+          }
+        }
+      })();
+    }, SERVER_SEARCH_DEBOUNCE_MS);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [normalizedQuery]);
+
+  const displayItems = useMemo(() => {
+    const currentServerIssueItems = searchedIssueQuery === normalizedQuery ? serverIssueItems : [];
+    return mergeMentionItems(items, currentServerIssueItems).slice(0, MAX_ITEMS);
+  }, [items, normalizedQuery, searchedIssueQuery, serverIssueItems]);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [displayItems]);
+
+  useEffect(() => {
+    itemRefs.current[selectedIndex]?.scrollIntoView({ block: "nearest" });
+  }, [selectedIndex]);
+
+  const selectItem = useCallback(
+    (index: number) => {
+      const item = displayItems[index];
+      if (!item) return;
+      const wsId = getCurrentWsId();
+      if (wsId) recordMentionUsage(wsId, item);
+      command(item);
+    },
+    [displayItems, command],
+  );
+
+  useImperativeHandle(ref, () => ({
+    onKeyDown: ({ event }) => {
+      // IME is composing — don't intercept Enter/Arrow as picker actions;
+      // those keys belong to the IME (Enter commits composition, etc).
+      if (isImeComposing(event)) return false;
+      if (event.key === "ArrowUp") {
+        if (displayItems.length === 0) return true;
+        setSelectedIndex((i) => (i + displayItems.length - 1) % displayItems.length);
+        return true;
+      }
+      if (event.key === "ArrowDown") {
+        if (displayItems.length === 0) return true;
+        setSelectedIndex((i) => (i + 1) % displayItems.length);
+        return true;
+      }
+      if (event.key === "Enter") {
+        if (displayItems.length === 0) return true;
+        selectItem(selectedIndex);
+        return true;
+      }
+      return false;
+    },
+  }));
+
+  if (displayItems.length === 0) {
+    const isWaitingForServer =
+      normalizedQuery !== "" && (isSearchingIssues || searchedIssueQuery !== normalizedQuery);
 
     return (
-      <div className="rounded-md border bg-popover py-1 shadow-md w-72 max-h-[300px] overflow-y-auto">
-        {groups.map((group) => (
-          <div key={group.label}>
-            <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">
-              {groupLabel(group.label)}
-            </div>
-            {group.items.map((item) => {
-              const idx = globalIndex++;
-              return (
-                <MentionRow
-                  key={`${item.type}-${item.id}`}
-                  item={item}
-                  selected={idx === selectedIndex}
-                  onSelect={() => selectItem(idx)}
-                  buttonRef={(el) => { itemRefs.current[idx] = el; }}
-                />
-              );
-            })}
-          </div>
-        ))}
+      <div className="rounded-md border bg-popover p-2 text-xs text-muted-foreground shadow-md">
+        {isWaitingForServer ? t(($) => $.mention.searching) : t(($) => $.mention.no_results)}
       </div>
     );
-  },
-);
+  }
+
+  const groups = groupItems(displayItems);
+  const groupLabel = (label: string): string => {
+    if (label === "Users") return t(($) => $.mention.group_users);
+    if (label === "Issues") return t(($) => $.mention.group_issues);
+    return label;
+  };
+
+  // Build a flat index mapping: globalIndex → item
+  let globalIndex = 0;
+
+  return (
+    <div className="rounded-md border bg-popover py-1 shadow-md w-72 max-h-[300px] overflow-y-auto">
+      {groups.map((group) => (
+        <div key={group.label}>
+          <div className="px-3 py-1.5 text-xs font-medium text-muted-foreground">
+            {groupLabel(group.label)}
+          </div>
+          {group.items.map((item) => {
+            const idx = globalIndex++;
+            return (
+              <MentionRow
+                key={`${item.type}-${item.id}`}
+                item={item}
+                selected={idx === selectedIndex}
+                onSelect={() => selectItem(idx)}
+                buttonRef={(el) => {
+                  itemRefs.current[idx] = el;
+                }}
+              />
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+});
 
 // ---------------------------------------------------------------------------
 // MentionRow — single item in the list
@@ -307,14 +295,10 @@ function MentionRow({
         } ${isClosed ? "opacity-60" : ""}`}
         onClick={onSelect}
       >
-        {item.status && (
-          <StatusIcon status={item.status} className="h-3.5 w-3.5 shrink-0" />
-        )}
+        {item.status && <StatusIcon status={item.status} className="h-3.5 w-3.5 shrink-0" />}
         <span className="shrink-0 text-muted-foreground">{item.label}</span>
         {item.description && (
-          <span
-            className={`truncate text-muted-foreground ${isClosed ? "line-through" : ""}`}
-          >
+          <span className={`truncate text-muted-foreground ${isClosed ? "line-through" : ""}`}>
             {item.description}
           </span>
         )}
@@ -362,10 +346,9 @@ function issueToMention(i: Pick<Issue, "id" | "identifier" | "title" | "status">
   };
 }
 
-export function createMentionSuggestion(qc: QueryClient): Omit<
-  SuggestionOptions<MentionItem>,
-  "editor"
-> {
+export function createMentionSuggestion(
+  qc: QueryClient,
+): Omit<SuggestionOptions<MentionItem>, "editor"> {
   // Renderer/popup instances live in this closure so each ContentEditor owns
   // its own TipTap suggestion popup lifecycle.
   let renderer: ReactRenderer<MentionListRef> | null = null;
@@ -389,8 +372,7 @@ export function createMentionSuggestion(qc: QueryClient): Omit<
     // store. Used to gate personal agents in the @mention list so members
     // don't see (or auto-complete) agents they couldn't assign anyway.
     const userId = useAuthStore.getState().user?.id ?? null;
-    const myRole =
-      members.find((m) => m.user_id === userId)?.role ?? null;
+    const myRole = members.find((m) => m.user_id === userId)?.role ?? null;
 
     const q = query.toLowerCase();
 
@@ -420,19 +402,12 @@ export function createMentionSuggestion(qc: QueryClient): Omit<
     // targets come first regardless of type, with an alphabetical fallback
     // for everyone the user hasn't mentioned yet on this device.
     const recency = getRecencyMap(wsId);
-    const userItems = sortUserItemsByRecency(
-      [...memberItems, ...agentItems],
-      recency,
-    );
+    const userItems = sortUserItemsByRecency([...memberItems, ...agentItems], recency);
 
     // Cached issues give an instant first paint; MentionList adds server
     // matches for done/cancelled and any other issues not in this cache.
     const issueItems: MentionItem[] = cachedIssues
-      .filter(
-        (i) =>
-          i.identifier.toLowerCase().includes(q) ||
-          i.title.toLowerCase().includes(q),
-      )
+      .filter((i) => i.identifier.toLowerCase().includes(q) || i.title.toLowerCase().includes(q))
       .map(issueToMention);
 
     return [...allItem, ...userItems, ...issueItems];

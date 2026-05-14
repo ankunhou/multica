@@ -53,8 +53,7 @@ export function StepRuntimeConnect({
    *  after submitting the waitlist form. */
   onWaitlistSubmitted?: () => void;
 }) {
-  const { runtimes, selected, selectedId, setSelectedId } =
-    useRuntimePicker(wsId);
+  const { runtimes, selected, selectedId, setSelectedId } = useRuntimePicker(wsId);
 
   return (
     <FancyView
@@ -113,8 +112,7 @@ function FancyView({
     return () => window.clearTimeout(t);
   }, [runtimes.length]);
 
-  const phase: Phase =
-    runtimes.length > 0 ? "found" : hasTimedOut ? "empty" : "scanning";
+  const phase: Phase = runtimes.length > 0 ? "found" : hasTimedOut ? "empty" : "scanning";
 
   const onlineCount = runtimes.filter((r) => r.status === "online").length;
 
@@ -128,8 +126,7 @@ function FancyView({
   // after the 5s grace period.
   const detectStartRef = useRef<number | null>(null);
   if (detectStartRef.current === null) {
-    detectStartRef.current =
-      typeof performance !== "undefined" ? performance.now() : Date.now();
+    detectStartRef.current = typeof performance !== "undefined" ? performance.now() : Date.now();
   }
   const detectedEmittedRef = useRef(false);
   useEffect(() => {
@@ -137,11 +134,8 @@ function FancyView({
     if (phase === "scanning") return;
     detectedEmittedRef.current = true;
 
-    const providers = Array.from(
-      new Set(runtimes.map((r) => r.provider).filter(Boolean)),
-    ).sort();
-    const now =
-      typeof performance !== "undefined" ? performance.now() : Date.now();
+    const providers = Array.from(new Set(runtimes.map((r) => r.provider).filter(Boolean))).sort();
+    const now = typeof performance !== "undefined" ? performance.now() : Date.now();
     const detectMs = Math.round(now - (detectStartRef.current ?? now));
 
     captureEvent("onboarding_runtime_detected", {
@@ -234,11 +228,7 @@ function FancyView({
         {/* Scrollable middle — content changes by phase but always wraps
             at max-w-[620px] so the 2-column runtime grid has room to
             breathe without stretching into readability territory. */}
-        <main
-          ref={mainRef}
-          style={fadeStyle}
-          className="min-h-0 flex-1 overflow-y-auto"
-        >
+        <main ref={mainRef} style={fadeStyle} className="min-h-0 flex-1 overflow-y-auto">
           {/* key=phase forces a remount on phase transition so the
               `animate-onboarding-enter` animation replays — otherwise CSS
               only runs on initial mount and scanning→found would be a
@@ -274,24 +264,13 @@ function FancyView({
             self-serve exit: onNext(null) → bootstrap runs the no-agent
             branch, onboarding still completes. */}
         <footer className="flex shrink-0 items-center justify-end gap-4 bg-background px-6 py-4 sm:px-10 md:px-14 lg:px-16">
-          <span
-            aria-live="polite"
-            className="mr-auto text-xs text-muted-foreground"
-          >
+          <span aria-live="polite" className="mr-auto text-xs text-muted-foreground">
             {footerHint}
           </span>
-          <Button
-            variant="secondary"
-            disabled={submitting}
-            onClick={handleSkip}
-          >
+          <Button variant="secondary" disabled={submitting} onClick={handleSkip}>
             {t(($) => $.step_runtime.skip)}
           </Button>
-          <Button
-            size="lg"
-            disabled={!canContinue || submitting}
-            onClick={handleContinue}
-          >
+          <Button size="lg" disabled={!canContinue || submitting} onClick={handleContinue}>
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {t(($) => $.common.continue)}
             <ArrowRight className="h-4 w-4" />
@@ -358,8 +337,7 @@ function FoundView({
       : onlineCount === 0
         ? t(($) => $.step_runtime.status_none_online)
         : t(($) => $.step_runtime.status_n_online, { count: onlineCount });
-  const statusTone =
-    onlineCount === 0 ? "text-muted-foreground" : "text-success";
+  const statusTone = onlineCount === 0 ? "text-muted-foreground" : "text-success";
 
   return (
     <div>
@@ -448,23 +426,15 @@ function EmptyView({
         />
       </div>
 
-      <Dialog
-        open={waitlistOpen}
-        onOpenChange={(o) => (o ? null : setWaitlistOpen(false))}
-      >
+      <Dialog open={waitlistOpen} onOpenChange={(o) => (o ? null : setWaitlistOpen(false))}>
         <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[520px]">
           <DialogHeader>
             <DialogTitle>{t(($) => $.step_runtime.dialog_title)}</DialogTitle>
-            <DialogDescription>
-              {t(($) => $.step_runtime.dialog_description)}
-            </DialogDescription>
+            <DialogDescription>{t(($) => $.step_runtime.dialog_description)}</DialogDescription>
           </DialogHeader>
 
           <div className="min-h-0 flex-1 overflow-y-auto pt-2">
-            <CloudWaitlistExpand
-              submitted={waitlistSubmitted}
-              onSubmitted={onWaitlistSubmitted}
-            />
+            <CloudWaitlistExpand submitted={waitlistSubmitted} onSubmitted={onWaitlistSubmitted} />
           </div>
 
           <DialogFooter>
@@ -504,9 +474,7 @@ function EmptyCard({
     >
       <div className="min-w-0">
         <div className="text-[14.5px] font-medium text-foreground">{title}</div>
-        <p className="mt-1 text-[12.5px] leading-[1.55] text-muted-foreground">
-          {subtitle}
-        </p>
+        <p className="mt-1 text-[12.5px] leading-[1.55] text-muted-foreground">{subtitle}</p>
       </div>
       <span
         aria-hidden
@@ -552,9 +520,7 @@ function RuntimeCard({
         <ProviderLogo provider={runtime.provider} className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="truncate text-sm font-medium text-foreground">
-          {runtime.name}
-        </div>
+        <div className="truncate text-sm font-medium text-foreground">{runtime.name}</div>
         <div className="mt-0.5 flex items-center gap-1.5 font-mono text-[11px] text-muted-foreground">
           <span
             className={cn(
@@ -596,9 +562,7 @@ function RadioMark({ selected }: { selected: boolean }) {
         selected ? "border-foreground" : "border-border",
       )}
     >
-      {selected && (
-        <span className="absolute inset-[3px] rounded-full bg-foreground" />
-      )}
+      {selected && <span className="absolute inset-[3px] rounded-full bg-foreground" />}
     </span>
   );
 }

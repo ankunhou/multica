@@ -66,11 +66,7 @@ export const availabilityConfig: Record<AgentAvailability, AvailabilityVisual> =
 
 // Order used by availability filter chips so colours read in a natural
 // progression rather than alphabetical.
-export const availabilityOrder: AgentAvailability[] = [
-  "online",
-  "unstable",
-  "offline",
-];
+export const availabilityOrder: AgentAvailability[] = ["online", "unstable", "offline"];
 
 export interface WorkloadVisual {
   label: string;

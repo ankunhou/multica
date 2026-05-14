@@ -27,13 +27,7 @@ function piePath(cx: number, cy: number, r: number, progress: number): string {
 // Base component — dashed outer ring + pie fill + optional center icon
 // ---------------------------------------------------------------------------
 
-function ProgressCircle({
-  progress,
-  children,
-}: {
-  progress: number;
-  children?: React.ReactNode;
-}) {
+function ProgressCircle({ progress, children }: { progress: number; children?: React.ReactNode }) {
   return (
     <>
       {/* Outer dashed ring */}

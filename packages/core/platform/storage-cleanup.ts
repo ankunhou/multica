@@ -20,10 +20,7 @@ const WORKSPACE_SCOPED_KEYS = [
 ];
 
 /** Remove all workspace-scoped storage entries for the given workspace slug. */
-export function clearWorkspaceStorage(
-  adapter: StorageAdapter,
-  slug: string,
-) {
+export function clearWorkspaceStorage(adapter: StorageAdapter, slug: string) {
   for (const key of WORKSPACE_SCOPED_KEYS) {
     adapter.removeItem(`${key}:${slug}`);
   }

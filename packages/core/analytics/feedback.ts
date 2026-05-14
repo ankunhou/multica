@@ -23,10 +23,7 @@ export type FeedbackOpenedSource = "help_menu";
  * modal opens inside a workspace; pre-workspace surfaces (e.g. inbox,
  * onboarding transitions) omit it rather than sending an empty string.
  */
-export function captureFeedbackOpened(
-  source: FeedbackOpenedSource,
-  workspaceId?: string,
-): void {
+export function captureFeedbackOpened(source: FeedbackOpenedSource, workspaceId?: string): void {
   captureEvent("feedback_opened", {
     source,
     ...(workspaceId ? { workspace_id: workspaceId } : {}),

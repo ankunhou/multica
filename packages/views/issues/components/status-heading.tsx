@@ -2,13 +2,7 @@ import type { IssueStatus } from "@multica/core/types";
 import { StatusIcon } from "./status-icon";
 import { useT } from "../../i18n";
 
-export function StatusHeading({
-  status,
-  count,
-}: {
-  status: IssueStatus;
-  count: number;
-}) {
+export function StatusHeading({ status, count }: { status: IssueStatus; count: number }) {
   const { t } = useT("issues");
   return (
     <div className="flex items-center gap-2">

@@ -1,17 +1,9 @@
-import type {
-  Issue,
-  IssueStatus,
-  IssueStatusBucket,
-  ListIssuesCache,
-} from "../types";
+import type { Issue, IssueStatus, IssueStatusBucket, ListIssuesCache } from "../types";
 import { PAGINATED_STATUSES } from "./queries";
 
 const EMPTY_BUCKET: IssueStatusBucket = { issues: [], total: 0 };
 
-export function getBucket(
-  resp: ListIssuesCache,
-  status: IssueStatus,
-): IssueStatusBucket {
+export function getBucket(resp: ListIssuesCache, status: IssueStatus): IssueStatusBucket {
   return resp.byStatus[status] ?? EMPTY_BUCKET;
 }
 
@@ -37,10 +29,7 @@ export function findIssueLocation(
 }
 
 /** Add an issue to its status bucket (no-op if already present). */
-export function addIssueToBuckets(
-  resp: ListIssuesCache,
-  issue: Issue,
-): ListIssuesCache {
+export function addIssueToBuckets(resp: ListIssuesCache, issue: Issue): ListIssuesCache {
   const bucket = getBucket(resp, issue.status);
   if (bucket.issues.some((i) => i.id === issue.id)) return resp;
   return setBucket(resp, issue.status, {
@@ -50,10 +39,7 @@ export function addIssueToBuckets(
 }
 
 /** Remove an issue from whichever bucket contains it. */
-export function removeIssueFromBuckets(
-  resp: ListIssuesCache,
-  id: string,
-): ListIssuesCache {
+export function removeIssueFromBuckets(resp: ListIssuesCache, id: string): ListIssuesCache {
   const loc = findIssueLocation(resp, id);
   if (!loc) return resp;
   const bucket = getBucket(resp, loc.status);

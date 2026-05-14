@@ -28,24 +28,17 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@multica/ui/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Switch } from "@multica/ui/components/ui/switch";
-import {
-  ALL_STATUSES,
-  PRIORITY_ORDER,
-} from "@multica/core/issues/config";
+import { ALL_STATUSES, PRIORITY_ORDER } from "@multica/core/issues/config";
 import { StatusIcon, PriorityIcon } from "../../issues/components";
-import {
-  SORT_OPTIONS,
-  CARD_PROPERTY_OPTIONS,
-} from "@multica/core/issues/stores/view-store";
+import { SORT_OPTIONS, CARD_PROPERTY_OPTIONS } from "@multica/core/issues/stores/view-store";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import type { Issue } from "@multica/core/types";
-import { myIssuesViewStore, type MyIssuesScope } from "@multica/core/issues/stores/my-issues-view-store";
+import {
+  myIssuesViewStore,
+  type MyIssuesScope,
+} from "@multica/core/issues/stores/my-issues-view-store";
 import { useT } from "../../i18n";
 import { useIssuePriorityLabels, useIssueStatusLabels } from "../../issues/components/labels";
 
@@ -71,10 +64,7 @@ function HoverCheck({ checked }: { checked: boolean }) {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getActiveFilterCount(state: {
-  statusFilters: string[];
-  priorityFilters: string[];
-}) {
+function getActiveFilterCount(state: { statusFilters: string[]; priorityFilters: string[] }) {
   let count = 0;
   if (state.statusFilters.length > 0) count++;
   if (state.priorityFilters.length > 0) count++;
@@ -108,9 +98,21 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
   const statusLabels = useIssueStatusLabels();
   const priorityLabels = useIssuePriorityLabels();
   const SCOPES: { value: MyIssuesScope; label: string; description: string }[] = [
-    { value: "assigned", label: t(($) => $.header.scope.assigned_label), description: t(($) => $.header.scope.assigned_description) },
-    { value: "created", label: t(($) => $.header.scope.created_label), description: t(($) => $.header.scope.created_description) },
-    { value: "agents", label: t(($) => $.header.scope.agents_label), description: t(($) => $.header.scope.agents_description) },
+    {
+      value: "assigned",
+      label: t(($) => $.header.scope.assigned_label),
+      description: t(($) => $.header.scope.assigned_description),
+    },
+    {
+      value: "created",
+      label: t(($) => $.header.scope.created_label),
+      description: t(($) => $.header.scope.created_description),
+    },
+    {
+      value: "agents",
+      label: t(($) => $.header.scope.agents_label),
+      description: t(($) => $.header.scope.agents_description),
+    },
   ];
   const viewMode = useStore(myIssuesViewStore, (s) => s.viewMode);
   const statusFilters = useStore(myIssuesViewStore, (s) => s.statusFilters);
@@ -123,17 +125,28 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
 
   const counts = useIssueCounts(allIssues);
 
-  const hasActiveFilters =
-    getActiveFilterCount({ statusFilters, priorityFilters }) > 0;
+  const hasActiveFilters = getActiveFilterCount({ statusFilters, priorityFilters }) > 0;
 
-  const SORT_LABEL_KEY: Record<typeof SORT_OPTIONS[number]["value"], "sort_manual" | "sort_priority" | "sort_due_date" | "sort_created" | "sort_title"> = {
+  const SORT_LABEL_KEY: Record<
+    (typeof SORT_OPTIONS)[number]["value"],
+    "sort_manual" | "sort_priority" | "sort_due_date" | "sort_created" | "sort_title"
+  > = {
     position: "sort_manual",
     priority: "sort_priority",
     due_date: "sort_due_date",
     created_at: "sort_created",
     title: "sort_title",
   };
-  const CARD_PROPERTY_LABEL_KEY: Record<typeof CARD_PROPERTY_OPTIONS[number]["key"], "card_priority" | "card_description" | "card_assignee" | "card_due_date" | "card_project" | "card_labels" | "card_child_progress"> = {
+  const CARD_PROPERTY_LABEL_KEY: Record<
+    (typeof CARD_PROPERTY_OPTIONS)[number]["key"],
+    | "card_priority"
+    | "card_description"
+    | "card_assignee"
+    | "card_due_date"
+    | "card_project"
+    | "card_labels"
+    | "card_child_progress"
+  > = {
     priority: "card_priority",
     description: "card_description",
     assignee: "card_assignee",
@@ -180,7 +193,11 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
               render={
                 <TooltipTrigger
                   render={
-                    <Button variant="outline" size="icon-sm" className="relative text-muted-foreground">
+                    <Button
+                      variant="outline"
+                      size="icon-sm"
+                      className="relative text-muted-foreground"
+                    >
                       <Filter className="size-4" />
                       {hasActiveFilters && (
                         <span className="absolute top-0 right-0 size-1.5 rounded-full bg-brand" />
@@ -199,9 +216,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                 <CircleDot className="size-3.5" />
                 <span className="flex-1">{t(($) => $.header.filter_status)}</span>
                 {statusFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {statusFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{statusFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-48">
@@ -235,9 +250,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                 <SignalHigh className="size-3.5" />
                 <span className="flex-1">{t(($) => $.header.filter_priority)}</span>
                 {priorityFilters.length > 0 && (
-                  <span className="text-xs text-primary font-medium">
-                    {priorityFilters.length}
-                  </span>
+                  <span className="text-xs text-primary font-medium">{priorityFilters.length}</span>
                 )}
               </DropdownMenuSubTrigger>
               <DropdownMenuSubContent className="w-auto min-w-44">
@@ -314,10 +327,7 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                   />
                   <DropdownMenuContent align="start" className="w-auto">
                     {SORT_OPTIONS.map((opt) => (
-                      <DropdownMenuItem
-                        key={opt.value}
-                        onClick={() => act.setSortBy(opt.value)}
-                      >
+                      <DropdownMenuItem key={opt.value} onClick={() => act.setSortBy(opt.value)}>
                         {t(($) => $.header[SORT_LABEL_KEY[opt.value]])}
                       </DropdownMenuItem>
                     ))}
@@ -326,12 +336,12 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
                 <Button
                   variant="outline"
                   size="icon-sm"
-                  onClick={() =>
-                    act.setSortDirection(
-                      sortDirection === "asc" ? "desc" : "asc",
-                    )
+                  onClick={() => act.setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+                  title={
+                    sortDirection === "asc"
+                      ? t(($) => $.header.ascending)
+                      : t(($) => $.header.descending)
                   }
-                  title={sortDirection === "asc" ? t(($) => $.header.ascending) : t(($) => $.header.descending)}
                 >
                   {sortDirection === "asc" ? (
                     <ArrowUp className="size-3.5" />
@@ -348,11 +358,10 @@ export function MyIssuesHeader({ allIssues }: { allIssues: Issue[] }) {
               </span>
               <div className="mt-2 space-y-2">
                 {CARD_PROPERTY_OPTIONS.map((opt) => (
-                  <label
-                    key={opt.key}
-                    className="flex cursor-pointer items-center justify-between"
-                  >
-                    <span className="text-sm">{t(($) => $.header[CARD_PROPERTY_LABEL_KEY[opt.key]])}</span>
+                  <label key={opt.key} className="flex cursor-pointer items-center justify-between">
+                    <span className="text-sm">
+                      {t(($) => $.header[CARD_PROPERTY_LABEL_KEY[opt.key]])}
+                    </span>
                     <Switch
                       size="sm"
                       checked={cardProperties[opt.key]}

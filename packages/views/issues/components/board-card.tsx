@@ -83,9 +83,7 @@ export const BoardCardContent = memo(function BoardCardContent({
       <p className="text-xs text-muted-foreground">{issue.identifier}</p>
 
       {/* Row 2: Title */}
-      <p className="mt-1 text-sm font-medium leading-snug line-clamp-2">
-        {issue.title}
-      </p>
+      <p className="mt-1 text-sm font-medium leading-snug line-clamp-2">{issue.title}</p>
 
       {/* Sub-issue progress + project + labels */}
       {(showChildProgress || showProject || showLabels) && (
@@ -104,17 +102,13 @@ export const BoardCardContent = memo(function BoardCardContent({
               <span className="truncate">{project!.title}</span>
             </span>
           )}
-          {showLabels && labels.map((label) => (
-            <LabelChip key={label.id} label={label} />
-          ))}
+          {showLabels && labels.map((label) => <LabelChip key={label.id} label={label} />)}
         </div>
       )}
 
       {/* Description */}
       {showDescription && (
-        <p className="mt-1 text-xs text-muted-foreground line-clamp-1">
-          {issue.description}
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground line-clamp-1">{issue.description}</p>
       )}
 
       {/* Row 3: Assignee, priority badge, due date */}
@@ -151,9 +145,7 @@ export const BoardCardContent = memo(function BoardCardContent({
                 <PriorityPicker
                   priority={issue.priority}
                   onUpdate={handleUpdate}
-                  trigger={
-                    <IssuePriorityBadge priority={issue.priority} />
-                  }
+                  trigger={<IssuePriorityBadge priority={issue.priority} />}
                 />
               </PickerWrapper>
             ) : (
@@ -206,16 +198,15 @@ const animateLayoutChanges: AnimateLayoutChanges = (args) => {
   return defaultAnimateLayoutChanges(args);
 };
 
-export const DraggableBoardCard = memo(function DraggableBoardCard({ issue, childProgress }: { issue: Issue; childProgress?: ChildProgress }) {
+export const DraggableBoardCard = memo(function DraggableBoardCard({
+  issue,
+  childProgress,
+}: {
+  issue: Issue;
+  childProgress?: ChildProgress;
+}) {
   const p = useWorkspacePaths();
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: issue.id,
     data: { status: issue.status },
     animateLayoutChanges,

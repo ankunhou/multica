@@ -8,10 +8,7 @@ export const PROJECT_STATUS_ORDER: ProjectStatus[] = [
   "cancelled",
 ];
 
-export const PROJECT_STATUS_CONFIG: Record<
-  ProjectStatus,
-  { label: string }
-> = {
+export const PROJECT_STATUS_CONFIG: Record<ProjectStatus, { label: string }> = {
   planned: { label: "Planned" },
   in_progress: { label: "In Progress" },
   paused: { label: "Paused" },
@@ -27,10 +24,7 @@ export const PROJECT_PRIORITY_ORDER: ProjectPriority[] = [
   "none",
 ];
 
-export const PROJECT_PRIORITY_CONFIG: Record<
-  ProjectPriority,
-  { label: string; bars: number }
-> = {
+export const PROJECT_PRIORITY_CONFIG: Record<ProjectPriority, { label: string; bars: number }> = {
   urgent: { label: "Urgent", bars: 4 },
   high: { label: "High", bars: 3 },
   medium: { label: "Medium", bars: 2 },

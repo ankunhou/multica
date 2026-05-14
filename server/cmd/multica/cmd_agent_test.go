@@ -752,7 +752,6 @@ func TestAgentAvatarUpdateFailure(t *testing.T) {
 	}
 }
 
-
 // TestAgentAvatarMissingFileFlag rejects when --file is not provided.
 func TestAgentAvatarMissingFileFlag(t *testing.T) {
 	t.Setenv("MULTICA_SERVER_URL", "http://127.0.0.1:0")
@@ -889,13 +888,13 @@ func TestAgentGetTableIncludesAvatarURL(t *testing.T) {
 			t.Errorf("unexpected path: %s", r.URL.Path)
 		}
 		json.NewEncoder(w).Encode(map[string]any{
-			"id":         "agent-123",
-			"name":       "TestAgent",
-			"status":     "active",
+			"id":           "agent-123",
+			"name":         "TestAgent",
+			"status":       "active",
 			"runtime_mode": "cloud",
-			"visibility": "workspace",
-			"avatar_url": "https://cdn.example.com/avatar.png",
-			"description": "A test agent",
+			"visibility":   "workspace",
+			"avatar_url":   "https://cdn.example.com/avatar.png",
+			"description":  "A test agent",
 		})
 	}))
 	defer srv.Close()

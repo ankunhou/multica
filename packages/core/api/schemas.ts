@@ -1,10 +1,5 @@
 import { z } from "zod";
-import type {
-  Attachment,
-  GeneratedAgentDraft,
-  ListIssuesResponse,
-  TimelineEntry,
-} from "../types";
+import type { Attachment, GeneratedAgentDraft, ListIssuesResponse, TimelineEntry } from "../types";
 
 // ---------------------------------------------------------------------------
 // Schemas for the highest-risk API endpoints — those whose responses drive
@@ -46,23 +41,27 @@ const ReactionSchema = z.object({
 // Nested attachments embedded in timeline/comment responses stay lenient on
 // purpose: a single malformed attachment must not knock the whole timeline
 // into the fallback `[]`.
-const AttachmentSchema = z.object({
-  id: z.string(),
-}).loose();
+const AttachmentSchema = z
+  .object({
+    id: z.string(),
+  })
+  .loose();
 
 // Standalone attachment lookup (`GET /api/attachments/{id}`) is the source of
 // truth for click-time download URLs. The two fields the download flow opens
 // in a new tab — `download_url` and `url` — must be strings, otherwise we'd
 // happily `window.open(undefined)`. `filename` gates the toast/title and is
 // also enforced so a missing value falls back to the empty record below.
-export const AttachmentResponseSchema = z.object({
-  id: z.string(),
-  url: z.string(),
-  download_url: z.string(),
-  filename: z.string(),
-  chat_session_id: z.string().nullable().optional(),
-  chat_message_id: z.string().nullable().optional(),
-}).loose();
+export const AttachmentResponseSchema = z
+  .object({
+    id: z.string(),
+    url: z.string(),
+    download_url: z.string(),
+    filename: z.string(),
+    chat_session_id: z.string().nullable().optional(),
+    chat_message_id: z.string().nullable().optional(),
+  })
+  .loose();
 
 export const EMPTY_ATTACHMENT: Attachment = {
   id: "",
@@ -88,22 +87,24 @@ export const EMPTY_ATTACHMENT: Attachment = {
 // wasn't updated in lock-step. `.loose()` removes that synchronisation
 // hazard — the schema validates the shape it knows about and leaves the
 // rest alone.
-const TimelineEntrySchema = z.object({
-  type: z.string(),
-  id: z.string(),
-  actor_type: z.string(),
-  actor_id: z.string(),
-  created_at: z.string(),
-  action: z.string().optional(),
-  details: z.record(z.string(), z.unknown()).optional(),
-  content: z.string().optional(),
-  parent_id: z.string().nullable().optional(),
-  updated_at: z.string().optional(),
-  comment_type: z.string().optional(),
-  reactions: z.array(ReactionSchema).optional(),
-  attachments: z.array(AttachmentSchema).optional(),
-  coalesced_count: z.number().optional(),
-}).loose();
+const TimelineEntrySchema = z
+  .object({
+    type: z.string(),
+    id: z.string(),
+    actor_type: z.string(),
+    actor_id: z.string(),
+    created_at: z.string(),
+    action: z.string().optional(),
+    details: z.record(z.string(), z.unknown()).optional(),
+    content: z.string().optional(),
+    parent_id: z.string().nullable().optional(),
+    updated_at: z.string().optional(),
+    comment_type: z.string().optional(),
+    reactions: z.array(ReactionSchema).optional(),
+    attachments: z.array(AttachmentSchema).optional(),
+    coalesced_count: z.number().optional(),
+  })
+  .loose();
 
 // /timeline returns a flat array of TimelineEntry, oldest first. The
 // previously cursor-paginated wrapper was removed (#1929) — at observed data
@@ -112,74 +113,86 @@ export const TimelineEntriesSchema = z.array(TimelineEntrySchema);
 
 export const EMPTY_TIMELINE_ENTRIES: TimelineEntry[] = [];
 
-export const CommentSchema = z.object({
-  id: z.string(),
-  issue_id: z.string(),
-  author_type: z.string(),
-  author_id: z.string(),
-  content: z.string(),
-  type: z.string(),
-  parent_id: z.string().nullable(),
-  reactions: z.array(ReactionSchema).default([]),
-  attachments: z.array(AttachmentSchema).default([]),
-  created_at: z.string(),
-  updated_at: z.string(),
-}).loose();
+export const CommentSchema = z
+  .object({
+    id: z.string(),
+    issue_id: z.string(),
+    author_type: z.string(),
+    author_id: z.string(),
+    content: z.string(),
+    type: z.string(),
+    parent_id: z.string().nullable(),
+    reactions: z.array(ReactionSchema).default([]),
+    attachments: z.array(AttachmentSchema).default([]),
+    created_at: z.string(),
+    updated_at: z.string(),
+  })
+  .loose();
 
 export const CommentsListSchema = z.array(CommentSchema);
 
-const IssueSchema = z.object({
-  id: z.string(),
-  workspace_id: z.string(),
-  number: z.number(),
-  identifier: z.string(),
-  title: z.string(),
-  description: z.string().nullable(),
-  status: z.string(),
-  priority: z.string(),
-  assignee_type: z.string().nullable(),
-  assignee_id: z.string().nullable(),
-  creator_type: z.string(),
-  creator_id: z.string(),
-  parent_issue_id: z.string().nullable(),
-  project_id: z.string().nullable(),
-  position: z.number(),
-  due_date: z.string().nullable(),
-  reactions: z.array(z.unknown()).optional(),
-  labels: z.array(z.unknown()).optional(),
-  created_at: z.string(),
-  updated_at: z.string(),
-}).loose();
+const IssueSchema = z
+  .object({
+    id: z.string(),
+    workspace_id: z.string(),
+    number: z.number(),
+    identifier: z.string(),
+    title: z.string(),
+    description: z.string().nullable(),
+    status: z.string(),
+    priority: z.string(),
+    assignee_type: z.string().nullable(),
+    assignee_id: z.string().nullable(),
+    creator_type: z.string(),
+    creator_id: z.string(),
+    parent_issue_id: z.string().nullable(),
+    project_id: z.string().nullable(),
+    position: z.number(),
+    due_date: z.string().nullable(),
+    reactions: z.array(z.unknown()).optional(),
+    labels: z.array(z.unknown()).optional(),
+    created_at: z.string(),
+    updated_at: z.string(),
+  })
+  .loose();
 
-export const ListIssuesResponseSchema = z.object({
-  issues: z.array(IssueSchema).default([]),
-  total: z.number().default(0),
-}).loose();
+export const ListIssuesResponseSchema = z
+  .object({
+    issues: z.array(IssueSchema).default([]),
+    total: z.number().default(0),
+  })
+  .loose();
 
 export const EMPTY_LIST_ISSUES_RESPONSE: ListIssuesResponse = {
   issues: [],
   total: 0,
 };
 
-const SubscriberSchema = z.object({
-  issue_id: z.string(),
-  user_type: z.string(),
-  user_id: z.string(),
-  reason: z.string(),
-  created_at: z.string(),
-}).loose();
+const SubscriberSchema = z
+  .object({
+    issue_id: z.string(),
+    user_type: z.string(),
+    user_id: z.string(),
+    reason: z.string(),
+    created_at: z.string(),
+  })
+  .loose();
 
 export const SubscribersListSchema = z.array(SubscriberSchema);
 
-export const ChildIssuesResponseSchema = z.object({
-  issues: z.array(IssueSchema).default([]),
-}).loose();
+export const ChildIssuesResponseSchema = z
+  .object({
+    issues: z.array(IssueSchema).default([]),
+  })
+  .loose();
 
-export const GeneratedAgentDraftSchema = z.object({
-  name: z.string(),
-  description: z.string(),
-  instructions: z.string(),
-}).loose();
+export const GeneratedAgentDraftSchema = z
+  .object({
+    name: z.string(),
+    description: z.string(),
+    instructions: z.string(),
+  })
+  .loose();
 
 export const EMPTY_GENERATED_AGENT_DRAFT: GeneratedAgentDraft = {
   name: "",

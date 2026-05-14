@@ -8,10 +8,7 @@ import {
   ContextMenuContent,
 } from "@multica/ui/components/ui/context-menu";
 import { useIssueActions } from "./use-issue-actions";
-import {
-  IssueActionsMenuItems,
-  contextPrimitives,
-} from "./issue-actions-menu-items";
+import { IssueActionsMenuItems, contextPrimitives } from "./issue-actions-menu-items";
 
 interface IssueActionsContextMenuProps {
   issue: Issue;
@@ -19,20 +16,13 @@ interface IssueActionsContextMenuProps {
   children: ReactElement;
 }
 
-export function IssueActionsContextMenu({
-  issue,
-  children,
-}: IssueActionsContextMenuProps) {
+export function IssueActionsContextMenu({ issue, children }: IssueActionsContextMenuProps) {
   const actions = useIssueActions(issue);
   return (
     <ContextMenu>
       <ContextMenuTrigger render={children} />
       <ContextMenuContent>
-        <IssueActionsMenuItems
-          issue={issue}
-          actions={actions}
-          primitives={contextPrimitives}
-        />
+        <IssueActionsMenuItems issue={issue} actions={actions} primitives={contextPrimitives} />
       </ContextMenuContent>
     </ContextMenu>
   );

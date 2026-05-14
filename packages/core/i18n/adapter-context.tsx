@@ -12,19 +12,13 @@ export function LocaleAdapterProvider({
   adapter: LocaleAdapter;
   children: ReactNode;
 }) {
-  return (
-    <LocaleAdapterContext.Provider value={adapter}>
-      {children}
-    </LocaleAdapterContext.Provider>
-  );
+  return <LocaleAdapterContext.Provider value={adapter}>{children}</LocaleAdapterContext.Provider>;
 }
 
 export function useLocaleAdapter(): LocaleAdapter {
   const ctx = useContext(LocaleAdapterContext);
   if (!ctx) {
-    throw new Error(
-      "useLocaleAdapter must be used within <LocaleAdapterProvider>",
-    );
+    throw new Error("useLocaleAdapter must be used within <LocaleAdapterProvider>");
   }
   return ctx;
 }

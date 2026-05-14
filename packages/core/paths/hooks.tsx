@@ -26,11 +26,7 @@ export function WorkspaceSlugProvider({
   slug: string | null;
   children: ReactNode;
 }) {
-  return (
-    <WorkspaceSlugContext.Provider value={slug}>
-      {children}
-    </WorkspaceSlugContext.Provider>
-  );
+  return <WorkspaceSlugContext.Provider value={slug}>{children}</WorkspaceSlugContext.Provider>;
 }
 
 /** Current workspace slug from URL, or null outside workspace-scoped routes. */
@@ -42,9 +38,7 @@ export function useWorkspaceSlug(): string | null {
 export function useRequiredWorkspaceSlug(): string {
   const slug = useWorkspaceSlug();
   if (!slug) {
-    throw new Error(
-      "useRequiredWorkspaceSlug called outside a workspace-scoped route",
-    );
+    throw new Error("useRequiredWorkspaceSlug called outside a workspace-scoped route");
   }
   return slug;
 }

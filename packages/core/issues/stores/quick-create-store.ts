@@ -2,7 +2,10 @@
 
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createWorkspaceAwareStorage, registerForWorkspaceRehydration } from "../../platform/workspace-storage";
+import {
+  createWorkspaceAwareStorage,
+  registerForWorkspaceRehydration,
+} from "../../platform/workspace-storage";
 import { defaultStorage } from "../../platform/storage";
 
 // Per-workspace memory of the last agent and project the user picked in the

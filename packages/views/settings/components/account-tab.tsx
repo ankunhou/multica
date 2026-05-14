@@ -115,7 +115,9 @@ export function AccountTab() {
             </div>
 
             <div>
-              <Label className="text-xs text-muted-foreground">{t(($) => $.account.name_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.account.name_label)}
+              </Label>
               <Input
                 type="search"
                 value={profileName}

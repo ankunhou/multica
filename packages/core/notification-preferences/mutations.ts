@@ -18,7 +18,7 @@ export function useUpdateNotificationPreferences() {
       );
       qc.setQueryData<NotificationPreferenceResponse>(
         notificationPreferenceKeys.all(wsId),
-        (old) => old ? { ...old, preferences } : { workspace_id: wsId, preferences },
+        (old) => (old ? { ...old, preferences } : { workspace_id: wsId, preferences }),
       );
       return { prev };
     },

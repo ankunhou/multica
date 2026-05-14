@@ -16,9 +16,7 @@ function platformArchiveDescriptor(
   const os = osMap[platform];
   const mappedArch = archMap[arch];
   if (!os || !mappedArch) {
-    throw new Error(
-      `unsupported platform for CLI auto-install: ${platform}/${arch}`,
-    );
+    throw new Error(`unsupported platform for CLI auto-install: ${platform}/${arch}`);
   }
   const ext = platform === "win32" ? "zip" : "tar.gz";
   return { os, arch: mappedArch, ext };
@@ -29,10 +27,7 @@ export function selectPlatformReleaseAssetName(
   platform: NodeJS.Platform = process.platform,
   arch: string = process.arch,
 ): string {
-  const { os, arch: mappedArch, ext } = platformArchiveDescriptor(
-    platform,
-    arch,
-  );
+  const { os, arch: mappedArch, ext } = platformArchiveDescriptor(platform, arch);
   const names = [...assetNames];
 
   // Prefer the versioned `multica-cli-<v>-<os>-<arch>.<ext>` name; fall
@@ -40,8 +35,7 @@ export function selectPlatformReleaseAssetName(
   // only ship the legacy archive keep working.
   const suffix = `-${os}-${mappedArch}.${ext}`;
   const matches = names.filter(
-    (name) =>
-      name.startsWith(RELEASE_ARCHIVE_PREFIX) && name.endsWith(suffix),
+    (name) => name.startsWith(RELEASE_ARCHIVE_PREFIX) && name.endsWith(suffix),
   );
 
   if (matches.length === 1) {

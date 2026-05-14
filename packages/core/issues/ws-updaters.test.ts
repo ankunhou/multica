@@ -3,12 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { onIssueLabelsChanged } from "./ws-updaters";
 import { issueKeys } from "./queries";
 import { labelKeys } from "../labels/queries";
-import type {
-  Issue,
-  IssueLabelsResponse,
-  Label,
-  ListIssuesCache,
-} from "../types";
+import type { Issue, IssueLabelsResponse, Label, ListIssuesCache } from "../types";
 
 const WS_ID = "ws-1";
 const ISSUE_ID = "issue-1";
@@ -67,9 +62,9 @@ describe("onIssueLabelsChanged", () => {
 
     onIssueLabelsChanged(qc, WS_ID, ISSUE_ID, [labelB]);
 
-    expect(
-      qc.getQueryData<IssueLabelsResponse>(labelKeys.byIssue(WS_ID, ISSUE_ID)),
-    ).toEqual({ labels: [labelB] });
+    expect(qc.getQueryData<IssueLabelsResponse>(labelKeys.byIssue(WS_ID, ISSUE_ID))).toEqual({
+      labels: [labelB],
+    });
   });
 
   it("leaves the per-issue label cache untouched when the picker has not fetched", () => {

@@ -49,9 +49,7 @@ export function CloudWaitlistExpand({
       toast.success(t(($) => $.cloud_waitlist.success_toast));
       onSubmitted();
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t(($) => $.cloud_waitlist.failed_toast),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.cloud_waitlist.failed_toast));
     } finally {
       setSubmitting(false);
     }
@@ -61,16 +59,11 @@ export function CloudWaitlistExpand({
     <div className="flex flex-col gap-4 rounded-lg border bg-muted/40 p-5">
       <p className="text-[13.5px] leading-[1.55] text-foreground/85">
         {t(($) => $.cloud_waitlist.intro_main)}{" "}
-        <span className="text-foreground/70">
-          {t(($) => $.cloud_waitlist.intro_warning)}
-        </span>
+        <span className="text-foreground/70">{t(($) => $.cloud_waitlist.intro_warning)}</span>
       </p>
 
       <div className="flex flex-col gap-1.5">
-        <Label
-          htmlFor="waitlist-email"
-          className="text-xs font-medium text-muted-foreground"
-        >
+        <Label htmlFor="waitlist-email" className="text-xs font-medium text-muted-foreground">
           {t(($) => $.cloud_waitlist.email_label)}
         </Label>
         <Input
@@ -91,10 +84,7 @@ export function CloudWaitlistExpand({
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label
-          htmlFor="waitlist-reason"
-          className="text-xs font-medium text-muted-foreground"
-        >
+        <Label htmlFor="waitlist-reason" className="text-xs font-medium text-muted-foreground">
           {t(($) => $.cloud_waitlist.reason_label)}
           <span className="ml-2 font-normal text-muted-foreground/70">
             {t(($) => $.cloud_waitlist.optional)}

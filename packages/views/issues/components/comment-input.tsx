@@ -4,7 +4,12 @@ import { useRef, useState, useCallback, useEffect } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { cn } from "@multica/ui/lib/utils";
-import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay } from "../../editor";
+import {
+  ContentEditor,
+  type ContentEditorRef,
+  useFileDropZone,
+  FileDropOverlay,
+} from "../../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { SubmitButton } from "@multica/ui/components/common/submit-button";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
@@ -47,7 +52,9 @@ function CommentInput({ issueId, onSubmit }: CommentInputProps) {
       const md = editorRef.current?.getMarkdown();
       if (md && md.trim().length > 0) setDraft(draftKey, md);
     };
-    const onVis = () => { if (document.visibilityState === "hidden") flush(); };
+    const onVis = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pagehide", flush);
     return () => {
@@ -56,16 +63,22 @@ function CommentInput({ issueId, onSubmit }: CommentInputProps) {
     };
   }, [draftKey, setDraft]);
 
-  const handleUpload = useCallback(async (file: File) => {
-    const result = await uploadWithToast(file, { issueId });
-    if (result) {
-      uploadMapRef.current.set(result.link, result.id);
-    }
-    return result;
-  }, [uploadWithToast, issueId]);
+  const handleUpload = useCallback(
+    async (file: File) => {
+      const result = await uploadWithToast(file, { issueId });
+      if (result) {
+        uploadMapRef.current.set(result.link, result.id);
+      }
+      return result;
+    },
+    [uploadWithToast, issueId],
+  );
 
   const handleSubmit = async () => {
-    const content = editorRef.current?.getMarkdown()?.replace(/(\n\s*)+$/, "").trim();
+    const content = editorRef.current
+      ?.getMarkdown()
+      ?.replace(/(\n\s*)+$/, "")
+      .trim();
     if (!content || submitting) return;
     // Only send attachment IDs for uploads still present in the content.
     const activeIds: string[] = [];
@@ -126,12 +139,11 @@ function CommentInput({ issueId, onSubmit }: CommentInputProps) {
               </button>
             }
           />
-          <TooltipContent side="top">{isExpanded ? t(($) => $.comment.collapse_tooltip) : t(($) => $.comment.expand_tooltip)}</TooltipContent>
+          <TooltipContent side="top">
+            {isExpanded ? t(($) => $.comment.collapse_tooltip) : t(($) => $.comment.expand_tooltip)}
+          </TooltipContent>
         </Tooltip>
-        <FileUploadButton
-          size="sm"
-          onSelect={(file) => editorRef.current?.uploadFile(file)}
-        />
+        <FileUploadButton size="sm" onSelect={(file) => editorRef.current?.uploadFile(file)} />
         <SubmitButton
           onClick={handleSubmit}
           disabled={isEmpty}

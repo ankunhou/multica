@@ -38,13 +38,7 @@ export function MentionView({ node }: NodeViewProps) {
   );
 }
 
-function IssueMention({
-  issueId,
-  fallbackLabel,
-}: {
-  issueId: string;
-  fallbackLabel?: string;
-}) {
+function IssueMention({ issueId, fallbackLabel }: { issueId: string; fallbackLabel?: string }) {
   const p = useWorkspacePaths();
   const { push, openInNewTab } = useNavigation();
   const issuePath = p.issueDetail(issueId);

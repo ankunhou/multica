@@ -7,11 +7,7 @@ import { useChatStore } from "@multica/core/chat";
 import { chatSessionsOptions, pendingChatTasksOptions } from "@multica/core/chat/queries";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { createLogger } from "@multica/core/logger";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { useT } from "../../i18n";
 
 const logger = createLogger("chat.ui");
@@ -59,7 +55,9 @@ export function ChatFab() {
           </span>
         )}
       </TooltipTrigger>
-      <TooltipContent side="top" sideOffset={10}>{tooltip}</TooltipContent>
+      <TooltipContent side="top" sideOffset={10}>
+        {tooltip}
+      </TooltipContent>
     </Tooltip>
   );
 }

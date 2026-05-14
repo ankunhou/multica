@@ -29,10 +29,7 @@ function CodeBlockView({ node }: NodeViewProps) {
   const language = node.attrs.language || "";
   const isMermaid = language === "mermaid";
   const chart = node.textContent;
-  const debouncedChart = useDebouncedValue(
-    isMermaid ? chart : "",
-    MERMAID_PREVIEW_DEBOUNCE_MS,
-  );
+  const debouncedChart = useDebouncedValue(isMermaid ? chart : "", MERMAID_PREVIEW_DEBOUNCE_MS);
 
   const handleCopy = async () => {
     const text = node.textContent;
@@ -45,10 +42,7 @@ function CodeBlockView({ node }: NodeViewProps) {
   return (
     <NodeViewWrapper className="code-block-wrapper group/code relative my-2">
       {isMermaid && debouncedChart.trim() && (
-        <div
-          contentEditable={false}
-          className="mermaid-diagram-preview mb-1"
-        >
+        <div contentEditable={false} className="mermaid-diagram-preview mb-1">
           <MermaidDiagram chart={debouncedChart} />
         </div>
       )}
@@ -56,22 +50,14 @@ function CodeBlockView({ node }: NodeViewProps) {
         contentEditable={false}
         className="code-block-header absolute top-0 right-0 z-10 flex items-center gap-1.5 px-2 py-1.5 opacity-0 transition-opacity group-hover/code:opacity-100"
       >
-        {language && (
-          <span className="text-xs text-muted-foreground select-none">
-            {language}
-          </span>
-        )}
+        {language && <span className="text-xs text-muted-foreground select-none">{language}</span>}
         <button
           type="button"
           onClick={handleCopy}
           className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
           title={t(($) => $.code_block.copy_code)}
         >
-          {copied ? (
-            <Check className="h-3.5 w-3.5" />
-          ) : (
-            <Copy className="h-3.5 w-3.5" />
-          )}
+          {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
         </button>
       </div>
       <pre spellCheck={false}>

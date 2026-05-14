@@ -12,11 +12,7 @@ import {
   type AgentTemplateId,
   type QuestionnaireAnswers,
 } from "@multica/core/onboarding";
-import type {
-  Agent,
-  AgentRuntime,
-  CreateAgentRequest,
-} from "@multica/core/types";
+import type { Agent, AgentRuntime, CreateAgentRequest } from "@multica/core/types";
 import { DragStrip } from "@multica/views/platform";
 import { StepHeader } from "../components/step-header";
 import { useT } from "../../i18n";
@@ -94,8 +90,7 @@ export function StepAgent({
   const recommendedId = recommendTemplate(questionnaire);
   const recommended = TEMPLATE_BY_ID[recommendedId];
 
-  const [templateId, setTemplateId] =
-    useState<AgentTemplateId>(recommendedId);
+  const [templateId, setTemplateId] = useState<AgentTemplateId>(recommendedId);
   const template = TEMPLATE_BY_ID[templateId];
 
   const [creating, setCreating] = useState(false);
@@ -115,9 +110,7 @@ export function StepAgent({
       const agent = await api.createAgent(req);
       await onCreated(agent);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t(($) => $.step_agent.create_failed),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.step_agent.create_failed));
       setCreating(false);
     }
   };
@@ -152,11 +145,7 @@ export function StepAgent({
         {/* Scrollable middle. `useScrollFade` softly masks content at
             the header / footer edges as the user scrolls, replacing a
             hard divider line. */}
-        <main
-          ref={mainRef}
-          style={fadeStyle}
-          className="min-h-0 flex-1 overflow-y-auto"
-        >
+        <main ref={mainRef} style={fadeStyle} className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
               {t(($) => $.step_agent.eyebrow)}
@@ -166,9 +155,7 @@ export function StepAgent({
             </h1>
             <p className="mt-4 text-[15.5px] leading-[1.55] text-foreground/80">
               {t(($) => $.step_agent.lede_prefix)}
-              <strong className="font-medium text-foreground">
-                {recommended.label}
-              </strong>
+              <strong className="font-medium text-foreground">{recommended.label}</strong>
               {t(($) => $.step_agent.lede_suffix)}
             </p>
 
@@ -251,12 +238,8 @@ function TemplateCard({
         )}
       </div>
       <div className="flex flex-col gap-1">
-        <div className="text-sm font-medium text-foreground">
-          {template.label}
-        </div>
-        <p className="text-xs leading-snug text-muted-foreground">
-          {template.blurb}
-        </p>
+        <div className="text-sm font-medium text-foreground">{template.label}</div>
+        <p className="text-xs leading-snug text-muted-foreground">{template.blurb}</p>
       </div>
     </button>
   );
@@ -322,15 +305,7 @@ function AboutAgentsSide() {
   );
 }
 
-function WayItem({
-  glyph,
-  title,
-  body,
-}: {
-  glyph: string;
-  title: string;
-  body: string;
-}) {
+function WayItem({ glyph, title, body }: { glyph: string; title: string; body: string }) {
   return (
     <div className="grid grid-cols-[22px_1fr] gap-3">
       <div
@@ -340,12 +315,8 @@ function WayItem({
         {glyph}
       </div>
       <div className="flex flex-col gap-1">
-        <div className="text-[14px] font-medium leading-tight text-foreground">
-          {title}
-        </div>
-        <p className="text-[13px] leading-[1.5] text-muted-foreground">
-          {body}
-        </p>
+        <div className="text-[14px] font-medium leading-tight text-foreground">{title}</div>
+        <p className="text-[13px] leading-[1.5] text-muted-foreground">{body}</p>
       </div>
     </div>
   );

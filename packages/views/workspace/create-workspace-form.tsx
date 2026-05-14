@@ -9,11 +9,7 @@ import { Card, CardContent } from "@multica/ui/components/ui/card";
 import { useCreateWorkspace } from "@multica/core/workspace/mutations";
 import type { Workspace } from "@multica/core/types";
 import { isImeComposing } from "@multica/core/utils";
-import {
-  WORKSPACE_SLUG_REGEX,
-  isWorkspaceSlugConflict,
-  nameToWorkspaceSlug,
-} from "./slug";
+import { WORKSPACE_SLUG_REGEX, isWorkspaceSlugConflict, nameToWorkspaceSlug } from "./slug";
 import { useT } from "../i18n";
 import { isReservedSlug } from "@multica/core/paths";
 
@@ -34,12 +30,9 @@ export function CreateWorkspaceForm({ onSuccess }: CreateWorkspaceFormProps) {
       ? t(($) => $.create_form.errors.slug_format)
       : null;
   const slugReservedError =
-    slug.length > 0 && isReservedSlug(slug)
-      ? t(($) => $.create_form.errors.slug_reserved)
-      : null;
+    slug.length > 0 && isReservedSlug(slug) ? t(($) => $.create_form.errors.slug_reserved) : null;
   const slugError = slugValidationError ?? slugReservedError ?? slugServerError;
-  const canSubmit =
-    name.trim().length > 0 && slug.trim().length > 0 && !slugError;
+  const canSubmit = name.trim().length > 0 && slug.trim().length > 0 && !slugError;
 
   const handleNameChange = (value: string) => {
     setName(value);
@@ -111,9 +104,7 @@ export function CreateWorkspaceForm({ onSuccess }: CreateWorkspaceFormProps) {
               }}
             />
           </div>
-          {slugError && (
-            <p className="text-xs text-destructive">{slugError}</p>
-          )}
+          {slugError && <p className="text-xs text-destructive">{slugError}</p>}
         </div>
         <Button
           className="w-full"

@@ -67,7 +67,13 @@ export function InboxDetailLabel({ item }: { item: InboxItem }) {
     }
     case "issue_assigned": {
       if (details.new_assignee_id) {
-        return <span>{t(($) => $.labels.assigned_to, { name: getActorName(details.new_assignee_type ?? "member", details.new_assignee_id) })}</span>;
+        return (
+          <span>
+            {t(($) => $.labels.assigned_to, {
+              name: getActorName(details.new_assignee_type ?? "member", details.new_assignee_id),
+            })}
+          </span>
+        );
       }
       return <span>{typeLabels[item.type]}</span>;
     }
@@ -75,12 +81,19 @@ export function InboxDetailLabel({ item }: { item: InboxItem }) {
       return <span>{t(($) => $.labels.removed_assignee)}</span>;
     case "assignee_changed": {
       if (details.new_assignee_id) {
-        return <span>{t(($) => $.labels.assigned_to, { name: getActorName(details.new_assignee_type ?? "member", details.new_assignee_id) })}</span>;
+        return (
+          <span>
+            {t(($) => $.labels.assigned_to, {
+              name: getActorName(details.new_assignee_type ?? "member", details.new_assignee_id),
+            })}
+          </span>
+        );
       }
       return <span>{typeLabels[item.type]}</span>;
     }
     case "due_date_changed": {
-      if (details.to) return <span>{t(($) => $.labels.set_due_date_to, { date: shortDate(details.to) })}</span>;
+      if (details.to)
+        return <span>{t(($) => $.labels.set_due_date_to, { date: shortDate(details.to) })}</span>;
       return <span>{t(($) => $.labels.removed_due_date)}</span>;
     }
     case "new_comment": {

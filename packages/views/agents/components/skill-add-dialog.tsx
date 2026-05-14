@@ -7,10 +7,7 @@ import { toast } from "sonner";
 import type { Agent } from "@multica/core/types";
 import { api } from "@multica/core/api";
 import { useWorkspaceId } from "@multica/core/hooks";
-import {
-  skillListOptions,
-  workspaceKeys,
-} from "@multica/core/workspace/queries";
+import { skillListOptions, workspaceKeys } from "@multica/core/workspace/queries";
 import { Button } from "@multica/ui/components/ui/button";
 import {
   Dialog,
@@ -50,17 +47,13 @@ export function SkillAddDialog({
   const [query, setQuery] = useState("");
 
   const agentSkillIds = new Set(agent.skills.map((s) => s.id));
-  const availableSkills = workspaceSkills.filter(
-    (s) => !agentSkillIds.has(s.id),
-  );
+  const availableSkills = workspaceSkills.filter((s) => !agentSkillIds.has(s.id));
   const trimmedQuery = query.trim().toLowerCase();
   const filteredSkills = trimmedQuery
     ? availableSkills.filter((s) => {
         const name = s.name.toLowerCase();
         const description = s.description?.toLowerCase() ?? "";
-        return (
-          name.includes(trimmedQuery) || description.includes(trimmedQuery)
-        );
+        return name.includes(trimmedQuery) || description.includes(trimmedQuery);
       })
     : availableSkills;
 
@@ -90,7 +83,9 @@ export function SkillAddDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-sm">{t(($) => $.tab_body.skills.add_dialog_title)}</DialogTitle>
+          <DialogTitle className="text-sm">
+            {t(($) => $.tab_body.skills.add_dialog_title)}
+          </DialogTitle>
           <DialogDescription className="text-xs">
             {t(($) => $.tab_body.skills.add_dialog_description)}
           </DialogDescription>
@@ -120,9 +115,7 @@ export function SkillAddDialog({
               <div className="min-w-0 flex-1">
                 <div className="truncate font-medium">{skill.name}</div>
                 {skill.description && (
-                  <div className="truncate text-xs text-muted-foreground">
-                    {skill.description}
-                  </div>
+                  <div className="truncate text-xs text-muted-foreground">{skill.description}</div>
                 )}
               </div>
             </button>

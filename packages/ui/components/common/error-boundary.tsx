@@ -84,12 +84,8 @@ function DefaultFallback({ error, reset }: { error: Error; reset: () => void }) 
       className="flex flex-col items-start gap-3 rounded-md border border-dashed border-border bg-muted/30 p-4 text-sm"
     >
       <div className="space-y-1">
-        <p className="font-medium text-foreground">
-          Something went wrong displaying this section.
-        </p>
-        <p className="text-muted-foreground">
-          {error.message || "An unexpected error occurred."}
-        </p>
+        <p className="font-medium text-foreground">Something went wrong displaying this section.</p>
+        <p className="text-muted-foreground">{error.message || "An unexpected error occurred."}</p>
       </div>
       <Button size="sm" variant="outline" onClick={reset}>
         Try again

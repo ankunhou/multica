@@ -46,26 +46,20 @@ function runtimeArchFromArgs(argv) {
 function normalizeRuntimePlatform(platform) {
   if (platform in PLATFORM_TO_GOOS) return platform;
   throw new Error(
-    `[bundle-cli] unsupported target platform: ${platform}. ` +
-      "Use darwin, linux, or win32.",
+    `[bundle-cli] unsupported target platform: ${platform}. ` + "Use darwin, linux, or win32.",
   );
 }
 
 function normalizeRuntimeArch(arch) {
   if (SUPPORTED_ARCHS.has(arch)) return arch;
-  throw new Error(
-    `[bundle-cli] unsupported target architecture: ${arch}. ` +
-      "Use x64 or arm64.",
-  );
+  throw new Error(`[bundle-cli] unsupported target architecture: ${arch}. ` + "Use x64 or arm64.");
 }
 
 function binaryNameForPlatform(platform) {
   return platform === "win32" ? "multica.exe" : "multica";
 }
 
-const targetPlatform = normalizeRuntimePlatform(
-  runtimePlatformFromArgs(process.argv.slice(2)),
-);
+const targetPlatform = normalizeRuntimePlatform(runtimePlatformFromArgs(process.argv.slice(2)));
 const targetArch = normalizeRuntimeArch(runtimeArchFromArgs(process.argv.slice(2)));
 const goos = PLATFORM_TO_GOOS[targetPlatform];
 const goarch = targetArch === "x64" ? "amd64" : targetArch;
@@ -108,12 +102,7 @@ async function goBuildEnv() {
     GOARCH: goarch,
   };
 
-  if (
-    process.platform === "win32" &&
-    !env.GOCACHE &&
-    !env.LOCALAPPDATA &&
-    !env.LocalAppData
-  ) {
+  if (process.platform === "win32" && !env.GOCACHE && !env.LOCALAPPDATA && !env.LocalAppData) {
     const goCache = join(serverDir, "tmp", "go-build-cache");
     await mkdir(goCache, { recursive: true });
     env.GOCACHE = goCache;
@@ -173,22 +162,11 @@ if (hasGo()) {
     `[bundle-cli] go build → ${srcBinary} (${goos}/${goarch}, version=${version} commit=${commit})`,
   );
   await mkdir(join(serverDir, "bin", `${goos}-${goarch}`), { recursive: true });
-  execFileSync(
-    "go",
-    [
-      "build",
-      "-ldflags",
-      ldflags,
-      "-o",
-      srcBinary,
-      "./cmd/multica",
-    ],
-    {
-      cwd: serverDir,
-      stdio: "inherit",
-      env: await goBuildEnv(),
-    },
-  );
+  execFileSync("go", ["build", "-ldflags", ldflags, "-o", srcBinary, "./cmd/multica"], {
+    cwd: serverDir,
+    stdio: "inherit",
+    env: await goBuildEnv(),
+  });
 } else {
   console.warn(
     "[bundle-cli] `go` not found in PATH — skipping CLI build. " +

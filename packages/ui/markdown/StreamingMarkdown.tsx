@@ -1,20 +1,20 @@
-import * as React from 'react'
-import { Markdown, type RenderMode } from './Markdown'
+import * as React from "react";
+import { Markdown, type RenderMode } from "./Markdown";
 
 export interface StreamingMarkdownProps {
-  content: string
-  isStreaming: boolean
-  mode?: RenderMode
-  className?: string
-  onUrlClick?: (url: string) => void
-  onFileClick?: (path: string) => void
-  renderMention?: (props: { type: string; id: string }) => React.ReactNode
-  cdnDomain?: string
+  content: string;
+  isStreaming: boolean;
+  mode?: RenderMode;
+  className?: string;
+  onUrlClick?: (url: string) => void;
+  onFileClick?: (path: string) => void;
+  renderMention?: (props: { type: string; id: string }) => React.ReactNode;
+  cdnDomain?: string;
 }
 
 interface Block {
-  content: string
-  isCodeBlock: boolean
+  content: string;
+  isCodeBlock: boolean;
 }
 
 /**
@@ -30,11 +30,11 @@ interface Block {
  * @see http://www.cse.yorku.ca/~oz/hash.html
  */
 function simpleHash(str: string): string {
-  let hash = 5381
+  let hash = 5381;
   for (let i = 0; i < str.length; i++) {
-    hash = ((hash << 5) + hash) ^ str.charCodeAt(i)
+    hash = ((hash << 5) + hash) ^ str.charCodeAt(i);
   }
-  return (hash >>> 0).toString(36)
+  return (hash >>> 0).toString(36);
 }
 
 /**
@@ -47,67 +47,67 @@ function simpleHash(str: string): string {
  * This is intentionally simple - just string scanning, no regex per line.
  */
 function splitIntoBlocks(content: string): Block[] {
-  const blocks: Block[] = []
-  const lines = content.split('\n')
-  let currentBlock = ''
-  let inCodeBlock = false
-  let inMathBlock = false
+  const blocks: Block[] = [];
+  const lines = content.split("\n");
+  let currentBlock = "";
+  let inCodeBlock = false;
+  let inMathBlock = false;
 
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i] ?? ''
+    const line = lines[i] ?? "";
 
     // Check for code fence (``` at start of line, optionally followed by language)
-    if (line.startsWith('```')) {
+    if (line.startsWith("```")) {
       if (!inCodeBlock) {
         // Starting a code block - flush current paragraph first
         if (currentBlock.trim()) {
-          blocks.push({ content: currentBlock.trim(), isCodeBlock: false })
-          currentBlock = ''
+          blocks.push({ content: currentBlock.trim(), isCodeBlock: false });
+          currentBlock = "";
         }
-        inCodeBlock = true
-        currentBlock = line + '\n'
+        inCodeBlock = true;
+        currentBlock = line + "\n";
       } else {
         // Ending a code block
-        currentBlock += line
-        blocks.push({ content: currentBlock, isCodeBlock: true })
-        currentBlock = ''
-        inCodeBlock = false
+        currentBlock += line;
+        blocks.push({ content: currentBlock, isCodeBlock: true });
+        currentBlock = "";
+        inCodeBlock = false;
       }
     } else if (inCodeBlock) {
       // Inside code block - append line
-      currentBlock += line + '\n'
-    // Check for display math fence ($$)
-    } else if (line.trim() === '$$') {
+      currentBlock += line + "\n";
+      // Check for display math fence ($$)
+    } else if (line.trim() === "$$") {
       if (!inMathBlock) {
         // Starting a math block - flush current paragraph first
         if (currentBlock.trim()) {
-          blocks.push({ content: currentBlock.trim(), isCodeBlock: false })
-          currentBlock = ''
+          blocks.push({ content: currentBlock.trim(), isCodeBlock: false });
+          currentBlock = "";
         }
-        inMathBlock = true
-        currentBlock = line + '\n'
+        inMathBlock = true;
+        currentBlock = line + "\n";
       } else {
         // Ending a math block
-        currentBlock += line
-        blocks.push({ content: currentBlock, isCodeBlock: false })
-        currentBlock = ''
-        inMathBlock = false
+        currentBlock += line;
+        blocks.push({ content: currentBlock, isCodeBlock: false });
+        currentBlock = "";
+        inMathBlock = false;
       }
     } else if (inMathBlock) {
       // Inside math block - append line (don't split on blank lines)
-      currentBlock += line + '\n'
-    } else if (line === '') {
+      currentBlock += line + "\n";
+    } else if (line === "") {
       // Empty line outside code block = paragraph boundary
       if (currentBlock.trim()) {
-        blocks.push({ content: currentBlock.trim(), isCodeBlock: false })
-        currentBlock = ''
+        blocks.push({ content: currentBlock.trim(), isCodeBlock: false });
+        currentBlock = "";
       }
     } else {
       // Regular text line
       if (currentBlock) {
-        currentBlock += '\n' + line
+        currentBlock += "\n" + line;
       } else {
-        currentBlock = line
+        currentBlock = line;
       }
     }
   }
@@ -116,11 +116,11 @@ function splitIntoBlocks(content: string): Block[] {
   if (currentBlock) {
     blocks.push({
       content: inCodeBlock || inMathBlock ? currentBlock : currentBlock.trim(),
-      isCodeBlock: inCodeBlock
-    })
+      isCodeBlock: inCodeBlock,
+    });
   }
 
-  return blocks
+  return blocks;
 }
 
 /**
@@ -138,28 +138,37 @@ const MemoizedBlock = React.memo(
     onUrlClick,
     onFileClick,
     renderMention,
-    cdnDomain
+    cdnDomain,
   }: {
-    content: string
-    mode: RenderMode
-    className?: string
-    onUrlClick?: (url: string) => void
-    onFileClick?: (path: string) => void
-    renderMention?: (props: { type: string; id: string }) => React.ReactNode
-    cdnDomain?: string
+    content: string;
+    mode: RenderMode;
+    className?: string;
+    onUrlClick?: (url: string) => void;
+    onFileClick?: (path: string) => void;
+    renderMention?: (props: { type: string; id: string }) => React.ReactNode;
+    cdnDomain?: string;
   }) {
     return (
-      <Markdown mode={mode} className={className} onUrlClick={onUrlClick} onFileClick={onFileClick} renderMention={renderMention} cdnDomain={cdnDomain}>
+      <Markdown
+        mode={mode}
+        className={className}
+        onUrlClick={onUrlClick}
+        onFileClick={onFileClick}
+        renderMention={renderMention}
+        cdnDomain={cdnDomain}
+      >
         {content}
       </Markdown>
-    )
+    );
   },
   (prev, next) => {
     // Only re-render if content actually changed
-    return prev.content === next.content && prev.mode === next.mode && prev.className === next.className
-  }
-)
-MemoizedBlock.displayName = 'MemoizedBlock'
+    return (
+      prev.content === next.content && prev.mode === next.mode && prev.className === next.className
+    );
+  },
+);
+MemoizedBlock.displayName = "MemoizedBlock";
 
 /**
  * StreamingMarkdown - Optimized markdown renderer for streaming content
@@ -180,42 +189,49 @@ MemoizedBlock.displayName = 'MemoizedBlock'
 export function StreamingMarkdown({
   content,
   isStreaming,
-  mode = 'minimal',
+  mode = "minimal",
   className,
   onUrlClick,
   onFileClick,
   renderMention,
-  cdnDomain
+  cdnDomain,
 }: StreamingMarkdownProps): React.JSX.Element {
   // Split into blocks - memoized to avoid recomputation
   // Must be called unconditionally to satisfy Rules of Hooks
   const blocks = React.useMemo(
     () => (isStreaming ? splitIntoBlocks(content) : []),
-    [content, isStreaming]
-  )
+    [content, isStreaming],
+  );
 
   // Not streaming - use simple Markdown (no block splitting needed)
   if (!isStreaming) {
     return (
-      <Markdown mode={mode} className={className} onUrlClick={onUrlClick} onFileClick={onFileClick} renderMention={renderMention} cdnDomain={cdnDomain}>
+      <Markdown
+        mode={mode}
+        className={className}
+        onUrlClick={onUrlClick}
+        onFileClick={onFileClick}
+        renderMention={renderMention}
+        cdnDomain={cdnDomain}
+      >
         {content}
       </Markdown>
-    )
+    );
   }
 
   // Empty content - return null, let parent handle loading indicator
   if (blocks.length === 0) {
-    return <></>
+    return <></>;
   }
 
   return (
     <>
       {blocks.map((block, i) => {
-        const isLastBlock = i === blocks.length - 1
+        const isLastBlock = i === blocks.length - 1;
 
         // Complete blocks use content hash as key -> stable identity -> memoized
         // Last block uses "active" prefix -> always re-renders on content change
-        const key = isLastBlock ? `active-${i}` : `block-${i}-${simpleHash(block.content)}`
+        const key = isLastBlock ? `active-${i}` : `block-${i}-${simpleHash(block.content)}`;
 
         return (
           <MemoizedBlock
@@ -228,8 +244,8 @@ export function StreamingMarkdown({
             renderMention={renderMention}
             cdnDomain={cdnDomain}
           />
-        )
+        );
       })}
     </>
-  )
+  );
 }

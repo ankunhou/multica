@@ -24,4 +24,3 @@ func TestServerHostIsLocal(t *testing.T) {
 		})
 	}
 }
-

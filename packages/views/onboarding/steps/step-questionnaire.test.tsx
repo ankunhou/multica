@@ -22,10 +22,7 @@ function renderStep(initial: Partial<QuestionnaireAnswers> = {}) {
   const onSubmit = vi.fn();
   render(
     <I18nProvider locale="en" resources={TEST_RESOURCES}>
-      <StepQuestionnaire
-        initial={{ ...EMPTY_ANSWERS, ...initial }}
-        onSubmit={onSubmit}
-      />
+      <StepQuestionnaire initial={{ ...EMPTY_ANSWERS, ...initial }} onSubmit={onSubmit} />
     </I18nProvider>,
   );
   return { onSubmit };
@@ -45,45 +42,31 @@ function renderStep(initial: Partial<QuestionnaireAnswers> = {}) {
 describe("StepQuestionnaire", () => {
   it("Continue is disabled when no questions are answered", () => {
     renderStep();
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
   });
 
   it("Continue stays disabled with only one question answered", async () => {
     const user = userEvent.setup();
     renderStep();
     await user.click(screen.getByRole("radio", { name: /just me/i }));
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
   });
 
   it("Continue stays disabled with only two questions answered", async () => {
     const user = userEvent.setup();
     renderStep();
     await user.click(screen.getByRole("radio", { name: /just me/i }));
-    await user.click(
-      screen.getByRole("radio", { name: /software developer/i }),
-    );
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeDisabled();
+    await user.click(screen.getByRole("radio", { name: /software developer/i }));
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
   });
 
   it("Continue enables when all three questions are answered", async () => {
     const user = userEvent.setup();
     renderStep();
     await user.click(screen.getByRole("radio", { name: /just me/i }));
-    await user.click(
-      screen.getByRole("radio", { name: /software developer/i }),
-    );
-    await user.click(
-      screen.getByRole("radio", { name: /write and ship code/i }),
-    );
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeEnabled();
+    await user.click(screen.getByRole("radio", { name: /software developer/i }));
+    await user.click(screen.getByRole("radio", { name: /write and ship code/i }));
+    expect(screen.getByRole("button", { name: /continue/i })).toBeEnabled();
   });
 
   it("Continue stays disabled when Other is picked but its text is empty", async () => {
@@ -95,9 +78,7 @@ describe("StepQuestionnaire", () => {
     });
     const q3Other = screen.getAllByRole("radio", { name: /^other$/i })[2]!;
     await user.click(q3Other);
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
   });
 
   it("Continue re-enables once Other text is filled in", async () => {
@@ -107,9 +88,7 @@ describe("StepQuestionnaire", () => {
     await user.click(q3Other);
     const input = screen.getByPlaceholderText(/automate my weekly reports/i);
     await user.type(input, "Teach me the system");
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeEnabled();
+    expect(screen.getByRole("button", { name: /continue/i })).toBeEnabled();
   });
 
   it("clears Other text when the user switches to a concrete option", async () => {
@@ -123,10 +102,7 @@ describe("StepQuestionnaire", () => {
     // Submitted payload must have team_size_other = null.
     const q1Other = screen.getAllByRole("radio", { name: /^other$/i })[0]!;
     await user.click(q1Other);
-    await user.type(
-      screen.getByPlaceholderText(/small community i help run/i),
-      "large enterprise",
-    );
+    await user.type(screen.getByPlaceholderText(/small community i help run/i), "large enterprise");
     await user.click(screen.getByRole("radio", { name: /just me/i }));
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
@@ -152,12 +128,11 @@ describe("StepQuestionnaire", () => {
 
   it("respects the initial prop (used for resume-after-back)", () => {
     renderStep({ team_size: "team", role: "developer" });
-    expect(
-      screen.getByRole("radio", { name: /my team/i }),
-    ).toHaveAttribute("aria-checked", "true");
-    expect(
-      screen.getByRole("radio", { name: /software developer/i }),
-    ).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: /my team/i })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: /software developer/i })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
   });
 
   it("submits the full answer set including all three questions", async () => {
@@ -165,12 +140,8 @@ describe("StepQuestionnaire", () => {
     const { onSubmit } = renderStep();
 
     await user.click(screen.getByRole("radio", { name: /just me/i }));
-    await user.click(
-      screen.getByRole("radio", { name: /software developer/i }),
-    );
-    await user.click(
-      screen.getByRole("radio", { name: /write and ship code/i }),
-    );
+    await user.click(screen.getByRole("radio", { name: /software developer/i }));
+    await user.click(screen.getByRole("radio", { name: /write and ship code/i }));
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     expect(onSubmit).toHaveBeenCalledWith({

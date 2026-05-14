@@ -41,8 +41,7 @@ function deriveWsUrl(): string | undefined {
 // Build-time version preferred (CI sets NEXT_PUBLIC_APP_VERSION to a git tag
 // or sha so different deploys are distinguishable in server logs); fall back
 // to the package.json version so local dev still reports something useful.
-const WEB_VERSION =
-  process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version || "dev";
+const WEB_VERSION = process.env.NEXT_PUBLIC_APP_VERSION || packageJson.version || "dev";
 
 export function WebProviders({
   children,
@@ -56,10 +55,7 @@ export function WebProviders({
   const cookieAuth = !hasLegacyToken();
   // Stable identity reference so downstream effects keyed on it don't see a
   // new object on every parent render.
-  const identity = useMemo(
-    () => ({ platform: "web", version: WEB_VERSION }),
-    [],
-  );
+  const identity = useMemo(() => ({ platform: "web", version: WEB_VERSION }), []);
   const localeAdapter = useMemo(() => createBrowserCookieLocaleAdapter(), []);
   return (
     <CoreProvider

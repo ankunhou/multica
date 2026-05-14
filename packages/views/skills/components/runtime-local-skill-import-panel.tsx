@@ -3,11 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AlertCircle, Download, FileText, HardDrive, Loader2 } from "lucide-react";
-import type {
-  AgentRuntime,
-  RuntimeLocalSkillSummary,
-  Skill,
-} from "@multica/core/types";
+import type { AgentRuntime, RuntimeLocalSkillSummary, Skill } from "@multica/core/types";
 import { useAuthStore } from "@multica/core/auth";
 import { useWorkspaceId } from "@multica/core/hooks";
 import {
@@ -16,10 +12,7 @@ import {
   runtimeLocalSkillsOptions,
   resolveRuntimeLocalSkillImport,
 } from "@multica/core/runtimes";
-import {
-  skillDetailOptions,
-  workspaceKeys,
-} from "@multica/core/workspace/queries";
+import { skillDetailOptions, workspaceKeys } from "@multica/core/workspace/queries";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
@@ -83,9 +76,7 @@ function SkillItem({
             <Badge variant="secondary">{skill.provider}</Badge>
           </div>
           {skill.description && (
-            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-              {skill.description}
-            </p>
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">{skill.description}</p>
           )}
           <p className="mt-1 truncate font-mono text-xs text-muted-foreground">
             {skill.source_path}
@@ -145,9 +136,7 @@ export function RuntimeLocalSkillImportPanel({
   const localRuntimes = useMemo(
     () =>
       runtimes.filter(
-        (r) =>
-          r.runtime_mode === "local" &&
-          (userId == null || r.owner_id === userId),
+        (r) => r.runtime_mode === "local" && (userId == null || r.owner_id === userId),
       ),
     [runtimes, userId],
   );
@@ -169,16 +158,12 @@ export function RuntimeLocalSkillImportPanel({
   }, [selectedRuntimeId]);
 
   const selectedRuntime = localRuntimes.find((r) => r.id === selectedRuntimeId);
-  const canBrowseSkills =
-    !!selectedRuntimeId && selectedRuntime?.status === "online";
+  const canBrowseSkills = !!selectedRuntimeId && selectedRuntime?.status === "online";
   const skillsQuery = useQuery({
     ...runtimeLocalSkillsOptions(selectedRuntimeId || null),
     enabled: canBrowseSkills,
   });
-  const runtimeSkills = useMemo(
-    () => skillsQuery.data?.skills ?? [],
-    [skillsQuery.data],
-  );
+  const runtimeSkills = useMemo(() => skillsQuery.data?.skills ?? [], [skillsQuery.data]);
   const selectedSkill = runtimeSkills.find((s) => s.key === selectedSkillKey);
 
   useEffect(() => {
@@ -205,10 +190,7 @@ export function RuntimeLocalSkillImportPanel({
         name: name.trim() || undefined,
         description: description.trim() || undefined,
       });
-      qc.setQueryData(
-        skillDetailOptions(wsId, result.skill.id).queryKey,
-        result.skill,
-      );
+      qc.setQueryData(skillDetailOptions(wsId, result.skill.id).queryKey, result.skill);
       await Promise.all([
         qc.invalidateQueries({
           queryKey: runtimeLocalSkillsKeys.forRuntime(selectedRuntimeId),
@@ -340,10 +322,7 @@ export function RuntimeLocalSkillImportPanel({
           <Label className="text-xs text-muted-foreground">
             {t(($) => $.runtime_import.runtime_label)}
           </Label>
-          <Select
-            value={selectedRuntimeId}
-            onValueChange={(v) => v && setSelectedRuntimeId(v)}
-          >
+          <Select value={selectedRuntimeId} onValueChange={(v) => v && setSelectedRuntimeId(v)}>
             <SelectTrigger className="w-full">
               <SelectValue placeholder={t(($) => $.runtime_import.runtime_placeholder)}>
                 {selectedRuntime ? runtimeLabel(selectedRuntime) : null}
@@ -362,14 +341,8 @@ export function RuntimeLocalSkillImportPanel({
         {selectedRuntime && (
           <div className="flex items-center gap-2 rounded-md border bg-muted/20 px-3 py-1.5 text-xs text-muted-foreground">
             <HardDrive className="h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 flex-1 truncate">
-              {runtimeLabel(selectedRuntime)}
-            </span>
-            <Badge
-              variant={
-                selectedRuntime.status === "online" ? "secondary" : "outline"
-              }
-            >
+            <span className="min-w-0 flex-1 truncate">{runtimeLabel(selectedRuntime)}</span>
+            <Badge variant={selectedRuntime.status === "online" ? "secondary" : "outline"}>
               {selectedRuntime.status}
             </Badge>
           </div>
@@ -406,12 +379,7 @@ export function RuntimeLocalSkillImportPanel({
             t(($) => $.runtime_import.select_skill)
           )}
         </div>
-        <Button
-          type="button"
-          size="sm"
-          onClick={handleImport}
-          disabled={!canImport}
-        >
+        <Button type="button" size="sm" onClick={handleImport} disabled={!canImport}>
           {importing ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />

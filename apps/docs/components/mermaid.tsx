@@ -140,11 +140,7 @@ export function Mermaid({ chart }: { chart: string }) {
   }
 
   if (!svg) {
-    return (
-      <div className="my-4 text-sm text-muted-foreground">
-        Rendering diagram…
-      </div>
-    );
+    return <div className="my-4 text-sm text-muted-foreground">Rendering diagram…</div>;
   }
 
   return (

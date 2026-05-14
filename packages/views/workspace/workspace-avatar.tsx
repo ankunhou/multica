@@ -19,7 +19,7 @@ function WorkspaceAvatar({ name, logoUrl, size = "sm", className }: WorkspaceAva
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-hidden border bg-muted font-semibold text-muted-foreground",
         sizeMap[size],
-        className
+        className,
       )}
     >
       {logoUrl ? (

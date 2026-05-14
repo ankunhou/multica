@@ -1,7 +1,7 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@multica/ui/lib/utils"
+import { cn } from "@multica/ui/lib/utils";
 
 const noticeVariants = cva(
   "inline-flex w-full items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs ring-1 [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3.5",
@@ -18,8 +18,8 @@ const noticeVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 function Notice({
   className,
@@ -33,7 +33,7 @@ function Notice({
       className={cn(noticeVariants({ variant }), className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Notice, noticeVariants }
+export { Notice, noticeVariants };

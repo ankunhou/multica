@@ -3,7 +3,16 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion } from "motion/react";
-import { Minus, Maximize2, Minimize2, ChevronDown, ChevronRight, Plus, Check, Trash2 } from "lucide-react";
+import {
+  Minus,
+  Maximize2,
+  Minimize2,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+  Check,
+  Trash2,
+} from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import {
@@ -87,7 +96,7 @@ export function ChatWindow() {
     chatMessagesOptions(activeSessionId ?? ""),
   );
   // When no active session, always show empty — don't use stale cache
-  const messages = activeSessionId ? rawMessages ?? [] : [];
+  const messages = activeSessionId ? (rawMessages ?? []) : [];
   // Skeleton only shows for an un-cached session fetch. Cached switches
   // return data synchronously — no flash. `enabled: false` (new chat)
   // keeps isLoading false so the starter prompts aren't hidden.
@@ -98,18 +107,14 @@ export function ChatWindow() {
   // (chat:message / chat:done / task:*) keep it invalidated in real time.
   //
   // This is the SOLE source for pendingTaskId — no mirror in the store.
-  const { data: pendingTask } = useQuery(
-    pendingChatTaskOptions(activeSessionId ?? ""),
-  );
+  const { data: pendingTask } = useQuery(pendingChatTaskOptions(activeSessionId ?? ""));
   const pendingTaskId = pendingTask?.task_id ?? null;
 
   // Legacy archived sessions (the old soft-archive feature was removed but
   // pre-existing rows with status='archived' may still exist) render as
   // read-only: dropdown keeps showing them under "archived", but ChatInput
   // is disabled and the server still rejects POST /messages for them.
-  const currentSession = activeSessionId
-    ? sessions.find((s) => s.id === activeSessionId)
-    : null;
+  const currentSession = activeSessionId ? sessions.find((s) => s.id === activeSessionId) : null;
   const isSessionArchived = currentSession?.status === "archived";
 
   const qc = useQueryClient();
@@ -124,9 +129,7 @@ export function ChatWindow() {
 
   // Resolve selected agent: stored preference → first available
   const activeAgent =
-    availableAgents.find((a) => a.id === selectedAgentId) ??
-    availableAgents[0] ??
-    null;
+    availableAgents.find((a) => a.id === selectedAgentId) ?? availableAgents[0] ?? null;
 
   // Three-state availability — "loading" stays neutral (no banner, no
   // disable) so the input doesn't flash a fake "no agent" state in the
@@ -141,8 +144,7 @@ export function ChatWindow() {
   // downstream so banners and pill copy stay silent during loading rather
   // than flash speculative offline text.
   const presenceDetail = useAgentPresenceDetail(wsId, activeAgent?.id);
-  const availability =
-    presenceDetail === "loading" ? undefined : presenceDetail.availability;
+  const availability = presenceDetail === "loading" ? undefined : presenceDetail.availability;
 
   // Mount / unmount logging. ChatWindow lives in DashboardLayout, so this
   // fires on layout mount (login / workspace switch / fresh page load).
@@ -177,8 +179,7 @@ export function ChatWindow() {
   // has_unread comes from the list query; WS handlers invalidate it on
   // chat:done so a reply arriving while the user watches triggers this
   // effect again and is instantly cleared.
-  const currentHasUnread =
-    sessions.find((s) => s.id === activeSessionId)?.has_unread ?? false;
+  const currentHasUnread = sessions.find((s) => s.id === activeSessionId)?.has_unread ?? false;
   useEffect(() => {
     if (!isOpen || !activeSessionId) return;
     if (!currentHasUnread) return;
@@ -254,9 +255,10 @@ export function ChatWindow() {
       }
 
       const focusOn = useChatStore.getState().focusMode;
-      const finalContent = focusOn && anchorCandidate
-        ? `${buildAnchorMarkdown(anchorCandidate)}\n\n${content}`
-        : content;
+      const finalContent =
+        focusOn && anchorCandidate
+          ? `${buildAnchorMarkdown(anchorCandidate)}\n\n${content}`
+          : content;
 
       const isNewSession = !activeSessionId;
 
@@ -289,9 +291,8 @@ export function ChatWindow() {
         task_id: null,
         created_at: sentAt,
       };
-      qc.setQueryData<ChatMessage[]>(
-        chatKeys.messages(sessionId),
-        (old) => (old ? [...old, optimistic] : [optimistic]),
+      qc.setQueryData<ChatMessage[]>(chatKeys.messages(sessionId), (old) =>
+        old ? [...old, optimistic] : [optimistic],
       );
       // Seed the pending-task with a temporary id so the StatusPill mounts
       // and starts ticking the instant the user clicks send. Real task_id
@@ -321,13 +322,7 @@ export function ChatWindow() {
       });
       qc.invalidateQueries({ queryKey: chatKeys.messages(sessionId) });
     },
-    [
-      activeSessionId,
-      activeAgent,
-      anchorCandidate,
-      ensureSession,
-      qc,
-    ],
+    [activeSessionId, activeAgent, anchorCandidate, ensureSession, qc],
   );
 
   const handleStop = useCallback(() => {
@@ -411,7 +406,8 @@ export function ChatWindow() {
   const isExpanded = useChatStore((s) => s.isExpanded);
 
   const windowRef = useRef<HTMLDivElement>(null);
-  const { renderWidth, renderHeight, isAtMax, boundsReady, isDragging, toggleExpand, startDrag } = useChatResize(windowRef);
+  const { renderWidth, renderHeight, isAtMax, boundsReady, isDragging, toggleExpand, startDrag } =
+    useChatResize(windowRef);
 
   // Show the list (vs empty state) as soon as there's anything to display —
   // a real message, or a pending task whose timeline will stream in.
@@ -440,9 +436,7 @@ export function ChatWindow() {
         scale: isVisible ? 1 : 0.95,
       }}
       transition={{
-        layout: isDragging
-          ? { duration: 0 }
-          : { type: "spring", duration: 0.3, bounce: 0 },
+        layout: isDragging ? { duration: 0 } : { type: "spring", duration: 0.3, bounce: 0 },
         opacity: { duration: 0.15 },
         scale: { type: "spring", duration: 0.2, bounce: 0 },
       }}
@@ -485,16 +479,20 @@ export function ChatWindow() {
                   size="icon-sm"
                   className="text-muted-foreground"
                   onClick={toggleExpand}
-                  aria-label={isExpanded || isAtMax
-                    ? t(($) => $.window.restore_tooltip)
-                    : t(($) => $.window.expand_tooltip)}
+                  aria-label={
+                    isExpanded || isAtMax
+                      ? t(($) => $.window.restore_tooltip)
+                      : t(($) => $.window.expand_tooltip)
+                  }
                 />
               }
             >
               {isExpanded || isAtMax ? <Minimize2 /> : <Maximize2 />}
             </TooltipTrigger>
             <TooltipContent side="top">
-              {isExpanded || isAtMax ? t(($) => $.window.restore_tooltip) : t(($) => $.window.expand_tooltip)}
+              {isExpanded || isAtMax
+                ? t(($) => $.window.restore_tooltip)
+                : t(($) => $.window.expand_tooltip)}
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -662,17 +660,8 @@ function AgentMenuItem({
   onSelect: (agent: Agent) => void;
 }) {
   return (
-    <DropdownMenuItem
-      onClick={() => onSelect(agent)}
-      className="flex min-w-0 items-center gap-2"
-    >
-      <ActorAvatar
-        actorType="agent"
-        actorId={agent.id}
-        size={24}
-        enableHoverCard
-        showStatusDot
-      />
+    <DropdownMenuItem onClick={() => onSelect(agent)} className="flex min-w-0 items-center gap-2">
+      <ActorAvatar actorType="agent" actorId={agent.id} size={24} enableHoverCard showStatusDot />
       <span className="truncate flex-1">{agent.name}</span>
       {isCurrent && <Check className="size-3.5 text-muted-foreground shrink-0" />}
     </DropdownMenuItem>
@@ -703,7 +692,7 @@ function SessionDropdown({
   const agentById = useMemo(() => new Map(agents.map((a) => [a.id, a])), [agents]);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
   const title = activeSession?.title?.trim() || t(($) => $.window.untitled);
-  const triggerAgent = activeSession ? agentById.get(activeSession.agent_id) ?? null : null;
+  const triggerAgent = activeSession ? (agentById.get(activeSession.agent_id) ?? null) : null;
 
   const { active, archived } = useMemo(() => {
     const active: ChatSession[] = [];
@@ -739,9 +728,7 @@ function SessionDropdown({
   const otherSessionRunning = sessions.some(
     (s) => s.id !== activeSessionId && inFlightSessionIds.has(s.id),
   );
-  const otherSessionUnread = sessions.some(
-    (s) => s.id !== activeSessionId && s.has_unread,
-  );
+  const otherSessionUnread = sessions.some((s) => s.id !== activeSessionId && s.has_unread);
 
   const handleConfirmDelete = () => {
     if (!pendingDelete) return;
@@ -828,19 +815,16 @@ function SessionDropdown({
           )}
           <span className="truncate text-sm font-medium">{title}</span>
           {otherSessionRunning ? (
-            <ChatSessionSignalPip
-              signal="running"
-              label={t(($) => $.window.another_running)}
-            />
+            <ChatSessionSignalPip signal="running" label={t(($) => $.window.another_running)} />
           ) : otherSessionUnread ? (
-            <ChatSessionSignalPip
-              signal="unread"
-              label={t(($) => $.window.another_unread)}
-            />
+            <ChatSessionSignalPip signal="unread" label={t(($) => $.window.another_unread)} />
           ) : null}
           <ChevronDown className="size-3 text-muted-foreground shrink-0" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start" className="max-h-96 w-auto min-w-64 max-w-80 overflow-y-auto">
+        <DropdownMenuContent
+          align="start"
+          className="max-h-96 w-auto min-w-64 max-w-80 overflow-y-auto"
+        >
           {sessions.length === 0 ? (
             <div className="px-2 py-1.5 text-xs text-muted-foreground">
               {t(($) => $.window.no_previous)}
@@ -868,15 +852,9 @@ function SessionDropdown({
                     ) : (
                       <ChevronRight className="size-3" />
                     )}
-                    <span>
-                      {t(($) => $.window.archived_group, { count: archived.length })}
-                    </span>
+                    <span>{t(($) => $.window.archived_group, { count: archived.length })}</span>
                   </DropdownMenuItem>
-                  {showArchived && (
-                    <DropdownMenuGroup>
-                      {archived.map(renderRow)}
-                    </DropdownMenuGroup>
-                  )}
+                  {showArchived && <DropdownMenuGroup>{archived.map(renderRow)}</DropdownMenuGroup>}
                 </>
               )}
             </>
@@ -892,9 +870,7 @@ function SessionDropdown({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t(($) => $.session_history.delete_dialog.title)}
-            </AlertDialogTitle>
+            <AlertDialogTitle>{t(($) => $.session_history.delete_dialog.title)}</AlertDialogTitle>
             <AlertDialogDescription>
               {pendingDelete?.title
                 ? t(($) => $.session_history.delete_dialog.description_with_title, {
@@ -973,9 +949,7 @@ function EmptyState({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-8">
         <div className="text-center space-y-3">
-          <h3 className="text-base font-semibold">
-            {t(($) => $.empty_state.first_time_title)}
-          </h3>
+          <h3 className="text-base font-semibold">{t(($) => $.empty_state.first_time_title)}</h3>
           <p className="text-sm text-muted-foreground">
             {t(($) => $.empty_state.first_time_intro)}{" "}
             <span className="font-medium text-foreground">

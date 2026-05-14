@@ -1,11 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  WorkspaceSlugProvider,
-  useWorkspaceSlug,
-  useCurrentWorkspace,
-} from "@multica/core/paths";
+import { WorkspaceSlugProvider, useWorkspaceSlug, useCurrentWorkspace } from "@multica/core/paths";
 import { workspaceKeys } from "@multica/core/workspace/queries";
 import type { Workspace } from "@multica/core/types";
 

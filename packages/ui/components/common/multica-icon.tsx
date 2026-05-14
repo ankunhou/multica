@@ -63,7 +63,7 @@ export function MulticaIcon({
         className={cn(
           "inline-flex items-center justify-center border border-border rounded-md",
           sizeConfig.wrapper,
-          className
+          className,
         )}
         aria-hidden="true"
         {...props}
@@ -73,13 +73,10 @@ export function MulticaIcon({
             "block",
             sizeConfig.icon,
             !entranceDone && "animate-entrance-spin",
-            entranceDone && !noSpin && "hover:animate-spin"
+            entranceDone && !noSpin && "hover:animate-spin",
           )}
         >
-          <span
-            className="block size-full bg-current"
-            style={{ clipPath }}
-          />
+          <span className="block size-full bg-current" style={{ clipPath }} />
         </span>
       </span>
     );
@@ -91,15 +88,12 @@ export function MulticaIcon({
         "inline-block size-[1em]",
         !entranceDone && "animate-entrance-spin",
         entranceDone && !noSpin && "hover:animate-spin",
-        className
+        className,
       )}
       aria-hidden="true"
       {...props}
     >
-      <span
-        className="block size-full bg-current"
-        style={{ clipPath }}
-      />
+      <span className="block size-full bg-current" style={{ clipPath }} />
     </span>
   );
 }

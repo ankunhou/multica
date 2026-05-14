@@ -27,11 +27,10 @@ const plistPath = resolve(electronBin, "../../Info.plist");
 
 function plistGet(key) {
   try {
-    return execFileSync(
-      "/usr/libexec/PlistBuddy",
-      ["-c", `Print :${key}`, plistPath],
-      { encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
-    ).trim();
+    return execFileSync("/usr/libexec/PlistBuddy", ["-c", `Print :${key}`, plistPath], {
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
   } catch {
     return "";
   }
@@ -39,24 +38,13 @@ function plistGet(key) {
 
 function plistSet(key, value) {
   try {
-    execFileSync("/usr/libexec/PlistBuddy", [
-      "-c",
-      `Set :${key} ${value}`,
-      plistPath,
-    ]);
+    execFileSync("/usr/libexec/PlistBuddy", ["-c", `Set :${key} ${value}`, plistPath]);
   } catch {
-    execFileSync("/usr/libexec/PlistBuddy", [
-      "-c",
-      `Add :${key} string ${value}`,
-      plistPath,
-    ]);
+    execFileSync("/usr/libexec/PlistBuddy", ["-c", `Add :${key} string ${value}`, plistPath]);
   }
 }
 
-if (
-  plistGet("CFBundleName") === DESIRED_NAME &&
-  plistGet("CFBundleDisplayName") === DESIRED_NAME
-) {
+if (plistGet("CFBundleName") === DESIRED_NAME && plistGet("CFBundleDisplayName") === DESIRED_NAME) {
   process.exit(0);
 }
 

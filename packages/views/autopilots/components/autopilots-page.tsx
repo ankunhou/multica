@@ -1,7 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Zap, Play, Pause, AlertCircle, Newspaper, GitPullRequest, Bug, BarChart3, Shield, FileSearch } from "lucide-react";
+import {
+  Plus,
+  Zap,
+  Play,
+  Pause,
+  AlertCircle,
+  Newspaper,
+  GitPullRequest,
+  Bug,
+  BarChart3,
+  Shield,
+  FileSearch,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { autopilotListOptions } from "@multica/core/autopilots/queries";
 import { useWorkspaceId } from "@multica/core/hooks";
@@ -87,7 +99,10 @@ function useFormatRelativeDate(): (date: string) => string {
   };
 }
 
-const STATUS_VISUAL: Record<AutopilotStatus, { tone: "success" | "warning" | "muted"; icon: typeof Zap }> = {
+const STATUS_VISUAL: Record<
+  AutopilotStatus,
+  { tone: "success" | "warning" | "muted"; icon: typeof Zap }
+> = {
   active: { tone: "success", icon: Play },
   paused: { tone: "warning", icon: Pause },
   archived: { tone: "muted", icon: AlertCircle },
@@ -114,10 +129,14 @@ function AutopilotRow({ autopilot }: { autopilot: Autopilot }) {
       <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 pl-6 text-xs sm:contents sm:pl-0">
         {/* Agent */}
         <span className="flex min-w-0 items-center gap-1.5 text-muted-foreground sm:w-32 sm:shrink-0">
-          <ActorAvatar actorType="agent" actorId={autopilot.assignee_id} size={18} enableHoverCard showStatusDot />
-          <span className="truncate">
-            {getActorName("agent", autopilot.assignee_id)}
-          </span>
+          <ActorAvatar
+            actorType="agent"
+            actorId={autopilot.assignee_id}
+            size={18}
+            enableHoverCard
+            showStatusDot
+          />
+          <span className="truncate">{getActorName("agent", autopilot.assignee_id)}</span>
         </span>
 
         {/* Mode */}
@@ -136,7 +155,9 @@ function AutopilotRow({ autopilot }: { autopilot: Autopilot }) {
 
         {/* Last run */}
         <span className="text-muted-foreground tabular-nums sm:w-20 sm:shrink-0 sm:text-right">
-          {autopilot.last_run_at ? formatRelativeDate(autopilot.last_run_at) : t(($) => $.page.last_run_empty)}
+          {autopilot.last_run_at
+            ? formatRelativeDate(autopilot.last_run_at)
+            : t(($) => $.page.last_run_empty)}
         </span>
       </div>
     </div>
@@ -164,7 +185,9 @@ export function AutopilotsPage() {
             <span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-muted/70 text-muted-foreground">
               <Zap className="h-3.5 w-3.5" />
             </span>
-            <h1 className="truncate text-2xl font-semibold tracking-tight md:text-3xl">{t(($) => $.page.title)}</h1>
+            <h1 className="truncate text-2xl font-semibold tracking-tight md:text-3xl">
+              {t(($) => $.page.title)}
+            </h1>
             {!isLoading && autopilots.length > 0 && (
               <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
                 {autopilots.length}
@@ -230,7 +253,12 @@ export function AutopilotsPage() {
                 );
               })}
             </div>
-            <Button size="sm" variant="ghost" className="mt-4 rounded-full px-3" onClick={() => openCreate()}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="mt-4 rounded-full px-3"
+              onClick={() => openCreate()}
+            >
               <Plus className="h-3.5 w-3.5 mr-1" />
               {t(($) => $.page.start_blank)}
             </Button>

@@ -23,10 +23,7 @@ export function HowItWorksSection() {
 
         <div className="mt-20 grid gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
           {t.howItWorks.steps.map((step, i) => (
-            <div
-              key={i}
-              className="flex flex-col bg-[#05070b] p-8 lg:p-10"
-            >
+            <div key={i} className="flex flex-col bg-[#05070b] p-8 lg:p-10">
               <span className="text-[13px] font-semibold tabular-nums text-white/28">
                 {String(i + 1).padStart(2, "0")}
               </span>

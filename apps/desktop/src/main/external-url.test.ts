@@ -25,9 +25,7 @@ describe("isSafeExternalHttpUrl", () => {
 
   it("rejects dangerous pseudo-schemes", () => {
     expect(isSafeExternalHttpUrl("javascript:alert(1)")).toBe(false);
-    expect(
-      isSafeExternalHttpUrl("data:text/html,<script>alert(1)</script>"),
-    ).toBe(false);
+    expect(isSafeExternalHttpUrl("data:text/html,<script>alert(1)</script>")).toBe(false);
   });
 
   it("rejects filesystem and network transport schemes", () => {

@@ -22,15 +22,10 @@ export function CloudSection() {
         <h2 className="font-[family-name:var(--font-serif)] text-[2.2rem] leading-[1.1] tracking-[-0.03em] sm:text-[2.6rem]">
           {d.title}
         </h2>
-        <p className="mt-4 max-w-[560px] text-[15px] leading-7 text-[#0a0d12]/72">
-          {d.sub}
-        </p>
+        <p className="mt-4 max-w-[560px] text-[15px] leading-7 text-[#0a0d12]/72">{d.sub}</p>
 
         <div className="mt-10">
-          <CloudWaitlistExpand
-            submitted={submitted}
-            onSubmitted={() => setSubmitted(true)}
-          />
+          <CloudWaitlistExpand submitted={submitted} onSubmitted={() => setSubmitted(true)} />
         </div>
       </div>
     </section>

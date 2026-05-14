@@ -82,8 +82,7 @@ vi.mock("@multica/core/chat", () => {
   return {
     DRAFT_NEW_SESSION: "__draft_new__",
     useChatStore: Object.assign(
-      (selector?: (s: typeof state) => unknown) =>
-        selector ? selector(state) : state,
+      (selector?: (s: typeof state) => unknown) => (selector ? selector(state) : state),
       { getState: () => state },
     ),
   };

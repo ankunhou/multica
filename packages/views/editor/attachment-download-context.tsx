@@ -37,9 +37,8 @@ export function AttachmentDownloadProvider({ attachments, children }: ProviderPr
         return attachments.find((a) => a.url === url)?.id;
       },
       openByUrl: (url) => {
-        const id = url && attachments?.length
-          ? attachments.find((a) => a.url === url)?.id
-          : undefined;
+        const id =
+          url && attachments?.length ? attachments.find((a) => a.url === url)?.id : undefined;
         if (id) {
           download(id);
           return;

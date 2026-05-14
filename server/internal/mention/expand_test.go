@@ -47,9 +47,9 @@ func TestExpandIssueIdentifiers(t *testing.T) {
 	}
 
 	tests := []struct {
-		name    string
-		input   string
-		want    string
+		name  string
+		input string
+		want  string
 	}{
 		{
 			name:  "basic replacement",

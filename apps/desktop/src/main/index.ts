@@ -43,11 +43,7 @@ if (process.platform !== "win32") {
   // Fallback: prepend common install locations in case fix-path came up
   // short (broken shell rc, non-interactive $SHELL, missing entries). Safe
   // to duplicate — PATH lookups short-circuit on first match.
-  const fallbackPaths = [
-    "/opt/homebrew/bin",
-    "/usr/local/bin",
-    join(homedir(), ".local/bin"),
-  ];
+  const fallbackPaths = ["/opt/homebrew/bin", "/usr/local/bin", join(homedir(), ".local/bin")];
   if (process.platform === "darwin") {
     fallbackPaths.push(
       "/Applications/Codex.app/Contents/Resources",
@@ -132,9 +128,7 @@ function createWindow(): void {
     // Linux production needs this explicitly because AppImage direct-launch
     // does not install a .desktop entry, so the WM has no other path to
     // the bundled icon; without it Ubuntu falls back to the theme default.
-    ...(is.dev || process.platform === "linux"
-      ? { icon: BUNDLED_ICON_PATH }
-      : {}),
+    ...(is.dev || process.platform === "linux" ? { icon: BUNDLED_ICON_PATH } : {}),
     webPreferences: {
       preload: join(__dirname, "../preload/index.js"),
       sandbox: false,
@@ -180,12 +174,8 @@ function createWindow(): void {
   // navigate back. DevTools refresh (via the DevTools UI) still works.
   mainWindow.webContents.on("before-input-event", (_event, input) => {
     if (input.type !== "keyDown") return;
-    const cmdOrCtrl =
-      process.platform === "darwin" ? input.meta : input.control;
-    if (
-      (cmdOrCtrl && input.key.toLowerCase() === "r") ||
-      input.key === "F5"
-    ) {
+    const cmdOrCtrl = process.platform === "darwin" ? input.meta : input.control;
+    if ((cmdOrCtrl && input.key.toLowerCase() === "r") || input.key === "F5") {
       _event.preventDefault();
     }
   });
@@ -224,9 +214,7 @@ if (is.dev) {
 
 if (process.defaultApp) {
   // In dev, register with the path to the electron binary + app path
-  app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [
-    app.getAppPath(),
-  ]);
+  app.setAsDefaultProtocolClient(PROTOCOL, process.execPath, [app.getAppPath()]);
 } else {
   app.setAsDefaultProtocolClient(PROTOCOL);
 }
@@ -269,9 +257,7 @@ if (!gotTheLock) {
       },
     });
 
-    electronApp.setAppUserModelId(
-      is.dev ? "ai.multica.desktop.dev" : "ai.multica.desktop",
-    );
+    electronApp.setAppUserModelId(is.dev ? "ai.multica.desktop.dev" : "ai.multica.desktop");
 
     // macOS: replace the default Electron dock icon with the bundled logo
     // so the Canary dev build is visually distinct from a stock Electron
@@ -300,7 +286,8 @@ if (!gotTheLock) {
     // already carries X-Client-Version and X-Client-OS.
     ipcMain.on("app:get-info", (event) => {
       const p = process.platform;
-      const os = p === "darwin" ? "macos" : p === "win32" ? "windows" : p === "linux" ? "linux" : "unknown";
+      const os =
+        p === "darwin" ? "macos" : p === "win32" ? "windows" : p === "linux" ? "linux" : "unknown";
       event.returnValue = { version: getAppVersion(), os };
     });
 
@@ -397,9 +384,7 @@ if (!gotTheLock) {
   });
 
   // Check argv for deep link on cold start (Windows/Linux)
-  const deepLinkArg = process.argv.find((arg) =>
-    arg.startsWith(`${PROTOCOL}://`),
-  );
+  const deepLinkArg = process.argv.find((arg) => arg.startsWith(`${PROTOCOL}://`));
   if (deepLinkArg) {
     app.whenReady().then(() => handleDeepLink(deepLinkArg));
   }

@@ -26,11 +26,7 @@ function CopyButton({ text }: { text: string }) {
       className="shrink-0 rounded p-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
       aria-label={t(($) => $.cli_install.copy_aria)}
     >
-      {copied ? (
-        <Check className="h-3.5 w-3.5 text-success" />
-      ) : (
-        <Copy className="h-3.5 w-3.5" />
-      )}
+      {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
     </button>
   );
 }
@@ -43,9 +39,7 @@ function Step({ n, label, cmd }: { n: number; label: string; cmd: string }) {
       </p>
       <div className="flex items-start gap-2 rounded-lg bg-muted px-3 py-2.5 font-mono text-sm">
         <Terminal className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-        <code className="min-w-0 flex-1 whitespace-pre-wrap break-all">
-          {cmd}
-        </code>
+        <code className="min-w-0 flex-1 whitespace-pre-wrap break-all">{cmd}</code>
         <CopyButton text={cmd} />
       </div>
     </div>

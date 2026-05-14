@@ -28,8 +28,7 @@ export function createMarkdownCopyExtension() {
     addProseMirrorPlugins() {
       const { editor } = this;
 
-      const fallback = (slice: Slice) =>
-        slice.content.textBetween(0, slice.content.size, "\n\n");
+      const fallback = (slice: Slice) => slice.content.textBetween(0, slice.content.size, "\n\n");
 
       return [
         new Plugin({
@@ -41,10 +40,7 @@ export function createMarkdownCopyExtension() {
                 // Wrap slice content in a temp doc so the serializer walks
                 // it like a real document. Inline-only slices auto-wrap
                 // into doc → paragraph; block slices pass through.
-                const doc = editor.schema.topNodeType.create(
-                  null,
-                  slice.content,
-                );
+                const doc = editor.schema.topNodeType.create(null, slice.content);
                 const md = editor.markdown.serialize(doc.toJSON());
                 return md.replace(BLOB_IMAGE_RE, "").replace(/\n+$/, "");
               } catch {

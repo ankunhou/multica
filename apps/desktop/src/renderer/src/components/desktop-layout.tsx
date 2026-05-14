@@ -4,11 +4,7 @@ import { cn } from "@multica/ui/lib/utils";
 import { useTabHistory } from "@/hooks/use-tab-history";
 import { useActiveTitleSync } from "@/hooks/use-tab-sync";
 import { useTabStore, resolveRouteIcon } from "@/stores/tab-store";
-import {
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
-} from "@multica/ui/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger, useSidebar } from "@multica/ui/components/ui/sidebar";
 import { ModalRegistry } from "@multica/views/modals/registry";
 import { AppSidebar } from "@multica/views/layout";
 import { useT } from "@multica/views/i18n";
@@ -69,16 +65,11 @@ function MainTopBar() {
 
   return (
     <header
-      className={cn(
-        "h-13 shrink-0 flex items-center gap-2 px-1",
-        sidebarHidden && "pl-20",
-      )}
+      className={cn("h-13 shrink-0 flex items-center gap-2 px-1", sidebarHidden && "pl-20")}
       style={{ WebkitAppRegion: "drag" } as React.CSSProperties}
     >
       {sidebarHidden && (
-        <SidebarTrigger
-          style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
-        />
+        <SidebarTrigger style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties} />
       )}
       <TabBar />
     </header>
@@ -123,9 +114,7 @@ function DesktopInboxBridge() {
     return window.desktopAPI.onInboxOpen(({ slug, issueKey }) => {
       if (!slug) return;
       const inboxPath = `${paths.workspace(slug).inbox()}?issue=${encodeURIComponent(issueKey)}`;
-      window.dispatchEvent(
-        new CustomEvent("multica:navigate", { detail: { path: inboxPath } }),
-      );
+      window.dispatchEvent(new CustomEvent("multica:navigate", { detail: { path: inboxPath } }));
     });
   }, []);
 

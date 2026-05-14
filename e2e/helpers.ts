@@ -15,10 +15,7 @@ const DEFAULT_E2E_WORKSPACE = "e2e-workspace";
 export async function loginAsDefault(page: Page): Promise<string> {
   const api = new TestApiClient();
   await api.login(DEFAULT_E2E_EMAIL, DEFAULT_E2E_NAME);
-  const workspace = await api.ensureWorkspace(
-    "E2E Workspace",
-    DEFAULT_E2E_WORKSPACE,
-  );
+  const workspace = await api.ensureWorkspace("E2E Workspace", DEFAULT_E2E_WORKSPACE);
 
   const token = api.getToken();
   await page.addInitScript((t) => {
@@ -52,9 +49,7 @@ export async function createTestApi(): Promise<TestApiClient> {
 }
 
 export function workspaceSwitcherButton(page: Page) {
-  return page
-    .getByRole("button", { name: /Workspace|Renamed WS|Multica/ })
-    .first();
+  return page.getByRole("button", { name: /Workspace|Renamed WS|Multica/ }).first();
 }
 
 export async function openWorkspaceMenu(page: Page) {

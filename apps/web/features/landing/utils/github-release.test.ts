@@ -119,9 +119,7 @@ describe("fetchLatestRelease", () => {
   });
 
   it("returns an empty release shape when the API errors", async () => {
-    const fetchMock = vi.fn().mockResolvedValue(
-      new Response("rate limited", { status: 403 }),
-    );
+    const fetchMock = vi.fn().mockResolvedValue(new Response("rate limited", { status: 403 }));
     vi.stubGlobal("fetch", fetchMock);
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 

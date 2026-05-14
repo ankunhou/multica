@@ -31,9 +31,7 @@ export function UpdatesSettingsTab() {
 
   return (
     <div>
-      <h2 className="text-lg font-semibold">
-        {t(($) => $.updates.settings.title)}
-      </h2>
+      <h2 className="text-lg font-semibold">{t(($) => $.updates.settings.title)}</h2>
       <p className="text-sm text-muted-foreground mt-1">
         {t(($) => $.updates.settings.description)}
       </p>
@@ -41,9 +39,7 @@ export function UpdatesSettingsTab() {
       <div className="mt-6 divide-y">
         <div className="flex items-center justify-between gap-6 py-4">
           <div className="min-w-0">
-            <p className="text-sm font-medium">
-              {t(($) => $.updates.settings.current_version)}
-            </p>
+            <p className="text-sm font-medium">{t(($) => $.updates.settings.current_version)}</p>
             <p className="text-sm text-muted-foreground mt-0.5 font-mono">
               {t(($) => $.updates.settings.current_version_value, {
                 version: currentVersion,
@@ -54,9 +50,7 @@ export function UpdatesSettingsTab() {
 
         <div className="flex items-start justify-between gap-6 py-4">
           <div className="min-w-0">
-            <p className="text-sm font-medium">
-              {t(($) => $.updates.settings.check_title)}
-            </p>
+            <p className="text-sm font-medium">{t(($) => $.updates.settings.check_title)}</p>
             <p className="text-sm text-muted-foreground mt-0.5">
               {t(($) => $.updates.settings.check_description)}
             </p>

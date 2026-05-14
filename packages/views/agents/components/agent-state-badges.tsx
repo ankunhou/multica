@@ -32,9 +32,7 @@ export function AgentAvailabilityBadge({
   const availabilityLabel = t(($) => $.availability[detail.availability]);
   const workloadLabel = t(($) => $.workload[detail.workload]);
   const title =
-    detail.workload === "idle"
-      ? availabilityLabel
-      : `${availabilityLabel} · ${workloadLabel}`;
+    detail.workload === "idle" ? availabilityLabel : `${availabilityLabel} · ${workloadLabel}`;
 
   if (compact) {
     return (
@@ -82,13 +80,9 @@ export function AgentWorkloadBadge({
   return (
     <span className={cn("inline-flex items-center gap-1 text-xs", className)}>
       {detail.workload !== "idle" && (
-        <workload.icon
-          className={cn("h-3 w-3 shrink-0", labelTone, isWorking && "animate-spin")}
-        />
+        <workload.icon className={cn("h-3 w-3 shrink-0", labelTone, isWorking && "animate-spin")} />
       )}
-      <span className={cn("shrink-0", labelTone)}>
-        {t(($) => $.workload[detail.workload])}
-      </span>
+      <span className={cn("shrink-0", labelTone)}>{t(($) => $.workload[detail.workload])}</span>
       {countStyle === "inline" && inlineCount && (
         <span className="truncate text-muted-foreground">{inlineCount}</span>
       )}

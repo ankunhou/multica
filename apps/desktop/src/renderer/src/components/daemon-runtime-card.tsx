@@ -1,13 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import {
-  AlertCircle,
-  Play,
-  Square,
-  RotateCw,
-  Server,
-  Activity,
-  ScrollText,
-} from "lucide-react";
+import { AlertCircle, Play, Square, RotateCw, Server, Activity, ScrollText } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { runtimeListOptions } from "@multica/core/runtimes";
@@ -33,10 +25,7 @@ import {
 import { toast } from "sonner";
 import { DaemonPanel } from "./daemon-panel";
 import type { DaemonStatus } from "../../../shared/daemon-types";
-import {
-  DAEMON_STATE_COLORS,
-  formatUptime,
-} from "../../../shared/daemon-types";
+import { DAEMON_STATE_COLORS, formatUptime } from "../../../shared/daemon-types";
 
 /**
  * Header card on the desktop Runtimes page that surfaces the daemon embedded
@@ -67,11 +56,7 @@ export function DaemonRuntimeCard() {
   // out which active tasks would be impacted by a Stop.
   const localRuntimeIds = useMemo(() => {
     if (!status.daemonId) return new Set<string>();
-    return new Set(
-      runtimes
-        .filter((r) => r.daemon_id === status.daemonId)
-        .map((r) => r.id),
-    );
+    return new Set(runtimes.filter((r) => r.daemon_id === status.daemonId).map((r) => r.id));
   }, [runtimes, status.daemonId]);
 
   const runtimeCount = localRuntimeIds.size;
@@ -104,9 +89,12 @@ export function DaemonRuntimeCard() {
     const result = await window.daemonAPI.start();
     if (!result.success) {
       setActionLoading(false);
-      toast.error(t(($) => $.daemon.card.toast_start_failed), {
-        description: result.error,
-      });
+      toast.error(
+        t(($) => $.daemon.card.toast_start_failed),
+        {
+          description: result.error,
+        },
+      );
     }
   }, [t]);
 
@@ -117,9 +105,12 @@ export function DaemonRuntimeCard() {
     setActionLoading(true);
     const result = await window.daemonAPI.stop();
     if (!result.success) {
-      toast.error(t(($) => $.daemon.card.toast_stop_failed), {
-        description: result.error,
-      });
+      toast.error(
+        t(($) => $.daemon.card.toast_stop_failed),
+        {
+          description: result.error,
+        },
+      );
     }
   }, [t]);
 
@@ -137,17 +128,23 @@ export function DaemonRuntimeCard() {
     setActionLoading(true);
     const result = await window.daemonAPI.restart();
     if (!result.success) {
-      toast.error(t(($) => $.daemon.card.toast_restart_failed), {
-        description: result.error,
-      });
+      toast.error(
+        t(($) => $.daemon.card.toast_restart_failed),
+        {
+          description: result.error,
+        },
+      );
       return;
     }
     // Success feedback — the daemon takes a few seconds to come back online,
     // and the only other UI signal is the state badge flipping briefly. A
     // toast confirms the click was received and tells the user what to expect.
-    toast.success(t(($) => $.daemon.card.toast_restarting), {
-      description: t(($) => $.daemon.card.toast_restarting_description),
-    });
+    toast.success(
+      t(($) => $.daemon.card.toast_restarting),
+      {
+        description: t(($) => $.daemon.card.toast_restarting_description),
+      },
+    );
   }, [t]);
 
   const handleRetryInstall = useCallback(async () => {
@@ -162,8 +159,7 @@ export function DaemonRuntimeCard() {
   const isRunning = status.state === "running";
   const isStopped = status.state === "stopped";
   const isCliMissing = status.state === "cli_not_found";
-  const isTransitioning =
-    status.state === "starting" || status.state === "stopping";
+  const isTransitioning = status.state === "starting" || status.state === "stopping";
   const isInstalling = status.state === "installing_cli";
 
   return (
@@ -174,12 +170,7 @@ export function DaemonRuntimeCard() {
             <Server className="size-4 text-muted-foreground" />
             {t(($) => $.daemon.card.title)}
             <span className="inline-flex items-center gap-1.5 rounded-md border bg-background px-1.5 py-0.5 text-xs font-normal">
-              <span
-                className={cn(
-                  "size-1.5 rounded-full",
-                  DAEMON_STATE_COLORS[status.state],
-                )}
-              />
+              <span className={cn("size-1.5 rounded-full", DAEMON_STATE_COLORS[status.state])} />
               <span
                 className={cn(
                   "tabular-nums",
@@ -189,9 +180,7 @@ export function DaemonRuntimeCard() {
                 {t(($) => $.daemon.state[status.state])}
               </span>
               {isRunning && status.uptime && (
-                <span className="text-muted-foreground">
-                  · {formatUptime(status.uptime)}
-                </span>
+                <span className="text-muted-foreground">· {formatUptime(status.uptime)}</span>
               )}
             </span>
           </CardTitle>
@@ -208,11 +197,7 @@ export function DaemonRuntimeCard() {
             <div className="flex items-center gap-1.5">
               {isRunning && (
                 <>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => setPanelOpen(true)}
-                  >
+                  <Button size="sm" variant="ghost" onClick={() => setPanelOpen(true)}>
                     <ScrollText className="size-3.5 mr-1.5" />
                     {t(($) => $.daemon.card.view_logs)}
                   </Button>
@@ -238,11 +223,7 @@ export function DaemonRuntimeCard() {
               )}
 
               {isStopped && (
-                <Button
-                  size="sm"
-                  onClick={handleStart}
-                  disabled={actionLoading}
-                >
+                <Button size="sm" onClick={handleStart} disabled={actionLoading}>
                   {actionLoading ? (
                     <Activity className="size-3.5 mr-1.5 animate-pulse" />
                   ) : (

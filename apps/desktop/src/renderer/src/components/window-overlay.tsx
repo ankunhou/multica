@@ -54,10 +54,7 @@ function WindowOverlayInner() {
         />
       )}
       {overlay.type === "invite" && (
-        <InvitePage
-          invitationId={overlay.invitationId}
-          onBack={onBack}
-        />
+        <InvitePage invitationId={overlay.invitationId} onBack={onBack} />
       )}
       {overlay.type === "invitations" && <InvitationsPage />}
       {overlay.type === "onboarding" && (

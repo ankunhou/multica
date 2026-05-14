@@ -223,8 +223,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
                 className="transition-colors"
               >
                 <title>
-                  {c.date}:{" "}
-                  {c.cost > 0 ? fmtMoney(c.cost) : t(($) => $.charts.heatmap_no_activity)}
+                  {c.date}: {c.cost > 0 ? fmtMoney(c.cost) : t(($) => $.charts.heatmap_no_activity)}
                 </title>
               </rect>
             ))}
@@ -259,15 +258,8 @@ function InsightsRow({
   formatDate: (date: string | Date) => string;
 }) {
   const { t } = useT("runtimes");
-  const {
-    busiestDay,
-    busyDayName,
-    busyDayAvg,
-    quietDayName,
-    quietDayAvg,
-    totalCost,
-    windowDays,
-  } = insights;
+  const { busiestDay, busyDayName, busyDayAvg, quietDayName, quietDayAvg, totalCost, windowDays } =
+    insights;
   return (
     <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3 sm:grid-cols-4">
       <Insight
@@ -278,27 +270,28 @@ function InsightsRow({
       <Insight
         label={t(($) => $.charts.heatmap_most_active_weekday)}
         value={busyDayName ?? "—"}
-        sub={busyDayName ? t(($) => $.charts.heatmap_avg_cost, { value: fmtMoney(busyDayAvg) }) : null}
+        sub={
+          busyDayName ? t(($) => $.charts.heatmap_avg_cost, { value: fmtMoney(busyDayAvg) }) : null
+        }
       />
       <Insight
         label={t(($) => $.charts.heatmap_quietest_weekday)}
         value={quietDayName ?? "—"}
-        sub={quietDayName ? t(($) => $.charts.heatmap_avg_cost, { value: fmtMoney(quietDayAvg) }) : null}
+        sub={
+          quietDayName
+            ? t(($) => $.charts.heatmap_avg_cost, { value: fmtMoney(quietDayAvg) })
+            : null
+        }
       />
-      <Insight label={t(($) => $.charts.heatmap_window_total, { count: windowDays })} value={fmtMoney(totalCost)} />
+      <Insight
+        label={t(($) => $.charts.heatmap_window_total, { count: windowDays })}
+        value={fmtMoney(totalCost)}
+      />
     </dl>
   );
 }
 
-function Insight({
-  label,
-  value,
-  sub,
-}: {
-  label: string;
-  value: string;
-  sub?: string | null;
-}) {
+function Insight({ label, value, sub }: { label: string; value: string; sub?: string | null }) {
   return (
     <div className="min-w-0">
       <dt className="truncate text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -307,9 +300,7 @@ function Insight({
       <dd className="mt-0.5 truncate text-sm font-medium tabular-nums">
         {value}
         {sub != null && (
-          <span className="ml-1.5 text-xs font-normal text-muted-foreground">
-            {sub}
-          </span>
+          <span className="ml-1.5 text-xs font-normal text-muted-foreground">{sub}</span>
         )}
       </dd>
     </div>

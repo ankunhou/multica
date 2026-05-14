@@ -84,7 +84,9 @@ export function IntegrationsTab() {
                   size="sm"
                   onClick={handleConnect}
                   disabled={connecting || !configured}
-                  title={!configured ? t(($) => $.integrations.connect_disabled_tooltip) : undefined}
+                  title={
+                    !configured ? t(($) => $.integrations.connect_disabled_tooltip) : undefined
+                  }
                 >
                   {connecting
                     ? t(($) => $.integrations.connect_opening)
@@ -98,7 +100,10 @@ export function IntegrationsTab() {
                 {t(($) => $.integrations.not_configured)}{" "}
                 <code className="rounded bg-muted px-1 py-0.5 text-[10px]">GITHUB_APP_SLUG</code>{" "}
                 {t(($) => $.integrations.not_configured_and)}{" "}
-                <code className="rounded bg-muted px-1 py-0.5 text-[10px]">GITHUB_WEBHOOK_SECRET</code>.
+                <code className="rounded bg-muted px-1 py-0.5 text-[10px]">
+                  GITHUB_WEBHOOK_SECRET
+                </code>
+                .
               </p>
             )}
 

@@ -39,9 +39,7 @@ export function CustomArgsTab({
   onDirtyChange?: (dirty: boolean) => void;
 }) {
   const { t } = useT("agents");
-  const [entries, setEntries] = useState<ArgEntry[]>(
-    argsToEntries(agent.custom_args ?? []),
-  );
+  const [entries, setEntries] = useState<ArgEntry[]>(argsToEntries(agent.custom_args ?? []));
   const [saving, setSaving] = useState(false);
 
   const currentArgs = entriesToArgs(entries);
@@ -61,9 +59,7 @@ export function CustomArgsTab({
   };
 
   const updateEntry = (index: number, value: string) => {
-    setEntries(
-      entries.map((entry, i) => (i === index ? { ...entry, value } : entry)),
-    );
+    setEntries(entries.map((entry, i) => (i === index ? { ...entry, value } : entry)));
   };
 
   const handleSave = async () => {
@@ -84,9 +80,7 @@ export function CustomArgsTab({
     <div className="space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
-          <p className="text-xs text-muted-foreground">
-            {t(($) => $.tab_body.custom_args.intro)}
-          </p>
+          <p className="text-xs text-muted-foreground">{t(($) => $.tab_body.custom_args.intro)}</p>
           {launchHeader && (
             <p className="text-xs text-muted-foreground">
               {t(($) => $.tab_body.custom_args.launch_mode_prefix)}
@@ -96,13 +90,7 @@ export function CustomArgsTab({
             </p>
           )}
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={addEntry}
-          className="shrink-0"
-        >
+        <Button type="button" variant="outline" size="sm" onClick={addEntry} className="shrink-0">
           <Plus className="h-3 w-3" />
           {t(($) => $.tab_body.common.add)}
         </Button>
@@ -134,7 +122,9 @@ export function CustomArgsTab({
 
       <div className="flex items-center justify-end gap-3">
         {dirty && (
-          <span className="text-xs text-muted-foreground">{t(($) => $.tab_body.common.unsaved_changes)}</span>
+          <span className="text-xs text-muted-foreground">
+            {t(($) => $.tab_body.common.unsaved_changes)}
+          </span>
         )}
         <Button onClick={handleSave} disabled={!dirty || saving} size="sm">
           {saving ? (

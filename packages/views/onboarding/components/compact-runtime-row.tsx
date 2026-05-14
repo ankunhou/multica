@@ -34,9 +34,7 @@ export function CompactRuntimeRow({
       }}
       className={cn(
         "flex cursor-pointer flex-row items-center gap-3 rounded-lg border bg-card p-4 transition-colors",
-        selected
-          ? "border-primary ring-1 ring-primary"
-          : "hover:border-foreground/20",
+        selected ? "border-primary ring-1 ring-primary" : "hover:border-foreground/20",
       )}
     >
       <ProviderLogo provider={runtime.provider} className="h-5 w-5" />
@@ -49,7 +47,9 @@ export function CompactRuntimeRow({
           "h-2 w-2 shrink-0 rounded-full",
           online ? "bg-success" : "bg-muted-foreground/40",
         )}
-        aria-label={online ? tAgents(($) => $.availability.online) : tAgents(($) => $.availability.offline)}
+        aria-label={
+          online ? tAgents(($) => $.availability.online) : tAgents(($) => $.availability.offline)
+        }
       />
     </div>
   );

@@ -12,8 +12,7 @@ interface FakeClipboard {
 function fakePasteEvent(text: string, html?: string) {
   const data: FakeClipboard = {
     files: [],
-    getData: (type) =>
-      type === "text/plain" ? text : type === "text/html" ? (html ?? "") : "",
+    getData: (type) => (type === "text/plain" ? text : type === "text/html" ? (html ?? "") : ""),
   };
   return {
     clipboardData: data,

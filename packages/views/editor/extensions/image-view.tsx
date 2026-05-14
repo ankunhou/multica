@@ -4,12 +4,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { NodeViewWrapper } from "@tiptap/react";
 import type { NodeViewProps } from "@tiptap/react";
-import {
-  Maximize2,
-  Download,
-  Link as LinkIcon,
-  Trash2,
-} from "lucide-react";
+import { Maximize2, Download, Link as LinkIcon, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@multica/ui/lib/utils";
 import { useT } from "../../i18n";
@@ -19,15 +14,7 @@ import { useAttachmentDownloadResolver } from "../attachment-download-context";
 // Lightbox — full-screen image preview (ESC or click backdrop to close)
 // ---------------------------------------------------------------------------
 
-function ImageLightbox({
-  src,
-  alt,
-  onClose,
-}: {
-  src: string;
-  alt: string;
-  onClose: () => void;
-}) {
+function ImageLightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -89,10 +76,7 @@ function ImageView({ node, editor, selected, deleteNode }: NodeViewProps) {
   return (
     <NodeViewWrapper className="image-node">
       <figure
-        className={cn(
-          "image-figure",
-          selected && isEditable && "image-selected",
-        )}
+        className={cn("image-figure", selected && isEditable && "image-selected")}
         contentEditable={false}
         onClick={!isEditable && !uploading ? handleView : undefined}
       >
@@ -115,32 +99,18 @@ function ImageView({ node, editor, selected, deleteNode }: NodeViewProps) {
             <button type="button" onClick={handleDownload} title={t(($) => $.image.download)}>
               <Download className="size-3.5" />
             </button>
-            <button
-              type="button"
-              onClick={handleCopyLink}
-              title={t(($) => $.image.copy_link)}
-            >
+            <button type="button" onClick={handleCopyLink} title={t(($) => $.image.copy_link)}>
               <LinkIcon className="size-3.5" />
             </button>
             {isEditable && (
-              <button
-                type="button"
-                onClick={() => deleteNode()}
-                title={t(($) => $.image.delete)}
-              >
+              <button type="button" onClick={() => deleteNode()} title={t(($) => $.image.delete)}>
                 <Trash2 className="size-3.5" />
               </button>
             )}
           </div>
         )}
       </figure>
-      {lightbox && (
-        <ImageLightbox
-          src={src}
-          alt={alt}
-          onClose={() => setLightbox(false)}
-        />
-      )}
+      {lightbox && <ImageLightbox src={src} alt={alt} onClose={() => setLightbox(false)} />}
     </NodeViewWrapper>
   );
 }

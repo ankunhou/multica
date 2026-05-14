@@ -10,8 +10,7 @@ export function useCreatePin() {
   const wsId = useWorkspaceId();
   const userId = useAuthStore((s) => s.user?.id ?? "");
   return useMutation({
-    mutationFn: (data: { item_type: PinnedItemType; item_id: string }) =>
-      api.createPin(data),
+    mutationFn: (data: { item_type: PinnedItemType; item_id: string }) => api.createPin(data),
     onSuccess: (newPin) => {
       qc.setQueryData<PinnedItem[]>(pinKeys.list(wsId, userId), (old) =>
         old ? [...old, newPin] : [newPin],

@@ -28,9 +28,6 @@ interface PresenceIndicatorProps {
  * `useAgentPresenceDetail` for a single agent, or `useWorkspacePresenceMap`
  * for lists).
  */
-export function AgentPresenceIndicator({
-  detail,
-  compact,
-}: PresenceIndicatorProps) {
+export function AgentPresenceIndicator({ detail, compact }: PresenceIndicatorProps) {
   return <AgentPresenceSummary detail={detail} compact={compact} />;
 }

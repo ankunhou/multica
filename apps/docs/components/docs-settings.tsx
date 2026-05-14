@@ -31,8 +31,7 @@ function switchLocalePath(pathname: string, target: string): string {
     first && i18n.languages.some((l) => l === first && l !== i18n.defaultLanguage);
 
   const rest = hasLocalePrefix ? segments.slice(1) : segments;
-  const prefixed =
-    target === i18n.defaultLanguage ? rest : [target, ...rest];
+  const prefixed = target === i18n.defaultLanguage ? rest : [target, ...rest];
 
   return "/" + prefixed.join("/");
 }
@@ -54,8 +53,7 @@ export function DocsSettings({ locale }: { locale: string }) {
   useEffect(() => setMounted(true), []);
 
   const activeTheme = mounted ? (theme ?? "system") : "system";
-  const activeThemeOption =
-    THEME_OPTIONS.find((o) => o.value === activeTheme) ?? THEME_OPTIONS[2]!;
+  const activeThemeOption = THEME_OPTIONS.find((o) => o.value === activeTheme) ?? THEME_OPTIONS[2]!;
 
   const handleLocaleChange = (next: string) => {
     if (next === locale) return;
@@ -115,10 +113,7 @@ export function DocsSettings({ locale }: { locale: string }) {
             <DropdownMenuItem
               key={opt.value}
               onClick={() => setTheme(opt.value)}
-              className={cn(
-                "gap-2",
-                opt.value === activeTheme && "bg-accent",
-              )}
+              className={cn("gap-2", opt.value === activeTheme && "bg-accent")}
             >
               {opt.icon}
               {opt.label}

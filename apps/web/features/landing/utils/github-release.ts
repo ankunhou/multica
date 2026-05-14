@@ -1,7 +1,4 @@
-import {
-  parseReleaseAssets,
-  type DownloadAssets,
-} from "./parse-release-assets";
+import { parseReleaseAssets, type DownloadAssets } from "./parse-release-assets";
 
 /**
  * Server-side fetcher for the latest Multica release, designed to
@@ -30,8 +27,7 @@ export interface LatestRelease {
   assets: DownloadAssets;
 }
 
-const GITHUB_RELEASES_URL =
-  "https://api.github.com/repos/multica-ai/multica/releases?per_page=2";
+const GITHUB_RELEASES_URL = "https://api.github.com/repos/multica-ai/multica/releases?per_page=2";
 
 const REVALIDATE_SECONDS = 300;
 
@@ -82,8 +78,7 @@ export async function fetchLatestRelease(): Promise<LatestRelease> {
       return emptyRelease();
     }
     const previous = stable[1];
-    const chosen =
-      previous && isWithinFreshWindow(latest) ? previous : latest;
+    const chosen = previous && isWithinFreshWindow(latest) ? previous : latest;
 
     return {
       version: chosen.tag_name ?? null,

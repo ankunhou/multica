@@ -1,9 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import {
-  QueryClient,
-  QueryClientProvider,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const {
   navigate,
@@ -168,12 +165,8 @@ describe("InvitationsPage", () => {
     listMyInvitations.mockResolvedValue([]);
     renderWithClient();
 
-    await waitFor(() =>
-      screen.getByRole("button", { name: /continue to setup/i }),
-    );
-    fireEvent.click(
-      screen.getByRole("button", { name: /continue to setup/i }),
-    );
+    await waitFor(() => screen.getByRole("button", { name: /continue to setup/i }));
+    fireEvent.click(screen.getByRole("button", { name: /continue to setup/i }));
     expect(navigate).toHaveBeenCalledWith("/onboarding");
   });
 });

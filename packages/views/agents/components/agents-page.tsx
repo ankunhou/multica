@@ -88,7 +88,10 @@ type AvailabilityFilter = "all" | AgentAvailability;
 
 type SortKey = "recent" | "name" | "runs" | "created";
 const SORT_KEYS: SortKey[] = ["recent", "name", "runs", "created"];
-const SORT_LABEL_KEY: Record<SortKey, "label_recent" | "label_name" | "label_runs" | "label_created"> = {
+const SORT_LABEL_KEY: Record<
+  SortKey,
+  "label_recent" | "label_name" | "label_runs" | "label_created"
+> = {
   recent: "label_recent",
   name: "label_name",
   runs: "label_runs",
@@ -111,9 +114,7 @@ export function AgentsPage() {
     error: listError,
     refetch: refetchList,
   } = useQuery(agentListOptions(wsId));
-  const { data: runtimes = [], isLoading: runtimesLoading } = useQuery(
-    runtimeListOptions(wsId),
-  );
+  const { data: runtimes = [], isLoading: runtimesLoading } = useQuery(runtimeListOptions(wsId));
   const { data: members = [] } = useQuery(memberListOptions(wsId));
   const { data: runCountsRaw = [] } = useQuery(agentRunCounts30dOptions(wsId));
 
@@ -129,22 +130,17 @@ export function AgentsPage() {
   // ordering (Mine first). All is one click away when users want the
   // workspace-wide view.
   const [scope, setScope] = useState<Scope>("mine");
-  const [availabilityFilter, setAvailabilityFilter] =
-    useState<AvailabilityFilter>("all");
+  const [availabilityFilter, setAvailabilityFilter] = useState<AvailabilityFilter>("all");
   const [sort, setSort] = useState<SortKey>("recent");
   const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useResourceViewModePreference(
-    AGENT_VIEW_MODE_STORAGE_KEY,
-  );
+  const [viewMode, setViewMode] = useResourceViewModePreference(AGENT_VIEW_MODE_STORAGE_KEY);
   const [showCreate, setShowCreate] = useState(false);
   const [showQuickCreate, setShowQuickCreate] = useState(false);
   // When set, the Create dialog opens pre-populated with this agent's
   // config — driven by the row-level "Duplicate" action. We keep this
   // separate from `showCreate` so a stray null-template doesn't open the
   // dialog: the dialog opens iff `showCreate || duplicateTemplate`.
-  const [duplicateTemplate, setDuplicateTemplate] = useState<Agent | null>(
-    null,
-  );
+  const [duplicateTemplate, setDuplicateTemplate] = useState<Agent | null>(null);
 
   const runtimesById = useMemo(() => {
     const m = new Map<string, AgentRuntime>();
@@ -169,10 +165,7 @@ export function AgentsPage() {
 
   // Layer 1a — view (active / archived).
   const inView = useMemo(
-    () =>
-      agents.filter((a) =>
-        view === "archived" ? !!a.archived_at : !a.archived_at,
-      ),
+    () => agents.filter((a) => (view === "archived" ? !!a.archived_at : !a.archived_at)),
     [agents, view],
   );
 
@@ -183,11 +176,12 @@ export function AgentsPage() {
   // returning all agents, so admin tools (and the API itself) are
   // unaffected — this is a UI-only filter.
   const visibleInView = useMemo(() => {
-    return inView.filter((a) =>
-      canAssignAgentToIssue(a, {
-        userId: currentUser?.id ?? null,
-        role: myRole,
-      }).allowed,
+    return inView.filter(
+      (a) =>
+        canAssignAgentToIssue(a, {
+          userId: currentUser?.id ?? null,
+          role: myRole,
+        }).allowed,
     );
   }, [inView, currentUser?.id, myRole]);
 
@@ -224,10 +218,7 @@ export function AgentsPage() {
         if (detail?.availability !== availabilityFilter) return false;
       }
       if (q) {
-        if (
-          !a.name.toLowerCase().includes(q) &&
-          !(a.description ?? "").toLowerCase().includes(q)
-        ) {
+        if (!a.name.toLowerCase().includes(q) && !(a.description ?? "").toLowerCase().includes(q)) {
           return false;
         }
       }
@@ -260,10 +251,7 @@ export function AgentsPage() {
         xs.sort((a, b) => a.name.localeCompare(b.name));
         break;
       case "runs":
-        xs.sort(
-          (a, b) =>
-            (runCountsById.get(b.id) ?? 0) - (runCountsById.get(a.id) ?? 0),
-        );
+        xs.sort((a, b) => (runCountsById.get(b.id) ?? 0) - (runCountsById.get(a.id) ?? 0));
         break;
       case "created":
         xs.sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
@@ -275,14 +263,8 @@ export function AgentsPage() {
         // created_at. We don't have a precise last-touched timestamp on
         // Agent today; this approximates it closely without a new column.
         xs.sort((a, b) => {
-          const aSum = summarizeActivityWindow(
-            activityMap.get(a.id),
-            7,
-          ).totalRuns;
-          const bSum = summarizeActivityWindow(
-            activityMap.get(b.id),
-            7,
-          ).totalRuns;
+          const aSum = summarizeActivityWindow(activityMap.get(a.id), 7).totalRuns;
+          const bSum = summarizeActivityWindow(activityMap.get(b.id), 7).totalRuns;
           if (aSum !== bSum) return bSum - aSum;
           const aRuns = runCountsById.get(a.id) ?? 0;
           const bRuns = runCountsById.get(b.id) ?? 0;
@@ -294,15 +276,9 @@ export function AgentsPage() {
     return xs;
   }, [filteredAgents, sort, runCountsById, activityMap]);
 
-  const archivedCount = useMemo(
-    () => agents.filter((a) => !!a.archived_at).length,
-    [agents],
-  );
+  const archivedCount = useMemo(() => agents.filter((a) => !!a.archived_at).length, [agents]);
 
-  const totalActiveCount = useMemo(
-    () => agents.filter((a) => !a.archived_at).length,
-    [agents],
-  );
+  const totalActiveCount = useMemo(() => agents.filter((a) => !a.archived_at).length, [agents]);
 
   // Auto-bounce out of Archived if the population empties (e.g. user
   // restored the last archived agent from another surface).
@@ -352,13 +328,10 @@ export function AgentsPage() {
   // pull their own queries, which keeps each cell a pure function.
   const agentRows = useMemo<AgentRow[]>(() => {
     return sortedAgents.map((agent) => {
-      const isOwner =
-        !!currentUser?.id && agent.owner_id === currentUser.id;
+      const isOwner = !!currentUser?.id && agent.owner_id === currentUser.id;
       const canManage = isWorkspaceAdmin || isOwner;
       const ownerIdToShow =
-        scope === "all" &&
-        agent.owner_id &&
-        agent.owner_id !== currentUser?.id
+        scope === "all" && agent.owner_id && agent.owner_id !== currentUser?.id
           ? agent.owner_id
           : null;
       return {
@@ -468,8 +441,7 @@ export function AgentsPage() {
             <ResourceSurface
               className={cn(
                 "flex flex-col overflow-hidden",
-                (viewMode === "list" || sortedAgents.length === 0) &&
-                  "min-h-[560px]",
+                (viewMode === "list" || sortedAgents.length === 0) && "min-h-[560px]",
               )}
             >
               {view === "active" ? (
@@ -509,17 +481,12 @@ export function AgentsPage() {
                 <DataTable
                   variant="resource"
                   table={table}
-                  onRowClick={(row) =>
-                    navigation.push(paths.agentDetail(row.original.agent.id))
-                  }
+                  onRowClick={(row) => navigation.push(paths.agentDetail(row.original.agent.id))}
                 />
               ) : null}
             </ResourceSurface>
             {sortedAgents.length > 0 && viewMode === "grid" && (
-              <AgentCardGrid
-                rows={agentRows}
-                onDuplicate={handleDuplicate}
-              />
+              <AgentCardGrid rows={agentRows} onDuplicate={handleDuplicate} />
             )}
           </div>
         )}
@@ -576,9 +543,7 @@ function PageHeaderBar({
         <span className={resourceHeaderIconClassName}>
           <Bot className="h-3.5 w-3.5" />
         </span>
-        <h1 className="truncate text-2xl font-semibold tracking-tight">
-          {t(($) => $.page.title)}
-        </h1>
+        <h1 className="truncate text-2xl font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
         {totalCount > 0 && (
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
             {totalCount}
@@ -644,11 +609,7 @@ function ListError({
   const { t } = useT("agents");
   return (
     <div className="flex flex-1 min-h-0 flex-col">
-      <PageHeaderBar
-        totalCount={0}
-        onCreate={onCreate}
-        onQuickCreate={onQuickCreate}
-      />
+      <PageHeaderBar totalCount={0} onCreate={onCreate} onQuickCreate={onQuickCreate} />
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
         <AlertCircle className="h-8 w-8 text-destructive" />
         <div>
@@ -659,12 +620,7 @@ function ListError({
               : t(($) => $.page.list_load_failed_default)}
           </p>
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={onRetry}
-        >
+        <Button type="button" variant="outline" size="sm" onClick={onRetry}>
           {t(($) => $.page.try_again)}
         </Button>
       </div>
@@ -773,11 +729,7 @@ function ScopeButton({
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={resourceSegmentItemClassName(active)}
-    >
+    <button type="button" onClick={onClick} className={resourceSegmentItemClassName(active)}>
       <span>{label}</span>
       <span
         className={`font-mono tabular-nums ${
@@ -790,13 +742,7 @@ function ScopeButton({
   );
 }
 
-function SortDropdown({
-  sort,
-  setSort,
-}: {
-  sort: SortKey;
-  setSort: (v: SortKey) => void;
-}) {
+function SortDropdown({ sort, setSort }: { sort: SortKey; setSort: (v: SortKey) => void }) {
   const { t } = useT("agents");
   return (
     <DropdownMenu>
@@ -814,11 +760,7 @@ function SortDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-auto">
         {SORT_KEYS.map((k) => (
-          <DropdownMenuItem
-            key={k}
-            onClick={() => setSort(k)}
-            className="text-xs"
-          >
+          <DropdownMenuItem key={k} onClick={() => setSort(k)} className="text-xs">
             {t(($) => $.sort[SORT_LABEL_KEY[k]])}
           </DropdownMenuItem>
         ))}
@@ -895,9 +837,7 @@ function AvailabilityChip({
     >
       {dotClass && <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />}
       <span>{label}</span>
-      <span className="font-mono tabular-nums text-muted-foreground/70">
-        {count}
-      </span>
+      <span className="font-mono tabular-nums text-muted-foreground/70">{count}</span>
     </Button>
   );
 }
@@ -951,23 +891,13 @@ function AgentCardGrid({
   return (
     <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
       {rows.map((row) => (
-        <AgentCard
-          key={row.agent.id}
-          row={row}
-          onDuplicate={onDuplicate}
-        />
+        <AgentCard key={row.agent.id} row={row} onDuplicate={onDuplicate} />
       ))}
     </div>
   );
 }
 
-function AgentCard({
-  row,
-  onDuplicate,
-}: {
-  row: AgentRow;
-  onDuplicate: (agent: Agent) => void;
-}) {
+function AgentCard({ row, onDuplicate }: { row: AgentRow; onDuplicate: (agent: Agent) => void }) {
   const { t } = useT("agents");
   const paths = useWorkspacePaths();
   const navigation = useNavigation();
@@ -978,20 +908,13 @@ function AgentCard({
   const RuntimeIcon = isCloud ? Cloud : Monitor;
   const runtimeLabel =
     row.runtime?.name ??
-    (isCloud
-      ? t(($) => $.row.fallback_runtime_cloud)
-      : t(($) => $.row.fallback_runtime_local));
-  const activitySummary = row.activity
-    ? summarizeActivityWindow(row.activity, 7)
-    : null;
+    (isCloud ? t(($) => $.row.fallback_runtime_cloud) : t(($) => $.row.fallback_runtime_local));
+  const activitySummary = row.activity ? summarizeActivityWindow(row.activity, 7) : null;
 
   const handleOpen = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (event.defaultPrevented) return;
-      if (
-        (event.metaKey || event.ctrlKey || event.shiftKey) &&
-        navigation.openInNewTab
-      ) {
+      if ((event.metaKey || event.ctrlKey || event.shiftKey) && navigation.openInNewTab) {
         navigation.openInNewTab(href);
         return;
       }
@@ -1024,10 +947,7 @@ function AgentCard({
             actorType="agent"
             actorId={row.agent.id}
             size={36}
-            className={cn(
-              "shrink-0 rounded-2xl",
-              isArchived && "opacity-50 grayscale",
-            )}
+            className={cn("shrink-0 rounded-2xl", isArchived && "opacity-50 grayscale")}
             showStatusDot={!isArchived}
           />
           <div className="min-w-0">
@@ -1049,19 +969,13 @@ function AgentCard({
                 </span>
               )}
               {row.ownerIdToShow && (
-                <ActorAvatar
-                  actorType="member"
-                  actorId={row.ownerIdToShow}
-                  size={14}
-                />
+                <ActorAvatar actorType="member" actorId={row.ownerIdToShow} size={14} />
               )}
             </div>
             <p
               className={cn(
                 "mt-1 line-clamp-2 text-xs",
-                row.agent.description
-                  ? "text-muted-foreground"
-                  : "italic text-muted-foreground/50",
+                row.agent.description ? "text-muted-foreground" : "italic text-muted-foreground/50",
               )}
             >
               {row.agent.description || t(($) => $.row.no_description)}
@@ -1098,30 +1012,20 @@ function AgentCard({
 
       <div className="mt-auto flex items-end justify-between gap-3 pt-6">
         <div className="min-w-0">
-          <div className="text-xs text-muted-foreground">
-            {t(($) => $.columns.activity_7d)}
-          </div>
+          <div className="text-xs text-muted-foreground">{t(($) => $.columns.activity_7d)}</div>
           <div className="mt-1 h-5">
             {isArchived ? (
               <span className="text-xs text-muted-foreground/50">—</span>
             ) : activitySummary ? (
-              <Sparkline
-                buckets={activitySummary.buckets}
-                width={64}
-                height={20}
-              />
+              <Sparkline buckets={activitySummary.buckets} width={64} height={20} />
             ) : (
               <span className="inline-block h-5 w-16 animate-pulse rounded bg-muted/60" />
             )}
           </div>
         </div>
         <div className="text-right">
-          <div className="text-xs text-muted-foreground">
-            {t(($) => $.columns.runs)}
-          </div>
-          <div className="mt-1 font-mono text-sm tabular-nums">
-            {row.runCount.toLocaleString()}
-          </div>
+          <div className="text-xs text-muted-foreground">{t(($) => $.columns.runs)}</div>
+          <div className="mt-1 font-mono text-sm tabular-nums">{row.runCount.toLocaleString()}</div>
         </div>
       </div>
     </ResourceSurface>
@@ -1146,9 +1050,7 @@ function EmptyState({
         <Bot className="h-6 w-6 text-muted-foreground" />
       </div>
       <h2 className="mt-4 text-base font-semibold">{t(($) => $.empty.title)}</h2>
-      <p className="mt-1 max-w-md text-sm text-muted-foreground">
-        {t(($) => $.empty.description)}
-      </p>
+      <p className="mt-1 max-w-md text-sm text-muted-foreground">{t(($) => $.empty.description)}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2">
         <Button
           type="button"
@@ -1174,15 +1076,7 @@ function EmptyState({
   );
 }
 
-function NoMatches({
-  view,
-  search,
-  scope,
-}: {
-  view: View;
-  search: string;
-  scope: Scope;
-}) {
+function NoMatches({ view, search, scope }: { view: View; search: string; scope: Scope }) {
   const { t } = useT("agents");
   const hasSearch = search.length > 0;
   const hasFilter = scope === "mine";

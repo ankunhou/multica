@@ -42,10 +42,7 @@ vi.mock("@tanstack/react-query", () => ({
 // Preserve the real sanitizeNextUrl so the "drop unsafe ?next=" behavior is
 // exercised rather than silently diverging from the source of truth.
 vi.mock("@multica/core/auth", async () => {
-  const actual =
-    await vi.importActual<typeof import("@multica/core/auth")>(
-      "@multica/core/auth",
-    );
+  const actual = await vi.importActual<typeof import("@multica/core/auth")>("@multica/core/auth");
   return {
     ...actual,
     useAuthStore: (selector: (s: unknown) => unknown) =>
@@ -75,9 +72,7 @@ describe("CallbackPage", () => {
     vi.clearAllMocks();
     // Snapshot keys before deleting — forEach + delete skips entries because
     // the iteration index advances while the underlying list shrinks.
-    Array.from(mockSearchParams.keys()).forEach((k) =>
-      mockSearchParams.delete(k),
-    );
+    Array.from(mockSearchParams.keys()).forEach((k) => mockSearchParams.delete(k));
     mockSearchParams.set("code", "test-code");
     mockLoginWithGoogle.mockResolvedValue(makeUser());
     mockListWorkspaces.mockResolvedValue([]);
@@ -121,9 +116,7 @@ describe("CallbackPage", () => {
   });
 
   it("onboarded user with workspace lands in that workspace", async () => {
-    mockLoginWithGoogle.mockResolvedValue(
-      makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }),
-    );
+    mockLoginWithGoogle.mockResolvedValue(makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }));
     mockListWorkspaces.mockResolvedValue([
       {
         id: "ws-1",
@@ -149,9 +142,7 @@ describe("CallbackPage", () => {
   });
 
   it("onboarded user ignores unsafe next= targets and lands on the default destination", async () => {
-    mockLoginWithGoogle.mockResolvedValue(
-      makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }),
-    );
+    mockLoginWithGoogle.mockResolvedValue(makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }));
     mockSearchParams.set("state", "next:https://evil.example");
 
     render(<CallbackPage />);
@@ -163,9 +154,7 @@ describe("CallbackPage", () => {
   });
 
   it("onboarded user honors a safe next= target (e.g. /invite/{id})", async () => {
-    mockLoginWithGoogle.mockResolvedValue(
-      makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }),
-    );
+    mockLoginWithGoogle.mockResolvedValue(makeUser({ onboarded_at: "2026-01-01T00:00:00Z" }));
     mockSearchParams.set("state", "next:/invite/abc123");
 
     render(<CallbackPage />);

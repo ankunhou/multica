@@ -29,7 +29,9 @@ export function WorkspaceLoader({ name }: { name?: string | null }) {
             <span className="font-medium text-foreground">{name}</span>…
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">{t(($) => $.workspace_loader.loading_workspace)}</p>
+          <p className="text-sm text-muted-foreground">
+            {t(($) => $.workspace_loader.loading_workspace)}
+          </p>
         )}
       </div>
     </div>

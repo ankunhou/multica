@@ -1,6 +1,9 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { createWorkspaceAwareStorage, registerForWorkspaceRehydration } from "../../platform/workspace-storage";
+import {
+  createWorkspaceAwareStorage,
+  registerForWorkspaceRehydration,
+} from "../../platform/workspace-storage";
 import { defaultStorage } from "../../platform/storage";
 
 /**
@@ -33,7 +36,9 @@ export const useCommentCollapseStore = create<CommentCollapseStore>()(
             }
             return { collapsedByIssue: { ...s.collapsedByIssue, [issueId]: next } };
           }
-          return { collapsedByIssue: { ...s.collapsedByIssue, [issueId]: [...current, commentId] } };
+          return {
+            collapsedByIssue: { ...s.collapsedByIssue, [issueId]: [...current, commentId] },
+          };
         }),
     }),
     {

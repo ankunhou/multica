@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  type MouseEvent,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { type MouseEvent, useEffect, useMemo, useRef, useState } from "react";
 import { LandingHeader } from "./landing-header";
 import { LandingFooter } from "./landing-footer";
 import { useLocale } from "../i18n";
@@ -109,9 +103,7 @@ export function ChangelogPageClient() {
   const entries = t.changelog.entries;
   const groups = useMemo(() => groupByMonth(entries), [entries]);
 
-  const [activeVersion, setActiveVersion] = useState<string>(
-    entries[0]?.version ?? ""
-  );
+  const [activeVersion, setActiveVersion] = useState<string>(entries[0]?.version ?? "");
   const navLockRef = useRef<number | null>(null);
 
   useEffect(() => {
@@ -147,7 +139,7 @@ export function ChangelogPageClient() {
         }
         setActiveVersion(best);
       },
-      { rootMargin: "-20% 0px -70% 0px", threshold: 0 }
+      { rootMargin: "-20% 0px -70% 0px", threshold: 0 },
     );
 
     entries.forEach((r) => {
@@ -157,21 +149,20 @@ export function ChangelogPageClient() {
     return () => observer.disconnect();
   }, [entries]);
 
-  const jumpTo =
-    (version: string) => (e: MouseEvent<HTMLAnchorElement>) => {
-      const el = document.getElementById(anchorId(version));
-      if (!el) return;
-      e.preventDefault();
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.history.replaceState(null, "", `#${anchorId(version)}`);
-      setActiveVersion(version);
-      if (navLockRef.current !== null) {
-        window.clearTimeout(navLockRef.current);
-      }
-      navLockRef.current = window.setTimeout(() => {
-        navLockRef.current = null;
-      }, 800);
-    };
+  const jumpTo = (version: string) => (e: MouseEvent<HTMLAnchorElement>) => {
+    const el = document.getElementById(anchorId(version));
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.replaceState(null, "", `#${anchorId(version)}`);
+    setActiveVersion(version);
+    if (navLockRef.current !== null) {
+      window.clearTimeout(navLockRef.current);
+    }
+    navLockRef.current = window.setTimeout(() => {
+      navLockRef.current = null;
+    }, 800);
+  };
 
   return (
     <>
@@ -203,8 +194,7 @@ export function ChangelogPageClient() {
 
                         <ol className="mt-1.5">
                           {group.entries.map((release) => {
-                            const isActive =
-                              release.version === activeVersion;
+                            const isActive = release.version === activeVersion;
                             const { day } = parseDate(release.date);
                             return (
                               <li key={release.version}>
@@ -231,9 +221,7 @@ export function ChangelogPageClient() {
                                   <span
                                     className={[
                                       "w-[1.25rem] shrink-0 text-right tabular-nums",
-                                      isActive
-                                        ? "font-semibold"
-                                        : "font-medium",
+                                      isActive ? "font-semibold" : "font-medium",
                                     ].join(" ")}
                                   >
                                     {day}
@@ -263,8 +251,7 @@ export function ChangelogPageClient() {
 
               <div className="mt-16 space-y-16">
                 {entries.map((release) => {
-                  const hasCategorized =
-                    release.features || release.improvements || release.fixes;
+                  const hasCategorized = release.features || release.improvements || release.fixes;
                   return (
                     <section
                       key={release.version}
@@ -294,15 +281,14 @@ export function ChangelogPageClient() {
                               <ChangeList items={release.features} />
                             </div>
                           )}
-                          {release.improvements &&
-                            release.improvements.length > 0 && (
-                              <div>
-                                <h3 className="text-[13px] font-semibold uppercase tracking-wide text-[#0a0d12]/50">
-                                  {categoryLabels.improvements}
-                                </h3>
-                                <ChangeList items={release.improvements} />
-                              </div>
-                            )}
+                          {release.improvements && release.improvements.length > 0 && (
+                            <div>
+                              <h3 className="text-[13px] font-semibold uppercase tracking-wide text-[#0a0d12]/50">
+                                {categoryLabels.improvements}
+                              </h3>
+                              <ChangeList items={release.improvements} />
+                            </div>
+                          )}
                           {release.fixes && release.fixes.length > 0 && (
                             <div>
                               <h3 className="text-[13px] font-semibold uppercase tracking-wide text-[#0a0d12]/50">

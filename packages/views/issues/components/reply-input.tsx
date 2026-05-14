@@ -2,7 +2,12 @@
 
 import { useRef, useState, useCallback, useEffect } from "react";
 import { ArrowUp, Loader2, Maximize2, Minimize2 } from "lucide-react";
-import { ContentEditor, type ContentEditorRef, useFileDropZone, FileDropOverlay } from "../../editor";
+import {
+  ContentEditor,
+  type ContentEditorRef,
+  useFileDropZone,
+  FileDropOverlay,
+} from "../../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { ActorAvatar } from "../../common/actor-avatar";
@@ -47,9 +52,7 @@ function ReplyInput({
   const editorRef = useRef<ContentEditorRef>(null);
   // If a draft key is provided, hydrate from store on mount (defaultValue is
   // the only injection point on ContentEditorRef) and flush on every onUpdate.
-  const initialDraft = draftKey
-    ? useCommentDraftStore.getState().getDraft(draftKey)
-    : undefined;
+  const initialDraft = draftKey ? useCommentDraftStore.getState().getDraft(draftKey) : undefined;
   const setDraft = useCommentDraftStore((s) => s.setDraft);
   const clearDraft = useCommentDraftStore((s) => s.clearDraft);
   const [isEmpty, setIsEmpty] = useState(!initialDraft?.trim());
@@ -68,7 +71,9 @@ function ReplyInput({
       const md = editorRef.current?.getMarkdown();
       if (md && md.trim().length > 0) setDraft(draftKey, md);
     };
-    const onVis = () => { if (document.visibilityState === "hidden") flush(); };
+    const onVis = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
     document.addEventListener("visibilitychange", onVis);
     window.addEventListener("pagehide", flush);
     return () => {
@@ -77,16 +82,22 @@ function ReplyInput({
     };
   }, [draftKey, setDraft]);
 
-  const handleUpload = useCallback(async (file: File) => {
-    const result = await uploadWithToast(file, { issueId });
-    if (result) {
-      uploadMapRef.current.set(result.link, result.id);
-    }
-    return result;
-  }, [uploadWithToast, issueId]);
+  const handleUpload = useCallback(
+    async (file: File) => {
+      const result = await uploadWithToast(file, { issueId });
+      if (result) {
+        uploadMapRef.current.set(result.link, result.id);
+      }
+      return result;
+    },
+    [uploadWithToast, issueId],
+  );
 
   const handleSubmit = async () => {
-    const content = editorRef.current?.getMarkdown()?.replace(/(\n\s*)+$/, "").trim();
+    const content = editorRef.current
+      ?.getMarkdown()
+      ?.replace(/(\n\s*)+$/, "")
+      .trim();
     if (!content || submitting) return;
     // Only send attachment IDs for uploads still present in the content.
     const activeIds: string[] = [];
@@ -119,9 +130,7 @@ function ReplyInput({
         {...dropZoneProps}
         className={cn(
           "relative min-w-0 flex-1 flex flex-col",
-          isExpanded
-            ? "h-[60vh]"
-            : size === "sm" ? "max-h-40" : "max-h-56",
+          isExpanded ? "h-[60vh]" : size === "sm" ? "max-h-40" : "max-h-56",
           (!isEmpty || isExpanded) && "pb-7",
         )}
       >
@@ -155,16 +164,19 @@ function ReplyInput({
                   }}
                   className="inline-flex h-6 w-6 items-center justify-center rounded-sm text-muted-foreground opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                 >
-                  {isExpanded ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+                  {isExpanded ? (
+                    <Minimize2 className="h-3.5 w-3.5" />
+                  ) : (
+                    <Maximize2 className="h-3.5 w-3.5" />
+                  )}
                 </button>
               }
             />
-            <TooltipContent side="top">{isExpanded ? t(($) => $.reply.collapse_tooltip) : t(($) => $.reply.expand_tooltip)}</TooltipContent>
+            <TooltipContent side="top">
+              {isExpanded ? t(($) => $.reply.collapse_tooltip) : t(($) => $.reply.expand_tooltip)}
+            </TooltipContent>
           </Tooltip>
-          <FileUploadButton
-            size="sm"
-            onSelect={(file) => editorRef.current?.uploadFile(file)}
-          />
+          <FileUploadButton size="sm" onSelect={(file) => editorRef.current?.uploadFile(file)} />
           <button
             type="button"
             disabled={isEmpty || submitting}

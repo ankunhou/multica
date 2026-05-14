@@ -28,11 +28,7 @@ import {
 } from "../utils";
 import { KpiCard } from "./shared";
 import { ActorAvatar } from "../../common/actor-avatar";
-import {
-  DailyCostChart,
-  HourlyActivityChart,
-  ActivityHeatmap,
-} from "./charts";
+import { DailyCostChart, HourlyActivityChart, ActivityHeatmap } from "./charts";
 import { CustomPricingDialog } from "./custom-pricing-dialog";
 import { useT } from "../../i18n";
 
@@ -107,9 +103,7 @@ function fmtMoney(n: number): string {
 
 export function UsageSection({ runtimeId }: { runtimeId: string }) {
   const { t } = useT("runtimes");
-  const { data: usage = [], isLoading: loading } = useQuery(
-    runtimeUsageOptions(runtimeId, 180),
-  );
+  const { data: usage = [], isLoading: loading } = useQuery(runtimeUsageOptions(runtimeId, 180));
   const [days, setDays] = useState<TimeRange>(30);
   // Subscribe so the KPI cards (which call estimateCost at render-time, not
   // through a memo) re-evaluate when the user saves a custom rate. The
@@ -128,8 +122,7 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
   const totals = computeTotals(filtered);
   const prevTotals = computeTotals(prevFiltered);
 
-  const tokensTotal =
-    totals.input + totals.output + totals.cacheRead + totals.cacheWrite;
+  const tokensTotal = totals.input + totals.output + totals.cacheRead + totals.cacheWrite;
   const cacheableTokens = totals.input + totals.cacheRead;
   const cacheHitRate =
     cacheableTokens > 0 ? Math.round((totals.cacheRead / cacheableTokens) * 100) : 0;
@@ -171,13 +164,7 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
           hint={
             costDelta == null ? undefined : (
               <span
-                className={
-                  costDelta > 0
-                    ? "text-warning"
-                    : costDelta < 0
-                      ? "text-success"
-                      : ""
-                }
+                className={costDelta > 0 ? "text-warning" : costDelta < 0 ? "text-success" : ""}
               >
                 {t(($) => $.usage.kpi_cost_delta, {
                   sign: costDelta > 0 ? "+" : "",
@@ -218,12 +205,7 @@ export function UsageSection({ runtimeId }: { runtimeId: string }) {
           dimensions: by-date (Daily), by-hour-of-day (Hourly), by-calendar
           (Heatmap). The period selector lives at the page top — this card
           only owns the tab switch and chart legend. */}
-      <WhenChart
-        runtimeId={runtimeId}
-        usage={usage}
-        filtered={filtered}
-        days={days}
-      />
+      <WhenChart runtimeId={runtimeId} usage={usage} filtered={filtered} days={days} />
 
       {/* Layer 3 — WHO/WHAT burned the spend. By-hour was dropped — that
           dimension lives in the WHEN chart now. */}
@@ -271,10 +253,7 @@ function WhenChart({
     enabled: tab === "hourly",
   });
 
-  const { dailyCostStack } = useMemo(
-    () => aggregateByDate(filtered),
-    [filtered, pricings],
-  );
+  const { dailyCostStack } = useMemo(() => aggregateByDate(filtered), [filtered, pricings]);
   const hourlyCost = useMemo(
     () =>
       aggregateCostByHour(byHourRows).map((row) => ({
@@ -325,13 +304,7 @@ function WhenChart({
   );
 }
 
-function DailyTab({
-  data,
-  usage,
-}: {
-  data: { total: number }[];
-  usage: RuntimeUsage[];
-}) {
+function DailyTab({ data, usage }: { data: { total: number }[]; usage: RuntimeUsage[] }) {
   const totalCost = data.reduce((s, d) => s + d.total, 0);
   if (totalCost === 0) return <EmptyChartState usage={usage} />;
   return <DailyCostChart data={data as Parameters<typeof DailyCostChart>[0]["data"]} />;
@@ -361,9 +334,7 @@ function HourlyTab({
 function EmptyChartState({ usage }: { usage: RuntimeUsage[] }) {
   const { t } = useT("runtimes");
   const hasTokens = usage.some(
-    (u) =>
-      u.input_tokens + u.output_tokens + u.cache_read_tokens + u.cache_write_tokens >
-      0,
+    (u) => u.input_tokens + u.output_tokens + u.cache_read_tokens + u.cache_write_tokens > 0,
   );
   const unmapped = collectUnmappedModels(usage);
 
@@ -371,27 +342,19 @@ function EmptyChartState({ usage }: { usage: RuntimeUsage[] }) {
     <div className="flex aspect-[3/1] flex-col items-center justify-center gap-2 rounded-md border border-dashed bg-muted/20 p-6 text-center">
       <BarChart3 className="h-5 w-5 text-muted-foreground/50" />
       {!hasTokens ? (
-        <p className="text-xs text-muted-foreground">
-          {t(($) => $.usage.empty_no_usage)}
-        </p>
+        <p className="text-xs text-muted-foreground">{t(($) => $.usage.empty_no_usage)}</p>
       ) : unmapped.length > 0 ? (
         // CTA lives in the page-level UnmappedPricingNotice above. Keep the
         // chart-area copy descriptive only so the two surfaces don't bicker.
         <>
-          <p className="text-xs text-muted-foreground">
-            {t(($) => $.usage.empty_pricing_missing)}
-          </p>
-          <p className="font-mono text-[11px] text-foreground">
-            {unmapped.join(", ")}
-          </p>
+          <p className="text-xs text-muted-foreground">{t(($) => $.usage.empty_pricing_missing)}</p>
+          <p className="font-mono text-[11px] text-foreground">{unmapped.join(", ")}</p>
           <p className="text-[11px] text-muted-foreground/70">
             {t(($) => $.usage.empty_pricing_hint)}
           </p>
         </>
       ) : (
-        <p className="text-xs text-muted-foreground">
-          {t(($) => $.usage.empty_zero_cost)}
-        </p>
+        <p className="text-xs text-muted-foreground">{t(($) => $.usage.empty_zero_cost)}</p>
       )}
     </div>
   );
@@ -424,12 +387,7 @@ function UnmappedPricingNotice({ usage }: { usage: RuntimeUsage[] }) {
           {unmapped.join(", ")}
         </p>
       </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        onClick={() => setDialogOpen(true)}
-      >
+      <Button type="button" variant="outline" size="sm" onClick={() => setDialogOpen(true)}>
         {t(($) => $.usage.custom_pricing.open_button)}
       </Button>
       <CustomPricingDialog
@@ -457,10 +415,7 @@ function ChartLegend() {
     <div className="flex items-center gap-3 text-xs text-muted-foreground">
       {items.map((it) => (
         <span key={it.label} className="inline-flex items-center gap-1.5">
-          <span
-            className="h-2 w-2 rounded-sm"
-            style={{ background: it.color }}
-          />
+          <span className="h-2 w-2 rounded-sm" style={{ background: it.color }} />
           {it.label}
         </span>
       ))}
@@ -499,14 +454,8 @@ function CostByBlock({
   const wsId = useWorkspaceId();
   const { data: agents = [] } = useQuery(agentListOptions(wsId));
 
-  const byAgent = useMemo(
-    () => aggregateCostByAgent(byAgentRows),
-    [byAgentRows, pricings],
-  );
-  const byModel = useMemo(
-    () => aggregateCostByModel(usage),
-    [usage, pricings],
-  );
+  const byAgent = useMemo(() => aggregateCostByAgent(byAgentRows), [byAgentRows, pricings]);
+  const byModel = useMemo(() => aggregateCostByModel(usage), [usage, pricings]);
 
   const caption =
     tab === "agent"
@@ -556,9 +505,7 @@ function CostByBlock({
           <CostByList
             rows={byModel}
             renderKey={(key) => (
-              <span className="truncate font-mono text-xs text-foreground">
-                {key}
-              </span>
+              <span className="truncate font-mono text-xs text-foreground">{key}</span>
             )}
           />
         )}
@@ -599,10 +546,7 @@ function CostByList({
           >
             <div className="min-w-0">{renderKey(row.key)}</div>
             <div className="relative h-2 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-chart-1"
-                style={{ width: `${pct}%` }}
-              />
+              <div className="h-full rounded-full bg-chart-1" style={{ width: `${pct}%` }} />
             </div>
             <div className="text-right text-xs tabular-nums text-muted-foreground">
               {formatTokens(row.tokens)}
@@ -633,9 +577,7 @@ function FoldedRow({ usage }: { usage: RuntimeUsage[] }) {
         onClick={() => setOpen((v) => !v)}
         className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       >
-        <ChevronRight
-          className={`h-3 w-3 transition-transform ${open ? "rotate-90" : ""}`}
-        />
+        <ChevronRight className={`h-3 w-3 transition-transform ${open ? "rotate-90" : ""}`} />
         {t(($) => $.usage.daily_breakdown_toggle)}
       </button>
       {open && (
@@ -674,18 +616,10 @@ function DailyBreakdownTable({ usage }: { usage: RuntimeUsage[] }) {
             >
               <div className="text-muted-foreground">{date}</div>
               <div className="truncate font-mono">{row.model}</div>
-              <div className="text-right tabular-nums">
-                {formatTokens(row.input_tokens)}
-              </div>
-              <div className="text-right tabular-nums">
-                {formatTokens(row.output_tokens)}
-              </div>
-              <div className="text-right tabular-nums">
-                {formatTokens(row.cache_read_tokens)}
-              </div>
-              <div className="text-right tabular-nums">
-                {formatTokens(row.cache_write_tokens)}
-              </div>
+              <div className="text-right tabular-nums">{formatTokens(row.input_tokens)}</div>
+              <div className="text-right tabular-nums">{formatTokens(row.output_tokens)}</div>
+              <div className="text-right tabular-nums">{formatTokens(row.cache_read_tokens)}</div>
+              <div className="text-right tabular-nums">{formatTokens(row.cache_write_tokens)}</div>
             </div>
           )),
         )}
@@ -713,9 +647,7 @@ function UsageEmpty() {
   return (
     <div className="flex flex-col items-center rounded-lg border border-dashed py-8">
       <BarChart3 className="h-5 w-5 text-muted-foreground/40" />
-      <p className="mt-2 text-xs text-muted-foreground">
-        {t(($) => $.usage.no_data)}
-      </p>
+      <p className="mt-2 text-xs text-muted-foreground">{t(($) => $.usage.no_data)}</p>
     </div>
   );
 }
@@ -735,9 +667,7 @@ function sliceWindow(usage: RuntimeUsage[], days: number) {
 
   return {
     filtered: usage.filter((u) => u.date >= isoCurrent),
-    prevFiltered: usage.filter(
-      (u) => u.date >= isoPrev && u.date < isoCurrent,
-    ),
+    prevFiltered: usage.filter((u) => u.date >= isoPrev && u.date < isoCurrent),
   };
 }
 
@@ -763,4 +693,3 @@ function computeTotals(rows: RuntimeUsage[]): UsageTotals {
     { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, cacheSavings: 0 },
   );
 }
-

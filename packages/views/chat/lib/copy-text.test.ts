@@ -87,9 +87,9 @@ describe("extractCopyText", () => {
   });
 
   it("returns concatenated text segments for an all-text timeline", () => {
-    expect(
-      extractCopyText(message(""), [text(1, "hello"), text(2, "world")]),
-    ).toBe("hello\n\nworld");
+    expect(extractCopyText(message(""), [text(1, "hello"), text(2, "world")])).toBe(
+      "hello\n\nworld",
+    );
   });
 
   it("returns only the final text for the standard tool-using shape", () => {
@@ -117,18 +117,12 @@ describe("extractCopyText", () => {
   });
 
   it("falls back to message.content when timeline has no text items", () => {
-    expect(
-      extractCopyText(message("fallback body"), [thinking(1), tool(2)]),
-    ).toBe("fallback body");
+    expect(extractCopyText(message("fallback body"), [thinking(1), tool(2)])).toBe("fallback body");
   });
 
   it("joins multiple trailing text segments with blank-line separators", () => {
-    expect(
-      extractCopyText(message(""), [
-        tool(1),
-        text(2, "para 1"),
-        text(3, "para 2"),
-      ]),
-    ).toBe("para 1\n\npara 2");
+    expect(extractCopyText(message(""), [tool(1), text(2, "para 1"), text(3, "para 2")])).toBe(
+      "para 1\n\npara 2",
+    );
   });
 });

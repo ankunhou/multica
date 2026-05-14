@@ -53,11 +53,7 @@ function toLegacyColor(color: string, fallback: string, ownerDocument: Document)
   return `rgb(${red}, ${green}, ${blue})`;
 }
 
-function resolveCssColor(
-  host: HTMLElement,
-  variableName: string,
-  fallback: string,
-): string {
+function resolveCssColor(host: HTMLElement, variableName: string, fallback: string): string {
   const probe = host.ownerDocument.createElement("span");
   probe.style.color = `var(${variableName})`;
   probe.style.display = "none";
@@ -134,9 +130,7 @@ function hashChart(chart: string): string {
 function readCachedLayout(chart: string): MermaidLayout | null {
   if (typeof window === "undefined") return null;
   try {
-    const raw = window.sessionStorage.getItem(
-      MERMAID_LAYOUT_CACHE_PREFIX + hashChart(chart),
-    );
+    const raw = window.sessionStorage.getItem(MERMAID_LAYOUT_CACHE_PREFIX + hashChart(chart));
     if (!raw) return null;
     const parsed = JSON.parse(raw);
     if (
@@ -251,10 +245,7 @@ export function MermaidDiagram({ chart }: { chart: string }) {
   const { t } = useT("editor");
   const reactId = useId();
   const containerRef = useRef<HTMLDivElement>(null);
-  const diagramId = useMemo(
-    () => `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`,
-    [reactId],
-  );
+  const diagramId = useMemo(() => `mermaid-${reactId.replace(/[^a-zA-Z0-9_-]/g, "")}`, [reactId]);
   const themeVersion = useThemeVersion();
   const [sandboxedDocument, setSandboxedDocument] = useState<string | null>(null);
   const [expandedDocument, setExpandedDocument] = useState<string | null>(null);
@@ -290,12 +281,8 @@ export function MermaidDiagram({ chart }: { chart: string }) {
           const measured = getMermaidLayout(renderedSvg);
           setLayout(measured);
           writeCachedLayout(chart, measured);
-          setSandboxedDocument(
-            buildSandboxedMermaidDocument(renderedSvg, containerRef.current),
-          );
-          setExpandedDocument(
-            buildExpandedMermaidDocument(renderedSvg, containerRef.current),
-          );
+          setSandboxedDocument(buildSandboxedMermaidDocument(renderedSvg, containerRef.current));
+          setExpandedDocument(buildExpandedMermaidDocument(renderedSvg, containerRef.current));
         }
       } catch (err) {
         if (!cancelled) {

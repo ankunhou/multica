@@ -25,13 +25,7 @@ export interface TriggerConfig {
 // Constants — schema-level (not user-visible)
 // ---------------------------------------------------------------------------
 
-const FREQUENCY_KEYS: TriggerFrequency[] = [
-  "hourly",
-  "daily",
-  "weekdays",
-  "weekly",
-  "custom",
-];
+const FREQUENCY_KEYS: TriggerFrequency[] = ["hourly", "daily", "weekdays", "weekly", "custom"];
 
 const DAY_SHORT_KEYS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
 
@@ -206,7 +200,9 @@ export function useDescribeTrigger(): (cfg: TriggerConfig) => string {
     const offset = getTimezoneOffset(cfg.timezone);
     switch (cfg.frequency) {
       case "hourly": {
-        const min = parseInt(cfg.time.split(":")[1] ?? "0", 10).toString().padStart(2, "0");
+        const min = parseInt(cfg.time.split(":")[1] ?? "0", 10)
+          .toString()
+          .padStart(2, "0");
         return t(($) => $.trigger_config.describe.hourly, { min });
       }
       case "daily":
@@ -239,9 +235,7 @@ type AutopilotsT = ReturnType<typeof useT<"autopilots">>["t"];
 function formatDayList(days: number[], t: AutopilotsT): string {
   const sorted = sortedDays(days);
   if (sorted.length === 0) return t(($) => $.trigger_config.summary.no_days);
-  return sorted
-    .map((d) => t(($) => $.trigger_config.days_short[DAY_SHORT_KEYS[d]!]))
-    .join(", ");
+  return sorted.map((d) => t(($) => $.trigger_config.days_short[DAY_SHORT_KEYS[d]!])).join(", ");
 }
 
 // ---------------------------------------------------------------------------
@@ -344,9 +338,7 @@ export function TriggerConfigSection({
                     onValueChange={(v) => v && onChange({ ...config, timezone: v })}
                   >
                     <SelectTrigger className="mt-1 w-full">
-                      <SelectValue>
-                        {() => getTimezoneLabel(config.timezone)}
-                      </SelectValue>
+                      <SelectValue>{() => getTimezoneLabel(config.timezone)}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {timezones.map((tz) => (

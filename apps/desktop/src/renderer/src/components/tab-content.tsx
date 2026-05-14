@@ -40,10 +40,7 @@ export function TabContent() {
   return (
     <>
       {group.tabs.map((tab) => (
-        <Activity
-          key={tab.id}
-          mode={tab.id === group.activeTabId ? "visible" : "hidden"}
-        >
+        <Activity key={tab.id} mode={tab.id === group.activeTabId ? "visible" : "hidden"}>
           <TabNavigationProvider router={tab.router}>
             <RouterProvider router={tab.router} />
             <TabRouterInner tab={tab} />

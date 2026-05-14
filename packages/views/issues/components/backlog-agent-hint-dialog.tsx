@@ -2,10 +2,7 @@
 
 import { useState } from "react";
 import { Archive, ArrowRight, Bot, CheckCircle2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogContent,
-} from "@multica/ui/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent } from "@multica/ui/components/ui/alert-dialog";
 import { Button } from "@multica/ui/components/ui/button";
 import { Checkbox } from "@multica/ui/components/ui/checkbox";
 import { useT } from "../../i18n";
@@ -68,9 +65,7 @@ export function BacklogAgentHintContent({
             <Bot className="size-4" />
           </div>
           <div className="min-w-0">
-            <h2 className="text-base font-semibold">
-              {t(($) => $.backlog_hint.title)}
-            </h2>
+            <h2 className="text-base font-semibold">{t(($) => $.backlog_hint.title)}</h2>
             <p className="mt-1 text-sm leading-5 text-muted-foreground">
               {t(($) => $.backlog_hint.description)}
             </p>
@@ -80,12 +75,18 @@ export function BacklogAgentHintContent({
         <div className="mt-4 grid gap-2 rounded-lg border bg-muted/35 p-3 text-sm">
           <div className="flex items-center gap-2 text-muted-foreground">
             <Archive className="size-4 shrink-0" />
-            <span className="font-medium text-foreground">{t(($) => $.backlog_hint.row_backlog_label)}</span>
-            <span className="text-muted-foreground">{t(($) => $.backlog_hint.row_backlog_hint)}</span>
+            <span className="font-medium text-foreground">
+              {t(($) => $.backlog_hint.row_backlog_label)}
+            </span>
+            <span className="text-muted-foreground">
+              {t(($) => $.backlog_hint.row_backlog_hint)}
+            </span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <ArrowRight className="size-4 shrink-0" />
-            <span className="font-medium text-foreground">{t(($) => $.backlog_hint.row_todo_label)}</span>
+            <span className="font-medium text-foreground">
+              {t(($) => $.backlog_hint.row_todo_label)}
+            </span>
             <span className="text-muted-foreground">{t(($) => $.backlog_hint.row_todo_hint)}</span>
             <CheckCircle2 className="ml-auto size-4 shrink-0 text-primary" />
           </div>
@@ -110,11 +111,7 @@ export function BacklogAgentHintContent({
             >
               {t(($) => $.backlog_hint.keep_in_backlog)}
             </Button>
-            <Button
-              type="button"
-              className="w-full sm:w-auto"
-              onClick={handleMoveToTodo}
-            >
+            <Button type="button" className="w-full sm:w-auto" onClick={handleMoveToTodo}>
               {t(($) => $.backlog_hint.move_to_todo)}
             </Button>
           </div>

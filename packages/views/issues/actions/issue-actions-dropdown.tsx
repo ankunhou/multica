@@ -8,10 +8,7 @@ import {
   DropdownMenuContent,
 } from "@multica/ui/components/ui/dropdown-menu";
 import { useIssueActions } from "./use-issue-actions";
-import {
-  IssueActionsMenuItems,
-  dropdownPrimitives,
-} from "./issue-actions-menu-items";
+import { IssueActionsMenuItems, dropdownPrimitives } from "./issue-actions-menu-items";
 
 interface IssueActionsDropdownProps {
   issue: Issue;

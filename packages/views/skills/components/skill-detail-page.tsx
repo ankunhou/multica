@@ -50,11 +50,7 @@ import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { Textarea } from "@multica/ui/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { AppLink, useNavigation } from "../../navigation";
 import { useCanEditSkill } from "../hooks/use-can-edit-skill";
 import { useSkillPermissions } from "@multica/core/permissions";
@@ -158,10 +154,7 @@ function UsedBySection({ agents }: { agents: Agent[] }) {
   return (
     <ul className="space-y-1.5">
       {agents.map((a) => (
-        <li
-          key={a.id}
-          className="flex items-center gap-2 rounded-md border bg-card px-2.5 py-1.5"
-        >
+        <li key={a.id} className="flex items-center gap-2 rounded-md border bg-card px-2.5 py-1.5">
           <ActorAvatar
             name={a.name}
             initials={a.name.slice(0, 2).toUpperCase()}
@@ -172,9 +165,7 @@ function UsedBySection({ agents }: { agents: Agent[] }) {
           <div className="min-w-0 flex-1">
             <div className="truncate text-xs font-medium">{a.name}</div>
             {a.description && (
-              <div className="truncate text-xs text-muted-foreground">
-                {a.description}
-              </div>
+              <div className="truncate text-xs text-muted-foreground">{a.description}</div>
             )}
           </div>
         </li>
@@ -206,27 +197,15 @@ function OriginSidebarCard({
   return (
     <div className="rounded-md border bg-muted/30 p-3">
       <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-        {isRuntime ? (
-          <HardDrive className="h-3 w-3" />
-        ) : (
-          <Sparkles className="h-3 w-3" />
-        )}
+        {isRuntime ? <HardDrive className="h-3 w-3" /> : <Sparkles className="h-3 w-3" />}
         {label}
       </div>
-      {runtime && (
-        <div className="mt-1 break-all text-xs text-foreground">
-          {runtime.name}
-        </div>
-      )}
+      {runtime && <div className="mt-1 break-all text-xs text-foreground">{runtime.name}</div>}
       {origin.source_path && (
-        <div className="mt-1 break-all font-mono text-xs text-foreground">
-          {origin.source_path}
-        </div>
+        <div className="mt-1 break-all font-mono text-xs text-foreground">{origin.source_path}</div>
       )}
       {origin.source_url && (
-        <div className="mt-1 break-all font-mono text-xs text-foreground">
-          {origin.source_url}
-        </div>
+        <div className="mt-1 break-all font-mono text-xs text-foreground">{origin.source_url}</div>
       )}
       {origin.provider && (
         <div className="mt-1 font-mono text-xs text-muted-foreground">
@@ -249,25 +228,12 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
   const paths = useWorkspacePaths();
   const navigation = useNavigation();
 
-  const {
-    data: skill,
-    isLoading,
-    error,
-  } = useQuery(skillDetailOptions(wsId, skillId));
-  const { data: agents = [], error: agentsError } = useQuery(
-    agentListOptions(wsId),
-  );
-  const { data: members = [], error: membersError } = useQuery(
-    memberListOptions(wsId),
-  );
-  const { data: runtimes = [], error: runtimesError } = useQuery(
-    runtimeListOptions(wsId),
-  );
+  const { data: skill, isLoading, error } = useQuery(skillDetailOptions(wsId, skillId));
+  const { data: agents = [], error: agentsError } = useQuery(agentListOptions(wsId));
+  const { data: members = [], error: membersError } = useQuery(memberListOptions(wsId));
+  const { data: runtimes = [], error: runtimesError } = useQuery(runtimeListOptions(wsId));
 
-  const assignments = useMemo(
-    () => selectSkillAssignments(agents),
-    [agents],
-  );
+  const assignments = useMemo(() => selectSkillAssignments(agents), [agents]);
 
   const canEdit = useCanEditSkill(skill, wsId);
   const skillPermissions = useSkillPermissions(skill ?? null, wsId);
@@ -294,8 +260,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
     if (seededKeyRef.current === key) return;
 
     const sameSkill =
-      seededKeyRef.current !== null &&
-      seededKeyRef.current.startsWith(`${wsId}:${skill.id}@`);
+      seededKeyRef.current !== null && seededKeyRef.current.startsWith(`${wsId}:${skill.id}@`);
 
     if (sameSkill) {
       const d = draftRef.current;
@@ -333,26 +298,17 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
 
   const creator = useMemo<MemberWithUser | null>(
     () =>
-      skill?.created_by
-        ? members.find((m) => m.user_id === skill.created_by) ?? null
-        : null,
+      skill?.created_by ? (members.find((m) => m.user_id === skill.created_by) ?? null) : null,
     [members, skill?.created_by],
   );
 
-  const origin = useMemo(
-    () => (skill ? readOrigin(skill) : null),
-    [skill],
-  );
+  const origin = useMemo(() => (skill ? readOrigin(skill) : null), [skill]);
   const originRuntime = useMemo<AgentRuntime | null>(() => {
-    if (!origin || origin.type !== "runtime_local" || !origin.runtime_id)
-      return null;
+    if (!origin || origin.type !== "runtime_local" || !origin.runtime_id) return null;
     return runtimes.find((r) => r.id === origin.runtime_id) ?? null;
   }, [origin, runtimes]);
 
-  const skillAgents = useMemo(
-    () => assignments.get(skillId) ?? [],
-    [assignments, skillId],
-  );
+  const skillAgents = useMemo(() => assignments.get(skillId) ?? [], [assignments, skillId]);
 
   const fileMap = useMemo(() => {
     const map = new Map<string, string>();
@@ -410,10 +366,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
         files: files.filter((f) => f.path.trim()),
       };
       const updated = await api.updateSkill(skill.id, payload);
-      qc.setQueryData(
-        skillDetailOptions(wsId, skill.id).queryKey,
-        updated,
-      );
+      qc.setQueryData(skillDetailOptions(wsId, skill.id).queryKey, updated);
       seedFromSkill(updated);
       seededKeyRef.current = `${wsId}:${updated.id}@${updated.updated_at}`;
       setConflictPending(false);
@@ -450,9 +403,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
       toast.success(t(($) => $.detail.toast_deleted));
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t(($) => $.detail.toast_delete_failed),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.detail.toast_delete_failed));
       setDeleting(false);
       setConfirmDelete(false);
     }
@@ -476,15 +427,12 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
       setContent(newContent);
     } else {
       setFiles((prev) =>
-        prev.map((f) =>
-          f.path === selectedPath ? { ...f, content: newContent } : f,
-        ),
+        prev.map((f) => (f.path === selectedPath ? { ...f, content: newContent } : f)),
       );
     }
   };
 
-  const supportingQueryDown =
-    !!agentsError || !!membersError || !!runtimesError;
+  const supportingQueryDown = !!agentsError || !!membersError || !!runtimesError;
 
   if (isLoading) {
     return (
@@ -507,11 +455,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
     return (
       <div className="flex flex-1 min-h-0 flex-col">
         <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-          <Button
-            variant="ghost"
-            size="xs"
-            render={<AppLink href={paths.skills()} />}
-          >
+          <Button variant="ghost" size="xs" render={<AppLink href={paths.skills()} />}>
             <ArrowLeft className="h-3 w-3" />
             {t(($) => $.detail.all_skills)}
           </Button>
@@ -553,18 +497,12 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
     <div className="flex flex-1 min-h-0 flex-col">
       {/* Topbar */}
       <div className="flex h-12 shrink-0 items-center gap-2 border-b px-3">
-        <Button
-          variant="ghost"
-          size="xs"
-          render={<AppLink href={paths.skills()} />}
-        >
+        <Button variant="ghost" size="xs" render={<AppLink href={paths.skills()} />}>
           <ArrowLeft className="h-3 w-3" />
           {t(($) => $.detail.all_skills)}
         </Button>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="truncate font-mono text-xs text-foreground">
-          {skill.name}
-        </span>
+        <span className="truncate font-mono text-xs text-foreground">{skill.name}</span>
         <div className="ml-auto flex items-center gap-2">
           {!canEdit && (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
@@ -684,10 +622,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
               aria-label={t(($) => $.detail.name_aria)}
             />
             <div className="space-y-1">
-              <Label
-                htmlFor="skill-description"
-                className="text-xs text-muted-foreground"
-              >
+              <Label htmlFor="skill-description" className="text-xs text-muted-foreground">
                 <Pencil className="h-3 w-3" />
                 {t(($) => $.detail.description_label)}
               </Label>
@@ -778,12 +713,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                 {t(($) => $.detail.save_bar.unsaved)}
               </span>
               <div className="ml-auto flex items-center gap-1.5">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="xs"
-                  onClick={handleDiscard}
-                >
+                <Button type="button" variant="ghost" size="xs" onClick={handleDiscard}>
                   {t(($) => $.detail.save_bar.discard)}
                 </Button>
                 <Button
@@ -820,17 +750,13 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                 <dt className="min-w-20 text-muted-foreground">
                   {t(($) => $.detail.sidebar.created)}
                 </dt>
-                <dd className="min-w-0 flex-1">
-                  {relativeTime(skill.created_at)}
-                </dd>
+                <dd className="min-w-0 flex-1">{relativeTime(skill.created_at)}</dd>
               </div>
               <div className="flex gap-2">
                 <dt className="min-w-20 text-muted-foreground">
                   {t(($) => $.detail.sidebar.updated)}
                 </dt>
-                <dd className="min-w-0 flex-1">
-                  {relativeTime(skill.updated_at)}
-                </dd>
+                <dd className="min-w-0 flex-1">{relativeTime(skill.updated_at)}</dd>
               </div>
               {creator && (
                 <div className="flex gap-2">
@@ -846,13 +772,8 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                 </dt>
                 <dd className="min-w-0 flex-1">{totalFileCount(skill)}</dd>
               </div>
-              <div
-                className="flex gap-2"
-                title={skill.id}
-              >
-                <dt className="min-w-20 text-muted-foreground">
-                  {t(($) => $.detail.sidebar.id)}
-                </dt>
+              <div className="flex gap-2" title={skill.id}>
+                <dt className="min-w-20 text-muted-foreground">{t(($) => $.detail.sidebar.id)}</dt>
                 <dd className="min-w-0 flex-1 truncate font-mono text-muted-foreground">
                   {skill.id.slice(0, 8)}…
                 </dd>
@@ -924,12 +845,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
             >
               {t(($) => $.detail.delete_dialog.cancel)}
             </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={handleDelete}
-              disabled={deleting}
-            >
+            <Button type="button" variant="destructive" onClick={handleDelete} disabled={deleting}>
               {deleting ? (
                 <>
                   <Loader2 className="h-3 w-3 animate-spin" />

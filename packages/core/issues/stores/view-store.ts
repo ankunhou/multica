@@ -6,7 +6,10 @@ import { createStore, type StoreApi } from "zustand/vanilla";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { IssueStatus, IssuePriority } from "../../types";
 import { ALL_STATUSES } from "../config";
-import { createWorkspaceAwareStorage, registerForWorkspaceRehydration } from "../../platform/workspace-storage";
+import {
+  createWorkspaceAwareStorage,
+  registerForWorkspaceRehydration,
+} from "../../platform/workspace-storage";
 import { defaultStorage } from "../../platform/storage";
 
 export type ViewMode = "board" | "list";
@@ -116,29 +119,20 @@ export const viewStoreSlice = (set: StoreApi<IssueViewState>["setState"]): Issue
     })),
   toggleAssigneeFilter: (value) =>
     set((state) => {
-      const exists = state.assigneeFilters.some(
-        (f) => f.type === value.type && f.id === value.id,
-      );
+      const exists = state.assigneeFilters.some((f) => f.type === value.type && f.id === value.id);
       return {
         assigneeFilters: exists
-          ? state.assigneeFilters.filter(
-              (f) => !(f.type === value.type && f.id === value.id),
-            )
+          ? state.assigneeFilters.filter((f) => !(f.type === value.type && f.id === value.id))
           : [...state.assigneeFilters, value],
       };
     }),
-  toggleNoAssignee: () =>
-    set((state) => ({ includeNoAssignee: !state.includeNoAssignee })),
+  toggleNoAssignee: () => set((state) => ({ includeNoAssignee: !state.includeNoAssignee })),
   toggleCreatorFilter: (value) =>
     set((state) => {
-      const exists = state.creatorFilters.some(
-        (f) => f.type === value.type && f.id === value.id,
-      );
+      const exists = state.creatorFilters.some((f) => f.type === value.type && f.id === value.id);
       return {
         creatorFilters: exists
-          ? state.creatorFilters.filter(
-              (f) => !(f.type === value.type && f.id === value.id),
-            )
+          ? state.creatorFilters.filter((f) => !(f.type === value.type && f.id === value.id))
           : [...state.creatorFilters, value],
       };
     }),
@@ -148,8 +142,7 @@ export const viewStoreSlice = (set: StoreApi<IssueViewState>["setState"]): Issue
         ? state.projectFilters.filter((id) => id !== projectId)
         : [...state.projectFilters, projectId],
     })),
-  toggleNoProject: () =>
-    set((state) => ({ includeNoProject: !state.includeNoProject })),
+  toggleNoProject: () => set((state) => ({ includeNoProject: !state.includeNoProject })),
   toggleLabelFilter: (labelId) =>
     set((state) => ({
       labelFilters: state.labelFilters.includes(labelId)
@@ -249,7 +242,7 @@ export function mergeViewStatePersisted<T extends IssueViewState>(
 /** Factory: creates a vanilla StoreApi for use with React Context. */
 export function createIssueViewStore(persistKey: string): StoreApi<IssueViewState> {
   const store = createStore<IssueViewState>()(
-    persist(viewStoreSlice, viewStorePersistOptions(persistKey))
+    persist(viewStoreSlice, viewStorePersistOptions(persistKey)),
   );
   registerForWorkspaceRehydration(() => store.persist.rehydrate());
   return store;
@@ -257,7 +250,7 @@ export function createIssueViewStore(persistKey: string): StoreApi<IssueViewStat
 
 /** Global singleton for the /issues page. */
 export const useIssueViewStore = create<IssueViewState>()(
-  persist(viewStoreSlice, viewStorePersistOptions("multica_issues_view"))
+  persist(viewStoreSlice, viewStorePersistOptions("multica_issues_view")),
 );
 
 registerForWorkspaceRehydration(() => useIssueViewStore.persist.rehydrate());

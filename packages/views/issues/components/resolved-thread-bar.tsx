@@ -37,7 +37,10 @@ export function ResolvedThreadBar({ entry, replies, onExpand }: ResolvedThreadBa
   if (authors.length <= MAX_NAMED_AUTHORS) {
     authorsLabel = authors.map((a) => getActorName(a.type, a.id)).join(", ");
   } else {
-    const named = authors.slice(0, MAX_NAMED_AUTHORS).map((a) => getActorName(a.type, a.id)).join(", ");
+    const named = authors
+      .slice(0, MAX_NAMED_AUTHORS)
+      .map((a) => getActorName(a.type, a.id))
+      .join(", ");
     const remaining = authors.length - MAX_NAMED_AUTHORS;
     authorsLabel = t(($) => $.comment.resolve.bar_authors_more, { names: named, count: remaining });
   }

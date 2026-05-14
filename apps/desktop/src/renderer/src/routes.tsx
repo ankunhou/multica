@@ -1,10 +1,5 @@
 import { useEffect } from "react";
-import {
-  createMemoryRouter,
-  Navigate,
-  Outlet,
-  useMatches,
-} from "react-router-dom";
+import { createMemoryRouter, Navigate, Outlet, useMatches } from "react-router-dom";
 import type { RouteObject } from "react-router-dom";
 import { IssueDetailPage } from "./pages/issue-detail-page";
 import { ProjectDetailPage } from "./pages/project-detail-page";
@@ -39,8 +34,9 @@ function TitleSync() {
   const matches = useMatches();
   const titleKey = [...matches]
     .reverse()
-    .find((m) => (m.handle as { titleKey?: keyof typeof routeTitleKeys })?.titleKey)
-    ?.handle as { titleKey?: keyof typeof routeTitleKeys } | undefined;
+    .find((m) => (m.handle as { titleKey?: keyof typeof routeTitleKeys })?.titleKey)?.handle as
+    | { titleKey?: keyof typeof routeTitleKeys }
+    | undefined;
 
   useEffect(() => {
     if (!titleKey?.titleKey) return;
@@ -191,9 +187,7 @@ export const appRoutes: RouteObject[] = [
           { path: "inbox", element: <InboxPage />, handle: { titleKey: "inbox" } },
           {
             path: "settings",
-            element: (
-              <DesktopSettingsPage />
-            ),
+            element: <DesktopSettingsPage />,
             handle: { titleKey: "settings" },
           },
         ],

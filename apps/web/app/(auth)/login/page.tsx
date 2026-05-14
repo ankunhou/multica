@@ -6,11 +6,7 @@ import { useQueryClient, type QueryClient } from "@tanstack/react-query";
 import { sanitizeNextUrl, useAuthStore } from "@multica/core/auth";
 import { useConfigStore } from "@multica/core/config";
 import { workspaceKeys } from "@multica/core/workspace/queries";
-import {
-  paths,
-  resolvePostAuthDestination,
-  useHasOnboarded,
-} from "@multica/core/paths";
+import { paths, resolvePostAuthDestination, useHasOnboarded } from "@multica/core/paths";
 import { api } from "@multica/core/api";
 import type { Workspace } from "@multica/core/types";
 import {
@@ -95,9 +91,7 @@ function LoginPageContent() {
         })
         .catch((err) => {
           setDesktopError(
-            err instanceof Error
-              ? err.message
-              : t(($) => $.web.desktop_handoff.prepare_failed),
+            err instanceof Error ? err.message : t(($) => $.web.desktop_handoff.prepare_failed),
           );
         });
       return;
@@ -107,9 +101,7 @@ function LoginPageContent() {
       return;
     }
     const list = qc.getQueryData<Workspace[]>(workspaceKeys.list()) ?? [];
-    void resolveLoggedInDestination(qc, hasOnboarded, list).then((dest) =>
-      router.replace(dest),
-    );
+    void resolveLoggedInDestination(qc, hasOnboarded, list).then((dest) => router.replace(dest));
   }, [isLoading, user, router, nextUrl, cliCallbackRaw, isDesktopHandoff, hasOnboarded, qc]);
 
   const handleSuccess = async () => {
@@ -128,12 +120,10 @@ function LoginPageContent() {
 
   // Build Google OAuth state: encode platform + next URL so the callback
   // can redirect to the right place after login.
-  const googleState = [
-    platform === "desktop" ? "platform:desktop" : "",
-    nextUrl ? `next:${nextUrl}` : "",
-  ]
-    .filter(Boolean)
-    .join(",") || undefined;
+  const googleState =
+    [platform === "desktop" ? "platform:desktop" : "", nextUrl ? `next:${nextUrl}` : ""]
+      .filter(Boolean)
+      .join(",") || undefined;
 
   // While the desktop handoff is in progress (or has produced a token/error),
   // render a dedicated screen instead of flashing the login form or redirecting

@@ -1,7 +1,7 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-import { cn } from "@multica/ui/lib/utils"
+import { cn } from "@multica/ui/lib/utils";
 
 const statusIndicatorVariants = cva(
   "inline-flex items-center gap-1 text-xs font-medium [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-3",
@@ -20,15 +20,15 @@ const statusIndicatorVariants = cva(
     defaultVariants: {
       tone: "muted",
     },
-  }
-)
+  },
+);
 
 type StatusIndicatorProps = React.ComponentProps<"span"> &
   VariantProps<typeof statusIndicatorVariants> & {
-    icon?: React.ComponentType<{ className?: string }>
-    iconClassName?: string
-    spin?: boolean
-  }
+    icon?: React.ComponentType<{ className?: string }>;
+    iconClassName?: string;
+    spin?: boolean;
+  };
 
 function StatusIndicator({
   className,
@@ -48,7 +48,7 @@ function StatusIndicator({
       {Icon && <Icon className={cn(spin && "animate-spin", iconClassName)} />}
       {children}
     </span>
-  )
+  );
 }
 
-export { StatusIndicator, statusIndicatorVariants }
+export { StatusIndicator, statusIndicatorVariants };

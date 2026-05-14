@@ -8,12 +8,19 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-cjk-sans: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC";
+  --font-cjk-sans:
+    "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC";
   --font-cjk-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", "SimSun";
   --font-cjk-mono: "Noto Sans Mono CJK SC", "Sarasa Mono SC", "Microsoft YaHei Mono";
-  --font-sans: var(--font-cjk-sans), var(--font-latin, "Inter"), -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-serif: var(--font-cjk-serif), var(--font-serif-latin, "Source Serif 4"), ui-serif, "Iowan Old Style", "Apple Garamond", Baskerville, "Times New Roman", serif;
-  --font-mono: var(--font-cjk-mono), var(--font-mono-latin, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans:
+    var(--font-cjk-sans), var(--font-latin, "Inter"), -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  --font-serif:
+    var(--font-cjk-serif), var(--font-serif-latin, "Source Serif 4"), ui-serif, "Iowan Old Style",
+    "Apple Garamond", Baskerville, "Times New Roman", serif;
+  --font-mono:
+    var(--font-cjk-mono), var(--font-mono-latin, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo,
+    Consolas, monospace;
 }
 
 @source "../../../packages/ui/**/*.{ts,tsx}";

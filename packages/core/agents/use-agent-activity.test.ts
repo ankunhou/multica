@@ -60,11 +60,7 @@ describe("deriveAgentActivity", () => {
       bucket("a1", 29, 1), // slot 0
       bucket("a1", 0, 5), // slot 29
     ];
-    const result = deriveAgentActivity(
-      buckets,
-      fullHistoryAgent.created_at,
-      NOW,
-    );
+    const result = deriveAgentActivity(buckets, fullHistoryAgent.created_at, NOW);
     expect(result.buckets).toHaveLength(30);
     expect(result.buckets[0]).toEqual({ total: 1, failed: 0 });
     expect(result.buckets[29]).toEqual({ total: 5, failed: 0 });
@@ -87,26 +83,14 @@ describe("deriveAgentActivity", () => {
   });
 
   it("ignores buckets older than the 30-day window", () => {
-    const result = deriveAgentActivity(
-      [bucket("a1", 60, 99)],
-      fullHistoryAgent.created_at,
-      NOW,
-    );
-    expect(
-      result.buckets.reduce((s, b) => s + b.total, 0),
-    ).toBe(0);
+    const result = deriveAgentActivity([bucket("a1", 60, 99)], fullHistoryAgent.created_at, NOW);
+    expect(result.buckets.reduce((s, b) => s + b.total, 0)).toBe(0);
   });
 
   it("zero-fills when the agent has no buckets", () => {
-    const result = deriveAgentActivity(
-      [],
-      fullHistoryAgent.created_at,
-      NOW,
-    );
+    const result = deriveAgentActivity([], fullHistoryAgent.created_at, NOW);
     expect(result.buckets).toHaveLength(30);
-    expect(result.buckets.every((b) => b.total === 0 && b.failed === 0)).toBe(
-      true,
-    );
+    expect(result.buckets.every((b) => b.total === 0 && b.failed === 0)).toBe(true);
   });
 });
 
@@ -142,22 +126,14 @@ describe("summarizeActivityWindow", () => {
   });
 
   it("clamps an oversized window to the available bucket count", () => {
-    const result = deriveAgentActivity(
-      [bucket("a1", 0, 2)],
-      fullHistoryAgent.created_at,
-      NOW,
-    );
+    const result = deriveAgentActivity([bucket("a1", 0, 2)], fullHistoryAgent.created_at, NOW);
     const summary = summarizeActivityWindow(result, 1000);
     expect(summary.buckets).toHaveLength(30);
     expect(summary.totalRuns).toBe(2);
   });
 
   it("returns no buckets when window is 0", () => {
-    const result = deriveAgentActivity(
-      [bucket("a1", 0, 5)],
-      fullHistoryAgent.created_at,
-      NOW,
-    );
+    const result = deriveAgentActivity([bucket("a1", 0, 5)], fullHistoryAgent.created_at, NOW);
     const summary = summarizeActivityWindow(result, 0);
     expect(summary.buckets).toEqual([]);
     expect(summary.totalRuns).toBe(0);
@@ -166,10 +142,7 @@ describe("summarizeActivityWindow", () => {
 
 describe("buildActivityMap", () => {
   it("groups buckets by agent and yields a derivation per agent", () => {
-    const agents: Agent[] = [
-      fullHistoryAgent,
-      { ...fullHistoryAgent, id: "a2" },
-    ];
+    const agents: Agent[] = [fullHistoryAgent, { ...fullHistoryAgent, id: "a2" }];
     const buckets: AgentActivityBucket[] = [
       bucket("a1", 0, 3),
       bucket("a2", 1, 2, 1),

@@ -2,16 +2,8 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Check } from "lucide-react";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { isImeComposing } from "@multica/core/utils";
 import { useT } from "../../../i18n";
 
@@ -78,9 +70,7 @@ export function PropertyPicker({
 
   const getItems = useCallback(() => {
     if (!listRef.current) return [];
-    return Array.from(
-      listRef.current.querySelectorAll<HTMLButtonElement>(ITEM_SELECTOR),
-    );
+    return Array.from(listRef.current.querySelectorAll<HTMLButtonElement>(ITEM_SELECTOR));
   }, []);
 
   // Apply/remove highlight class via DOM when index changes
@@ -143,7 +133,11 @@ export function PropertyPicker({
 
   const popoverTrigger = (
     <PopoverTrigger
-      className={triggerRender ? undefined : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors overflow-hidden"}
+      className={
+        triggerRender
+          ? undefined
+          : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors overflow-hidden"
+      }
       render={triggerRender}
     >
       {trigger}
@@ -179,7 +173,9 @@ export function PropertyPicker({
           </div>
         )}
         {header && <div className="border-b">{header}</div>}
-        <div ref={listRef} className="p-1 max-h-72 overflow-y-auto">{children}</div>
+        <div ref={listRef} className="p-1 max-h-72 overflow-y-auto">
+          {children}
+        </div>
         {footer && <div className="border-t p-1">{footer}</div>}
       </PopoverContent>
     </Popover>
@@ -215,7 +211,7 @@ export function PickerItem({
       data-picker-item
       disabled={disabled}
       onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-sm ${disabled ? "opacity-50 cursor-not-allowed" : hoverClassName ?? "hover:bg-accent"} transition-colors`}
+      className={`flex w-full items-center gap-3 rounded-md px-2 py-1.5 text-sm ${disabled ? "opacity-50 cursor-not-allowed" : (hoverClassName ?? "hover:bg-accent")} transition-colors`}
     >
       {/* min-w-0 lets long children (like truncated label names) shrink
           inside the flex row instead of pushing the selected checkmark off
@@ -225,9 +221,7 @@ export function PickerItem({
           right edge. */}
       <span className="flex min-w-0 flex-1 items-center gap-2">{children}</span>
       <Check
-        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground ${
-          selected ? "" : "invisible"
-        }`}
+        className={`h-3.5 w-3.5 shrink-0 text-muted-foreground ${selected ? "" : "invisible"}`}
       />
     </button>
   );
@@ -246,13 +240,7 @@ export function PickerItem({
 // PickerSection — group header
 // ---------------------------------------------------------------------------
 
-export function PickerSection({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+export function PickerSection({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
       <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">

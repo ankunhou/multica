@@ -24,10 +24,7 @@ function normalizePrompt(value: string): string {
   return value.replace(/\s+/g, " ").trim();
 }
 
-function canUseRuntime(
-  runtime: RuntimeDevice,
-  currentUserId: string | null,
-): boolean {
+function canUseRuntime(runtime: RuntimeDevice, currentUserId: string | null): boolean {
   if (!currentUserId) return true;
   if (runtime.owner_id === currentUserId) return true;
   return runtime.visibility === "public";
@@ -37,17 +34,19 @@ function pickRuntime(
   runtimes: RuntimeDevice[],
   currentUserId: string | null,
 ): RuntimeDevice | null {
-  return [...runtimes]
-    .filter((runtime) => canUseRuntime(runtime, currentUserId))
-    .sort((a, b) => {
-      const aMine = a.owner_id === currentUserId;
-      const bMine = b.owner_id === currentUserId;
-      if (aMine !== bMine) return aMine ? -1 : 1;
-      const aOnline = a.status === "online";
-      const bOnline = b.status === "online";
-      if (aOnline !== bOnline) return aOnline ? -1 : 1;
-      return a.name.localeCompare(b.name);
-    })[0] ?? null;
+  return (
+    [...runtimes]
+      .filter((runtime) => canUseRuntime(runtime, currentUserId))
+      .sort((a, b) => {
+        const aMine = a.owner_id === currentUserId;
+        const bMine = b.owner_id === currentUserId;
+        if (aMine !== bMine) return aMine ? -1 : 1;
+        const aOnline = a.status === "online";
+        const bOnline = b.status === "online";
+        if (aOnline !== bOnline) return aOnline ? -1 : 1;
+        return a.name.localeCompare(b.name);
+      })[0] ?? null
+  );
 }
 
 export function QuickCreateAgentDialog({
@@ -80,11 +79,7 @@ export function QuickCreateAgentDialog({
     setCreating(true);
     try {
       const draft = await api.generateAgentDraft({ prompt: normalizedPrompt });
-      if (
-        !draft.name.trim() ||
-        !draft.description.trim() ||
-        !draft.instructions.trim()
-      ) {
+      if (!draft.name.trim() || !draft.description.trim() || !draft.instructions.trim()) {
         throw new Error(t(($) => $.quick_create_dialog.generate_failed_toast));
       }
 
@@ -99,9 +94,7 @@ export function QuickCreateAgentDialog({
       onClose();
     } catch (err) {
       toast.error(
-        err instanceof Error
-          ? err.message
-          : t(($) => $.quick_create_dialog.create_failed_toast),
+        err instanceof Error ? err.message : t(($) => $.quick_create_dialog.create_failed_toast),
       );
       setCreating(false);
     }
@@ -150,10 +143,7 @@ export function QuickCreateAgentDialog({
                       })
                     : t(($) => $.quick_create_dialog.runtime_none)}
               </p>
-              <CharCounter
-                length={promptLength}
-                max={QUICK_AGENT_PROMPT_MAX}
-              />
+              <CharCounter length={promptLength} max={QUICK_AGENT_PROMPT_MAX} />
             </div>
           </div>
         </div>
@@ -164,16 +154,9 @@ export function QuickCreateAgentDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              creating ||
-              !normalizedPrompt ||
-              promptOverLimit ||
-              !selectedRuntime
-            }
+            disabled={creating || !normalizedPrompt || promptOverLimit || !selectedRuntime}
           >
-            {creating && (
-              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-            )}
+            {creating && <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />}
             {creating
               ? t(($) => $.quick_create_dialog.creating)
               : t(($) => $.quick_create_dialog.create)}

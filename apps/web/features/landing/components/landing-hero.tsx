@@ -55,9 +55,7 @@ export function LandingHero() {
           </div>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
-            <span className="text-[15px] text-white/50">
-              {t.hero.worksWith}
-            </span>
+            <span className="text-[15px] text-white/50">{t.hero.worksWith}</span>
             <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3">
               <div className="flex items-center gap-2.5 text-white/80">
                 <ClaudeCodeLogo className="size-5" />
@@ -94,12 +92,7 @@ export function LandingHero() {
 function LandingBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-0">
-      <Image
-        src="/images/landing-bg.jpg"
-        alt=""
-        fill
-        className="object-cover object-center"
-      />
+      <Image src="/images/landing-bg.jpg" alt="" fill className="object-cover object-center" />
     </div>
   );
 }

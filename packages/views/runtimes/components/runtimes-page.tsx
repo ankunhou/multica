@@ -13,11 +13,7 @@ import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Skeleton } from "@multica/ui/components/ui/skeleton";
 import { cn } from "@multica/ui/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { PageHeader } from "../../layout/page-header";
 import {
   type ResourceViewMode,
@@ -39,13 +35,7 @@ import { useT } from "../../i18n";
 type RuntimeFilter = "mine" | "all";
 type HealthFilter = "all" | "online" | "recently_lost" | "offline" | "about_to_gc";
 
-const HEALTH_ORDER: HealthFilter[] = [
-  "all",
-  "online",
-  "recently_lost",
-  "offline",
-  "about_to_gc",
-];
+const HEALTH_ORDER: HealthFilter[] = ["all", "online", "recently_lost", "offline", "about_to_gc"];
 
 // Dot tokens stay in code — labels/descriptions flow through useT.
 const HEALTH_DOT: Record<Exclude<HealthFilter, "all">, string> = {
@@ -87,18 +77,14 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
   const [scope, setScope] = useState<RuntimeFilter>("mine");
   const [healthFilter, setHealthFilter] = useState<HealthFilter>("all");
   const [search, setSearch] = useState("");
-  const [viewMode, setViewMode] = useResourceViewModePreference(
-    RUNTIME_VIEW_MODE_STORAGE_KEY,
-  );
+  const [viewMode, setViewMode] = useResourceViewModePreference(RUNTIME_VIEW_MODE_STORAGE_KEY);
   const [showConnectDialog, setShowConnectDialog] = useState(false);
 
   // One unified cache per workspace: scope (Mine/All) is a view filter, not
   // a fetch dimension. Splitting on owner used to give us two TanStack cache
   // slots holding independent snapshots of the same runtime — switching scope
   // surfaced stale `last_seen_at` from whichever slot was older.
-  const { data: runtimes = [], isLoading: fetching } = useQuery(
-    runtimeListOptions(wsId),
-  );
+  const { data: runtimes = [], isLoading: fetching } = useQuery(runtimeListOptions(wsId));
   const currentUserId = useAuthStore((s) => s.user?.id);
 
   const handleDaemonEvent = useCallback(() => {
@@ -172,8 +158,7 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
             <ResourceSurface
               className={cn(
                 "flex flex-col overflow-hidden",
-                (viewMode === "list" || filtered.length === 0) &&
-                  "min-h-[560px]",
+                (viewMode === "list" || filtered.length === 0) && "min-h-[560px]",
               )}
             >
               <CardToolbar
@@ -189,7 +174,12 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
                 total={scopedTotal}
               />
               {filtered.length === 0 ? (
-                <NoMatchesState search={search} healthFilter={healthFilter} scope={scope} bootstrapping={bootstrapping} />
+                <NoMatchesState
+                  search={search}
+                  healthFilter={healthFilter}
+                  scope={scope}
+                  bootstrapping={bootstrapping}
+                />
               ) : viewMode === "list" ? (
                 <RuntimeList
                   runtimes={filtered}
@@ -211,9 +201,7 @@ export function RuntimesPage({ topSlot, bootstrapping }: RuntimesPageProps = {})
         )}
       </ResourcePageBody>
 
-      {showConnectDialog && (
-        <ConnectRemoteDialog onClose={() => setShowConnectDialog(false)} />
-      )}
+      {showConnectDialog && <ConnectRemoteDialog onClose={() => setShowConnectDialog(false)} />}
     </div>
   );
 }
@@ -241,9 +229,7 @@ function PageHeaderBar({
         <span className={resourceHeaderIconClassName}>
           <Server className="h-3.5 w-3.5" />
         </span>
-        <h1 className="truncate text-2xl font-semibold tracking-tight">
-          {t(($) => $.page.title)}
-        </h1>
+        <h1 className="truncate text-2xl font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
         {totalCount > 0 && (
           <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
             {totalCount}
@@ -291,7 +277,6 @@ function PageHeaderBar({
 // pinning down a single non-obvious fact about the surface.
 // ---------------------------------------------------------------------------
 
-
 // ---------------------------------------------------------------------------
 // Card toolbar — search + scope toggle + live indicator. Skills puts its
 // search and filter buttons here; we follow the same convention so the card
@@ -334,9 +319,7 @@ function CardToolbar({
             </div>
           }
         />
-        <TooltipContent side="top">
-          {t(($) => $.page.live_tooltip)}
-        </TooltipContent>
+        <TooltipContent side="top">{t(($) => $.page.live_tooltip)}</TooltipContent>
       </Tooltip>
     </ResourceToolbarRow>
   );
@@ -390,10 +373,7 @@ function FilterChipsRow({
     <ResourceToolbarRow className="gap-2 py-2.5">
       {HEALTH_ORDER.map((key) => {
         const count = key === "all" ? total : healthCounts[key];
-        const label =
-          key === "all"
-            ? t(($) => $.page.filter_all)
-            : t(($) => $.health[key].label);
+        const label = key === "all" ? t(($) => $.page.filter_all) : t(($) => $.health[key].label);
         const description =
           key === "all"
             ? t(($) => $.page.filter_all_description)
@@ -447,13 +427,9 @@ function HealthChip({
                 : "rounded-full text-muted-foreground shadow-none"
             }
           >
-            {dotClass && (
-              <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />
-            )}
+            {dotClass && <span className={`h-1.5 w-1.5 rounded-full ${dotClass}`} />}
             <span>{label}</span>
-            <span className="font-mono tabular-nums text-muted-foreground/70">
-              {count}
-            </span>
+            <span className="font-mono tabular-nums text-muted-foreground/70">{count}</span>
           </Button>
         }
       />
@@ -475,15 +451,8 @@ function EmptyState({ onConnectRemote }: { onConnectRemote: () => void }) {
         <Server className="h-6 w-6 text-muted-foreground" />
       </div>
       <h2 className="mt-4 text-base font-semibold">{t(($) => $.page.empty.title)}</h2>
-      <p className="mt-1 max-w-md text-sm text-muted-foreground">
-        {t(($) => $.page.empty.hint)}
-      </p>
-      <Button
-        type="button"
-        size="sm"
-        onClick={onConnectRemote}
-        className="mt-5"
-      >
+      <p className="mt-1 max-w-md text-sm text-muted-foreground">{t(($) => $.page.empty.hint)}</p>
+      <Button type="button" size="sm" onClick={onConnectRemote} className="mt-5">
         <Plus className="h-3 w-3" />
         {t(($) => $.page.connect_remote)}
       </Button>
@@ -524,7 +493,8 @@ function NoMatchesState({
   const hasSearch = search.length > 0;
   const hasHealthFilter = healthFilter !== "all";
   const hasScope = scope === "mine";
-  const filterSuffix = hasHealthFilter || hasScope ? t(($) => $.page.no_matches.with_query_filter_suffix) : "";
+  const filterSuffix =
+    hasHealthFilter || hasScope ? t(($) => $.page.no_matches.with_query_filter_suffix) : "";
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center text-muted-foreground">

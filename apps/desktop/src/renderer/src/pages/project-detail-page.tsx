@@ -12,7 +12,11 @@ export function ProjectDetailPage() {
   const wsId = useWorkspaceId();
   const { data: project } = useQuery(projectDetailOptions(wsId, id!));
 
-  useDocumentTitle(project ? `${project.icon ? `${project.icon} ` : ""}${project.title}` : t(($) => $.routes.project));
+  useDocumentTitle(
+    project
+      ? `${project.icon ? `${project.icon} ` : ""}${project.title}`
+      : t(($) => $.routes.project),
+  );
 
   if (!id) return null;
   return <ProjectDetail projectId={id} />;

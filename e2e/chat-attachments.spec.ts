@@ -83,10 +83,9 @@ test.describe("Chat attachments", () => {
     api.setWorkspaceSlug(ws.slug);
     api.setWorkspaceId(ws.id);
 
-    const userRow = await pgc.query(
-      `SELECT id FROM "user" WHERE email = $1 LIMIT 1`,
-      ["e2e@multica.ai"],
-    );
+    const userRow = await pgc.query(`SELECT id FROM "user" WHERE email = $1 LIMIT 1`, [
+      "e2e@multica.ai",
+    ]);
     if (userRow.rows.length === 0) throw new Error("e2e user missing");
     const userId = userRow.rows[0].id as string;
 
@@ -123,8 +122,22 @@ test.describe("Chat attachments", () => {
 
     // 1. Upload a small PNG against the chat session.
     const pngBytes = Buffer.from([
-      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, // PNG signature
-      0x00, 0x00, 0x00, 0x0d, 0x49, 0x48, 0x44, 0x52, // IHDR
+      0x89,
+      0x50,
+      0x4e,
+      0x47,
+      0x0d,
+      0x0a,
+      0x1a,
+      0x0a, // PNG signature
+      0x00,
+      0x00,
+      0x00,
+      0x0d,
+      0x49,
+      0x48,
+      0x44,
+      0x52, // IHDR
     ]);
     const form = new FormData();
     form.append("file", new Blob([new Uint8Array(pngBytes)], { type: "image/png" }), "e2e.png");

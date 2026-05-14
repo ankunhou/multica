@@ -119,9 +119,7 @@ function CallbackContent() {
             <CardTitle className="text-2xl">
               {t(($) => $.web.desktop_handoff.opening_title)}
             </CardTitle>
-            <CardDescription>
-              {t(($) => $.web.desktop_handoff.opening_description)}
-            </CardDescription>
+            <CardDescription>{t(($) => $.web.desktop_handoff.opening_description)}</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <Button
@@ -143,9 +141,7 @@ function CallbackContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">
-              {t(($) => $.errors.login_failed_title)}
-            </CardTitle>
+            <CardTitle className="text-2xl">{t(($) => $.errors.login_failed_title)}</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -162,9 +158,7 @@ function CallbackContent() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">
-            {t(($) => $.web.callback.signing_in)}
-          </CardTitle>
+          <CardTitle className="text-2xl">{t(($) => $.web.callback.signing_in)}</CardTitle>
           <CardDescription>{t(($) => $.web.callback.signing_in_description)}</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">

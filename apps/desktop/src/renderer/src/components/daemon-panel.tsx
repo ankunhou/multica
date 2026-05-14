@@ -1,34 +1,12 @@
-import {
-  Fragment,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
-import {
-  ArrowDown,
-  Copy as CopyIcon,
-  Search,
-  Server,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ArrowDown, Copy as CopyIcon, Search, Server, Trash2, X } from "lucide-react";
 import { cn } from "@multica/ui/lib/utils";
 import { Button } from "@multica/ui/components/ui/button";
 import { useT } from "@multica/views/i18n";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
 import { toast } from "sonner";
 import type { DaemonStatus } from "../../../shared/daemon-types";
-import {
-  DAEMON_STATE_COLORS,
-  formatUptime,
-} from "../../../shared/daemon-types";
+import { DAEMON_STATE_COLORS, formatUptime } from "../../../shared/daemon-types";
 import { parseLogLine, type LogLevel, type ParsedLogLine } from "./parse-daemon-log";
 
 interface DaemonPanelProps {
@@ -56,12 +34,7 @@ type DisplayItem =
   | { kind: "line"; line: ParsedLogLine }
   | { kind: "group"; first: ParsedLogLine; rest: ParsedLogLine[] };
 
-export function DaemonPanel({
-  open,
-  onOpenChange,
-  status,
-  runtimeCount,
-}: DaemonPanelProps) {
+export function DaemonPanel({ open, onOpenChange, status, runtimeCount }: DaemonPanelProps) {
   const { t } = useT("desktop");
   const [logs, setLogs] = useState<ParsedLogLine[]>([]);
   const [search, setSearch] = useState("");
@@ -151,8 +124,7 @@ export function DaemonPanel({
         out.push({ kind: "line", line });
         continue;
       }
-      const lastMessage =
-        last.kind === "line" ? last.line.message : last.first.message;
+      const lastMessage = last.kind === "line" ? last.line.message : last.first.message;
       if (lastMessage && lastMessage === line.message) {
         if (last.kind === "line") {
           out[out.length - 1] = {
@@ -197,13 +169,14 @@ export function DaemonPanel({
     const text = filtered.map((l) => l.raw).join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      toast.success(
-        t(($) => $.daemon.logs.copied, { count: filtered.length }),
-      );
+      toast.success(t(($) => $.daemon.logs.copied, { count: filtered.length }));
     } catch (err) {
-      toast.error(t(($) => $.daemon.logs.copy_failed), {
-        description: err instanceof Error ? err.message : String(err),
-      });
+      toast.error(
+        t(($) => $.daemon.logs.copy_failed),
+        {
+          description: err instanceof Error ? err.message : String(err),
+        },
+      );
     }
   }, [filtered, t]);
 
@@ -395,40 +368,21 @@ export function DaemonPanel({
 
 // ---------- Sub-components ----------
 
-function ContextBadge({
-  status,
-  runtimeCount,
-}: {
-  status: DaemonStatus;
-  runtimeCount: number;
-}) {
+function ContextBadge({ status, runtimeCount }: { status: DaemonStatus; runtimeCount: number }) {
   const { t } = useT("desktop");
   const isRunning = status.state === "running";
   return (
     <span className="inline-flex items-center gap-1.5 rounded-md border bg-background px-1.5 py-0.5 text-xs font-normal">
-      <span
-        className={cn(
-          "size-1.5 rounded-full",
-          DAEMON_STATE_COLORS[status.state],
-        )}
-      />
-      <span
-        className={cn(
-          "tabular-nums",
-          isRunning ? "text-foreground" : "text-muted-foreground",
-        )}
-      >
+      <span className={cn("size-1.5 rounded-full", DAEMON_STATE_COLORS[status.state])} />
+      <span className={cn("tabular-nums", isRunning ? "text-foreground" : "text-muted-foreground")}>
         {t(($) => $.daemon.state[status.state])}
       </span>
       {isRunning && status.uptime && (
-        <span className="text-muted-foreground">
-          · {formatUptime(status.uptime)}
-        </span>
+        <span className="text-muted-foreground">· {formatUptime(status.uptime)}</span>
       )}
       {isRunning && runtimeCount > 0 && (
         <span className="text-muted-foreground">
-          ·{" "}
-          {t(($) => $.daemon.logs.runtime_count, { count: runtimeCount })}
+          · {t(($) => $.daemon.logs.runtime_count, { count: runtimeCount })}
         </span>
       )}
     </span>
@@ -462,12 +416,7 @@ function FilterChip({
       )}
     >
       {label}
-      <span
-        className={cn(
-          "tabular-nums",
-          active ? "text-current/80" : "text-muted-foreground/40",
-        )}
-      >
+      <span className={cn("tabular-nums", active ? "text-current/80" : "text-muted-foreground/40")}>
         {count}
       </span>
     </button>
@@ -519,18 +468,14 @@ function LogLineRow({
       )}
       onClick={hasFields ? onToggle : undefined}
     >
-      <span className="shrink-0 tabular-nums text-muted-foreground/60">
-        {line.timestamp}
-      </span>
+      <span className="shrink-0 tabular-nums text-muted-foreground/60">{line.timestamp}</span>
       <LevelBadge level={line.level} />
       <div className="min-w-0">
         <div className="flex min-w-0 items-baseline gap-2">
           <span className="break-words">{highlight(line.message, search)}</span>
           {hasFields && !expanded && (
             <span className="min-w-0 truncate text-muted-foreground/60">
-              {fieldEntries
-                .map(([k, v]) => `${k}=${truncateValue(v)}`)
-                .join("  ")}
+              {fieldEntries.map(([k, v]) => `${k}=${truncateValue(v)}`).join("  ")}
             </span>
           )}
         </div>
@@ -622,9 +567,7 @@ function GroupRows({
         className="my-0.5 ml-2 inline-flex w-fit items-center gap-2 rounded border border-dashed border-muted-foreground/25 px-2 py-0.5 text-[11px] italic text-muted-foreground/60 hover:text-foreground"
       >
         <span>···</span>
-        <span>
-          {t(($) => $.daemon.logs.hide_group, { count: rest.length + 1 })}
-        </span>
+        <span>{t(($) => $.daemon.logs.hide_group, { count: rest.length + 1 })}</span>
       </button>
     </>
   );

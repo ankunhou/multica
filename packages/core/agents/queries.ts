@@ -65,8 +65,7 @@ export function agentRunCounts30dOptions(wsId: string) {
 
 export const agentTasksKeys = {
   all: (wsId: string) => ["workspaces", wsId, "agent-tasks"] as const,
-  detail: (wsId: string, agentId: string) =>
-    [...agentTasksKeys.all(wsId), agentId] as const,
+  detail: (wsId: string, agentId: string) => [...agentTasksKeys.all(wsId), agentId] as const,
 };
 
 // All tasks for a single agent (the agent detail page consumer). Powers both

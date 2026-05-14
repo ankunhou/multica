@@ -2,7 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 import { projectKeys } from "./queries";
 import { useWorkspaceId } from "../hooks";
-import type { Project, CreateProjectRequest, UpdateProjectRequest, ListProjectsResponse } from "../types";
+import type {
+  Project,
+  CreateProjectRequest,
+  UpdateProjectRequest,
+  ListProjectsResponse,
+} from "../types";
 
 export function useCreateProject() {
   const qc = useQueryClient();
@@ -33,7 +38,9 @@ export function useUpdateProject() {
       const prevList = qc.getQueryData<ListProjectsResponse>(projectKeys.list(wsId));
       const prevDetail = qc.getQueryData<Project>(projectKeys.detail(wsId, id));
       qc.setQueryData<ListProjectsResponse>(projectKeys.list(wsId), (old) =>
-        old ? { ...old, projects: old.projects.map((p) => (p.id === id ? { ...p, ...data } : p)) } : old,
+        old
+          ? { ...old, projects: old.projects.map((p) => (p.id === id ? { ...p, ...data } : p)) }
+          : old,
       );
       qc.setQueryData<Project>(projectKeys.detail(wsId, id), (old) =>
         old ? { ...old, ...data } : old,
@@ -60,7 +67,9 @@ export function useDeleteProject() {
       await qc.cancelQueries({ queryKey: projectKeys.list(wsId) });
       const prevList = qc.getQueryData<ListProjectsResponse>(projectKeys.list(wsId));
       qc.setQueryData<ListProjectsResponse>(projectKeys.list(wsId), (old) =>
-        old ? { ...old, projects: old.projects.filter((p) => p.id !== id), total: old.total - 1 } : old,
+        old
+          ? { ...old, projects: old.projects.filter((p) => p.id !== id), total: old.total - 1 }
+          : old,
       );
       qc.removeQueries({ queryKey: projectKeys.detail(wsId, id) });
       return { prevList };

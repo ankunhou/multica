@@ -67,9 +67,7 @@ describe("CreateWorkspaceForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /create workspace/i }));
     await waitFor(() =>
-      expect(onSuccess).toHaveBeenCalledWith(
-        expect.objectContaining({ slug: "acme" }),
-      ),
+      expect(onSuccess).toHaveBeenCalledWith(expect.objectContaining({ slug: "acme" })),
     );
   });
 
@@ -82,9 +80,7 @@ describe("CreateWorkspaceForm", () => {
       target: { value: "Taken" },
     });
     fireEvent.click(screen.getByRole("button", { name: /create workspace/i }));
-    await waitFor(() =>
-      expect(screen.getByText(/already taken/i)).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText(/already taken/i)).toBeInTheDocument());
   });
 
   it("disables submit when slug has invalid format", () => {
@@ -95,9 +91,7 @@ describe("CreateWorkspaceForm", () => {
     fireEvent.change(screen.getByLabelText(/workspace url/i), {
       target: { value: "Invalid Slug!" },
     });
-    expect(
-      screen.getByRole("button", { name: /create workspace/i }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /create workspace/i })).toBeDisabled();
   });
 
   it("disables submit when slug is reserved", () => {
@@ -108,9 +102,7 @@ describe("CreateWorkspaceForm", () => {
     fireEvent.change(screen.getByLabelText(/workspace url/i), {
       target: { value: "admin" },
     });
-    expect(
-      screen.getByRole("button", { name: /create workspace/i }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: /create workspace/i })).toBeDisabled();
     expect(screen.getByText(/reserved and cannot be used/i)).toBeInTheDocument();
   });
 });

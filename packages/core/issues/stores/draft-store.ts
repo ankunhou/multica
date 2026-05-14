@@ -1,7 +1,10 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import type { IssueStatus, IssuePriority, IssueAssigneeType } from "../../types";
-import { createWorkspaceAwareStorage, registerForWorkspaceRehydration } from "../../platform/workspace-storage";
+import {
+  createWorkspaceAwareStorage,
+  registerForWorkspaceRehydration,
+} from "../../platform/workspace-storage";
 import { defaultStorage } from "../../platform/storage";
 
 interface IssueDraft {
@@ -43,8 +46,7 @@ export const useIssueDraftStore = create<IssueDraftStore>()(
       draft: { ...EMPTY_DRAFT },
       lastAssigneeType: undefined,
       lastAssigneeId: undefined,
-      setDraft: (patch) =>
-        set((s) => ({ draft: { ...s.draft, ...patch } })),
+      setDraft: (patch) => set((s) => ({ draft: { ...s.draft, ...patch } })),
       clearDraft: () =>
         set((s) => ({
           draft: {
@@ -53,8 +55,7 @@ export const useIssueDraftStore = create<IssueDraftStore>()(
             assigneeId: s.lastAssigneeId,
           },
         })),
-      setLastAssignee: (type, id) =>
-        set({ lastAssigneeType: type, lastAssigneeId: id }),
+      setLastAssignee: (type, id) => set({ lastAssigneeType: type, lastAssigneeId: id }),
       hasDraft: () => {
         const { draft } = get();
         return !!(draft.title || draft.description);

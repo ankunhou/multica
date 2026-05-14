@@ -2,11 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
-import {
-  captureDownloadIntent,
-  captureEvent,
-  setPersonProperties,
-} from "@multica/core/analytics";
+import { captureDownloadIntent, captureEvent, setPersonProperties } from "@multica/core/analytics";
 import { Button } from "@multica/ui/components/ui/button";
 import {
   Dialog,
@@ -177,11 +173,7 @@ export function StepPlatformFork({
           </div>
         </header>
 
-        <main
-          ref={mainRef}
-          style={fadeStyle}
-          className="min-h-0 flex-1 overflow-y-auto"
-        >
+        <main ref={mainRef} style={fadeStyle} className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
               {t(($) => $.step_platform.eyebrow)}
@@ -221,10 +213,7 @@ export function StepPlatformFork({
             for the CLI path is owned by the CLI dialog's own
             "Connect & continue" button; Skip is the self-serve exit. */}
         <footer className="flex shrink-0 items-center justify-between gap-4 bg-background px-6 py-4 sm:px-10 md:px-14 lg:px-16">
-          <span
-            aria-live="polite"
-            className="text-xs text-muted-foreground"
-          >
+          <span aria-live="polite" className="text-xs text-muted-foreground">
             {footerHint}
           </span>
           <Button variant="secondary" onClick={() => onNext(null)}>
@@ -271,13 +260,7 @@ export function StepPlatformFork({
 // Fork cards
 // ------------------------------------------------------------
 
-function ForkPrimary({
-  onClick,
-  downloaded,
-}: {
-  onClick: () => void;
-  downloaded: boolean;
-}) {
+function ForkPrimary({ onClick, downloaded }: { onClick: () => void; downloaded: boolean }) {
   const { t } = useT("onboarding");
   return (
     <button
@@ -333,16 +316,9 @@ function ForkAlt({
     <div className="flex items-center justify-between gap-4 rounded-lg border bg-card px-5 py-4">
       <div className="min-w-0">
         <div className="text-[14.5px] font-medium text-foreground">{title}</div>
-        <div className="mt-1 text-[12.5px] leading-[1.5] text-muted-foreground">
-          {subtitle}
-        </div>
+        <div className="mt-1 text-[12.5px] leading-[1.5] text-muted-foreground">{subtitle}</div>
       </div>
-      <Button
-        variant="outline"
-        size="sm"
-        className="shrink-0"
-        onClick={onAction}
-      >
+      <Button variant="outline" size="sm" className="shrink-0" onClick={onAction}>
         {actionLabel}
       </Button>
     </div>
@@ -389,9 +365,7 @@ function CliInstallDialog({
       <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[560px]">
         <DialogHeader>
           <DialogTitle>{t(($) => $.step_platform.cli_dialog_title)}</DialogTitle>
-          <DialogDescription>
-            {t(($) => $.step_platform.cli_dialog_description)}
-          </DialogDescription>
+          <DialogDescription>{t(($) => $.step_platform.cli_dialog_description)}</DialogDescription>
         </DialogHeader>
 
         <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pt-2">
@@ -506,13 +480,7 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
   //   parallels desktop StepRuntimeConnect's EmptyView — by that point
   //   it's worth pointing the user at Skip or Cloud waitlist).
   const stage: "normal" | "midway" | "slow" | "stalled" =
-    elapsed < 15
-      ? "normal"
-      : elapsed < 45
-        ? "midway"
-        : elapsed < 90
-          ? "slow"
-          : "stalled";
+    elapsed < 15 ? "normal" : elapsed < 45 ? "midway" : elapsed < 90 ? "slow" : "stalled";
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
@@ -532,10 +500,7 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
         </span>
       </div>
 
-      <p
-        aria-live="polite"
-        className="text-[12.5px] leading-[1.55] text-muted-foreground"
-      >
+      <p aria-live="polite" className="text-[12.5px] leading-[1.55] text-muted-foreground">
         {stage === "normal" && (
           <>
             {t(($) => $.step_platform.stage_normal_prefix)}
@@ -560,7 +525,9 @@ function CliWaitingStatus({ dialogOpen }: { dialogOpen: boolean }) {
         {stage === "stalled" && (
           <>
             {t(($) => $.step_platform.stage_stalled_prefix)}
-            <span className="font-medium text-foreground">{t(($) => $.step_platform.stage_stalled_term)}</span>
+            <span className="font-medium text-foreground">
+              {t(($) => $.step_platform.stage_stalled_term)}
+            </span>
             {t(($) => $.step_platform.stage_stalled_suffix)}
           </>
         )}
@@ -596,16 +563,11 @@ function CloudWaitlistDialog({
       <DialogContent className="flex max-h-[85vh] flex-col sm:max-w-[520px]">
         <DialogHeader>
           <DialogTitle>{t(($) => $.step_runtime.dialog_title)}</DialogTitle>
-          <DialogDescription>
-            {t(($) => $.step_runtime.dialog_description)}
-          </DialogDescription>
+          <DialogDescription>{t(($) => $.step_runtime.dialog_description)}</DialogDescription>
         </DialogHeader>
 
         <div className="min-h-0 flex-1 overflow-y-auto pt-2">
-          <CloudWaitlistExpand
-            submitted={submitted}
-            onSubmitted={onSubmitted}
-          />
+          <CloudWaitlistExpand submitted={submitted} onSubmitted={onSubmitted} />
         </div>
 
         <DialogFooter>

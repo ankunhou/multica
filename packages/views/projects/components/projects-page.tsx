@@ -5,10 +5,7 @@ import { Plus, FolderKanban, UserMinus, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { projectListOptions } from "@multica/core/projects/queries";
 import { useUpdateProject } from "@multica/core/projects/mutations";
-import {
-  PROJECT_STATUS_ORDER,
-  PROJECT_PRIORITY_ORDER,
-} from "@multica/core/projects/config";
+import { PROJECT_STATUS_ORDER, PROJECT_PRIORITY_ORDER } from "@multica/core/projects/config";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { useWorkspacePaths } from "@multica/core/paths";
 import { memberListOptions, agentListOptions } from "@multica/core/workspace/queries";
@@ -25,13 +22,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@multica/ui/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
-import type { Project, ProjectStatus, ProjectPriority, UpdateProjectRequest } from "@multica/core/types";
+import type {
+  Project,
+  ProjectStatus,
+  ProjectPriority,
+  UpdateProjectRequest,
+} from "@multica/core/types";
 import { PageHeader } from "../../layout/page-header";
 import {
   ResourcePageBody,
@@ -48,11 +46,7 @@ import { ProjectProgressMeter, getProjectProgressPercent } from "./project-progr
 import { ProjectStatusBadge, ProjectStatusDot } from "./project-status-badge";
 import { PROJECT_PRIORITY_VISUALS } from "./visuals";
 import { useT } from "../../i18n";
-import {
-  useProjectStatusLabels,
-  useProjectPriorityLabels,
-  useFormatRelativeDate,
-} from "./labels";
+import { useProjectStatusLabels, useProjectPriorityLabels, useFormatRelativeDate } from "./labels";
 
 const PROJECT_VIEW_MODE_STORAGE_KEY = "multica:projects:view-mode";
 
@@ -80,7 +74,9 @@ function ProjectPriorityControl({
             )}
           >
             <PriorityIcon priority={project.priority} />
-            <span className={cn("text-xs", priorityVisual.color)}>{priorityLabels[project.priority]}</span>
+            <span className={cn("text-xs", priorityVisual.color)}>
+              {priorityLabels[project.priority]}
+            </span>
           </button>
         }
       />
@@ -171,17 +167,41 @@ function ProjectLeadPicker({
   const [leadFilter, setLeadFilter] = useState("");
   const leadQuery = leadFilter.toLowerCase();
   const filteredMembers = members.filter((m) => m.name.toLowerCase().includes(leadQuery));
-  const filteredAgents = agents.filter((a) => !a.archived_at && a.name.toLowerCase().includes(leadQuery));
+  const filteredAgents = agents.filter(
+    (a) => !a.archived_at && a.name.toLowerCase().includes(leadQuery),
+  );
 
   return (
-    <Popover open={leadOpen} onOpenChange={(v) => { setLeadOpen(v); if (!v) setLeadFilter(""); }}>
+    <Popover
+      open={leadOpen}
+      onOpenChange={(v) => {
+        setLeadOpen(v);
+        if (!v) setLeadFilter("");
+      }}
+    >
       <PopoverTrigger
         render={
-          <button type="button" className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all hover:bg-background/80">
+          <button
+            type="button"
+            className="flex w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-all hover:bg-background/80"
+          >
             {project.lead_type && project.lead_id ? (
               <Tooltip>
-                <TooltipTrigger render={<span><ActorAvatar actorType={project.lead_type} actorId={project.lead_id} size={22} enableHoverCard /></span>} />
-                <TooltipContent side="bottom">{getActorName(project.lead_type, project.lead_id)}</TooltipContent>
+                <TooltipTrigger
+                  render={
+                    <span>
+                      <ActorAvatar
+                        actorType={project.lead_type}
+                        actorId={project.lead_id}
+                        size={22}
+                        enableHoverCard
+                      />
+                    </span>
+                  }
+                />
+                <TooltipContent side="bottom">
+                  {getActorName(project.lead_type, project.lead_id)}
+                </TooltipContent>
               </Tooltip>
             ) : (
               <span className="h-[22px] w-[22px] rounded-full border border-dashed border-muted-foreground/25 bg-muted/40" />
@@ -202,7 +222,10 @@ function ProjectLeadPicker({
         <div className="p-1 max-h-60 overflow-y-auto">
           <button
             type="button"
-            onClick={() => { onUpdate({ lead_type: null, lead_id: null }); setLeadOpen(false); }}
+            onClick={() => {
+              onUpdate({ lead_type: null, lead_id: null });
+              setLeadOpen(false);
+            }}
             className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
           >
             <UserMinus className="h-3.5 w-3.5 text-muted-foreground" />
@@ -210,12 +233,17 @@ function ProjectLeadPicker({
           </button>
           {filteredMembers.length > 0 && (
             <>
-              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.members_group)}</div>
+              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {t(($) => $.lead.members_group)}
+              </div>
               {filteredMembers.map((m) => (
                 <button
                   type="button"
                   key={m.user_id}
-                  onClick={() => { onUpdate({ lead_type: "member", lead_id: m.user_id }); setLeadOpen(false); }}
+                  onClick={() => {
+                    onUpdate({ lead_type: "member", lead_id: m.user_id });
+                    setLeadOpen(false);
+                  }}
                   className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
                 >
                   <ActorAvatar actorType="member" actorId={m.user_id} size={16} />
@@ -226,12 +254,17 @@ function ProjectLeadPicker({
           )}
           {filteredAgents.length > 0 && (
             <>
-              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">{t(($) => $.lead.agents_group)}</div>
+              <div className="px-2 pt-2 pb-1 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {t(($) => $.lead.agents_group)}
+              </div>
               {filteredAgents.map((a) => (
                 <button
                   type="button"
                   key={a.id}
-                  onClick={() => { onUpdate({ lead_type: "agent", lead_id: a.id }); setLeadOpen(false); }}
+                  onClick={() => {
+                    onUpdate({ lead_type: "agent", lead_id: a.id });
+                    setLeadOpen(false);
+                  }}
                   className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-accent transition-colors"
                 >
                   <ActorAvatar actorType="agent" actorId={a.id} size={16} showStatusDot />
@@ -241,7 +274,9 @@ function ProjectLeadPicker({
             </>
           )}
           {filteredMembers.length === 0 && filteredAgents.length === 0 && leadFilter && (
-            <div className="px-2 py-3 text-center text-sm text-muted-foreground">{t(($) => $.lead.no_results)}</div>
+            <div className="px-2 py-3 text-center text-sm text-muted-foreground">
+              {t(($) => $.lead.no_results)}
+            </div>
           )}
         </div>
       </PopoverContent>
@@ -358,7 +393,11 @@ function ProjectCard({ project }: { project: Project }) {
       </div>
 
       <ResourceInteractiveRegion className="mt-4 flex flex-wrap gap-2">
-        <ProjectPriorityControl project={project} onUpdate={handleUpdate} className="w-auto bg-muted/45 px-2.5" />
+        <ProjectPriorityControl
+          project={project}
+          onUpdate={handleUpdate}
+          className="w-auto bg-muted/45 px-2.5"
+        />
         <ProjectStatusControl project={project} onUpdate={handleUpdate} className="w-auto px-2.5" />
       </ResourceInteractiveRegion>
 
@@ -385,9 +424,7 @@ export function ProjectsPage() {
   const wsId = useWorkspaceId();
   const { data: projects = [], isLoading } = useQuery(projectListOptions(wsId));
   const openCreateProject = () => useModalStore.getState().open("create-project");
-  const [viewMode, setViewMode] = useResourceViewModePreference(
-    PROJECT_VIEW_MODE_STORAGE_KEY,
-  );
+  const [viewMode, setViewMode] = useResourceViewModePreference(PROJECT_VIEW_MODE_STORAGE_KEY);
 
   return (
     <div className="flex h-full flex-col">
@@ -397,9 +434,13 @@ export function ProjectsPage() {
           <span className={resourceHeaderIconClassName}>
             <FolderKanban className="h-3.5 w-3.5" />
           </span>
-          <h1 className="truncate text-2xl font-semibold tracking-tight">{t(($) => $.page.title)}</h1>
+          <h1 className="truncate text-2xl font-semibold tracking-tight">
+            {t(($) => $.page.title)}
+          </h1>
           {!isLoading && projects.length > 0 && (
-            <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">{projects.length}</span>
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums text-muted-foreground">
+              {projects.length}
+            </span>
           )}
         </div>
         <div className="flex shrink-0 items-center gap-2">
@@ -409,7 +450,12 @@ export function ProjectsPage() {
             listLabel={t(($) => $.page.view_list)}
             gridLabel={t(($) => $.page.view_grid)}
           />
-          <Button size="sm" variant="outline" className={resourceActionButtonClassName} onClick={openCreateProject}>
+          <Button
+            size="sm"
+            variant="outline"
+            className={resourceActionButtonClassName}
+            onClick={openCreateProject}
+          >
             <Plus className="h-3.5 w-3.5 mr-1" />
             {t(($) => $.page.new_project)}
           </Button>
@@ -441,36 +487,39 @@ export function ProjectsPage() {
               <FolderKanban className="h-5 w-5" />
             </span>
             <p className="text-sm text-foreground">{t(($) => $.page.empty)}</p>
-            <Button size="sm" variant="outline" className="mt-3 rounded-full" onClick={openCreateProject}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="mt-3 rounded-full"
+              onClick={openCreateProject}
+            >
               {t(($) => $.page.create_first)}
             </Button>
           </div>
-        ) : (
-          viewMode === "list" ? (
-            <ResourceSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
-              {/* Column headers */}
-              <div className="flex h-9 items-center gap-2 px-3 text-xs font-medium text-muted-foreground">
-                {/* Icon spacer + Name */}
-                <span className="shrink-0 w-[24px]" />
-                <span className="min-w-0 flex-1">{t(($) => $.table.name)}</span>
-                <span className="w-24 text-center shrink-0">{t(($) => $.table.priority)}</span>
-                <span className="w-28 text-center shrink-0">{t(($) => $.table.status)}</span>
-                <span className="w-24 text-center shrink-0">{t(($) => $.table.progress)}</span>
-                <span className="w-10 text-center shrink-0">{t(($) => $.table.lead)}</span>
-                <span className="w-20 text-right shrink-0">{t(($) => $.table.created)}</span>
-              </div>
-              {/* Rows */}
-              {projects.map((project) => (
-                <ProjectRow key={project.id} project={project} />
-              ))}
-            </ResourceSurface>
-          ) : (
-            <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {projects.map((project) => (
-                <ProjectCard key={project.id} project={project} />
-              ))}
+        ) : viewMode === "list" ? (
+          <ResourceSurface className="mx-auto w-full max-w-6xl overflow-hidden p-2">
+            {/* Column headers */}
+            <div className="flex h-9 items-center gap-2 px-3 text-xs font-medium text-muted-foreground">
+              {/* Icon spacer + Name */}
+              <span className="shrink-0 w-[24px]" />
+              <span className="min-w-0 flex-1">{t(($) => $.table.name)}</span>
+              <span className="w-24 text-center shrink-0">{t(($) => $.table.priority)}</span>
+              <span className="w-28 text-center shrink-0">{t(($) => $.table.status)}</span>
+              <span className="w-24 text-center shrink-0">{t(($) => $.table.progress)}</span>
+              <span className="w-10 text-center shrink-0">{t(($) => $.table.lead)}</span>
+              <span className="w-20 text-right shrink-0">{t(($) => $.table.created)}</span>
             </div>
-          )
+            {/* Rows */}
+            {projects.map((project) => (
+              <ProjectRow key={project.id} project={project} />
+            ))}
+          </ResourceSurface>
+        ) : (
+          <div className="mx-auto grid w-full max-w-7xl grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            {projects.map((project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </div>
         )}
       </ResourcePageBody>
     </div>

@@ -7,9 +7,9 @@ describe("decideVersionAction", () => {
   });
 
   it("returns not_running when status is not 'running'", () => {
-    expect(
-      decideVersionAction("v1.0.0", { status: "stopped", cli_version: "v1.0.0" }),
-    ).toBe("not_running");
+    expect(decideVersionAction("v1.0.0", { status: "stopped", cli_version: "v1.0.0" })).toBe(
+      "not_running",
+    );
   });
 
   it("returns ok when bundled version is unknown (fail safe)", () => {
@@ -75,14 +75,8 @@ describe("decideVersionAction", () => {
     const bundled = "v2.0.0";
     const base = { status: "running", cli_version: "v1.9.0" } as const;
 
-    expect(
-      decideVersionAction(bundled, { ...base, active_task_count: 3 }),
-    ).toBe("defer");
-    expect(
-      decideVersionAction(bundled, { ...base, active_task_count: 1 }),
-    ).toBe("defer");
-    expect(
-      decideVersionAction(bundled, { ...base, active_task_count: 0 }),
-    ).toBe("restart");
+    expect(decideVersionAction(bundled, { ...base, active_task_count: 3 })).toBe("defer");
+    expect(decideVersionAction(bundled, { ...base, active_task_count: 1 })).toBe("defer");
+    expect(decideVersionAction(bundled, { ...base, active_task_count: 0 })).toBe("restart");
   });
 });

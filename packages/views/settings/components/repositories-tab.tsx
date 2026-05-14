@@ -70,9 +70,7 @@ export function RepositoriesTab() {
 
         <Card>
           <CardContent className="space-y-3">
-            <p className="text-xs text-muted-foreground">
-              {t(($) => $.repositories.description)}
-            </p>
+            <p className="text-xs text-muted-foreground">{t(($) => $.repositories.description)}</p>
 
             {repos.map((repo, index) => (
               <div key={index} className="flex items-start gap-2">
@@ -103,11 +101,7 @@ export function RepositoriesTab() {
                   <Plus className="h-3 w-3" />
                   {t(($) => $.repositories.add)}
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={handleSave}
-                  disabled={saving}
-                >
+                <Button size="sm" onClick={handleSave} disabled={saving}>
                   <Save className="h-3 w-3" />
                   {saving ? t(($) => $.repositories.saving) : t(($) => $.repositories.save)}
                 </Button>

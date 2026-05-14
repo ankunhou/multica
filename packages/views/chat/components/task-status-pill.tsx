@@ -22,13 +22,7 @@ interface Stage {
   static?: boolean;
 }
 
-type StageKey =
-  | "offline"
-  | "reconnecting"
-  | "queued"
-  | "starting_up"
-  | "thinking"
-  | "typing";
+type StageKey = "offline" | "reconnecting" | "queued" | "starting_up" | "thinking" | "typing";
 
 type ToolKey =
   | "running_command"
@@ -61,16 +55,10 @@ function pickStageKeys(
   taskMessages: readonly TaskMessagePayload[],
   availability: AgentAvailability | undefined,
 ): { stageKey: StageKey; toolKey?: ToolKey; static?: boolean } {
-  if (
-    (status === "queued" || status === "dispatched") &&
-    availability === "offline"
-  ) {
+  if ((status === "queued" || status === "dispatched") && availability === "offline") {
     return { stageKey: "offline", static: true };
   }
-  if (
-    (status === "queued" || status === "dispatched") &&
-    availability === "unstable"
-  ) {
+  if ((status === "queued" || status === "dispatched") && availability === "unstable") {
     return { stageKey: "reconnecting" };
   }
   if (status === "queued") return { stageKey: "queued" };
@@ -119,11 +107,7 @@ function useResolveStage(): (
   };
 }
 
-export function TaskStatusPill({
-  pendingTask,
-  taskMessages,
-  availability,
-}: Props) {
+export function TaskStatusPill({ pendingTask, taskMessages, availability }: Props) {
   const resolveStage = useResolveStage();
   // Anchor: locked on first render. Once set we never reassign — otherwise
   // the timer would visibly snap backwards when an optimistic-seeded
@@ -158,13 +142,9 @@ export function TaskStatusPill({
       className="flex items-center gap-1.5 px-1 text-xs text-muted-foreground"
       aria-live="polite"
     >
-      {!stage.static && (
-        <UnicodeSpinner name="breathe" className="opacity-70" />
-      )}
+      {!stage.static && <UnicodeSpinner name="breathe" className="opacity-70" />}
       <span className="truncate">
-        <span className={cn(!stage.static && "animate-chat-text-shimmer")}>
-          {stage.label}
-        </span>
+        <span className={cn(!stage.static && "animate-chat-text-shimmer")}>{stage.label}</span>
         <span className="opacity-70"> · {formatElapsedSecs(elapsedSecs)}</span>
       </span>
     </div>

@@ -2,7 +2,11 @@
 
 import type { ReactNode } from "react";
 import { Users } from "lucide-react";
-import { HoverCard, HoverCardTrigger, HoverCardContent } from "@multica/ui/components/ui/hover-card";
+import {
+  HoverCard,
+  HoverCardTrigger,
+  HoverCardContent,
+} from "@multica/ui/components/ui/hover-card";
 import { ActorAvatar } from "./actor-avatar";
 
 interface MentionHoverCardProps {
@@ -61,9 +65,7 @@ function MentionHoverCard({
           />
           <div className="min-w-0">
             <p className="text-sm font-medium truncate">{name}</p>
-            {role && (
-              <p className="text-xs text-muted-foreground truncate">{role}</p>
-            )}
+            {role && <p className="text-xs text-muted-foreground truncate">{role}</p>}
           </div>
         </div>
       </HoverCardContent>

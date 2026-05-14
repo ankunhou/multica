@@ -15,11 +15,7 @@ import {
 } from "@multica/core/labels";
 import { LabelChip } from "../../../labels/label-chip";
 import { LabelsPanel } from "../labels-panel";
-import {
-  PropertyPicker,
-  PickerItem,
-  PickerEmpty,
-} from "./property-picker";
+import { PropertyPicker, PickerItem, PickerEmpty } from "./property-picker";
 import { useT } from "../../../i18n";
 
 interface LabelPickerProps {
@@ -36,8 +32,16 @@ interface LabelPickerProps {
  * and a color can still be changed afterwards from the Manage dialog.
  */
 const INLINE_COLORS = [
-  "#ef4444", "#f97316", "#eab308", "#22c55e", "#14b8a6",
-  "#3b82f6", "#6366f1", "#a855f7", "#ec4899", "#64748b",
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#3b82f6",
+  "#6366f1",
+  "#a855f7",
+  "#ec4899",
+  "#64748b",
 ] as const;
 
 function pickInlineColor(name: string): string {
@@ -90,10 +94,7 @@ export function LabelPicker({
   const detach = useDetachLabel(issueId);
   const create = useCreateLabel();
 
-  const attachedIds = useMemo(
-    () => new Set(attachedLabels.map((l) => l.id)),
-    [attachedLabels],
-  );
+  const attachedIds = useMemo(() => new Set(attachedLabels.map((l) => l.id)), [attachedLabels]);
 
   const query = filter.trim();
   const queryLower = query.toLowerCase();
@@ -159,17 +160,15 @@ export function LabelPicker({
           hasLabels ? (
             <>
               {attachedLabels.map((l) => (
-                <LabelChip
-                  key={l.id}
-                  label={l}
-                  onRemove={() => detach.mutate(l.id)}
-                />
+                <LabelChip key={l.id} label={l} onRemove={() => detach.mutate(l.id)} />
               ))}
             </>
           ) : (
             <>
               <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-muted-foreground">{t(($) => $.pickers.label.trigger_label)}</span>
+              <span className="text-muted-foreground">
+                {t(($) => $.pickers.label.trigger_label)}
+              </span>
             </>
           )
         }
@@ -189,11 +188,7 @@ export function LabelPicker({
         {filtered.map((label) => {
           const selected = attachedIds.has(label.id);
           return (
-            <PickerItem
-              key={label.id}
-              selected={selected}
-              onClick={() => toggle(label.id)}
-            >
+            <PickerItem key={label.id} selected={selected} onClick={() => toggle(label.id)}>
               <span
                 className="inline-block h-3 w-3 shrink-0 rounded-full"
                 style={{ backgroundColor: label.color }}
@@ -208,7 +203,8 @@ export function LabelPicker({
           <PickerItem selected={false} onClick={createAndAttach}>
             <Plus className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
             <span className="truncate">
-              {t(($) => $.pickers.label.create_action)} <span className="font-medium">&ldquo;{query}&rdquo;</span>
+              {t(($) => $.pickers.label.create_action)}{" "}
+              <span className="font-medium">&ldquo;{query}&rdquo;</span>
             </span>
             <span
               className="ml-auto inline-block h-3 w-3 shrink-0 rounded-full"
@@ -221,7 +217,9 @@ export function LabelPicker({
 
       <Dialog open={manageOpen} onOpenChange={setManageOpen}>
         <DialogContent className="max-w-2xl">
-          <DialogTitle className="text-lg font-semibold">{t(($) => $.pickers.label.manage_dialog_title)}</DialogTitle>
+          <DialogTitle className="text-lg font-semibold">
+            {t(($) => $.pickers.label.manage_dialog_title)}
+          </DialogTitle>
           <LabelsPanel />
         </DialogContent>
       </Dialog>

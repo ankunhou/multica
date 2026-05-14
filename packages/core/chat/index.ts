@@ -1,4 +1,11 @@
-export { createChatStore, CHAT_MIN_W, CHAT_MIN_H, CHAT_DEFAULT_W, CHAT_DEFAULT_H, DRAFT_NEW_SESSION } from "./store";
+export {
+  createChatStore,
+  CHAT_MIN_W,
+  CHAT_MIN_H,
+  CHAT_DEFAULT_W,
+  CHAT_DEFAULT_H,
+  DRAFT_NEW_SESSION,
+} from "./store";
 export type { ChatStoreOptions, ChatState, ChatTimelineItem, ContextAnchor } from "./store";
 
 import type { createChatStore as CreateChatStoreFn } from "./store";
@@ -24,10 +31,7 @@ export const useChatStore: ChatStoreInstance = new Proxy(
   (() => {}) as unknown as ChatStoreInstance,
   {
     apply(_target, _thisArg, args) {
-      if (!_store)
-        throw new Error(
-          "Chat store not initialised — call registerChatStore() first",
-        );
+      if (!_store) throw new Error("Chat store not initialised — call registerChatStore() first");
       return (_store as unknown as (...a: unknown[]) => unknown)(...args);
     },
     get(_target, prop) {

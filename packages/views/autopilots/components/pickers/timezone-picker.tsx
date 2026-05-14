@@ -3,10 +3,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { Check, ChevronDown, Globe } from "lucide-react";
 import { cn } from "@multica/ui/lib/utils";
-import {
-  PropertyPicker,
-  PickerEmpty,
-} from "../../../issues/components/pickers/property-picker";
+import { PropertyPicker, PickerEmpty } from "../../../issues/components/pickers/property-picker";
 import { useT } from "../../../i18n";
 
 export interface TimezonePickerProps {
@@ -55,9 +52,7 @@ type TimezoneCityKey = (typeof TIMEZONE_CITY_KEYS)[number];
 function cityKey(tz: string): TimezoneCityKey | null {
   if (tz === "UTC") return "UTC";
   const key = tz.split("/").pop() ?? "";
-  return TIMEZONE_CITY_KEYS.includes(key as TimezoneCityKey)
-    ? (key as TimezoneCityKey)
-    : null;
+  return TIMEZONE_CITY_KEYS.includes(key as TimezoneCityKey) ? (key as TimezoneCityKey) : null;
 }
 
 function fallbackCityLabel(tz: string): string {
@@ -76,10 +71,13 @@ export function TimezonePicker({
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("");
 
-  const getCityLabel = useCallback((tz: string) => {
-    const key = cityKey(tz);
-    return key ? t(($) => $.timezone_picker.cities[key]) : fallbackCityLabel(tz);
-  }, [t]);
+  const getCityLabel = useCallback(
+    (tz: string) => {
+      const key = cityKey(tz);
+      return key ? t(($) => $.timezone_picker.cities[key]) : fallbackCityLabel(tz);
+    },
+    [t],
+  );
 
   const selectedCity = getCityLabel(value);
   const selectedOffset = useMemo(() => offsetFor(value), [value]);
@@ -88,7 +86,8 @@ export function TimezonePicker({
   const filteredOptions = useMemo(() => {
     if (!query) return options;
     return options.filter((tz) => {
-      const haystack = `${tz} ${getCityLabel(tz)} ${fallbackCityLabel(tz)} ${offsetFor(tz)}`.toLowerCase();
+      const haystack =
+        `${tz} ${getCityLabel(tz)} ${fallbackCityLabel(tz)} ${offsetFor(tz)}`.toLowerCase();
       return haystack.includes(query);
     });
   }, [getCityLabel, options, query]);
@@ -150,15 +149,11 @@ export function TimezonePicker({
               className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent"
             >
               <span className="flex size-3.5 shrink-0 items-center justify-center">
-                {isSelected && (
-                  <Check className="size-3.5 text-foreground" />
-                )}
+                {isSelected && <Check className="size-3.5 text-foreground" />}
               </span>
               <span className="flex-1 truncate text-left">{getCityLabel(tz)}</span>
               {off && (
-                <span className="shrink-0 text-xs text-muted-foreground tabular-nums">
-                  {off}
-                </span>
+                <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{off}</span>
               )}
             </button>
           );

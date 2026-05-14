@@ -73,9 +73,7 @@ export function captureDownloadIntent(source: DownloadIntentSource): void {
  * via `$set_once` so every downstream event gains a platform dimension
  * without re-emitting.
  */
-export function captureDownloadPageViewed(
-  payload: DownloadDetectPayload,
-): void {
+export function captureDownloadPageViewed(payload: DownloadDetectPayload): void {
   captureEvent("download_page_viewed", {
     detected_os: payload.detected_os,
     detected_arch: payload.detected_arch,
@@ -95,9 +93,7 @@ export function captureDownloadPageViewed(
  * whether the click matched what we detected (miss = detect got it
  * wrong / user overrode).
  */
-export function captureDownloadInitiated(
-  payload: DownloadInitiatedPayload,
-): void {
+export function captureDownloadInitiated(payload: DownloadInitiatedPayload): void {
   captureEvent("download_initiated", { ...payload });
 }
 

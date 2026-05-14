@@ -54,14 +54,10 @@ export async function detectOS(): Promise<DetectResult> {
 
   // Modern Chromium: userAgentData with high-entropy values gives
   // both the platform name and CPU architecture unambiguously.
-  const uaData = (navigator as unknown as { userAgentData?: UserAgentDataLike })
-    .userAgentData;
+  const uaData = (navigator as unknown as { userAgentData?: UserAgentDataLike }).userAgentData;
   if (uaData?.getHighEntropyValues) {
     try {
-      const data = await uaData.getHighEntropyValues([
-        "platform",
-        "architecture",
-      ]);
+      const data = await uaData.getHighEntropyValues(["platform", "architecture"]);
       const os = normalizePlatform(data.platform);
       const arch = normalizeArch(data.architecture);
       return { os, arch, archConfident: arch !== "unknown" };
@@ -75,13 +71,14 @@ export async function detectOS(): Promise<DetectResult> {
   const ua = navigator.userAgent;
   const platform = navigator.platform || "";
 
-  const os: OSName = /Mac|iPhone|iPad|iPod/i.test(platform) || /Mac OS X/i.test(ua)
-    ? "mac"
-    : /Win/i.test(platform) || /Windows/i.test(ua)
-      ? "windows"
-      : /Linux/i.test(platform) || /Linux/i.test(ua)
-        ? "linux"
-        : "unknown";
+  const os: OSName =
+    /Mac|iPhone|iPad|iPod/i.test(platform) || /Mac OS X/i.test(ua)
+      ? "mac"
+      : /Win/i.test(platform) || /Windows/i.test(ua)
+        ? "windows"
+        : /Linux/i.test(platform) || /Linux/i.test(ua)
+          ? "linux"
+          : "unknown";
 
   let arch: Arch = "unknown";
   if (os === "mac") {

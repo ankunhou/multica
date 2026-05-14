@@ -43,9 +43,8 @@ const mockUseTheme = vi.hoisted(() =>
 );
 
 vi.mock("@tanstack/react-query", async () => {
-  const actual = await vi.importActual<typeof import("@tanstack/react-query")>(
-    "@tanstack/react-query",
-  );
+  const actual =
+    await vi.importActual<typeof import("@tanstack/react-query")>("@tanstack/react-query");
   return { ...actual, useQueryClient: () => ({ setQueryData: mockSetQueryData }) };
 });
 
@@ -127,16 +126,10 @@ describe("LoginPage", () => {
 
   it("renders email form with 'Sign in to Multica' title", () => {
     renderWithI18n(<LoginPage onSuccess={onSuccess} />);
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/enter your email to get a login code/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sign in to multica/i)).toBeInTheDocument();
+    expect(screen.getByText(/enter your email to get a login code/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /continue/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /continue/i })).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -202,9 +195,7 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
     expect(screen.getByText(/test@example.com/)).toBeInTheDocument();
   });
@@ -231,9 +222,7 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/failed to send code/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/failed to send code/i)).toBeInTheDocument();
     });
   });
 
@@ -255,19 +244,14 @@ describe("LoginPage", () => {
 
     // Step 2: code
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     const otpInput = getOTPInput();
     await user.type(otpInput, "123456");
 
     await waitFor(() => {
-      expect(mockVerifyCode).toHaveBeenCalledWith(
-        "test@example.com",
-        "123456",
-      );
+      expect(mockVerifyCode).toHaveBeenCalledWith("test@example.com", "123456");
       expect(mockApiListWorkspaces).toHaveBeenCalled();
       // The workspace list is seeded into React Query so onSuccess can read
       // it synchronously to compute a destination URL.
@@ -290,9 +274,7 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     const otpInput = getOTPInput();
@@ -317,9 +299,7 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     // After transitioning to code step, cooldown is 60s
@@ -388,16 +368,12 @@ describe("LoginPage", () => {
         google={{ clientId: "goog-123", redirectUri: "http://localhost/cb" }}
       />,
     );
-    expect(
-      screen.getByRole("button", { name: /continue with google/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /continue with google/i })).toBeInTheDocument();
   });
 
   it("hides Google OAuth button when google prop omitted", () => {
     renderWithI18n(<LoginPage onSuccess={onSuccess} />);
-    expect(
-      screen.queryByRole("button", { name: /continue with google/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /continue with google/i })).not.toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -407,13 +383,11 @@ describe("LoginPage", () => {
   it("shows cli_confirm step when existing session + cliCallback", async () => {
     localStorage.setItem("multica_token", "existing-jwt");
     // Cookie attempt fails first, then localStorage fallback succeeds
-    mockApiGetMe
-      .mockRejectedValueOnce(new Error("no cookie"))
-      .mockResolvedValueOnce({
-        id: "u-1",
-        email: "user@example.com",
-        name: "Test User",
-      });
+    mockApiGetMe.mockRejectedValueOnce(new Error("no cookie")).mockResolvedValueOnce({
+      id: "u-1",
+      email: "user@example.com",
+      name: "Test User",
+    });
 
     render(
       <LoginPage
@@ -423,29 +397,21 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/authorize cli/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
     });
     expect(screen.getByText(/user@example.com/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /authorize/i }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: /use a different account/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /authorize/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /use a different account/i })).toBeInTheDocument();
   });
 
   it("CLI authorize button redirects to callback URL", async () => {
     localStorage.setItem("multica_token", "existing-jwt");
     // Cookie attempt fails, localStorage fallback succeeds
-    mockApiGetMe
-      .mockRejectedValueOnce(new Error("no cookie"))
-      .mockResolvedValueOnce({
-        id: "u-1",
-        email: "user@example.com",
-        name: "Test User",
-      });
+    mockApiGetMe.mockRejectedValueOnce(new Error("no cookie")).mockResolvedValueOnce({
+      id: "u-1",
+      email: "user@example.com",
+      name: "Test User",
+    });
     const onTokenObtained = vi.fn();
 
     render(
@@ -457,9 +423,7 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/authorize cli/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
     });
 
     const user = userEvent.setup();
@@ -474,13 +438,11 @@ describe("LoginPage", () => {
   it("CLI authorize redirect includes the resolved web theme", async () => {
     mockUseTheme.mockReturnValue({ resolvedTheme: "dark", theme: "system" });
     localStorage.setItem("multica_token", "existing-jwt");
-    mockApiGetMe
-      .mockRejectedValueOnce(new Error("no cookie"))
-      .mockResolvedValueOnce({
-        id: "u-1",
-        email: "user@example.com",
-        name: "Test User",
-      });
+    mockApiGetMe.mockRejectedValueOnce(new Error("no cookie")).mockResolvedValueOnce({
+      id: "u-1",
+      email: "user@example.com",
+      name: "Test User",
+    });
 
     render(
       <LoginPage
@@ -504,13 +466,11 @@ describe("LoginPage", () => {
   it("'Use a different account' returns to email step", async () => {
     localStorage.setItem("multica_token", "existing-jwt");
     // Cookie attempt fails, localStorage fallback succeeds
-    mockApiGetMe
-      .mockRejectedValueOnce(new Error("no cookie"))
-      .mockResolvedValueOnce({
-        id: "u-1",
-        email: "user@example.com",
-        name: "Test User",
-      });
+    mockApiGetMe.mockRejectedValueOnce(new Error("no cookie")).mockResolvedValueOnce({
+      id: "u-1",
+      email: "user@example.com",
+      name: "Test User",
+    });
 
     render(
       <LoginPage
@@ -520,19 +480,13 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/authorize cli/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
     });
 
     const user = userEvent.setup();
-    await user.click(
-      screen.getByRole("button", { name: /use a different account/i }),
-    );
+    await user.click(screen.getByRole("button", { name: /use a different account/i }));
 
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sign in to multica/i)).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -616,19 +570,14 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     const otpInput = getOTPInput();
     await user.type(otpInput, "654321");
 
     await waitFor(() => {
-      expect(mockApiVerifyCode).toHaveBeenCalledWith(
-        "cli@example.com",
-        "654321",
-      );
+      expect(mockApiVerifyCode).toHaveBeenCalledWith("cli@example.com", "654321");
       expect(onTokenObtained).toHaveBeenCalled();
       expect(window.location.href).toContain(
         "http://localhost:9876/callback?token=new-jwt-token&state=xyz",
@@ -646,12 +595,7 @@ describe("LoginPage", () => {
   // -------------------------------------------------------------------------
 
   it("renders logo when provided", () => {
-    render(
-      <LoginPage
-        onSuccess={onSuccess}
-        logo={<div data-testid="custom-logo">Logo</div>}
-      />,
-    );
+    render(<LoginPage onSuccess={onSuccess} logo={<div data-testid="custom-logo">Logo</div>} />);
     expect(screen.getByTestId("custom-logo")).toBeInTheDocument();
   });
 
@@ -670,21 +614,14 @@ describe("LoginPage", () => {
     mockApiListWorkspaces.mockResolvedValueOnce([{ id: "ws-1" }]);
     const onTokenObtained = vi.fn();
 
-    render(
-      <LoginPage
-        onSuccess={onSuccess}
-        onTokenObtained={onTokenObtained}
-      />,
-    );
+    render(<LoginPage onSuccess={onSuccess} onTokenObtained={onTokenObtained} />);
 
     const user = userEvent.setup();
     await user.type(screen.getByLabelText(/email/i), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     const otpInput = getOTPInput();
@@ -709,18 +646,13 @@ describe("LoginPage", () => {
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/check your email/i),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /back/i }));
 
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/sign in to multica/i)).toBeInTheDocument();
   });
-
 });
 
 // ---------------------------------------------------------------------------

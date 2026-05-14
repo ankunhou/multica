@@ -26,9 +26,7 @@ export function DashboardLayout({
   return (
     <DashboardGuard
       loadingFallback={
-        <div className="flex h-svh items-center justify-center">
-          {loadingIndicator}
-        </div>
+        <div className="flex h-svh items-center justify-center">{loadingIndicator}</div>
       }
     >
       <SidebarProvider className="h-svh">

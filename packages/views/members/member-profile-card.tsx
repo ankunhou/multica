@@ -27,9 +27,7 @@ interface MemberProfileCardProps {
 export function MemberProfileCard({ userId }: MemberProfileCardProps) {
   const { t } = useT("members");
   const wsId = useWorkspaceId();
-  const { data: members = [], isLoading: membersLoading } = useQuery(
-    memberListOptions(wsId),
-  );
+  const { data: members = [], isLoading: membersLoading } = useQuery(memberListOptions(wsId));
   const { data: agents = [] } = useQuery(agentListOptions(wsId));
   const { data: runCounts = [] } = useQuery(agentRunCounts30dOptions(wsId));
 
@@ -48,9 +46,7 @@ export function MemberProfileCard({ userId }: MemberProfileCardProps) {
   }
 
   if (!member) {
-    return (
-      <div className="text-xs text-muted-foreground">{t(($) => $.card.unavailable)}</div>
-    );
+    return <div className="text-xs text-muted-foreground">{t(($) => $.card.unavailable)}</div>;
   }
 
   const initials = member.name
@@ -89,9 +85,7 @@ export function MemberProfileCard({ userId }: MemberProfileCardProps) {
             <p className="truncate text-sm font-semibold">{member.name}</p>
             <RoleBadge role={member.role} />
           </div>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">
-            {member.email}
-          </p>
+          <p className="mt-0.5 truncate text-xs text-muted-foreground">{member.email}</p>
         </div>
       </div>
 
@@ -128,7 +122,9 @@ function OwnedAgentsSection({ agents }: { agents: Agent[] }) {
 
   return (
     <div className="flex flex-col gap-1.5 text-xs">
-      <span className="text-muted-foreground">{t(($) => $.card.agents_section, { count: agents.length })}</span>
+      <span className="text-muted-foreground">
+        {t(($) => $.card.agents_section, { count: agents.length })}
+      </span>
       <div className="flex flex-col gap-0.5">
         {visible.map((a) => (
           <AppLink
@@ -146,9 +142,7 @@ function OwnedAgentsSection({ agents }: { agents: Agent[] }) {
             <div className="min-w-0 flex-1">
               <div className="truncate font-medium">{a.name}</div>
               {a.description && (
-                <div className="truncate text-muted-foreground">
-                  {a.description}
-                </div>
+                <div className="truncate text-muted-foreground">{a.description}</div>
               )}
             </div>
             <span

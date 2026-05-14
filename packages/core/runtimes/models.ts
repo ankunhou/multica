@@ -4,8 +4,7 @@ import type { RuntimeModelsResult } from "../types/agent";
 
 export const runtimeModelsKeys = {
   all: () => ["runtimes", "models"] as const,
-  forRuntime: (runtimeId: string) =>
-    [...runtimeModelsKeys.all(), runtimeId] as const,
+  forRuntime: (runtimeId: string) => [...runtimeModelsKeys.all(), runtimeId] as const,
 };
 
 const POLL_INTERVAL_MS = 500;
@@ -18,9 +17,7 @@ const POLL_TIMEOUT_MS = 30_000;
 // per-agent model selection entirely (hermes today) — the UI uses
 // this to disable its dropdown instead of accepting a value that
 // wouldn't be honoured at runtime.
-export async function resolveRuntimeModels(
-  runtimeId: string,
-): Promise<RuntimeModelsResult> {
+export async function resolveRuntimeModels(runtimeId: string): Promise<RuntimeModelsResult> {
   const initial = await api.initiateListModels(runtimeId);
   const start = Date.now();
   let current = initial;
@@ -39,9 +36,7 @@ export async function resolveRuntimeModels(
 
 export function runtimeModelsOptions(runtimeId: string | null | undefined) {
   return queryOptions({
-    queryKey: runtimeId
-      ? runtimeModelsKeys.forRuntime(runtimeId)
-      : runtimeModelsKeys.all(),
+    queryKey: runtimeId ? runtimeModelsKeys.forRuntime(runtimeId) : runtimeModelsKeys.all(),
     queryFn: () => resolveRuntimeModels(runtimeId as string),
     enabled: Boolean(runtimeId),
     // Models rarely change; cache for 60s to match the server-side

@@ -14,10 +14,7 @@ import type { WSEventType, StorageAdapter } from "../types";
 import type { ClientIdentity } from "../platform/types";
 import type { StoreApi, UseBoundStore } from "zustand";
 import type { AuthState } from "../auth/store";
-import {
-  getCurrentSlug,
-  subscribeToCurrentSlug,
-} from "../platform/workspace-storage";
+import { getCurrentSlug, subscribeToCurrentSlug } from "../platform/workspace-storage";
 import { createLogger } from "../logger";
 import { useRealtimeSync, type RealtimeSyncStores } from "./use-realtime-sync";
 
@@ -61,11 +58,7 @@ export function WSProvider({
   // the useEffect below tears down the old WS connection and opens a new one
   // bound to the new workspace slug. SSR snapshot is `null` because this
   // provider only renders client-side under CoreProvider.
-  const wsSlug = useSyncExternalStore(
-    subscribeToCurrentSlug,
-    getCurrentSlug,
-    () => null,
-  );
+  const wsSlug = useSyncExternalStore(subscribeToCurrentSlug, getCurrentSlug, () => null);
   const [wsClient, setWsClient] = useState<WSClient | null>(null);
 
   // Depend on identity primitives instead of the object reference so a parent
@@ -104,16 +97,7 @@ export function WSProvider({
       ws.disconnect();
       setWsClient(null);
     };
-  }, [
-    user,
-    wsSlug,
-    wsUrl,
-    storage,
-    cookieAuth,
-    identityPlatform,
-    identityVersion,
-    identityOS,
-  ]);
+  }, [user, wsSlug, wsUrl, storage, cookieAuth, identityPlatform, identityVersion, identityOS]);
 
   const stores: RealtimeSyncStores = { authStore };
 

@@ -36,9 +36,7 @@ const EMPTY_QUESTIONNAIRE: QuestionnaireAnswers = {
   use_case_other: null,
 };
 
-function mergeQuestionnaire(
-  raw: Record<string, unknown>,
-): QuestionnaireAnswers {
+function mergeQuestionnaire(raw: Record<string, unknown>): QuestionnaireAnswers {
   return { ...EMPTY_QUESTIONNAIRE, ...(raw as Partial<QuestionnaireAnswers>) };
 }
 
@@ -125,21 +123,16 @@ export function OnboardingFlow({
     try {
       await completeOnboarding("skip_existing", workspaces[0]?.id);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t(($) => $.errors.skip_failed),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.errors.skip_failed));
       return;
     }
     onComplete(workspaces[0] ?? undefined);
   }, [workspaces, onComplete]);
 
-  const handleQuestionnaireSubmit = useCallback(
-    async (answers: QuestionnaireAnswers) => {
-      await saveQuestionnaire(answers);
-      setStep("workspace");
-    },
-    [],
-  );
+  const handleQuestionnaireSubmit = useCallback(async (answers: QuestionnaireAnswers) => {
+    await saveQuestionnaire(answers);
+    setStep("workspace");
+  }, []);
 
   const handleWorkspaceCreated = useCallback((ws: Workspace) => {
     setWorkspace(ws);
@@ -203,12 +196,7 @@ export function OnboardingFlow({
   }
 
   if (step === "questionnaire") {
-    return (
-      <StepQuestionnaire
-        initial={storedQuestionnaire}
-        onSubmit={handleQuestionnaireSubmit}
-      />
-    );
+    return <StepQuestionnaire initial={storedQuestionnaire} onSubmit={handleQuestionnaireSubmit} />;
   }
 
   if (step === "workspace") {

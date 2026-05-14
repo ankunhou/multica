@@ -1,19 +1,7 @@
 import { app, ipcMain, BrowserWindow, shell } from "electron";
 import { execFile } from "child_process";
-import {
-  readFile,
-  writeFile,
-  mkdir,
-  rm,
-  open,
-  stat,
-} from "fs/promises";
-import {
-  existsSync,
-  watchFile,
-  unwatchFile,
-  type StatsListener,
-} from "fs";
+import { readFile, writeFile, mkdir, rm, open, stat } from "fs/promises";
+import { existsSync, watchFile, unwatchFile, type StatsListener } from "fs";
 import { join } from "path";
 import { homedir } from "os";
 import type { DaemonStatus, DaemonPrefs } from "../shared/daemon-types";
@@ -65,9 +53,7 @@ function healthPortForProfile(profile: string): number {
 }
 
 function profileDir(profile: string): string {
-  return profile
-    ? join(homedir(), ".multica", "profiles", profile)
-    : join(homedir(), ".multica");
+  return profile ? join(homedir(), ".multica", "profiles", profile) : join(homedir(), ".multica");
 }
 
 function profileConfigPath(profile: string): string {
@@ -96,10 +82,7 @@ async function readProfileUserId(profile: string): Promise<string | null> {
   }
 }
 
-async function writeProfileUserId(
-  profile: string,
-  userId: string,
-): Promise<void> {
+async function writeProfileUserId(profile: string, userId: string): Promise<void> {
   await mkdir(profileDir(profile), { recursive: true });
   await writeFile(profileUserIdPath(profile), userId, "utf-8");
 }
@@ -146,9 +129,7 @@ interface HealthPayload {
   workspaces?: unknown[];
 }
 
-async function fetchHealthAtPort(
-  port: number,
-): Promise<HealthPayload | null> {
+async function fetchHealthAtPort(port: number): Promise<HealthPayload | null> {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 2_000);
@@ -176,9 +157,7 @@ function deriveProfileName(targetUrl: string): string {
   }
 }
 
-async function readProfileConfig(
-  profile: string,
-): Promise<Record<string, unknown>> {
+async function readProfileConfig(profile: string): Promise<Record<string, unknown>> {
   try {
     const raw = await readFile(profileConfigPath(profile), "utf-8");
     const parsed = JSON.parse(raw);
@@ -188,17 +167,10 @@ async function readProfileConfig(
   }
 }
 
-async function writeProfileConfig(
-  profile: string,
-  cfg: Record<string, unknown>,
-): Promise<void> {
+async function writeProfileConfig(profile: string, cfg: Record<string, unknown>): Promise<void> {
   const op = async () => {
     await mkdir(profileDir(profile), { recursive: true });
-    await writeFile(
-      profileConfigPath(profile),
-      JSON.stringify(cfg, null, 2),
-      "utf-8",
-    );
+    await writeFile(profileConfigPath(profile), JSON.stringify(cfg, null, 2), "utf-8");
   };
   const next = configWriteChain.catch(() => {}).then(op);
   configWriteChain = next.catch(() => {});
@@ -273,11 +245,7 @@ async function fetchHealth(): Promise<DaemonStatus> {
 
   // Safety: if we have a target URL and the daemon on our port reports a
   // different server_url, it's not "our" daemon — drop it and re-resolve.
-  if (
-    targetApiBaseUrl &&
-    data.server_url &&
-    !urlsMatch(data.server_url, targetApiBaseUrl)
-  ) {
+  if (targetApiBaseUrl && data.server_url && !urlsMatch(data.server_url, targetApiBaseUrl)) {
     invalidateActiveProfile();
     return { state: "stopped" };
   }
@@ -289,9 +257,7 @@ async function fetchHealth(): Promise<DaemonStatus> {
     daemonId: data.daemon_id,
     deviceName: data.device_name,
     agents: data.agents ?? [],
-    workspaceCount: Array.isArray(data.workspaces)
-      ? data.workspaces.length
-      : 0,
+    workspaceCount: Array.isArray(data.workspaces) ? data.workspaces.length : 0,
     profile: active.name,
     serverUrl: data.server_url,
   };
@@ -299,9 +265,7 @@ async function fetchHealth(): Promise<DaemonStatus> {
 
 function findCliOnPath(): string | null {
   const candidates = process.platform === "win32" ? ["multica.exe"] : ["multica"];
-  const paths = (process.env["PATH"] ?? "").split(
-    process.platform === "win32" ? ";" : ":",
-  );
+  const paths = (process.env["PATH"] ?? "").split(process.platform === "win32" ? ";" : ":");
   if (process.platform === "darwin") {
     paths.push("/opt/homebrew/bin", "/usr/local/bin");
   }
@@ -338,15 +302,10 @@ async function probeCliBinary(
 ): Promise<string | null> {
   try {
     const stdout = await new Promise<string>((resolve, reject) => {
-      execFile(
-        bin,
-        ["version", "--output", "json"],
-        { timeout: 5_000 },
-        (err, out) => {
-          if (err) reject(err);
-          else resolve(out);
-        },
-      );
+      execFile(bin, ["version", "--output", "json"], { timeout: 5_000 }, (err, out) => {
+        if (err) reject(err);
+        else resolve(out);
+      });
     });
     const parsed = JSON.parse(stdout) as { version?: string };
     if (typeof parsed.version === "string" && parsed.version.length > 0) {
@@ -414,9 +373,7 @@ async function resolveCliBinary(): Promise<string | null> {
         cachedCliBinaryVersion = version;
         return installed;
       }
-      console.warn(
-        `[daemon] managed CLI at ${installed} failed validation after install`,
-      );
+      console.warn(`[daemon] managed CLI at ${installed} failed validation after install`);
     } catch (err) {
       console.warn("[daemon] CLI auto-install failed, falling back to PATH:", err);
     }
@@ -555,10 +512,7 @@ async function mintPat(jwt: string): Promise<string> {
  * - When we mint fresh and a daemon is already running, restart it so the
  *   new credentials take effect (the Go daemon reads config at startup).
  */
-async function syncToken(
-  tokenFromRenderer: string,
-  userId: string,
-): Promise<void> {
+async function syncToken(tokenFromRenderer: string, userId: string): Promise<void> {
   const active = await ensureActiveProfile();
   const config = await readProfileConfig(active.name);
   const previousUserId = await readProfileUserId(active.name);
@@ -577,9 +531,7 @@ async function syncToken(
   } else {
     try {
       finalToken = await mintPat(tokenFromRenderer);
-      console.log(
-        `[daemon] minted PAT for profile "${active.name}" (user_changed=${userChanged})`,
-      );
+      console.log(`[daemon] minted PAT for profile "${active.name}" (user_changed=${userChanged})`);
     } catch (err) {
       console.error("[daemon] failed to mint PAT:", err);
       throw err;
@@ -597,9 +549,7 @@ async function syncToken(
     try {
       const existing = await fetchHealthAtPort(active.port);
       if (existing?.status === "running") {
-        console.log(
-          "[daemon] user switched — restarting daemon with new credentials",
-        );
+        console.log("[daemon] user switched — restarting daemon with new credentials");
         void restartDaemon();
       }
     } catch (err) {
@@ -680,25 +630,20 @@ async function startDaemon(): Promise<{ success: boolean; error?: string }> {
   const args = ["daemon", "start", ...profileArgs(active)];
 
   return new Promise((resolve) => {
-    execFile(
-      bin,
-      args,
-      { timeout: 20_000, env: desktopSpawnEnv() },
-      (err) => {
-        if (err) {
-          currentState = "stopped";
-          startupDeadlineAt = null;
-          sendStatus({ state: "stopped" });
-          resolve({ success: false, error: err.message });
-          return;
-        }
-        // Stay in "starting" until pollOnce confirms /health — the CLI
-        // returning 0 only means the supervisor was spawned, not that the
-        // daemon process is already listening.
-        pollOnce();
-        resolve({ success: true });
-      },
-    );
+    execFile(bin, args, { timeout: 20_000, env: desktopSpawnEnv() }, (err) => {
+      if (err) {
+        currentState = "stopped";
+        startupDeadlineAt = null;
+        sendStatus({ state: "stopped" });
+        resolve({ success: false, error: err.message });
+        return;
+      }
+      // Stay in "starting" until pollOnce confirms /health — the CLI
+      // returning 0 only means the supervisor was spawned, not that the
+      // daemon process is already listening.
+      pollOnce();
+      resolve({ success: true });
+    });
   });
 }
 
@@ -778,11 +723,7 @@ const LOG_TAIL_INITIAL_WINDOW_BYTES = 32 * 1024;
 const LOG_TAIL_INITIAL_LINES = 200;
 const LOG_TAIL_POLL_MS = 500;
 
-async function readLogRange(
-  path: string,
-  startAt: number,
-  length: number,
-): Promise<string> {
+async function readLogRange(path: string, startAt: number, length: number): Promise<string> {
   const handle = await open(path, "r");
   try {
     const buffer = Buffer.alloc(length);
@@ -819,10 +760,7 @@ function startLogTail(win: BrowserWindow, retryCount = 0): void {
     let position = 0;
     try {
       const initialStats = await stat(logPath);
-      const windowBytes = Math.min(
-        initialStats.size,
-        LOG_TAIL_INITIAL_WINDOW_BYTES,
-      );
+      const windowBytes = Math.min(initialStats.size, LOG_TAIL_INITIAL_WINDOW_BYTES);
       const startAt = initialStats.size - windowBytes;
       if (windowBytes > 0) {
         const text = await readLogRange(logPath, startAt, windowBytes);
@@ -868,9 +806,7 @@ function stopLogTail(): void {
   }
 }
 
-export function setupDaemonManager(
-  windowGetter: () => BrowserWindow | null,
-): void {
+export function setupDaemonManager(windowGetter: () => BrowserWindow | null): void {
   getMainWindow = windowGetter;
 
   ipcMain.handle("daemon:set-target-api-url", async (_e, url: string) => {
@@ -886,9 +822,8 @@ export function setupDaemonManager(
   ipcMain.handle("daemon:stop", () => withGuard(() => stopDaemon()));
   ipcMain.handle("daemon:restart", () => withGuard(() => restartDaemon()));
   ipcMain.handle("daemon:get-status", () => fetchHealth());
-  ipcMain.handle(
-    "daemon:sync-token",
-    (_event, token: string, userId: string) => syncToken(token, userId),
+  ipcMain.handle("daemon:sync-token", (_event, token: string, userId: string) =>
+    syncToken(token, userId),
   );
   ipcMain.handle("daemon:clear-token", () => clearToken());
   ipcMain.handle("daemon:is-cli-installed", async () => {
@@ -904,13 +839,11 @@ export function setupDaemonManager(
     await bootstrapCli();
   });
   ipcMain.handle("daemon:get-prefs", () => loadPrefs());
-  ipcMain.handle(
-    "daemon:set-prefs",
-    (_event, prefs: Partial<DaemonPrefs>) =>
-      loadPrefs().then((cur) => {
-        const merged = { ...cur, ...prefs };
-        return savePrefs(merged).then(() => merged);
-      }),
+  ipcMain.handle("daemon:set-prefs", (_event, prefs: Partial<DaemonPrefs>) =>
+    loadPrefs().then((cur) => {
+      const merged = { ...cur, ...prefs };
+      return savePrefs(merged).then(() => merged);
+    }),
   );
   ipcMain.handle("daemon:auto-start", async () => {
     const prefs = await loadPrefs();

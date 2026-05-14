@@ -30,8 +30,7 @@ export function useResourceViewModePreference(
   storageKey: string,
   defaultMode: ResourceViewMode = "list",
 ) {
-  const [viewMode, setViewModeState] =
-    useState<ResourceViewMode>(defaultMode);
+  const [viewMode, setViewModeState] = useState<ResourceViewMode>(defaultMode);
 
   useEffect(() => {
     const stored = readViewModePreference(storageKey);

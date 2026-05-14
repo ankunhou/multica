@@ -1,7 +1,17 @@
 "use client";
 
 import { memo, useCallback, useRef, useState } from "react";
-import { CheckCircle2, ChevronRight, Copy, Download, FileText, MoreHorizontal, Pencil, RotateCcw, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronRight,
+  Copy,
+  Download,
+  FileText,
+  MoreHorizontal,
+  Pencil,
+  RotateCcw,
+  Trash2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Card } from "@multica/ui/components/ui/card";
 import { Button } from "@multica/ui/components/ui/button";
@@ -23,13 +33,25 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@multica/ui/components/ui/alert-dialog";
-import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@multica/ui/components/ui/collapsible";
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from "@multica/ui/components/ui/collapsible";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { ReactionBar } from "@multica/ui/components/common/reaction-bar";
 import { QuickEmojiPicker } from "@multica/ui/components/common/quick-emoji-picker";
 import { cn } from "@multica/ui/lib/utils";
 import { useActorName } from "@multica/core/workspace/hooks";
-import { ContentEditor, type ContentEditorRef, copyMarkdown, ReadonlyContent, useFileDropZone, FileDropOverlay, useDownloadAttachment } from "../../editor";
+import {
+  ContentEditor,
+  type ContentEditorRef,
+  copyMarkdown,
+  ReadonlyContent,
+  useFileDropZone,
+  FileDropOverlay,
+  useDownloadAttachment,
+} from "../../editor";
 import { FileUploadButton } from "@multica/ui/components/common/file-upload-button";
 import { useFileUpload } from "@multica/core/hooks/use-file-upload";
 import { api } from "@multica/core/api";
@@ -121,7 +143,15 @@ function DeleteCommentDialog({
 // Standalone attachment list — renders attachments not already in the markdown
 // ---------------------------------------------------------------------------
 
-function AttachmentList({ attachments, content, className }: { attachments?: Attachment[]; content?: string; className?: string }) {
+function AttachmentList({
+  attachments,
+  content,
+  className,
+}: {
+  attachments?: Attachment[];
+  content?: string;
+  className?: string;
+}) {
   const download = useDownloadAttachment();
   if (!attachments?.length) return null;
   // Skip attachments whose URL is already referenced in the markdown content,
@@ -262,7 +292,13 @@ function CommentRow({
   return (
     <div className={`py-3${isTemp ? " opacity-60" : ""}`}>
       <div className="flex items-center gap-2.5">
-        <ActorAvatar actorType={entry.actor_type} actorId={entry.actor_id} size={24} enableHoverCard showStatusDot />
+        <ActorAvatar
+          actorType={entry.actor_type}
+          actorId={entry.actor_id}
+          size={24}
+          enableHoverCard
+          showStatusDot
+        />
         <span className="cursor-pointer text-sm font-medium">
           {getActorName(entry.actor_type, entry.actor_id)}
         </span>
@@ -274,58 +310,58 @@ function CommentRow({
               </span>
             }
           />
-          <TooltipContent side="top">
-            {dateTime(entry.created_at)}
-          </TooltipContent>
+          <TooltipContent side="top">{dateTime(entry.created_at)}</TooltipContent>
         </Tooltip>
 
         {!isTemp && (
           <div className="ml-auto flex items-center gap-0.5">
-            <QuickEmojiPicker
-              onSelect={(emoji) => onToggleReaction(entry.id, emoji)}
-              align="end"
+            <QuickEmojiPicker onSelect={(emoji) => onToggleReaction(entry.id, emoji)} align="end" />
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    copyMarkdown(entry.content ?? "");
+                    toast.success(t(($) => $.comment.copied_toast));
+                  }}
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {t(($) => $.comment.copy_action)}
+                </DropdownMenuItem>
+                {(canEditEntry || canDeleteEntry) && (
+                  <>
+                    <DropdownMenuSeparator />
+                    {canEditEntry && (
+                      <DropdownMenuItem onClick={startEdit}>
+                        <Pencil className="h-3.5 w-3.5" />
+                        {t(($) => $.comment.edit_action)}
+                      </DropdownMenuItem>
+                    )}
+                    {canEditEntry && canDeleteEntry && <DropdownMenuSeparator />}
+                    {canDeleteEntry && (
+                      <DropdownMenuItem
+                        onClick={() => setConfirmDelete(true)}
+                        variant="destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        {t(($) => $.comment.delete_action)}
+                      </DropdownMenuItem>
+                    )}
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <DeleteCommentDialog
+              open={confirmDelete}
+              onOpenChange={setConfirmDelete}
+              onConfirm={() => onDelete(entry.id)}
             />
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => {
-                copyMarkdown(entry.content ?? "");
-                toast.success(t(($) => $.comment.copied_toast));
-              }}>
-                <Copy className="h-3.5 w-3.5" />
-                {t(($) => $.comment.copy_action)}
-              </DropdownMenuItem>
-              {(canEditEntry || canDeleteEntry) && (
-                <>
-                  <DropdownMenuSeparator />
-                  {canEditEntry && (
-                    <DropdownMenuItem onClick={startEdit}>
-                      <Pencil className="h-3.5 w-3.5" />
-                      {t(($) => $.comment.edit_action)}
-                    </DropdownMenuItem>
-                  )}
-                  {canEditEntry && canDeleteEntry && <DropdownMenuSeparator />}
-                  {canDeleteEntry && (
-                    <DropdownMenuItem onClick={() => setConfirmDelete(true)} variant="destructive">
-                      <Trash2 className="h-3.5 w-3.5" />
-                      {t(($) => $.comment.delete_action)}
-                    </DropdownMenuItem>
-                  )}
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DeleteCommentDialog
-            open={confirmDelete}
-            onOpenChange={setConfirmDelete}
-            onConfirm={() => onDelete(entry.id)}
-          />
           </div>
         )}
       </div>
@@ -334,7 +370,9 @@ function CommentRow({
         <div
           {...dropZoneProps}
           className="relative mt-1.5 pl-8"
-          onKeyDown={(e) => { if (e.key === "Escape") cancelEdit(); }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") cancelEdit();
+          }}
         >
           <div className="text-sm leading-relaxed">
             <ContentEditor
@@ -358,8 +396,12 @@ function CommentRow({
               onSelect={(file) => editEditorRef.current?.uploadFile(file)}
             />
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={cancelEdit}>{t(($) => $.comment.cancel_edit)}</Button>
-              <Button size="sm" variant="outline" onClick={saveEdit}>{t(($) => $.comment.save_action)}</Button>
+              <Button size="sm" variant="ghost" onClick={cancelEdit}>
+                {t(($) => $.comment.cancel_edit)}
+              </Button>
+              <Button size="sm" variant="outline" onClick={saveEdit}>
+                {t(($) => $.comment.save_action)}
+              </Button>
             </div>
           </div>
           {isDragOver && <FileDropOverlay />}
@@ -369,7 +411,11 @@ function CommentRow({
           <div className="mt-1.5 pl-8 text-sm leading-relaxed text-foreground/85">
             <ReadonlyContent content={entry.content ?? ""} attachments={entry.attachments} />
           </div>
-          <AttachmentList attachments={entry.attachments} content={entry.content} className="mt-1.5 pl-8" />
+          <AttachmentList
+            attachments={entry.attachments}
+            content={entry.content}
+            className="mt-1.5 pl-8"
+          />
           {!isTemp && (
             <ReactionBar
               reactions={reactions}
@@ -411,7 +457,10 @@ function CommentCardImpl({
   const isCollapsed = useCommentCollapseStore((s) => s.isCollapsed(issueId, entry.id));
   const toggleCollapse = useCommentCollapseStore((s) => s.toggle);
   const open = !isCollapsed;
-  const handleOpenChange = useCallback((_open: boolean) => toggleCollapse(issueId, entry.id), [toggleCollapse, issueId, entry.id]);
+  const handleOpenChange = useCallback(
+    (_open: boolean) => toggleCollapse(issueId, entry.id),
+    [toggleCollapse, issueId, entry.id],
+  );
   const [editing, setEditing] = useState(false);
   const editEditorRef = useRef<ContentEditorRef>(null);
   const cancelledRef = useRef(false);
@@ -484,7 +533,13 @@ function CommentCardImpl({
   const isHighlighted = highlightedCommentId === entry.id;
 
   return (
-    <Card className={cn("!py-0 !gap-0 overflow-hidden transition-colors duration-700", isTemp && "opacity-60", isHighlighted && "ring-2 ring-brand/50 bg-brand/5")}>
+    <Card
+      className={cn(
+        "!py-0 !gap-0 overflow-hidden transition-colors duration-700",
+        isTemp && "opacity-60",
+        isHighlighted && "ring-2 ring-brand/50 bg-brand/5",
+      )}
+    >
       {onCollapseResolved && (
         <button
           type="button"
@@ -504,9 +559,17 @@ function CommentCardImpl({
         <div className="px-4 py-3">
           <div className="flex items-center gap-2.5">
             <CollapsibleTrigger className="shrink-0 rounded p-0.5 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-              <ChevronRight className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-90")} />
+              <ChevronRight
+                className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-90")}
+              />
             </CollapsibleTrigger>
-            <ActorAvatar actorType={entry.actor_type} actorId={entry.actor_id} size={24} enableHoverCard showStatusDot />
+            <ActorAvatar
+              actorType={entry.actor_type}
+              actorId={entry.actor_id}
+              size={24}
+              enableHoverCard
+              showStatusDot
+            />
             <span className="shrink-0 cursor-pointer text-sm font-medium">
               {getActorName(entry.actor_type, entry.actor_id)}
             </span>
@@ -518,9 +581,7 @@ function CommentCardImpl({
                   </span>
                 }
               />
-              <TooltipContent side="top">
-                {dateTime(entry.created_at)}
-              </TooltipContent>
+              <TooltipContent side="top">{dateTime(entry.created_at)}</TooltipContent>
             </Tooltip>
 
             {!open && contentPreview && (
@@ -540,66 +601,73 @@ function CommentCardImpl({
                   onSelect={(emoji) => onToggleReaction(entry.id, emoji)}
                   align="end"
                 />
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  }
-                />
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => {
-                    copyMarkdown(entry.content ?? "");
-                    toast.success(t(($) => $.comment.copied_toast));
-                  }}>
-                    <Copy className="h-3.5 w-3.5" />
-                    {t(($) => $.comment.copy_action)}
-                  </DropdownMenuItem>
-                  {onResolveToggle && (
-                    <>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => onResolveToggle(entry.id, !entry.resolved_at)}>
-                        {entry.resolved_at ? (
-                          <>
-                            <RotateCcw className="h-3.5 w-3.5" />
-                            {t(($) => $.comment.resolve.unresolve_action)}
-                          </>
-                        ) : (
-                          <>
-                            <CheckCircle2 className="h-3.5 w-3.5" />
-                            {t(($) => $.comment.resolve.resolve_action)}
-                          </>
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button variant="ghost" size="icon-sm" className="text-muted-foreground">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    }
+                  />
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => {
+                        copyMarkdown(entry.content ?? "");
+                        toast.success(t(($) => $.comment.copied_toast));
+                      }}
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                      {t(($) => $.comment.copy_action)}
+                    </DropdownMenuItem>
+                    {onResolveToggle && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => onResolveToggle(entry.id, !entry.resolved_at)}
+                        >
+                          {entry.resolved_at ? (
+                            <>
+                              <RotateCcw className="h-3.5 w-3.5" />
+                              {t(($) => $.comment.resolve.unresolve_action)}
+                            </>
+                          ) : (
+                            <>
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                              {t(($) => $.comment.resolve.resolve_action)}
+                            </>
+                          )}
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                    {(canEditEntry || canDeleteEntry) && (
+                      <>
+                        <DropdownMenuSeparator />
+                        {canEditEntry && (
+                          <DropdownMenuItem onClick={startEdit}>
+                            <Pencil className="h-3.5 w-3.5" />
+                            {t(($) => $.comment.edit_action)}
+                          </DropdownMenuItem>
                         )}
-                      </DropdownMenuItem>
-                    </>
-                  )}
-                  {(canEditEntry || canDeleteEntry) && (
-                    <>
-                      <DropdownMenuSeparator />
-                      {canEditEntry && (
-                        <DropdownMenuItem onClick={startEdit}>
-                          <Pencil className="h-3.5 w-3.5" />
-                          {t(($) => $.comment.edit_action)}
-                        </DropdownMenuItem>
-                      )}
-                      {canEditEntry && canDeleteEntry && <DropdownMenuSeparator />}
-                      {canDeleteEntry && (
-                        <DropdownMenuItem onClick={() => setConfirmDelete(true)} variant="destructive">
-                          <Trash2 className="h-3.5 w-3.5" />
-                          {t(($) => $.comment.delete_action)}
-                        </DropdownMenuItem>
-                      )}
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DeleteCommentDialog
-                open={confirmDelete}
-                onOpenChange={setConfirmDelete}
-                onConfirm={() => onDelete(entry.id)}
-                hasReplies
-              />
+                        {canEditEntry && canDeleteEntry && <DropdownMenuSeparator />}
+                        {canDeleteEntry && (
+                          <DropdownMenuItem
+                            onClick={() => setConfirmDelete(true)}
+                            variant="destructive"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            {t(($) => $.comment.delete_action)}
+                          </DropdownMenuItem>
+                        )}
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DeleteCommentDialog
+                  open={confirmDelete}
+                  onOpenChange={setConfirmDelete}
+                  onConfirm={() => onDelete(entry.id)}
+                  hasReplies
+                />
               </div>
             )}
           </div>
@@ -613,7 +681,9 @@ function CommentCardImpl({
               <div
                 {...parentDropZoneProps}
                 className="relative pl-10"
-                onKeyDown={(e) => { if (e.key === "Escape") cancelEdit(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") cancelEdit();
+                }}
               >
                 <div className="text-sm leading-relaxed">
                   <ContentEditor
@@ -637,8 +707,12 @@ function CommentCardImpl({
                     onSelect={(file) => editEditorRef.current?.uploadFile(file)}
                   />
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="ghost" onClick={cancelEdit}>{t(($) => $.comment.cancel_edit)}</Button>
-                    <Button size="sm" variant="outline" onClick={saveEdit}>{t(($) => $.comment.save_action)}</Button>
+                    <Button size="sm" variant="ghost" onClick={cancelEdit}>
+                      {t(($) => $.comment.cancel_edit)}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={saveEdit}>
+                      {t(($) => $.comment.save_action)}
+                    </Button>
                   </div>
                 </div>
                 {parentDragOver && <FileDropOverlay />}
@@ -648,7 +722,11 @@ function CommentCardImpl({
                 <div className="pl-10 text-sm leading-relaxed text-foreground/85">
                   <ReadonlyContent content={entry.content ?? ""} attachments={entry.attachments} />
                 </div>
-                <AttachmentList attachments={entry.attachments} content={entry.content} className="mt-1.5 pl-10" />
+                <AttachmentList
+                  attachments={entry.attachments}
+                  content={entry.content}
+                  className="mt-1.5 pl-10"
+                />
                 {!isTemp && (
                   <ReactionBar
                     reactions={reactions}
@@ -665,7 +743,14 @@ function CommentCardImpl({
 
           {/* Replies */}
           {allNestedReplies.map((reply) => (
-            <div key={reply.id} id={`comment-${reply.id}`} className={cn("border-t border-border/50 px-4 transition-colors duration-700", highlightedCommentId === reply.id && "bg-brand/5")}>
+            <div
+              key={reply.id}
+              id={`comment-${reply.id}`}
+              className={cn(
+                "border-t border-border/50 px-4 transition-colors duration-700",
+                highlightedCommentId === reply.id && "bg-brand/5",
+              )}
+            >
               <CommentRow
                 issueId={issueId}
                 entry={reply}

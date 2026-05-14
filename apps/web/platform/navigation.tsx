@@ -2,16 +2,9 @@
 
 import { Suspense } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import {
-  NavigationProvider,
-  type NavigationAdapter,
-} from "@multica/views/navigation";
+import { NavigationProvider, type NavigationAdapter } from "@multica/views/navigation";
 
-function NavigationProviderInner({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+function NavigationProviderInner({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -29,11 +22,7 @@ function NavigationProviderInner({
   return <NavigationProvider value={adapter}>{children}</NavigationProvider>;
 }
 
-export function WebNavigationProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function WebNavigationProvider({ children }: { children: React.ReactNode }) {
   return (
     <Suspense>
       <NavigationProviderInner>{children}</NavigationProviderInner>

@@ -13,11 +13,7 @@
 
 import { deriveRuntimeHealth } from "../runtimes/derive-health";
 import type { Agent, AgentRuntime, AgentTask } from "../types";
-import type {
-  AgentAvailability,
-  AgentPresenceDetail,
-  Workload,
-} from "./types";
+import type { AgentAvailability, AgentPresenceDetail, Workload } from "./types";
 
 // AgentAvailability mirrors RuntimeHealth's reachability buckets but folds
 // `about_to_gc` into `offline` — both mean "long unreachable" from the
@@ -38,10 +34,7 @@ export function deriveAgentAvailability(
 // counts. Exported so Runtime-level views (which already aggregate counts
 // per-runtime in their own indices) can plug into the same vocabulary
 // without re-deriving from raw task arrays.
-export function deriveWorkload(counts: {
-  runningCount: number;
-  queuedCount: number;
-}): Workload {
+export function deriveWorkload(counts: { runningCount: number; queuedCount: number }): Workload {
   if (counts.runningCount > 0) return "working";
   if (counts.queuedCount > 0) return "queued";
   return "idle";

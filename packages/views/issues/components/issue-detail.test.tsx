@@ -60,7 +60,10 @@ vi.mock("@multica/core/workspace/hooks", () => ({
 vi.mock("@multica/core/workspace/queries", () => ({
   memberListOptions: () => ({
     queryKey: ["workspaces", "ws-1", "members"],
-    queryFn: () => Promise.resolve([{ user_id: "user-1", name: "Test User", email: "test@test.com", role: "admin" }]),
+    queryFn: () =>
+      Promise.resolve([
+        { user_id: "user-1", name: "Test User", email: "test@test.com", role: "admin" },
+      ]),
   }),
   agentListOptions: () => ({
     queryKey: ["workspaces", "ws-1", "agents"],
@@ -80,9 +83,7 @@ vi.mock("@multica/core/workspace/queries", () => ({
 // useCurrentWorkspace / useWorkspacePaths derive from the workspace slug in
 // URL Context. Tests don't mount a real route, so we short-circuit to fixtures.
 vi.mock("@multica/core/paths", async () => {
-  const actual = await vi.importActual<typeof import("@multica/core/paths")>(
-    "@multica/core/paths",
-  );
+  const actual = await vi.importActual<typeof import("@multica/core/paths")>("@multica/core/paths");
   return {
     ...actual,
     useCurrentWorkspace: () => ({ id: "ws-1", name: "Test WS", slug: "test" }),
@@ -124,7 +125,10 @@ vi.mock("../../editor", () => ({
     const [value, setValue] = useState(defaultValue || "");
     useImperativeHandle(ref, () => ({
       getMarkdown: () => valueRef.current,
-      clearContent: () => { valueRef.current = ""; setValue(""); },
+      clearContent: () => {
+        valueRef.current = "";
+        setValue("");
+      },
       focus: () => {},
       uploadFile: () => {},
     }));
@@ -205,7 +209,11 @@ const mockApiObj = vi.hoisted(() => ({
   listAttachments: vi.fn().mockResolvedValue([]),
   addCommentReaction: vi.fn(),
   removeCommentReaction: vi.fn(),
-  listMembers: vi.fn().mockResolvedValue([{ user_id: "user-1", name: "Test User", email: "test@test.com", role: "admin" }]),
+  listMembers: vi
+    .fn()
+    .mockResolvedValue([
+      { user_id: "user-1", name: "Test User", email: "test@test.com", role: "admin" },
+    ]),
   listAgents: vi.fn().mockResolvedValue([]),
 }));
 
@@ -223,19 +231,61 @@ vi.mock("@multica/core/issues/config", () => ({
   STATUS_CONFIG: {
     backlog: { label: "Backlog", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
     todo: { label: "Todo", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
-    in_progress: { label: "In Progress", iconColor: "text-warning", hoverBg: "hover:bg-warning/10" },
+    in_progress: {
+      label: "In Progress",
+      iconColor: "text-warning",
+      hoverBg: "hover:bg-warning/10",
+    },
     in_review: { label: "In Review", iconColor: "text-success", hoverBg: "hover:bg-success/10" },
     done: { label: "Done", iconColor: "text-info", hoverBg: "hover:bg-info/10" },
-    blocked: { label: "Blocked", iconColor: "text-destructive", hoverBg: "hover:bg-destructive/10" },
-    cancelled: { label: "Cancelled", iconColor: "text-muted-foreground", hoverBg: "hover:bg-accent" },
+    blocked: {
+      label: "Blocked",
+      iconColor: "text-destructive",
+      hoverBg: "hover:bg-destructive/10",
+    },
+    cancelled: {
+      label: "Cancelled",
+      iconColor: "text-muted-foreground",
+      hoverBg: "hover:bg-accent",
+    },
   },
   PRIORITY_ORDER: ["urgent", "high", "medium", "low", "none"],
   PRIORITY_CONFIG: {
-    urgent: { label: "Urgent", bars: 4, color: "text-destructive", badgeBg: "bg-destructive/10", badgeText: "text-destructive" },
-    high: { label: "High", bars: 3, color: "text-warning", badgeBg: "bg-warning/10", badgeText: "text-warning" },
-    medium: { label: "Medium", bars: 2, color: "text-warning", badgeBg: "bg-warning/10", badgeText: "text-warning" },
-    low: { label: "Low", bars: 1, color: "text-info", badgeBg: "bg-info/10", badgeText: "text-info" },
-    none: { label: "No priority", bars: 0, color: "text-muted-foreground", badgeBg: "bg-muted", badgeText: "text-muted-foreground" },
+    urgent: {
+      label: "Urgent",
+      bars: 4,
+      color: "text-destructive",
+      badgeBg: "bg-destructive/10",
+      badgeText: "text-destructive",
+    },
+    high: {
+      label: "High",
+      bars: 3,
+      color: "text-warning",
+      badgeBg: "bg-warning/10",
+      badgeText: "text-warning",
+    },
+    medium: {
+      label: "Medium",
+      bars: 2,
+      color: "text-warning",
+      badgeBg: "bg-warning/10",
+      badgeText: "text-warning",
+    },
+    low: {
+      label: "Low",
+      bars: 1,
+      color: "text-info",
+      badgeBg: "bg-info/10",
+      badgeText: "text-info",
+    },
+    none: {
+      label: "No priority",
+      bars: 0,
+      color: "text-muted-foreground",
+      badgeBg: "bg-muted",
+      badgeText: "text-muted-foreground",
+    },
   },
 }));
 
@@ -330,10 +380,7 @@ beforeEach(() => {
 
 // Mock modals
 vi.mock("@multica/core/modals", () => ({
-  useModalStore: Object.assign(
-    () => ({ open: vi.fn() }),
-    { getState: () => ({ open: vi.fn() }) },
-  ),
+  useModalStore: Object.assign(() => ({ open: vi.fn() }), { getState: () => ({ open: vi.fn() }) }),
 }));
 
 // Mock core/utils
@@ -343,7 +390,9 @@ vi.mock("@multica/core/utils", () => ({
 
 // Mock core/hooks/use-file-upload
 vi.mock("@multica/core/hooks/use-file-upload", () => ({
-  useFileUpload: () => ({ uploadWithToast: vi.fn().mockResolvedValue("https://example.com/file.png") }),
+  useFileUpload: () => ({
+    uploadWithToast: vi.fn().mockResolvedValue("https://example.com/file.png"),
+  }),
 }));
 
 // Mock realtime
@@ -362,11 +411,25 @@ vi.mock("sonner", () => ({
 
 // Mock react-resizable-panels (used by @multica/ui/components/ui/resizable)
 vi.mock("react-resizable-panels", () => ({
-  Group: ({ children, ...props }: any) => <div data-testid="panel-group" {...props}>{children}</div>,
-  Panel: ({ children, ...props }: any) => <div data-testid="panel" {...props}>{children}</div>,
-  Separator: ({ children, ...props }: any) => <div data-testid="panel-handle" {...props}>{children}</div>,
+  Group: ({ children, ...props }: any) => (
+    <div data-testid="panel-group" {...props}>
+      {children}
+    </div>
+  ),
+  Panel: ({ children, ...props }: any) => (
+    <div data-testid="panel" {...props}>
+      {children}
+    </div>
+  ),
+  Separator: ({ children, ...props }: any) => (
+    <div data-testid="panel-handle" {...props}>
+      {children}
+    </div>
+  ),
   useDefaultLayout: () => ({ defaultLayout: undefined, onLayoutChanged: vi.fn() }),
-  usePanelRef: () => ({ current: { isCollapsed: () => false, expand: vi.fn(), collapse: vi.fn() } }),
+  usePanelRef: () => ({
+    current: { isCollapsed: () => false, expand: vi.fn(), collapse: vi.fn() },
+  }),
 }));
 
 // ---------------------------------------------------------------------------
@@ -617,9 +680,7 @@ describe("IssueDetail (shared)", () => {
       // the mock unconditionally inline-renders every item, so this just
       // waits for the regular render pass.
       await waitFor(() => {
-        expect(
-          document.getElementById("comment-comment-2"),
-        ).not.toBeNull();
+        expect(document.getElementById("comment-comment-2")).not.toBeNull();
       });
 
       // The deep-link useLayoutEffect calls native scrollIntoView on the
@@ -627,9 +688,7 @@ describe("IssueDetail (shared)", () => {
       await waitFor(() => {
         expect(scrollIntoViewSpy).toHaveBeenCalled();
       });
-      expect(scrollIntoViewSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ block: "center" }),
-      );
+      expect(scrollIntoViewSpy).toHaveBeenCalledWith(expect.objectContaining({ block: "center" }));
     });
 
     it("still scrolls when the timeline is ready before the issue (regression for inbox click)", async () => {
@@ -646,17 +705,13 @@ describe("IssueDetail (shared)", () => {
 
       renderIssueDetailWithHighlight("comment-2", "issue-1", { seedTimeline: true });
 
-      expect(
-        document.getElementById("comment-comment-2"),
-      ).toBeNull();
+      expect(document.getElementById("comment-comment-2")).toBeNull();
       expect(scrollIntoViewSpy).not.toHaveBeenCalled();
 
       resolveIssue(mockIssue);
 
       await waitFor(() => {
-        expect(
-          document.getElementById("comment-comment-2"),
-        ).not.toBeNull();
+        expect(document.getElementById("comment-comment-2")).not.toBeNull();
       });
       await waitFor(() => {
         expect(scrollIntoViewSpy).toHaveBeenCalledWith(
@@ -711,9 +766,7 @@ describe("IssueDetail (shared)", () => {
       // After expansion, the reply must appear in the DOM (inside the now
       // -unfolded CommentCard) and the deep-link effect must scroll to it.
       await waitFor(() => {
-        expect(
-          document.getElementById("comment-reply-1"),
-        ).not.toBeNull();
+        expect(document.getElementById("comment-reply-1")).not.toBeNull();
       });
       await waitFor(() => {
         expect(scrollIntoViewSpy).toHaveBeenCalledWith(

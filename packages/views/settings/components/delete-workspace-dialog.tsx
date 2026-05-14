@@ -66,17 +66,13 @@ export function DeleteWorkspaceDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t(($) => $.delete_workspace_dialog.title)}</DialogTitle>
-          <DialogDescription>
-            {t(($) => $.delete_workspace_dialog.description)}
-          </DialogDescription>
+          <DialogDescription>{t(($) => $.delete_workspace_dialog.description)}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
           <Label htmlFor="delete-workspace-confirm" className="text-xs">
             {t(($) => $.delete_workspace_dialog.type_to_confirm_prefix)}{" "}
-            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
-              {workspaceName}
-            </code>{" "}
+            <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">{workspaceName}</code>{" "}
             {t(($) => $.delete_workspace_dialog.type_to_confirm_suffix)}
           </Label>
           <Input
@@ -115,7 +111,9 @@ export function DeleteWorkspaceDialog({
             onClick={submit}
             disabled={!matched || loading}
           >
-            {loading ? t(($) => $.delete_workspace_dialog.deleting) : t(($) => $.delete_workspace_dialog.confirm)}
+            {loading
+              ? t(($) => $.delete_workspace_dialog.deleting)
+              : t(($) => $.delete_workspace_dialog.confirm)}
           </Button>
         </DialogFooter>
       </DialogContent>

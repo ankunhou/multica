@@ -97,9 +97,7 @@ export function StepWelcome({
                 {t(($) => $.welcome.lede)}
               </p>
               <p className="text-sm leading-relaxed text-muted-foreground">
-                {isWeb
-                  ? t(($) => $.welcome.lede_web)
-                  : t(($) => $.welcome.lede_desktop)}
+                {isWeb ? t(($) => $.welcome.lede_web) : t(($) => $.welcome.lede_desktop)}
               </p>
             </div>
 
@@ -129,36 +127,21 @@ export function StepWelcome({
                     onClick={handleNext}
                     disabled={pending !== null}
                   >
-                    {pending === "next" && (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    )}
+                    {pending === "next" && <Loader2 className="h-4 w-4 animate-spin" />}
                     {t(($) => $.welcome.continue_on_web)}
                     <ArrowRight className="h-4 w-4" />
                   </Button>
                 </>
               ) : (
-                <Button
-                  size="lg"
-                  onClick={handleNext}
-                  disabled={pending !== null}
-                >
-                  {pending === "next" && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
+                <Button size="lg" onClick={handleNext} disabled={pending !== null}>
+                  {pending === "next" && <Loader2 className="h-4 w-4 animate-spin" />}
                   {t(($) => $.welcome.start_exploring)}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               )}
               {onSkip && (
-                <Button
-                  size="lg"
-                  variant="ghost"
-                  onClick={handleSkip}
-                  disabled={pending !== null}
-                >
-                  {pending === "skip" && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
+                <Button size="lg" variant="ghost" onClick={handleSkip} disabled={pending !== null}>
+                  {pending === "skip" && <Loader2 className="h-4 w-4 animate-spin" />}
                   {t(($) => $.welcome.skip_existing)}
                 </Button>
               )}
@@ -185,7 +168,6 @@ export function StepWelcome({
     </div>
   );
 }
-
 
 /**
  * A day in a solo user's multi-agent workspace. Five activity cards
@@ -319,18 +301,12 @@ function MockActivityCard({
       <div className="flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <MockAvatar actor={actor} />
-          <span className="truncate text-sm font-medium text-foreground">
-            {actor.name}
-          </span>
+          <span className="truncate text-sm font-medium text-foreground">{actor.name}</span>
         </div>
-        <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
-          {issueId}
-        </span>
+        <span className="shrink-0 font-mono text-[11px] text-muted-foreground">{issueId}</span>
       </div>
 
-      <p className="mt-2.5 text-sm leading-snug text-foreground/85">
-        {content}
-      </p>
+      <p className="mt-2.5 text-sm leading-snug text-foreground/85">{content}</p>
 
       {status && <StatusFooter status={status} timestamp={timestamp} />}
     </div>
@@ -369,15 +345,10 @@ function StatusFooter({
   const visual = ISSUE_STATUS_VISUALS[status];
   return (
     <div className="mt-3 flex items-center gap-2 text-xs">
-      <span
-        className={cn("flex items-center gap-1.5 font-medium", visual.iconColor)}
-      >
+      <span className={cn("flex items-center gap-1.5 font-medium", visual.iconColor)}>
         <StatusIcon
           status={status}
-          className={cn(
-            "h-3.5 w-3.5",
-            status === "in_progress" && "animate-pulse",
-          )}
+          className={cn("h-3.5 w-3.5", status === "in_progress" && "animate-pulse")}
         />
         {t(($) => $.welcome.illustration.status[status])}
       </span>

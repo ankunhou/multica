@@ -110,9 +110,9 @@ func TestJoinCloudWaitlistMissingEmailReturns400(t *testing.T) {
 	userID := newWaitlistTestUser(t, "waitlist-missing@multica.ai")
 
 	cases := []map[string]string{
-		{},                        // empty body
-		{"email": ""},             // blank
-		{"email": "   "},          // whitespace only
+		{},               // empty body
+		{"email": ""},    // blank
+		{"email": "   "}, // whitespace only
 		{"reason": "no email here"},
 	}
 

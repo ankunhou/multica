@@ -22,15 +22,11 @@ describe("normalizeGitVersion", () => {
   });
 
   it("preserves the prerelease suffix between tags", () => {
-    expect(normalizeGitVersion("v0.1.35-14-gf1415e96")).toBe(
-      "0.1.35-14-gf1415e96",
-    );
+    expect(normalizeGitVersion("v0.1.35-14-gf1415e96")).toBe("0.1.35-14-gf1415e96");
   });
 
   it("preserves the dirty suffix on a modified worktree", () => {
-    expect(normalizeGitVersion("v0.1.35-14-gf1415e96-dirty")).toBe(
-      "0.1.35-14-gf1415e96-dirty",
-    );
+    expect(normalizeGitVersion("v0.1.35-14-gf1415e96-dirty")).toBe("0.1.35-14-gf1415e96-dirty");
   });
 
   it("handles v-prefixed prerelease tags", () => {
@@ -49,7 +45,10 @@ describe("normalizeGitVersion", () => {
 describe("stripLeadingSeparator", () => {
   it("removes the leading -- inserted by npm/pnpm", () => {
     expect(stripLeadingSeparator(["--", "--mac", "--arm64", "--publish", "always"])).toEqual([
-      "--mac", "--arm64", "--publish", "always",
+      "--mac",
+      "--arm64",
+      "--publish",
+      "always",
     ]);
   });
 
@@ -58,9 +57,7 @@ describe("stripLeadingSeparator", () => {
   });
 
   it("does not strip a -- that appears mid-argv", () => {
-    expect(stripLeadingSeparator(["--mac", "--", "--arm64"])).toEqual([
-      "--mac", "--", "--arm64",
-    ]);
+    expect(stripLeadingSeparator(["--mac", "--", "--arm64"])).toEqual(["--mac", "--", "--arm64"]);
   });
 
   it("handles an empty array", () => {
@@ -71,12 +68,7 @@ describe("stripLeadingSeparator", () => {
 describe("parsePackageArgs", () => {
   it("collects per-platform targets and shared args", () => {
     expect(
-      parsePackageArgs([
-        "--win", "nsis",
-        "--mac", "dmg", "zip",
-        "--arm64",
-        "--publish", "never",
-      ]),
+      parsePackageArgs(["--win", "nsis", "--mac", "dmg", "zip", "--arm64", "--publish", "never"]),
     ).toEqual({
       allPlatforms: false,
       sharedArgs: ["--publish", "never"],
@@ -91,10 +83,7 @@ describe("parsePackageArgs", () => {
   });
 
   it("expands combined short flags", () => {
-    expect(parsePackageArgs(["-mw", "--x64"]).requestedPlatforms).toEqual([
-      "mac",
-      "win",
-    ]);
+    expect(parsePackageArgs(["-mw", "--x64"]).requestedPlatforms).toEqual(["mac", "win"]);
   });
 
   it("tracks the all-platforms shortcut", () => {
@@ -264,10 +253,6 @@ describe("envWithLocalBins", () => {
       desktopRoot,
     );
     expect(result).not.toHaveProperty("PATH");
-    expect(result.Path.split(delimiter)).toEqual([
-      desktopBin,
-      workspaceBin,
-      "runner-bin",
-    ]);
+    expect(result.Path.split(delimiter)).toEqual([desktopBin, workspaceBin, "runner-bin"]);
   });
 });

@@ -69,13 +69,8 @@ export const ListRow = memo(function ListRow({
             }`}
           />
         </div>
-        <AppLink
-          href={p.issueDetail(issue.id)}
-          className="flex flex-1 items-center gap-2 min-w-0"
-        >
-          <span className="w-16 shrink-0 text-xs text-muted-foreground">
-            {issue.identifier}
-          </span>
+        <AppLink href={p.issueDetail(issue.id)} className="flex flex-1 items-center gap-2 min-w-0">
+          <span className="w-16 shrink-0 text-xs text-muted-foreground">{issue.identifier}</span>
           <span className="flex min-w-0 flex-1 items-center gap-1.5">
             <span className="truncate">{issue.title}</span>
             {showChildProgress && (
@@ -92,9 +87,7 @@ export const ListRow = memo(function ListRow({
                   <LabelChip key={label.id} label={label} />
                 ))}
                 {labels.length > 3 && (
-                  <span className="text-[11px] text-muted-foreground">
-                    +{labels.length - 3}
-                  </span>
+                  <span className="text-[11px] text-muted-foreground">+{labels.length - 3}</span>
                 )}
               </span>
             )}

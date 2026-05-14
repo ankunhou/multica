@@ -5,10 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { agentListOptions } from "../workspace/queries";
 import { runtimeListOptions } from "../runtimes/queries";
 import { agentTaskSnapshotOptions } from "./queries";
-import {
-  buildPresenceMap,
-  deriveAgentPresenceDetail,
-} from "./derive-presence";
+import { buildPresenceMap, deriveAgentPresenceDetail } from "./derive-presence";
 import type { AgentPresenceDetail } from "./types";
 
 // 30s tick, mirroring useRuntimeHealth. Presence depends on wall-clock time
@@ -50,15 +47,27 @@ export function useWorkspacePresenceMap(wsId: string | undefined): {
   byAgent: Map<string, AgentPresenceDetail>;
   loading: boolean;
 } {
-  const { data: agents, isPending: agentsPending, isError: agentsErr } = useQuery({
+  const {
+    data: agents,
+    isPending: agentsPending,
+    isError: agentsErr,
+  } = useQuery({
     ...agentListOptions(wsId ?? ""),
     enabled: !!wsId,
   });
-  const { data: runtimes, isPending: runtimesPending, isError: runtimesErr } = useQuery({
+  const {
+    data: runtimes,
+    isPending: runtimesPending,
+    isError: runtimesErr,
+  } = useQuery({
     ...runtimeListOptions(wsId ?? ""),
     enabled: !!wsId,
   });
-  const { data: snapshot, isPending: snapshotPending, isError: snapshotErr } = useQuery({
+  const {
+    data: snapshot,
+    isPending: snapshotPending,
+    isError: snapshotErr,
+  } = useQuery({
     ...agentTaskSnapshotOptions(wsId ?? ""),
     enabled: !!wsId,
   });

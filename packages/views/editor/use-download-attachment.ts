@@ -65,9 +65,8 @@ export function useDownloadAttachment(): (attachmentId: string) => Promise<void>
       // `window.open` here returns a WindowProxy because we deliberately
       // omit `noopener`; we revoke the back-channel ourselves once we have
       // the real URL.
-      const placeholder = typeof window !== "undefined"
-        ? window.open("about:blank", "_blank")
-        : null;
+      const placeholder =
+        typeof window !== "undefined" ? window.open("about:blank", "_blank") : null;
       try {
         const fresh = await api.getAttachment(attachmentId);
         if (!fresh.download_url) {

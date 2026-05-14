@@ -17,10 +17,7 @@
  */
 
 import { isValidElement, memo, useCallback, useMemo, useRef, useState } from "react";
-import ReactMarkdown, {
-  defaultUrlTransform,
-  type Components,
-} from "react-markdown";
+import ReactMarkdown, { defaultUrlTransform, type Components } from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
@@ -66,22 +63,14 @@ const sanitizeSchema = {
   },
   attributes: {
     ...defaultSchema.attributes,
-    div: [
-      ...(defaultSchema.attributes?.div ?? []),
-      "dataType",
-      "dataHref",
-      "dataFilename",
-    ],
+    div: [...(defaultSchema.attributes?.div ?? []), "dataType", "dataHref", "dataFilename"],
     code: [
       ...(defaultSchema.attributes?.code ?? []),
       ["className", /^language-/],
       ["className", /^math-/],
       ["className", /^hljs/],
     ],
-    img: [
-      ...(defaultSchema.attributes?.img ?? []),
-      "alt",
-    ],
+    img: [...(defaultSchema.attributes?.img ?? []), "alt"],
   },
 };
 
@@ -125,13 +114,7 @@ function IssueMentionLink({ issueId, label }: { issueId: string; label?: string 
 // Named component so it can call useWorkspaceSlug() — arrow function inlined
 // inside `components` below would still work, but extracting it keeps the
 // hook usage explicit and avoids hook-in-object-literal surprises.
-function ReadonlyLink({
-  href,
-  children,
-}: {
-  href?: string;
-  children?: React.ReactNode;
-}) {
+function ReadonlyLink({ href, children }: { href?: string; children?: React.ReactNode }) {
   const slug = useWorkspaceSlug();
 
   if (isMentionHref(href)) {
@@ -225,9 +208,7 @@ function ReadonlyImage({
           </button>
         </span>
       </span>
-      {lightbox && (
-        <ImageLightbox src={imgSrc} alt={imgAlt} onClose={() => setLightbox(false)} />
-      )}
+      {lightbox && <ImageLightbox src={imgSrc} alt={imgAlt} onClose={() => setLightbox(false)} />}
     </span>
   );
 }
@@ -322,9 +303,7 @@ function buildComponents(
     // Code — lowlight highlighting for blocks, plain render for inline
     code: ({ className, children, node, ...props }) => {
       const lang = /language-(\w+)/.exec(className || "")?.[1];
-      const isBlock =
-        node?.position &&
-        node.position.start.line !== node.position.end.line;
+      const isBlock = node?.position && node.position.start.line !== node.position.end.line;
 
       if (isBlock && lang === "mermaid") {
         return <MermaidDiagram chart={String(children).replace(/\n$/, "")} />;
@@ -338,9 +317,7 @@ function buildComponents(
       // Block code — highlight with lowlight, output hljs classes
       const code = String(children).replace(/\n$/, "");
       try {
-        const tree = lang
-          ? lowlight.highlight(lang, code)
-          : lowlight.highlightAuto(code);
+        const tree = lang ? lowlight.highlight(lang, code) : lowlight.highlightAuto(code);
         return (
           <code
             className={cn("hljs", lang && `language-${lang}`)}

@@ -18,7 +18,12 @@ import {
 } from "@multica/ui/components/ui/alert-dialog";
 import { toast } from "sonner";
 import { useWorkspaceId } from "@multica/core/hooks";
-import { labelListOptions, useCreateLabel, useUpdateLabel, useDeleteLabel } from "@multica/core/labels";
+import {
+  labelListOptions,
+  useCreateLabel,
+  useUpdateLabel,
+  useDeleteLabel,
+} from "@multica/core/labels";
 import type { Label } from "@multica/core/types";
 import { isImeComposing } from "@multica/core/utils";
 import { LabelChip } from "../../labels/label-chip";
@@ -104,9 +109,7 @@ export function LabelsPanel() {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-muted-foreground">
-        {t(($) => $.labels_panel.intro)}
-      </p>
+      <p className="text-sm text-muted-foreground">{t(($) => $.labels_panel.intro)}</p>
 
       {/* Create form — color swatch, name, Add button all in one row */}
       <div className="flex items-center gap-2">
@@ -132,7 +135,9 @@ export function LabelsPanel() {
 
       {/* List — scrolls when labels exceed viewport */}
       <div className="space-y-2 max-h-[50vh] overflow-y-auto">
-        {isLoading && <p className="text-sm text-muted-foreground">{t(($) => $.labels_panel.loading)}</p>}
+        {isLoading && (
+          <p className="text-sm text-muted-foreground">{t(($) => $.labels_panel.loading)}</p>
+        )}
         {!isLoading && labels.length === 0 && (
           <p className="text-sm text-muted-foreground">{t(($) => $.labels_panel.empty)}</p>
         )}
@@ -140,10 +145,7 @@ export function LabelsPanel() {
           const isEditing = editingId === label.id;
           const editNameEmpty = isEditing && !editName.trim();
           return (
-            <div
-              key={label.id}
-              className="rounded-md border bg-card px-3 py-2"
-            >
+            <div key={label.id} className="rounded-md border bg-card px-3 py-2">
               <div className="flex items-center gap-3">
                 {isEditing ? (
                   <>
@@ -167,11 +169,7 @@ export function LabelsPanel() {
                       aria-invalid={editNameEmpty}
                       aria-describedby={editError ? `label-edit-error-${label.id}` : undefined}
                     />
-                    <ColorPalette
-                      value={editColor}
-                      onChange={setEditColor}
-                      compact
-                    />
+                    <ColorPalette value={editColor} onChange={setEditColor} compact />
                     <Button
                       size="sm"
                       variant="ghost"
@@ -181,7 +179,12 @@ export function LabelsPanel() {
                     >
                       <Check className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={cancelEdit} aria-label={t(($) => $.labels_panel.cancel_aria)}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={cancelEdit}
+                      aria-label={t(($) => $.labels_panel.cancel_aria)}
+                    >
                       <X className="h-4 w-4" />
                     </Button>
                   </>
@@ -191,9 +194,7 @@ export function LabelsPanel() {
                         pushing the hex/buttons off the right edge. */}
                     <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
                       <LabelChip label={label} fullName />
-                      <span className="text-xs text-muted-foreground">
-                        {label.color}
-                      </span>
+                      <span className="text-xs text-muted-foreground">{label.color}</span>
                     </div>
                     <Button
                       size="sm"
@@ -233,7 +234,9 @@ export function LabelsPanel() {
           <AlertDialogHeader>
             <AlertDialogTitle>{t(($) => $.labels_panel.delete_dialog_title)}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t(($) => $.labels_panel.delete_dialog_desc_prefix)}<strong>{pendingDeletion?.name}</strong>{t(($) => $.labels_panel.delete_dialog_desc_suffix)}
+              {t(($) => $.labels_panel.delete_dialog_desc_prefix)}
+              <strong>{pendingDeletion?.name}</strong>
+              {t(($) => $.labels_panel.delete_dialog_desc_suffix)}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -244,7 +247,9 @@ export function LabelsPanel() {
                 del.mutate(pendingDeletion.id, {
                   onSuccess: () => setPendingDeletion(null),
                   onError: (err: unknown) => {
-                    toast.error(err instanceof Error ? err.message : t(($) => $.labels_panel.delete_failed));
+                    toast.error(
+                      err instanceof Error ? err.message : t(($) => $.labels_panel.delete_failed),
+                    );
                   },
                 });
               }}
@@ -276,7 +281,11 @@ function ColorPalette({
   const size = compact ? "h-7 w-7" : "h-9 w-9";
   return (
     <div className={compact ? "flex items-center" : "flex items-center gap-3"}>
-      {!compact && <UILabel className="text-xs text-muted-foreground">{t(($) => $.labels_panel.color_label)}</UILabel>}
+      {!compact && (
+        <UILabel className="text-xs text-muted-foreground">
+          {t(($) => $.labels_panel.color_label)}
+        </UILabel>
+      )}
       <label
         className={`relative inline-flex ${size} cursor-pointer items-center justify-center rounded-full border border-border shadow-sm transition-transform hover:scale-105 focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1 focus-within:ring-offset-background`}
         style={{ backgroundColor: value }}
@@ -290,9 +299,7 @@ function ColorPalette({
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
         />
       </label>
-      {!compact && (
-        <span className="font-mono text-xs text-muted-foreground">{value}</span>
-      )}
+      {!compact && <span className="font-mono text-xs text-muted-foreground">{value}</span>}
     </div>
   );
 }

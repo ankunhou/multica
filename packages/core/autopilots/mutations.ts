@@ -40,7 +40,9 @@ export function useUpdateAutopilot() {
       const prevList = qc.getQueryData<ListAutopilotsResponse>(autopilotKeys.list(wsId));
       const prevDetail = qc.getQueryData<GetAutopilotResponse>(autopilotKeys.detail(wsId, id));
       qc.setQueryData<ListAutopilotsResponse>(autopilotKeys.list(wsId), (old) =>
-        old ? { ...old, autopilots: old.autopilots.map((a) => (a.id === id ? { ...a, ...data } : a)) } : old,
+        old
+          ? { ...old, autopilots: old.autopilots.map((a) => (a.id === id ? { ...a, ...data } : a)) }
+          : old,
       );
       qc.setQueryData<GetAutopilotResponse>(autopilotKeys.detail(wsId, id), (old) =>
         old ? { ...old, autopilot: { ...old.autopilot, ...data } } : old,
@@ -67,7 +69,9 @@ export function useDeleteAutopilot() {
       await qc.cancelQueries({ queryKey: autopilotKeys.list(wsId) });
       const prevList = qc.getQueryData<ListAutopilotsResponse>(autopilotKeys.list(wsId));
       qc.setQueryData<ListAutopilotsResponse>(autopilotKeys.list(wsId), (old) =>
-        old ? { ...old, autopilots: old.autopilots.filter((a) => a.id !== id), total: old.total - 1 } : old,
+        old
+          ? { ...old, autopilots: old.autopilots.filter((a) => a.id !== id), total: old.total - 1 }
+          : old,
       );
       qc.removeQueries({ queryKey: autopilotKeys.detail(wsId, id) });
       return { prevList };
@@ -97,7 +101,10 @@ export function useCreateAutopilotTrigger() {
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   return useMutation({
-    mutationFn: ({ autopilotId, ...data }: { autopilotId: string } & CreateAutopilotTriggerRequest) =>
+    mutationFn: ({
+      autopilotId,
+      ...data
+    }: { autopilotId: string } & CreateAutopilotTriggerRequest) =>
       api.createAutopilotTrigger(autopilotId, data),
     onSettled: (_data, _err, vars) => {
       qc.invalidateQueries({ queryKey: autopilotKeys.detail(wsId, vars.autopilotId) });
@@ -109,7 +116,11 @@ export function useUpdateAutopilotTrigger() {
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   return useMutation({
-    mutationFn: ({ autopilotId, triggerId, ...data }: { autopilotId: string; triggerId: string } & UpdateAutopilotTriggerRequest) =>
+    mutationFn: ({
+      autopilotId,
+      triggerId,
+      ...data
+    }: { autopilotId: string; triggerId: string } & UpdateAutopilotTriggerRequest) =>
       api.updateAutopilotTrigger(autopilotId, triggerId, data),
     onSettled: (_data, _err, vars) => {
       qc.invalidateQueries({ queryKey: autopilotKeys.detail(wsId, vars.autopilotId) });

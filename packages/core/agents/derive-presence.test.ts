@@ -230,10 +230,7 @@ describe("deriveAgentPresenceDetail", () => {
     const detail = deriveAgentPresenceDetail({
       agent: makeAgent(),
       runtime: makeRuntime(),
-      tasks: [
-        makeTask({ status: "running" }),
-        makeTask({ id: "t2", status: "queued" }),
-      ],
+      tasks: [makeTask({ status: "running" }), makeTask({ id: "t2", status: "queued" })],
       now: NOW,
     });
     expect(detail.availability).toBe("online");
@@ -254,10 +251,7 @@ describe("deriveAgentPresenceDetail", () => {
         status: "offline",
         last_seen_at: "2026-04-27T11:50:00Z",
       }),
-      tasks: [
-        makeTask({ status: "queued" }),
-        makeTask({ id: "t2", status: "queued" }),
-      ],
+      tasks: [makeTask({ status: "queued" }), makeTask({ id: "t2", status: "queued" })],
       now: NOW,
     });
     expect(detail.availability).toBe("offline");

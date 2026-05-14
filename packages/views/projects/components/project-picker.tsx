@@ -34,7 +34,11 @@ export function ProjectPicker({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={triggerRender ? undefined : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors overflow-hidden"}
+        className={
+          triggerRender
+            ? undefined
+            : "flex items-center gap-1.5 cursor-pointer rounded px-1 -mx-1 hover:bg-accent/30 transition-colors overflow-hidden"
+        }
         render={triggerRender}
       >
         {current ? (
@@ -60,7 +64,9 @@ export function ProjectPicker({
           </DropdownMenuItem>
         )}
         {projects.length === 0 && (
-          <div className="px-2 py-1.5 text-xs text-muted-foreground">{t(($) => $.picker.empty)}</div>
+          <div className="px-2 py-1.5 text-xs text-muted-foreground">
+            {t(($) => $.picker.empty)}
+          </div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

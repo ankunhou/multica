@@ -19,10 +19,7 @@ interface DashboardGuardProps {
  * the URL slug via useCurrentWorkspace(). The guard still gates on workspace
  * being resolved so downstream components can safely call useWorkspaceId().
  */
-export function DashboardGuard({
-  children,
-  loadingFallback = null,
-}: DashboardGuardProps) {
+export function DashboardGuard({ children, loadingFallback = null }: DashboardGuardProps) {
   const { user, isLoading, workspace } = useDashboardGuard();
 
   if (isLoading || !workspace) return <>{loadingFallback}</>;

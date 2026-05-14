@@ -8,10 +8,7 @@ describe("ChatSessionSignalPip", () => {
   it("renders running sessions with the warning activity tone", () => {
     render(<ChatSessionSignalPip signal="running" label="Running" />);
 
-    expect(screen.getByLabelText("Running")).toHaveClass(
-      "bg-agent-running",
-      "animate-pulse",
-    );
+    expect(screen.getByLabelText("Running")).toHaveClass("bg-agent-running", "animate-pulse");
   });
 
   it("renders unread sessions with the brand tone", () => {

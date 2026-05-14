@@ -56,9 +56,7 @@ export function InboxListItem({
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
-            {!item.read && (
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-            )}
+            {!item.read && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />}
             <span
               className={`truncate text-sm ${!item.read ? "font-medium" : "text-muted-foreground"}`}
             >
@@ -90,10 +88,14 @@ export function InboxListItem({
           </div>
         </div>
         <div className="mt-0.5 flex items-center justify-between gap-2">
-          <p className={`min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs ${item.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
+          <p
+            className={`min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-xs ${item.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}
+          >
             <InboxDetailLabel item={item} />
           </p>
-          <span className={`shrink-0 text-xs ${item.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}>
+          <span
+            className={`shrink-0 text-xs ${item.read ? "text-muted-foreground/60" : "text-muted-foreground"}`}
+          >
             {timeAgo(item.created_at)}
           </span>
         </div>

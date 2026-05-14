@@ -24,37 +24,20 @@ export function HelpLauncher() {
       >
         <CircleHelp className="size-4" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        side="top"
-        sideOffset={8}
-        className="min-w-40"
-      >
-        <DropdownMenuItem
-          render={
-            <a href={DOCS_URL} target="_blank" rel="noopener noreferrer" />
-          }
-        >
+      <DropdownMenuContent align="end" side="top" sideOffset={8} className="min-w-40">
+        <DropdownMenuItem render={<a href={DOCS_URL} target="_blank" rel="noopener noreferrer" />}>
           <BookOpen className="h-3.5 w-3.5" />
           {t(($) => $.help.docs)}
           <ArrowUpRight className="size-3 translate-y-px text-muted-foreground/50" />
         </DropdownMenuItem>
         <DropdownMenuItem
-          render={
-            <a
-              href={CHANGELOG_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            />
-          }
+          render={<a href={CHANGELOG_URL} target="_blank" rel="noopener noreferrer" />}
         >
           <History className="h-3.5 w-3.5" />
           {t(($) => $.help.changelog)}
           <ArrowUpRight className="size-3 translate-y-px text-muted-foreground/50" />
         </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => useModalStore.getState().open("feedback")}
-        >
+        <DropdownMenuItem onClick={() => useModalStore.getState().open("feedback")}>
           <MessageCircle className="h-3.5 w-3.5" />
           {t(($) => $.help.feedback)}
         </DropdownMenuItem>

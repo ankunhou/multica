@@ -21,7 +21,6 @@ import { FileText, Loader2, Download } from "lucide-react";
 import { useT } from "../../i18n";
 import { useAttachmentDownloadResolver } from "../attachment-download-context";
 
-
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -54,7 +53,9 @@ function FileCardView({ node }: NodeViewProps) {
           <FileText className="size-4 shrink-0 text-muted-foreground" />
         )}
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm">{uploading ? t(($) => $.file_card.uploading, { filename }) : filename}</p>
+          <p className="truncate text-sm">
+            {uploading ? t(($) => $.file_card.uploading, { filename }) : filename}
+          </p>
         </div>
         {!uploading && href && (
           <button

@@ -40,8 +40,7 @@ export function docsAlternates(slugs: string[]): {
     if (page) languages[lang] = absoluteDocsUrl(page.url);
   }
 
-  const canonical =
-    languages[i18n.defaultLanguage] ?? Object.values(languages)[0];
+  const canonical = languages[i18n.defaultLanguage] ?? Object.values(languages)[0];
   if (canonical) languages["x-default"] = canonical;
 
   return { canonical: canonical ?? absoluteDocsUrl("/"), languages };

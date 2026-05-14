@@ -18,20 +18,9 @@ import { api } from "@multica/core/api";
 import type { Skill } from "@multica/core/types";
 import { useWorkspaceId } from "@multica/core/hooks";
 import { isImeComposing } from "@multica/core/utils";
-import {
-  skillDetailOptions,
-  workspaceKeys,
-} from "@multica/core/workspace/queries";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { skillDetailOptions, workspaceKeys } from "@multica/core/workspace/queries";
+import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
@@ -44,11 +33,7 @@ import { useT } from "../../i18n";
 
 type Method = "chooser" | "manual" | "url" | "runtime";
 
-function seedAfterCreate(
-  qc: ReturnType<typeof useQueryClient>,
-  wsId: string,
-  skill: Skill,
-) {
+function seedAfterCreate(qc: ReturnType<typeof useQueryClient>, wsId: string, skill: Skill) {
   qc.setQueryData(skillDetailOptions(wsId, skill.id).queryKey, skill);
   qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
   qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
@@ -148,10 +133,7 @@ function ManualForm({
         className="flex-1 min-h-0 space-y-4 overflow-y-auto px-5 py-4"
       >
         <div className="space-y-1.5">
-          <Label
-            htmlFor="create-skill-name"
-            className="text-xs text-muted-foreground"
-          >
+          <Label htmlFor="create-skill-name" className="text-xs text-muted-foreground">
             {t(($) => $.create.manual.name_label)}
           </Label>
           <Input
@@ -168,16 +150,11 @@ function ManualForm({
               if (e.key === "Enter") submit();
             }}
           />
-          <p className="text-xs text-muted-foreground">
-            {t(($) => $.create.manual.name_hint)}
-          </p>
+          <p className="text-xs text-muted-foreground">{t(($) => $.create.manual.name_hint)}</p>
         </div>
 
         <div className="space-y-1.5">
-          <Label
-            htmlFor="create-skill-desc"
-            className="text-xs text-muted-foreground"
-          >
+          <Label htmlFor="create-skill-desc" className="text-xs text-muted-foreground">
             <Pencil className="h-3 w-3" />
             {t(($) => $.create.manual.description_label)}
           </Label>
@@ -199,30 +176,17 @@ function ManualForm({
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
               {error}
-              {isNameConflictError(error) && (
-                <>{t(($) => $.create.manual.name_conflict_hint)}</>
-              )}
+              {isNameConflictError(error) && <>{t(($) => $.create.manual.name_conflict_hint)}</>}
             </span>
           </div>
         )}
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2 border-t bg-muted/30 px-5 py-3">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onCancel}
-          disabled={loading}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
           {t(($) => $.create.manual.cancel)}
         </Button>
-        <Button
-          type="button"
-          size="sm"
-          onClick={submit}
-          disabled={!name.trim() || loading}
-        >
+        <Button type="button" size="sm" onClick={submit} disabled={!name.trim() || loading}>
           {loading ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />
@@ -382,30 +346,17 @@ function UrlForm({
             <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             <span>
               {error}
-              {isNameConflictError(error) && (
-                <>{t(($) => $.create.url.name_conflict_hint)}</>
-              )}
+              {isNameConflictError(error) && <>{t(($) => $.create.url.name_conflict_hint)}</>}
             </span>
           </div>
         )}
       </div>
 
       <div className="flex shrink-0 items-center justify-end gap-2 border-t bg-muted/30 px-5 py-3">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onCancel}
-          disabled={loading}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={loading}>
           {t(($) => $.create.url.cancel)}
         </Button>
-        <Button
-          type="button"
-          size="sm"
-          onClick={submit}
-          disabled={!url.trim() || loading}
-        >
+        <Button type="button" size="sm" onClick={submit} disabled={!url.trim() || loading}>
           {loading ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin" />
@@ -505,20 +456,12 @@ export function CreateSkillDialog({
         {/* Method body — each form owns its scroll middle + footer */}
         {method === "chooser" && <MethodChooser onChoose={setMethod} />}
         {method === "manual" && (
-          <ManualForm
-            onCreated={handleCreated}
-            onCancel={() => setMethod("chooser")}
-          />
+          <ManualForm onCreated={handleCreated} onCancel={() => setMethod("chooser")} />
         )}
         {method === "url" && (
-          <UrlForm
-            onCreated={handleCreated}
-            onCancel={() => setMethod("chooser")}
-          />
+          <UrlForm onCreated={handleCreated} onCancel={() => setMethod("chooser")} />
         )}
-        {method === "runtime" && (
-          <RuntimeLocalSkillImportPanel onImported={handleCreated} />
-        )}
+        {method === "runtime" && <RuntimeLocalSkillImportPanel onImported={handleCreated} />}
       </DialogContent>
     </Dialog>
   );

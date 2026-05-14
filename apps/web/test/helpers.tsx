@@ -77,7 +77,7 @@ export const mockAgents: Agent[] = [
 ];
 
 // Mock auth context value
- 
+
 export const mockAuthValue: Record<string, any> = {
   user: mockUser,
   workspace: mockWorkspace,

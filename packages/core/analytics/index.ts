@@ -22,13 +22,7 @@ const SIGNUP_SOURCE_COOKIE = "multica_signup_source";
 // JSON is worse than no attribution because PostHog can't parse it.
 const SIGNUP_SOURCE_VALUE_MAX_LEN = 96;
 const SIGNUP_SOURCE_MAX_LEN = 512;
-const UTM_KEYS = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_content",
-  "utm_term",
-] as const;
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
 
 let initialized = false;
 // auth-initializer fetches /api/config and /api/me in parallel — on a
@@ -231,10 +225,7 @@ export function resetAnalytics(): void {
  * Calls before initAnalytics() buffer in order so a late-arriving config
  * doesn't silently swallow a step transition.
  */
-export function captureEvent(
-  name: string,
-  props?: Record<string, unknown>,
-): void {
+export function captureEvent(name: string, props?: Record<string, unknown>): void {
   if (!initialized) {
     pendingOps.push({ kind: "event", name, props });
     return;
@@ -267,9 +258,7 @@ function capturePersonSet(props: Record<string, unknown>): void {
   posthog.capture("$set", { $set: props });
 }
 
-function withClientEventProperties(
-  props?: Record<string, unknown>,
-): Record<string, unknown> {
+function withClientEventProperties(props?: Record<string, unknown>): Record<string, unknown> {
   const next: Record<string, unknown> = { ...(props ?? {}) };
   if (currentUserId && next.user_id === undefined) {
     next.user_id = currentUserId;

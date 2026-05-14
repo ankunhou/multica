@@ -60,8 +60,7 @@ const desktopAPI = {
    *  decides whether to act (no-op when the user has an explicit Settings
    *  choice). Returns an unsubscribe function. */
   onSystemLocaleChanged: (callback: (locale: string) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, locale: string) =>
-      callback(locale);
+    const handler = (_event: Electron.IpcRendererEvent, locale: string) => callback(locale);
     ipcRenderer.on("locale:system-changed", handler);
     return () => {
       ipcRenderer.removeListener("locale:system-changed", handler);
@@ -71,8 +70,7 @@ const desktopAPI = {
   runtimeConfig,
   /** Listen for auth token delivered via deep link */
   onAuthToken: (callback: (token: string) => void) => {
-    const handler = (_event: Electron.IpcRendererEvent, token: string) =>
-      callback(token);
+    const handler = (_event: Electron.IpcRendererEvent, token: string) => callback(token);
     ipcRenderer.on("auth:token", handler);
     return () => {
       ipcRenderer.removeListener("auth:token", handler);
@@ -90,8 +88,7 @@ const desktopAPI = {
   /** Open a URL in the default browser */
   openExternal: (url: string) => ipcRenderer.invoke("shell:openExternal", url),
   /** Toggle immersive mode — hide macOS traffic lights for full-screen modals */
-  setImmersiveMode: (immersive: boolean) =>
-    ipcRenderer.invoke("window:setImmersive", immersive),
+  setImmersiveMode: (immersive: boolean) => ipcRenderer.invoke("window:setImmersive", immersive),
   /**
    * Show a native OS notification for a new inbox item. Fired from the
    * renderer only when the app is unfocused — in-focus feedback is the
@@ -112,8 +109,7 @@ const desktopAPI = {
    * Update the OS dock / taskbar unread badge. Pass 0 to clear. Values
    * above 99 render as "99+" (capping is handled in the main process).
    */
-  setUnreadBadge: (count: number) =>
-    ipcRenderer.send("badge:set", Math.max(0, Math.floor(count))),
+  setUnreadBadge: (count: number) => ipcRenderer.send("badge:set", Math.max(0, Math.floor(count))),
   /**
    * Subscribe to "open this inbox row" requests sent by the main process
    * when the user clicks an OS notification banner. Returns an unsubscribe
@@ -121,11 +117,7 @@ const desktopAPI = {
    * were passed to `showNotification`.
    */
   onInboxOpen: (
-    callback: (payload: {
-      slug: string;
-      itemId: string;
-      issueKey: string;
-    }) => void,
+    callback: (payload: { slug: string; itemId: string; issueKey: string }) => void,
   ) => {
     const handler = (
       _event: Electron.IpcRendererEvent,
@@ -151,14 +143,11 @@ interface DaemonStatus {
 }
 
 const daemonAPI = {
-  start: (): Promise<{ success: boolean; error?: string }> =>
-    ipcRenderer.invoke("daemon:start"),
-  stop: (): Promise<{ success: boolean; error?: string }> =>
-    ipcRenderer.invoke("daemon:stop"),
+  start: (): Promise<{ success: boolean; error?: string }> => ipcRenderer.invoke("daemon:start"),
+  stop: (): Promise<{ success: boolean; error?: string }> => ipcRenderer.invoke("daemon:stop"),
   restart: (): Promise<{ success: boolean; error?: string }> =>
     ipcRenderer.invoke("daemon:restart"),
-  getStatus: (): Promise<DaemonStatus> =>
-    ipcRenderer.invoke("daemon:get-status"),
+  getStatus: (): Promise<DaemonStatus> => ipcRenderer.invoke("daemon:get-status"),
   onStatusChange: (callback: (status: DaemonStatus) => void) => {
     const handler = (_: unknown, status: DaemonStatus) => callback(status);
     ipcRenderer.on("daemon:status", handler);
@@ -168,18 +157,16 @@ const daemonAPI = {
     ipcRenderer.invoke("daemon:set-target-api-url", url),
   syncToken: (token: string, userId: string): Promise<void> =>
     ipcRenderer.invoke("daemon:sync-token", token, userId),
-  clearToken: (): Promise<void> =>
-    ipcRenderer.invoke("daemon:clear-token"),
-  isCliInstalled: (): Promise<boolean> =>
-    ipcRenderer.invoke("daemon:is-cli-installed"),
+  clearToken: (): Promise<void> => ipcRenderer.invoke("daemon:clear-token"),
+  isCliInstalled: (): Promise<boolean> => ipcRenderer.invoke("daemon:is-cli-installed"),
   getPrefs: (): Promise<{ autoStart: boolean; autoStop: boolean }> =>
     ipcRenderer.invoke("daemon:get-prefs"),
-  setPrefs: (prefs: Partial<{ autoStart: boolean; autoStop: boolean }>): Promise<{ autoStart: boolean; autoStop: boolean }> =>
+  setPrefs: (
+    prefs: Partial<{ autoStart: boolean; autoStop: boolean }>,
+  ): Promise<{ autoStart: boolean; autoStop: boolean }> =>
     ipcRenderer.invoke("daemon:set-prefs", prefs),
-  autoStart: (): Promise<void> =>
-    ipcRenderer.invoke("daemon:auto-start"),
-  retryInstall: (): Promise<void> =>
-    ipcRenderer.invoke("daemon:retry-install"),
+  autoStart: (): Promise<void> => ipcRenderer.invoke("daemon:auto-start"),
+  retryInstall: (): Promise<void> => ipcRenderer.invoke("daemon:retry-install"),
   startLogStream: () => ipcRenderer.send("daemon:start-log-stream"),
   stopLogStream: () => ipcRenderer.send("daemon:stop-log-stream"),
   onLogLine: (callback: (line: string) => void) => {
@@ -193,7 +180,8 @@ const daemonAPI = {
 
 const updaterAPI = {
   onUpdateAvailable: (callback: (info: { version: string; releaseNotes?: string }) => void) => {
-    const handler = (_: unknown, info: { version: string; releaseNotes?: string }) => callback(info);
+    const handler = (_: unknown, info: { version: string; releaseNotes?: string }) =>
+      callback(info);
     ipcRenderer.on("updater:update-available", handler);
     return () => ipcRenderer.removeListener("updater:update-available", handler);
   },

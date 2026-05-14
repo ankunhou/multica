@@ -3,11 +3,7 @@
 import { toast } from "sonner";
 import { useTheme } from "@multica/ui/components/common/theme-provider";
 import { cn } from "@multica/ui/lib/utils";
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_LOCALES,
-  type SupportedLocale,
-} from "@multica/core/i18n";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type SupportedLocale } from "@multica/core/i18n";
 import { useLocaleAdapter } from "@multica/core/i18n/react";
 import { useAuthStore } from "@multica/core/auth";
 import { api } from "@multica/core/api";
@@ -29,13 +25,7 @@ const DARK_COLORS = {
   barMuted: "#52525b",
 };
 
-function WindowMockup({
-  variant,
-  className,
-}: {
-  variant: "light" | "dark";
-  className?: string;
-}) {
+function WindowMockup({ variant, className }: { variant: "light" | "dark"; className?: string }) {
   const colors = variant === "light" ? LIGHT_COLORS : DARK_COLORS;
 
   return (
@@ -50,38 +40,17 @@ function WindowMockup({
         <span className="size-[6px] rounded-full bg-[#28c840]" />
       </div>
       {/* Content area */}
-      <div
-        className="flex flex-1"
-        style={{ backgroundColor: colors.content }}
-      >
+      <div className="flex flex-1" style={{ backgroundColor: colors.content }}>
         {/* Sidebar */}
-        <div
-          className="w-[30%] space-y-1 p-2"
-          style={{ backgroundColor: colors.sidebar }}
-        >
-          <div
-            className="h-1 w-3/4 rounded-full"
-            style={{ backgroundColor: colors.bar }}
-          />
-          <div
-            className="h-1 w-1/2 rounded-full"
-            style={{ backgroundColor: colors.bar }}
-          />
+        <div className="w-[30%] space-y-1 p-2" style={{ backgroundColor: colors.sidebar }}>
+          <div className="h-1 w-3/4 rounded-full" style={{ backgroundColor: colors.bar }} />
+          <div className="h-1 w-1/2 rounded-full" style={{ backgroundColor: colors.bar }} />
         </div>
         {/* Main */}
         <div className="flex-1 space-y-1.5 p-2">
-          <div
-            className="h-1.5 w-4/5 rounded-full"
-            style={{ backgroundColor: colors.bar }}
-          />
-          <div
-            className="h-1 w-full rounded-full"
-            style={{ backgroundColor: colors.barMuted }}
-          />
-          <div
-            className="h-1 w-3/5 rounded-full"
-            style={{ backgroundColor: colors.barMuted }}
-          />
+          <div className="h-1.5 w-4/5 rounded-full" style={{ backgroundColor: colors.bar }} />
+          <div className="h-1 w-full rounded-full" style={{ backgroundColor: colors.barMuted }} />
+          <div className="h-1 w-3/5 rounded-full" style={{ backgroundColor: colors.barMuted }} />
         </div>
       </div>
     </div>
@@ -108,13 +77,10 @@ export function PreferencesTab() {
     { value: "dark" as const },
     { value: "system" as const },
   ];
-  const themeLabel = (value: typeof themeOptions[number]["value"]) =>
+  const themeLabel = (value: (typeof themeOptions)[number]["value"]) =>
     t(($) => $.preferences.theme[value]);
 
-  const languageOptions: { value: SupportedLocale }[] = [
-    { value: "en" },
-    { value: "zh-Hans" },
-  ];
+  const languageOptions: { value: SupportedLocale }[] = [{ value: "en" }, { value: "zh-Hans" }];
   const languageLabel = (value: SupportedLocale) =>
     value === "zh-Hans"
       ? t(($) => $.preferences.language.chinese)
@@ -154,9 +120,7 @@ export function PreferencesTab() {
   return (
     <div className="space-y-8">
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold">
-          {t(($) => $.preferences.theme.title)}
-        </h2>
+        <h2 className="text-sm font-semibold">{t(($) => $.preferences.theme.title)}</h2>
         <div className="flex gap-6" role="radiogroup">
           {themeOptions.map((opt) => {
             const active = theme === opt.value;
@@ -171,17 +135,12 @@ export function PreferencesTab() {
                 <div
                   className={cn(
                     "aspect-[4/3] w-36 overflow-hidden rounded-lg ring-1 transition-all",
-                    active
-                      ? "ring-2 ring-brand"
-                      : "ring-border hover:ring-2 hover:ring-border"
+                    active ? "ring-2 ring-brand" : "ring-border hover:ring-2 hover:ring-border",
                   )}
                 >
                   {opt.value === "system" ? (
                     <div className="relative h-full w-full">
-                      <WindowMockup
-                        variant="light"
-                        className="absolute inset-0"
-                      />
+                      <WindowMockup variant="light" className="absolute inset-0" />
                       <WindowMockup
                         variant="dark"
                         className="absolute inset-0 [clip-path:inset(0_0_0_50%)]"
@@ -194,9 +153,7 @@ export function PreferencesTab() {
                 <span
                   className={cn(
                     "text-sm transition-colors",
-                    active
-                      ? "font-medium text-foreground"
-                      : "text-muted-foreground"
+                    active ? "font-medium text-foreground" : "text-muted-foreground",
                   )}
                 >
                   {themeLabel(opt.value)}
@@ -208,9 +165,7 @@ export function PreferencesTab() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold">
-          {t(($) => $.preferences.language.title)}
-        </h2>
+        <h2 className="text-sm font-semibold">{t(($) => $.preferences.language.title)}</h2>
         <div className="flex gap-3" role="radiogroup">
           {languageOptions.map((opt) => {
             const active = currentLocale === opt.value;
@@ -224,7 +179,7 @@ export function PreferencesTab() {
                   "rounded-md border px-4 py-2 text-sm transition-colors",
                   active
                     ? "border-brand bg-brand/10 font-medium text-foreground"
-                    : "border-border text-muted-foreground hover:border-foreground/30"
+                    : "border-border text-muted-foreground hover:border-foreground/30",
                 )}
               >
                 {languageLabel(opt.value)}

@@ -138,7 +138,12 @@ describe("CreateAgentDialog runtime visibility gate", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("disables another member's private runtime in the picker", () => {
-    const mine = makeRuntime({ id: "rt-mine", name: "My Runtime", owner_id: ME, visibility: "private" });
+    const mine = makeRuntime({
+      id: "rt-mine",
+      name: "My Runtime",
+      owner_id: ME,
+      visibility: "private",
+    });
     const othersPrivate = makeRuntime({
       id: "rt-others-private",
       name: "Others Private",
@@ -150,20 +155,21 @@ describe("CreateAgentDialog runtime visibility gate", () => {
     // Flip to "All" so other-owned runtimes show.
     fireEvent.click(screen.getByText("All"));
     // Open the picker.
-    fireEvent.click(
-      screen.getByText("My Runtime", { selector: "span.truncate" }),
-    );
+    fireEvent.click(screen.getByText("My Runtime", { selector: "span.truncate" }));
 
-    const disabledRow = screen
-      .getByText("Others Private")
-      .closest("button") as HTMLButtonElement;
+    const disabledRow = screen.getByText("Others Private").closest("button") as HTMLButtonElement;
     expect(disabledRow).not.toBeNull();
     expect(disabledRow.disabled).toBe(true);
     expect(disabledRow.title).toMatch(/Private runtime/i);
   });
 
   it("lets a plain member pick another member's public runtime", () => {
-    const mine = makeRuntime({ id: "rt-mine", name: "My Runtime", owner_id: ME, visibility: "private" });
+    const mine = makeRuntime({
+      id: "rt-mine",
+      name: "My Runtime",
+      owner_id: ME,
+      visibility: "private",
+    });
     const othersPublic = makeRuntime({
       id: "rt-others-public",
       name: "Others Public",
@@ -173,13 +179,9 @@ describe("CreateAgentDialog runtime visibility gate", () => {
     renderDialog([mine, othersPublic]);
 
     fireEvent.click(screen.getByText("All"));
-    fireEvent.click(
-      screen.getByText("My Runtime", { selector: "span.truncate" }),
-    );
+    fireEvent.click(screen.getByText("My Runtime", { selector: "span.truncate" }));
 
-    const publicRow = screen
-      .getByText("Others Public")
-      .closest("button") as HTMLButtonElement;
+    const publicRow = screen.getByText("Others Public").closest("button") as HTMLButtonElement;
     expect(publicRow).not.toBeNull();
     expect(publicRow.disabled).toBe(false);
   });
@@ -226,12 +228,8 @@ describe("CreateAgentDialog runtime visibility gate", () => {
     const template = makeTemplate("rt-others-private");
     const { onCreate } = renderDialog([othersPrivate, mine], template);
 
-    expect(
-      screen.getByText("My Runtime", { selector: "span.truncate" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText("Others Private", { selector: "span.truncate" }),
-    ).toBeNull();
+    expect(screen.getByText("My Runtime", { selector: "span.truncate" })).toBeInTheDocument();
+    expect(screen.queryByText("Others Private", { selector: "span.truncate" })).toBeNull();
 
     // Sanity check: with a usable selection seeded, Create should submit.
     fireEvent.click(screen.getByText("Create"));
@@ -257,9 +255,7 @@ describe("CreateAgentDialog runtime visibility gate", () => {
     renderDialog([onlyOthersPrivate], template);
 
     // The Create button is rendered by lucide-free CTA text "Create".
-    const createBtn = screen
-      .getAllByRole("button")
-      .find((b) => b.textContent === "Create");
+    const createBtn = screen.getAllByRole("button").find((b) => b.textContent === "Create");
     expect(createBtn).toBeDefined();
     expect((createBtn as HTMLButtonElement).disabled).toBe(true);
   });

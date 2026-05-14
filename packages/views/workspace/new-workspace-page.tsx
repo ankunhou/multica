@@ -58,12 +58,8 @@ export function NewWorkspacePage({
       <div className="flex flex-1 flex-col items-center justify-center px-6 pb-12">
         <div className="flex w-full max-w-md flex-col items-center gap-6">
           <div className="text-center">
-            <h1 className="text-3xl font-semibold tracking-tight">
-              {t(($) => $.new_page.title)}
-            </h1>
-            <p className="mt-3 text-muted-foreground">
-              {t(($) => $.new_page.description)}
-            </p>
+            <h1 className="text-3xl font-semibold tracking-tight">{t(($) => $.new_page.title)}</h1>
+            <p className="mt-3 text-muted-foreground">{t(($) => $.new_page.description)}</p>
           </div>
           <CreateWorkspaceForm onSuccess={onSuccess} />
           <p className="text-center text-xs text-muted-foreground">

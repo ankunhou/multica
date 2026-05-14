@@ -32,9 +32,7 @@ export function SkillAttach({
   const [open, setOpen] = useState(false);
 
   const agentSkillIds = new Set(agent.skills.map((s) => s.id));
-  const availableCount = workspaceSkills.filter(
-    (s) => !agentSkillIds.has(s.id),
-  ).length;
+  const availableCount = workspaceSkills.filter((s) => !agentSkillIds.has(s.id)).length;
 
   if (!canEdit || availableCount === 0) return null;
 

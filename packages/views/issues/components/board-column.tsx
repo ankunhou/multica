@@ -84,9 +84,10 @@ export function BoardColumn({
                   size="icon-sm"
                   className="rounded-xl text-muted-foreground"
                   onClick={() =>
-                    useModalStore
-                      .getState()
-                      .open("create-issue", { status, ...(projectId ? { project_id: projectId } : {}) })
+                    useModalStore.getState().open("create-issue", {
+                      status,
+                      ...(projectId ? { project_id: projectId } : {}),
+                    })
                   }
                 >
                   <Plus className="size-3.5" />
@@ -105,7 +106,11 @@ export function BoardColumn({
       >
         <SortableContext items={issueIds} strategy={verticalListSortingStrategy}>
           {resolvedIssues.map((issue) => (
-            <DraggableBoardCard key={issue.id} issue={issue} childProgress={childProgressMap?.get(issue.id)} />
+            <DraggableBoardCard
+              key={issue.id}
+              issue={issue}
+              childProgress={childProgressMap?.get(issue.id)}
+            />
           ))}
         </SortableContext>
         {issueIds.length === 0 && (

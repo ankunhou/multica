@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  parseCronExpression,
-  toCronExpression,
-  getDefaultTriggerConfig,
-} from "./trigger-config";
+import { parseCronExpression, toCronExpression, getDefaultTriggerConfig } from "./trigger-config";
 
 describe("parseCronExpression", () => {
   it("round-trips hourly", () => {
@@ -59,7 +55,12 @@ describe("parseCronExpression", () => {
   });
 
   it("round-trips weekly preserving daysOfWeek", () => {
-    const cfg = { ...getDefaultTriggerConfig(), frequency: "weekly" as const, time: "14:45", daysOfWeek: [0, 2, 6] };
+    const cfg = {
+      ...getDefaultTriggerConfig(),
+      frequency: "weekly" as const,
+      time: "14:45",
+      daysOfWeek: [0, 2, 6],
+    };
     const parsed = parseCronExpression(toCronExpression(cfg), "UTC");
     expect(parsed.frequency).toBe("weekly");
     expect(parsed.time).toBe("14:45");

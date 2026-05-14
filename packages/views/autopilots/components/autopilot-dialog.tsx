@@ -17,11 +17,7 @@ import {
   Zap,
 } from "lucide-react";
 import { cn } from "@multica/ui/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-} from "@multica/ui/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@multica/ui/components/ui/dialog";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@multica/ui/components/ui/tooltip";
 import { Button } from "@multica/ui/components/ui/button";
 import { StatusIndicator } from "@multica/ui/components/ui/status-indicator";
@@ -43,10 +39,7 @@ import {
   useUpdateAutopilot,
   useUpdateAutopilotTrigger,
 } from "@multica/core/autopilots/mutations";
-import type {
-  AutopilotExecutionMode,
-  AutopilotTrigger,
-} from "@multica/core/types";
+import type { AutopilotExecutionMode, AutopilotTrigger } from "@multica/core/types";
 import { TitleEditor, ContentEditor } from "../../editor";
 import { ActorAvatar } from "../../common/actor-avatar";
 import { AgentPicker } from "./pickers/agent-picker";
@@ -92,13 +85,7 @@ export type AutopilotDialogProps =
 // Static schema-level data (not user-visible)
 // ---------------------------------------------------------------------------
 
-const FREQUENCY_KEYS: TriggerFrequency[] = [
-  "hourly",
-  "daily",
-  "weekdays",
-  "weekly",
-  "custom",
-];
+const FREQUENCY_KEYS: TriggerFrequency[] = ["hourly", "daily", "weekdays", "weekly", "custom"];
 
 const DAY_KEYS = [
   "sunday",
@@ -241,9 +228,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const isCreate = props.mode === "create";
-  const initial: Partial<AutopilotInitial> = isCreate
-    ? props.initial ?? {}
-    : props.initial;
+  const initial: Partial<AutopilotInitial> = isCreate ? (props.initial ?? {}) : props.initial;
 
   const [title, setTitle] = useState(initial.title ?? "");
   const [description, setDescription] = useState(initial.description ?? "");
@@ -271,9 +256,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
     toCronExpression(triggerConfig) !== initialCronRef.current ||
     triggerConfig.timezone !== initialTimezoneRef.current;
 
-  const firstTriggerIdRef = useRef(
-    !isCreate && props.triggers[0] ? props.triggers[0].id : null,
-  );
+  const firstTriggerIdRef = useRef(!isCreate && props.triggers[0] ? props.triggers[0].id : null);
 
   const triggerCount = isCreate ? 0 : props.triggers.length;
   const schedulePillDisabled = !isCreate && triggerCount >= 2;
@@ -289,8 +272,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
   const updateTrigger = useUpdateAutopilotTrigger();
   const [submitting, setSubmitting] = useState(false);
 
-  const canSubmit =
-    title.trim().length > 0 && assigneeId.length > 0 && !submitting;
+  const canSubmit = title.trim().length > 0 && assigneeId.length > 0 && !submitting;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -354,9 +336,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
       }
     } catch {
       toast.error(
-        isCreate
-          ? t(($) => $.dialog.toast_create_failed)
-          : t(($) => $.dialog.toast_update_failed),
+        isCreate ? t(($) => $.dialog.toast_create_failed) : t(($) => $.dialog.toast_update_failed),
       );
     } finally {
       setSubmitting(false);
@@ -390,9 +370,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                 <Rocket className="size-3" />
               </span>
               <span className="font-medium text-foreground">
-                {isCreate
-                  ? t(($) => $.dialog.header_create)
-                  : t(($) => $.dialog.header_edit)}
+                {isCreate ? t(($) => $.dialog.header_create) : t(($) => $.dialog.header_edit)}
               </span>
             </div>
             <span className="text-muted-foreground/60">·</span>
@@ -412,7 +390,11 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                     onClick={() => setIsExpanded((v) => !v)}
                     className="rounded-lg p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
                   >
-                    {isExpanded ? <Minimize2 className="size-4" /> : <Maximize2 className="size-4" />}
+                    {isExpanded ? (
+                      <Minimize2 className="size-4" />
+                    ) : (
+                      <Maximize2 className="size-4" />
+                    )}
                   </button>
                 }
               />
@@ -437,10 +419,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
         </div>
 
         {/* Body: two columns (stacks on narrow screens via flex-wrap at container level) */}
-        <div
-          key={contentKey}
-          className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden"
-        >
+        <div key={contentKey} className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden">
           {/* Left: Runbook */}
           <div className="flex-1 min-h-0 flex flex-col border-b border-border/70 lg:border-b-0 lg:border-r">
             <div className="px-8 pt-4 pb-3 shrink-0">
@@ -492,9 +471,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               onChange={setTriggerConfig}
               disabled={schedulePillDisabled}
               disabledReason={
-                schedulePillDisabled
-                  ? t(($) => $.dialog.schedule_disabled_reason)
-                  : undefined
+                schedulePillDisabled ? t(($) => $.dialog.schedule_disabled_reason) : undefined
               }
             />
           </aside>
@@ -520,8 +497,8 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                   ? t(($) => $.dialog.creating)
                   : t(($) => $.dialog.saving)
                 : isCreate
-                ? t(($) => $.dialog.create)
-                : t(($) => $.dialog.save)}
+                  ? t(($) => $.dialog.create)
+                  : t(($) => $.dialog.save)}
             </Button>
           </div>
         </div>
@@ -570,12 +547,7 @@ function AgentSection({
             )}
           >
             {selectedId ? (
-              <ActorAvatar
-                actorType="agent"
-                actorId={selectedId}
-                size={28}
-                showStatusDot
-              />
+              <ActorAvatar actorType="agent" actorId={selectedId} size={28} showStatusDot />
             ) : (
               <span className="inline-flex size-7 items-center justify-center rounded-full bg-muted text-muted-foreground">
                 <Rocket className="size-3.5" />
@@ -621,9 +593,7 @@ function OutputModeSection({
               onClick={() => onChange(key)}
               className={cn(
                 "w-full flex items-start gap-2.5 rounded-md border px-3 py-2 text-left cursor-pointer transition-colors",
-                selected
-                  ? "border-primary bg-primary/5"
-                  : "bg-background hover:bg-accent/40",
+                selected ? "border-primary bg-primary/5" : "bg-background hover:bg-accent/40",
               )}
             >
               <span
@@ -682,24 +652,15 @@ function ScheduleSection({
   return (
     <div>
       <SectionLabel>{t(($) => $.dialog.section_schedule)}</SectionLabel>
-      <div
-        className={cn(
-          "space-y-2",
-          disabled && "opacity-60 pointer-events-none",
-        )}
-      >
+      <div className={cn("space-y-2", disabled && "opacity-60 pointer-events-none")}>
         {/* Row 1: Frequency + (Day when weekly) */}
         <div className="grid grid-cols-2 gap-2">
           <Select
             value={config.frequency}
-            onValueChange={(v) =>
-              v && onChange({ ...config, frequency: v as TriggerFrequency })
-            }
+            onValueChange={(v) => v && onChange({ ...config, frequency: v as TriggerFrequency })}
           >
             <SelectTrigger className="w-full">
-              <SelectValue>
-                {t(($) => $.dialog.frequency_long[config.frequency])}
-              </SelectValue>
+              <SelectValue>{t(($) => $.dialog.frequency_long[config.frequency])}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {FREQUENCY_KEYS.map((freq) => (
@@ -712,11 +673,9 @@ function ScheduleSection({
           {config.frequency === "weekly" ? (
             <Select
               value={String(selectedDay)}
-              onValueChange={(v) =>
-                v && onChange({ ...config, daysOfWeek: [parseInt(v, 10)] })
-              }
+              onValueChange={(v) => v && onChange({ ...config, daysOfWeek: [parseInt(v, 10)] })}
             >
-            <SelectTrigger className="w-full">
+              <SelectTrigger className="w-full">
                 <SelectValue>
                   {t(($) => $.dialog.days[DAY_KEYS[selectedDay] ?? "monday"])}
                 </SelectValue>
@@ -739,9 +698,7 @@ function ScheduleSection({
           <input
             type="text"
             value={config.cronExpression}
-            onChange={(e) =>
-              onChange({ ...config, cronExpression: e.target.value })
-            }
+            onChange={(e) => onChange({ ...config, cronExpression: e.target.value })}
             placeholder="0 9 * * 1-5"
             className="w-full rounded-lg border border-input bg-transparent px-2.5 py-1 h-8 text-sm font-mono outline-none transition-colors focus:border-ring focus:ring-3 focus:ring-ring/50 dark:bg-input/30"
           />
@@ -753,10 +710,7 @@ function ScheduleSection({
           />
         ) : (
           <div className="grid grid-cols-2 gap-2">
-            <TimeInput
-              value={config.time}
-              onChange={(v) => onChange({ ...config, time: v })}
-            />
+            <TimeInput value={config.time} onChange={(v) => onChange({ ...config, time: v })} />
             <TimezonePicker
               value={config.timezone}
               onChange={(tz) => onChange({ ...config, timezone: tz })}
@@ -786,9 +740,7 @@ function ScheduleSection({
         )}
       </div>
       {disabled && disabledReason && (
-        <p className="mt-2 text-[11px] text-muted-foreground">
-          {disabledReason}
-        </p>
+        <p className="mt-2 text-[11px] text-muted-foreground">{disabledReason}</p>
       )}
     </div>
   );

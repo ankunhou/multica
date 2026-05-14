@@ -45,7 +45,12 @@ export function DeleteIssueConfirmModal({
   };
 
   return (
-    <AlertDialog open onOpenChange={(v) => { if (!v && !deleting) onClose(); }}>
+    <AlertDialog
+      open
+      onOpenChange={(v) => {
+        if (!v && !deleting) onClose();
+      }}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{t(($) => $.delete_issue.title)}</AlertDialogTitle>
@@ -57,7 +62,9 @@ export function DeleteIssueConfirmModal({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>{t(($) => $.delete_issue.cancel)}</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>
+            {t(($) => $.delete_issue.cancel)}
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={deleting}

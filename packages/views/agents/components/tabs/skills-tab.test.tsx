@@ -97,9 +97,7 @@ describe("SkillsTab", () => {
 
     // The removed section's heading and its trigger button must be gone.
     expect(screen.queryByText("Local Runtime Skills")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /Import to Workspace/i }),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Import to Workspace/i })).not.toBeInTheDocument();
 
     // No runtime list / local-skills query should be wired up either —
     // we removed @multica/core/runtimes from this file's imports.

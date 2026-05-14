@@ -199,7 +199,9 @@ async function sleep(ms) {
 async function ensureDb() {
   const info = databaseInfo(envFromFile());
   if (!isLocalDatabase(info)) {
-    console.log(`Remote database configured (${info.host}:${info.port}); skipping local Docker preflight.`);
+    console.log(
+      `Remote database configured (${info.host}:${info.port}); skipping local Docker preflight.`,
+    );
     return;
   }
 
@@ -257,31 +259,37 @@ function gitVersion() {
   const raw = capture("git", ["describe", "--tags", "--always", "--dirty"]);
   const commit = capture("git", ["rev-parse", "--short", "HEAD"]) || "unknown";
   const dirty = capture("git", ["status", "--porcelain"]) ? "-dirty" : "";
-  const version = /^v?\d+\.\d+\.\d+/.test(raw)
-    ? raw
-    : `${MIN_DEV_VERSION}-0-g${commit}${dirty}`;
+  const version = /^v?\d+\.\d+\.\d+/.test(raw) ? raw : `${MIN_DEV_VERSION}-0-g${commit}${dirty}`;
   const date = new Date().toISOString().replace(/\.\d{3}Z$/, "Z");
   return { version, commit, date };
 }
 
 function build() {
   const { version, commit, date } = gitVersion();
-  run("go", [
-    "build",
-    "-ldflags",
-    `-X main.version=${version} -X main.commit=${commit}`,
-    "-o",
-    bin("server"),
-    "./cmd/server",
-  ], { cwd: SERVER_DIR });
-  run("go", [
-    "build",
-    "-ldflags",
-    `-X main.version=${version} -X main.commit=${commit} -X main.date=${date}`,
-    "-o",
-    bin("multica"),
-    "./cmd/multica",
-  ], { cwd: SERVER_DIR });
+  run(
+    "go",
+    [
+      "build",
+      "-ldflags",
+      `-X main.version=${version} -X main.commit=${commit}`,
+      "-o",
+      bin("server"),
+      "./cmd/server",
+    ],
+    { cwd: SERVER_DIR },
+  );
+  run(
+    "go",
+    [
+      "build",
+      "-ldflags",
+      `-X main.version=${version} -X main.commit=${commit} -X main.date=${date}`,
+      "-o",
+      bin("multica"),
+      "./cmd/multica",
+    ],
+    { cwd: SERVER_DIR },
+  );
   run("go", ["build", "-o", bin("migrate"), "./cmd/migrate"], { cwd: SERVER_DIR });
 }
 
@@ -368,14 +376,18 @@ async function runStart() {
 function stopPort(port) {
   if (!port) return;
   if (IS_WIN) {
-    run("powershell.exe", [
-      "-NoLogo",
-      "-NoProfile",
-      "-ExecutionPolicy",
-      "Bypass",
-      "-Command",
-      `$ErrorActionPreference = 'SilentlyContinue'; Get-NetTCPConnection -LocalPort ${Number(port)} | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }`,
-    ], { allowFailure: true });
+    run(
+      "powershell.exe",
+      [
+        "-NoLogo",
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-Command",
+        `$ErrorActionPreference = 'SilentlyContinue'; Get-NetTCPConnection -LocalPort ${Number(port)} | Select-Object -ExpandProperty OwningProcess -Unique | ForEach-Object { Stop-Process -Id $_ -Force }`,
+      ],
+      { allowFailure: true },
+    );
     return;
   }
   run("sh", ["-c", `lsof -ti:${port} | xargs kill -9 2>/dev/null || true`], { allowFailure: true });
@@ -447,7 +459,9 @@ function checksum(value) {
 function initWorktreeEnv(outputName = ".env.worktree") {
   const outputPath = envPath(outputName);
   if (existsSync(outputPath) && process.env.FORCE !== "1") {
-    console.error(`Refusing to overwrite existing ${outputName}. Re-run with FORCE=1 if you want to regenerate it.`);
+    console.error(
+      `Refusing to overwrite existing ${outputName}. Re-run with FORCE=1 if you want to regenerate it.`,
+    );
     process.exit(1);
   }
 
@@ -681,7 +695,9 @@ async function selfhost({ build = false } = {}) {
     });
     if (pulled.error) throw pulled.error;
     if (pulled.status !== 0) {
-      console.error("Official images are not available for the selected tag. Run `just selfhost-build` to build from this checkout.");
+      console.error(
+        "Official images are not available for the selected tag. Run `just selfhost-build` to build from this checkout.",
+      );
       process.exit(pulled.status ?? 1);
     }
     run("docker", ["compose", "-f", "docker-compose.selfhost.yml", "up", "-d"]);
@@ -689,9 +705,13 @@ async function selfhost({ build = false } = {}) {
 
   if (await waitForBackend()) {
     const env = envFromFile();
-    console.log(`Multica is running: frontend http://localhost:${env.FRONTEND_PORT || "3000"}, backend http://localhost:${env.PORT || "8080"}`);
+    console.log(
+      `Multica is running: frontend http://localhost:${env.FRONTEND_PORT || "3000"}, backend http://localhost:${env.PORT || "8080"}`,
+    );
   } else {
-    console.log("Services are still starting. Check logs with `docker compose -f docker-compose.selfhost.yml logs`.");
+    console.log(
+      "Services are still starting. Check logs with `docker compose -f docker-compose.selfhost.yml logs`.",
+    );
   }
 }
 

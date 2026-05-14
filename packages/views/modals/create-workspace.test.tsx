@@ -29,9 +29,7 @@ vi.mock("@multica/ui/components/ui/dialog", () => ({
   Dialog: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   DialogContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   DialogTitle: ({ children }: { children: ReactNode }) => <h1>{children}</h1>,
-  DialogDescription: ({ children }: { children: ReactNode }) => (
-    <p>{children}</p>
-  ),
+  DialogDescription: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }));
 
 vi.mock("sonner", () => ({
@@ -80,10 +78,7 @@ describe("CreateWorkspaceModal", () => {
   it("shows a specific slug conflict error on 409 responses", async () => {
     const user = userEvent.setup();
     mockCreateWorkspaceMutate.mockImplementation(
-      (
-        _data: unknown,
-        options: { onError: (error: unknown) => void },
-      ) => {
+      (_data: unknown, options: { onError: (error: unknown) => void }) => {
         options.onError({ status: 409 });
       },
     );
@@ -94,14 +89,10 @@ describe("CreateWorkspaceModal", () => {
     await user.click(screen.getByRole("button", { name: "Create workspace" }));
 
     await waitFor(() => {
-      expect(
-        screen.getByText("That workspace URL is already taken."),
-      ).toBeInTheDocument();
+      expect(screen.getByText("That workspace URL is already taken.")).toBeInTheDocument();
     });
 
-    expect(mockToastError).toHaveBeenCalledWith(
-      "Choose a different workspace URL",
-    );
+    expect(mockToastError).toHaveBeenCalledWith("Choose a different workspace URL");
     expect(mockCreateWorkspaceMutate).toHaveBeenCalledWith(
       { name: "My Team", slug: "my-team" },
       expect.any(Object),
@@ -112,10 +103,7 @@ describe("CreateWorkspaceModal", () => {
     const user = userEvent.setup();
     const onClose = vi.fn();
     mockCreateWorkspaceMutate.mockImplementation(
-      (
-        _data: unknown,
-        options: { onSuccess: (ws: { slug: string }) => void },
-      ) => {
+      (_data: unknown, options: { onSuccess: (ws: { slug: string }) => void }) => {
         options.onSuccess({ slug: "my-team" });
       },
     );

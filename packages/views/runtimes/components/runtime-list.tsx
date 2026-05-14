@@ -3,22 +3,11 @@
 import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import type {
-  Agent,
-  AgentRuntime,
-  AgentTask,
-  MemberWithUser,
-} from "@multica/core/types";
+import type { Agent, AgentRuntime, AgentTask, MemberWithUser } from "@multica/core/types";
 import { useAuthStore } from "@multica/core/auth";
 import { useWorkspaceId } from "@multica/core/hooks";
-import {
-  agentListOptions,
-  memberListOptions,
-} from "@multica/core/workspace/queries";
-import {
-  deriveRuntimeHealth,
-  latestCliVersionOptions,
-} from "@multica/core/runtimes";
+import { agentListOptions, memberListOptions } from "@multica/core/workspace/queries";
+import { deriveRuntimeHealth, latestCliVersionOptions } from "@multica/core/runtimes";
 import { agentTaskSnapshotOptions, deriveWorkload } from "@multica/core/agents";
 import { paths, useWorkspaceSlug } from "@multica/core/paths";
 import { DataTable } from "@multica/ui/components/ui/data-table";
@@ -67,12 +56,11 @@ export function buildWorkloadIndex(
   for (const a of agents) {
     if (!a.runtime_id || a.archived_at) continue;
     agentToRuntime.set(a.id, a.runtime_id);
-    const entry =
-      result.get(a.runtime_id) ?? {
-        agentIds: [],
-        runningCount: 0,
-        queuedCount: 0,
-      };
+    const entry = result.get(a.runtime_id) ?? {
+      agentIds: [],
+      runningCount: 0,
+      queuedCount: 0,
+    };
     entry.agentIds.push(a.id);
     result.set(a.runtime_id, entry);
   }
@@ -82,8 +70,7 @@ export function buildWorkloadIndex(
     const entry = result.get(rid);
     if (!entry) continue;
     if (t.status === "running") entry.runningCount += 1;
-    else if (t.status === "queued" || t.status === "dispatched")
-      entry.queuedCount += 1;
+    else if (t.status === "queued" || t.status === "dispatched") entry.queuedCount += 1;
   }
   return result;
 }
@@ -116,17 +103,12 @@ export function RuntimeList({
   const { data: snapshot = [] } = useQuery(agentTaskSnapshotOptions(wsId));
   const { data: latestCliVersion = null } = useQuery(latestCliVersionOptions());
 
-  const currentMember = user
-    ? members.find((m) => m.user_id === user.id)
-    : null;
+  const currentMember = user ? members.find((m) => m.user_id === user.id) : null;
   const isAdmin = currentMember
     ? currentMember.role === "owner" || currentMember.role === "admin"
     : false;
 
-  const workloadIndex = useMemo(
-    () => buildWorkloadIndex(agents, snapshot),
-    [agents, snapshot],
-  );
+  const workloadIndex = useMemo(() => buildWorkloadIndex(agents, snapshot), [agents, snapshot]);
 
   const memberById = useMemo(() => {
     const map = new Map<string, MemberWithUser>();
@@ -148,9 +130,7 @@ export function RuntimeList({
   const rows = useMemo<RuntimeRow[]>(() => {
     return runtimes.map((runtime) => ({
       runtime,
-      ownerMember: runtime.owner_id
-        ? memberById.get(runtime.owner_id) ?? null
-        : null,
+      ownerMember: runtime.owner_id ? (memberById.get(runtime.owner_id) ?? null) : null,
       workload: workloadIndex.get(runtime.id) ?? EMPTY_WORKLOAD,
       canDelete: isAdmin || (!!user && runtime.owner_id === user.id),
     }));
@@ -202,9 +182,7 @@ export function RuntimeList({
       table={table}
       onRowClick={(row) => {
         if (!slug) return;
-        navigation.push(
-          paths.workspace(slug).runtimeDetail(row.original.runtime.id),
-        );
+        navigation.push(paths.workspace(slug).runtimeDetail(row.original.runtime.id));
       }}
     />
   );
@@ -229,9 +207,7 @@ function RuntimeCard({
   const { t: tAgents } = useT("agents");
   const navigation = useNavigation();
   const labelOf = useHealthLabel();
-  const href = slug
-    ? paths.workspace(slug).runtimeDetail(row.runtime.id)
-    : null;
+  const href = slug ? paths.workspace(slug).runtimeDetail(row.runtime.id) : null;
   const { base: baseName, hostname } = splitRuntimeName(row.runtime.name);
   const health = deriveRuntimeHealth(row.runtime, now);
   const lastSeen = formatLastSeen(row.runtime.last_seen_at);
@@ -243,10 +219,8 @@ function RuntimeCard({
   const workloadVisual = workloadConfig[workload];
   const WorkloadIcon = workloadVisual.icon;
   const meta = row.runtime.metadata as Record<string, unknown> | null;
-  const cliVersion =
-    meta && typeof meta.cli_version === "string" ? meta.cli_version : null;
-  const launchedBy =
-    meta && typeof meta.launched_by === "string" ? meta.launched_by : null;
+  const cliVersion = meta && typeof meta.cli_version === "string" ? meta.cli_version : null;
+  const launchedBy = meta && typeof meta.launched_by === "string" ? meta.launched_by : null;
   const hasCliUpdate =
     launchedBy !== "desktop" &&
     !!latestCliVersion &&
@@ -256,10 +230,7 @@ function RuntimeCard({
   const handleOpen = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       if (event.defaultPrevented || !href) return;
-      if (
-        (event.metaKey || event.ctrlKey || event.shiftKey) &&
-        navigation.openInNewTab
-      ) {
+      if ((event.metaKey || event.ctrlKey || event.shiftKey) && navigation.openInNewTab) {
         navigation.openInNewTab(href);
         return;
       }
@@ -300,19 +271,11 @@ function RuntimeCard({
                   : t(($) => $.detail.visibility_label.private)}
               </span>
             </div>
-            {hostname && (
-              <p className="mt-1 truncate text-xs text-muted-foreground">
-                {hostname}
-              </p>
-            )}
+            {hostname && <p className="mt-1 truncate text-xs text-muted-foreground">{hostname}</p>}
           </div>
         </div>
         <ResourceInteractiveRegion>
-          <RuntimeRowActions
-            runtime={row.runtime}
-            wsId={wsId}
-            canDelete={row.canDelete}
-          />
+          <RuntimeRowActions runtime={row.runtime} wsId={wsId} canDelete={row.canDelete} />
         </ResourceInteractiveRegion>
       </div>
 
@@ -340,14 +303,10 @@ function RuntimeCard({
                 {tAgents(($) => $.workload[workload])}
               </span>
               {workload === "working" && (
-                <span className="font-mono tabular-nums">
-                  {row.workload.runningCount}
-                </span>
+                <span className="font-mono tabular-nums">{row.workload.runningCount}</span>
               )}
               {workload === "queued" && (
-                <span className="font-mono tabular-nums">
-                  {row.workload.queuedCount}
-                </span>
+                <span className="font-mono tabular-nums">{row.workload.queuedCount}</span>
               )}
             </>
           )}
@@ -373,11 +332,7 @@ function RuntimeCard({
 
       {showOwner && row.ownerMember && (
         <div className="mt-auto flex min-w-0 items-center gap-2 pt-5 text-xs text-muted-foreground">
-          <ActorAvatar
-            actorType="member"
-            actorId={row.ownerMember.user_id}
-            size={18}
-          />
+          <ActorAvatar actorType="member" actorId={row.ownerMember.user_id} size={18} />
           <span className="truncate">{row.ownerMember.name}</span>
         </div>
       )}
@@ -394,16 +349,8 @@ function RuntimeCardAgentStack({ agentIds }: { agentIds: string[] }) {
   return (
     <div className="mt-2 flex items-center -space-x-1.5">
       {visible.map((id) => (
-        <span
-          key={id}
-          className="inline-flex rounded-full ring-2 ring-background"
-        >
-          <ActorAvatar
-            actorType="agent"
-            actorId={id}
-            size={22}
-            enableHoverCard
-          />
+        <span key={id} className="inline-flex rounded-full ring-2 ring-background">
+          <ActorAvatar actorType="agent" actorId={id} size={22} enableHoverCard />
         </span>
       ))}
       {extra > 0 && (

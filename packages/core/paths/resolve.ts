@@ -20,10 +20,7 @@ import { paths } from "./paths";
  * this resolver — this resolver only deals with the post-invite-check
  * destination.
  */
-export function resolvePostAuthDestination(
-  workspaces: Workspace[],
-  hasOnboarded: boolean,
-): string {
+export function resolvePostAuthDestination(workspaces: Workspace[], hasOnboarded: boolean): string {
   if (!hasOnboarded) {
     return paths.onboarding();
   }

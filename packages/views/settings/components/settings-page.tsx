@@ -84,8 +84,7 @@ export function SettingsPage({ extraAccountTabs }: SettingsPageProps = {}) {
   );
 
   const tabFromUrl = navigation.searchParams.get(TAB_QUERY_KEY);
-  const activeTab =
-    tabFromUrl && validTabs.has(tabFromUrl) ? tabFromUrl : DEFAULT_TAB;
+  const activeTab = tabFromUrl && validTabs.has(tabFromUrl) ? tabFromUrl : DEFAULT_TAB;
 
   // replace (not push) so settings tab switches don't pollute browser history.
   // Preserve any other query params the page may carry.
@@ -147,17 +146,37 @@ export function SettingsPage({ extraAccountTabs }: SettingsPageProps = {}) {
       {/* Right content */}
       <div className="flex-1 min-w-0 md:overflow-y-auto">
         <div className="w-full max-w-4xl mx-auto px-5 py-10 md:px-10 md:py-20">
-          <TabsContent value="profile"><AccountTab /></TabsContent>
-          <TabsContent value="preferences"><PreferencesTab /></TabsContent>
-          <TabsContent value="notifications"><NotificationsTab /></TabsContent>
-          <TabsContent value="tokens"><TokensTab /></TabsContent>
-          <TabsContent value="workspace"><WorkspaceTab /></TabsContent>
-          <TabsContent value="repositories"><RepositoriesTab /></TabsContent>
-          <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
-          <TabsContent value="labs"><LabsTab /></TabsContent>
-          <TabsContent value="members"><MembersTab /></TabsContent>
+          <TabsContent value="profile">
+            <AccountTab />
+          </TabsContent>
+          <TabsContent value="preferences">
+            <PreferencesTab />
+          </TabsContent>
+          <TabsContent value="notifications">
+            <NotificationsTab />
+          </TabsContent>
+          <TabsContent value="tokens">
+            <TokensTab />
+          </TabsContent>
+          <TabsContent value="workspace">
+            <WorkspaceTab />
+          </TabsContent>
+          <TabsContent value="repositories">
+            <RepositoriesTab />
+          </TabsContent>
+          <TabsContent value="integrations">
+            <IntegrationsTab />
+          </TabsContent>
+          <TabsContent value="labs">
+            <LabsTab />
+          </TabsContent>
+          <TabsContent value="members">
+            <MembersTab />
+          </TabsContent>
           {extraAccountTabs?.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value}>{tab.content}</TabsContent>
+            <TabsContent key={tab.value} value={tab.value}>
+              {tab.content}
+            </TabsContent>
           ))}
         </div>
       </div>

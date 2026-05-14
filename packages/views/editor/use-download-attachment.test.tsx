@@ -18,15 +18,19 @@ vi.mock("sonner", () => ({
 }));
 
 vi.mock("../i18n", () => ({
-  useT: () => ({ t: (sel: (s: { attachment: { download_failed: string } }) => string) => sel({ attachment: { download_failed: "Couldn't fetch a download link. Try again in a moment." } }) }),
+  useT: () => ({
+    t: (sel: (s: { attachment: { download_failed: string } }) => string) =>
+      sel({
+        attachment: { download_failed: "Couldn't fetch a download link. Try again in a moment." },
+      }),
+  }),
 }));
 
 import { useDownloadAttachment } from "./use-download-attachment";
 import { openExternal } from "../platform";
 import { toast } from "sonner";
 
-const SIGNED_URL =
-  "https://static.example.test/file.md?Policy=p&Signature=s&Key-Pair-Id=k";
+const SIGNED_URL = "https://static.example.test/file.md?Policy=p&Signature=s&Key-Pair-Id=k";
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -12,10 +12,7 @@ import type { QuestionnaireAnswers } from "@multica/core/onboarding";
 import { pinKeys } from "@multica/core/pins";
 import { projectKeys } from "@multica/core/projects";
 import { issueKeys } from "@multica/core/issues/queries";
-import {
-  memberListOptions,
-  workspaceKeys,
-} from "@multica/core/workspace/queries";
+import { memberListOptions, workspaceKeys } from "@multica/core/workspace/queries";
 import { Button } from "@multica/ui/components/ui/button";
 import {
   Dialog,
@@ -25,10 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@multica/ui/components/ui/dialog";
-import {
-  buildImportPayload,
-  type StarterContentLocale,
-} from "../utils/starter-content-templates";
+import { buildImportPayload, type StarterContentLocale } from "../utils/starter-content-templates";
 import { useT } from "../../i18n";
 
 /**
@@ -54,9 +48,7 @@ export function StarterContentPrompt() {
   const { push } = useNavigation();
   const qc = useQueryClient();
 
-  const [submitting, setSubmitting] = useState<"import" | "dismiss" | null>(
-    null,
-  );
+  const [submitting, setSubmitting] = useState<"import" | "dismiss" | null>(null);
 
   // Member-list fetch is the proxy we use to detect "did this user CREATE
   // this workspace, or were they invited into it?" An invitee is by definition
@@ -69,8 +61,7 @@ export function StarterContentPrompt() {
     ...memberListOptions(workspace?.id ?? ""),
     enabled: !!workspace?.id,
   });
-  const isSoloMember =
-    members.length === 1 && members[0]?.user_id === user?.id;
+  const isSoloMember = members.length === 1 && members[0]?.user_id === user?.id;
 
   const shouldShow =
     !!user &&
@@ -127,14 +118,10 @@ export function StarterContentPrompt() {
       // exists and we jump to it. Otherwise, stay on the issues list —
       // the new Getting Started project appears via realtime events.
       if (result.welcome_issue_id) {
-        push(
-          paths.workspace(workspace.slug).issueDetail(result.welcome_issue_id),
-        );
+        push(paths.workspace(workspace.slug).issueDetail(result.welcome_issue_id));
       }
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : t(($) => $.starter_content.import_failed),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.starter_content.import_failed));
       setSubmitting(null);
     }
   };
@@ -146,11 +133,7 @@ export function StarterContentPrompt() {
       await api.dismissStarterContent({ workspace_id: workspace.id });
       await refreshMe();
     } catch (err) {
-      toast.error(
-        err instanceof Error
-          ? err.message
-          : t(($) => $.starter_content.dismiss_failed),
-      );
+      toast.error(err instanceof Error ? err.message : t(($) => $.starter_content.dismiss_failed));
       setSubmitting(null);
     }
   };
@@ -181,20 +164,12 @@ export function StarterContentPrompt() {
         </DialogHeader>
 
         <DialogFooter className="mt-2 gap-2 sm:justify-end">
-          <Button
-            variant="ghost"
-            onClick={onDismiss}
-            disabled={submitting !== null}
-          >
-            {submitting === "dismiss" && (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            )}
+          <Button variant="ghost" onClick={onDismiss} disabled={submitting !== null}>
+            {submitting === "dismiss" && <Loader2 className="h-4 w-4 animate-spin" />}
             {t(($) => $.starter_content.dismiss_action)}
           </Button>
           <Button onClick={onImport} disabled={submitting !== null}>
-            {submitting === "import" && (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            )}
+            {submitting === "import" && <Loader2 className="h-4 w-4 animate-spin" />}
             {t(($) => $.starter_content.import_action)}
           </Button>
         </DialogFooter>
@@ -210,9 +185,7 @@ function resolveLocale(language: string): StarterContentLocale {
 }
 
 // Local helper — mirrors the onboarding flow's mergeQuestionnaire.
-function mergeQuestionnaire(
-  raw: Record<string, unknown>,
-): QuestionnaireAnswers {
+function mergeQuestionnaire(raw: Record<string, unknown>): QuestionnaireAnswers {
   const empty: QuestionnaireAnswers = {
     team_size: null,
     team_size_other: null,

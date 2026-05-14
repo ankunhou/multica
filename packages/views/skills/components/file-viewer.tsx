@@ -64,9 +64,7 @@ function FrontmatterCard({ data }: { data: Frontmatter }) {
       <div className="grid gap-1.5">
         {Object.entries(data).map(([key, value]) => (
           <div key={key} className="flex gap-2 text-xs">
-            <span className="shrink-0 font-medium text-muted-foreground min-w-[80px]">
-              {key}
-            </span>
+            <span className="shrink-0 font-medium text-muted-foreground min-w-[80px]">{key}</span>
             <span className="text-foreground">{value}</span>
           </div>
         ))}
@@ -101,9 +99,7 @@ export function FileViewer({
     <div className="flex h-full flex-col">
       {/* File header */}
       <div className="flex h-10 items-center justify-between border-b px-4">
-        <span className="text-xs font-mono text-muted-foreground truncate">
-          {path}
-        </span>
+        <span className="text-xs font-mono text-muted-foreground truncate">{path}</span>
         <div className="flex items-center gap-1">
           {isMd && (
             <Tooltip>
@@ -115,11 +111,7 @@ export function FileViewer({
                     onClick={() => setEditing(!editing)}
                     className="text-muted-foreground"
                   >
-                    {editing ? (
-                      <Eye className="h-3.5 w-3.5" />
-                    ) : (
-                      <Pencil className="h-3.5 w-3.5" />
-                    )}
+                    {editing ? <Eye className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
                   </Button>
                 }
               />
@@ -138,9 +130,7 @@ export function FileViewer({
         {isMd && !editing ? (
           <div className="p-6">
             {frontmatter && <FrontmatterCard data={frontmatter} />}
-            <Markdown mode="full">
-              {body || t(($) => $.file_viewer.no_content)}
-            </Markdown>
+            <Markdown mode="full">{body || t(($) => $.file_viewer.no_content)}</Markdown>
           </div>
         ) : (
           <Textarea

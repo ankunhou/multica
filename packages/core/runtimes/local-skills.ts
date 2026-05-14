@@ -8,8 +8,7 @@ import type {
 
 export const runtimeLocalSkillsKeys = {
   all: () => ["runtimes", "local-skills"] as const,
-  forRuntime: (runtimeId: string) =>
-    [...runtimeLocalSkillsKeys.all(), runtimeId] as const,
+  forRuntime: (runtimeId: string) => [...runtimeLocalSkillsKeys.all(), runtimeId] as const,
 };
 
 const POLL_INTERVAL_MS = 500;

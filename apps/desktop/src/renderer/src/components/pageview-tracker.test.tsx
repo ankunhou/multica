@@ -7,10 +7,7 @@ const state = vi.hoisted(() => ({
   user: null as { id: string } | null,
   overlay: null as { type: string; invitationId?: string } | null,
   activeWorkspaceSlug: null as string | null,
-  byWorkspace: {} as Record<
-    string,
-    { activeTabId: string; tabs: { id: string; path: string }[] }
-  >,
+  byWorkspace: {} as Record<string, { activeTabId: string; tabs: { id: string; path: string }[] }>,
   capturePageview: vi.fn<(path?: string) => void>(),
 }));
 
@@ -20,15 +17,13 @@ vi.mock("@multica/core/analytics", () => ({
 
 // Auth store — single selector pattern (`s => s.user`).
 vi.mock("@multica/core/auth", () => {
-  const useAuthStore = (selector: (s: typeof state) => unknown) =>
-    selector(state);
+  const useAuthStore = (selector: (s: typeof state) => unknown) => selector(state);
   return { useAuthStore };
 });
 
 // Window overlay store — same shape.
 vi.mock("@/stores/window-overlay-store", () => {
-  const useWindowOverlayStore = (selector: (s: typeof state) => unknown) =>
-    selector(state);
+  const useWindowOverlayStore = (selector: (s: typeof state) => unknown) => selector(state);
   return { useWindowOverlayStore };
 });
 
@@ -37,10 +32,9 @@ vi.mock("@/stores/window-overlay-store", () => {
 // (useActiveTabIdentity, getActiveTab) so we don't have to re-import them
 // from the real store inside a mocked module.
 vi.mock("@/stores/tab-store", () => {
-  const useTabStore = Object.assign(
-    (selector: (s: typeof state) => unknown) => selector(state),
-    { getState: () => state },
-  );
+  const useTabStore = Object.assign((selector: (s: typeof state) => unknown) => selector(state), {
+    getState: () => state,
+  });
   const getActiveTab = (s: typeof state) => {
     const slug = s.activeWorkspaceSlug;
     if (!slug) return null;
@@ -240,4 +234,3 @@ describe("PageviewTracker", () => {
     expect(state.capturePageview).not.toHaveBeenCalled();
   });
 });
-

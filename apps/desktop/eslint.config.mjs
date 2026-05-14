@@ -20,10 +20,7 @@ export default [
     ignores: ["src/renderer/src/**/*.test.tsx"],
     plugins: { i18next },
     rules: {
-      "i18next/no-literal-string": [
-        "error",
-        { mode: "jsx-text-only" },
-      ],
+      "i18next/no-literal-string": ["error", { mode: "jsx-text-only" }],
     },
   },
   {

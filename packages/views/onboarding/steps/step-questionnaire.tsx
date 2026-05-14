@@ -1,21 +1,10 @@
 "use client";
 
 import { type ReactNode, useMemo, useRef, useState } from "react";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Loader2,
-  PenLine,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, PenLine, Sparkles } from "lucide-react";
 import { Button } from "@multica/ui/components/ui/button";
 import { useScrollFade } from "@multica/ui/hooks/use-scroll-fade";
-import type {
-  QuestionnaireAnswers,
-  Role,
-  TeamSize,
-  UseCase,
-} from "@multica/core/onboarding";
+import type { QuestionnaireAnswers, Role, TeamSize, UseCase } from "@multica/core/onboarding";
 import { DragStrip } from "@multica/views/platform";
 import { StepHeader } from "../components/step-header";
 import { OptionCard, OtherOptionCard } from "../components/option-card";
@@ -75,15 +64,13 @@ export function StepQuestionnaire({
   const answeredCount = useMemo(() => {
     const q1 =
       answers.team_size !== null &&
-      (answers.team_size !== "other" ||
-        (answers.team_size_other ?? "").trim() !== "");
+      (answers.team_size !== "other" || (answers.team_size_other ?? "").trim() !== "");
     const q2 =
       answers.role !== null &&
       (answers.role !== "other" || (answers.role_other ?? "").trim() !== "");
     const q3 =
       answers.use_case !== null &&
-      (answers.use_case !== "other" ||
-        (answers.use_case_other ?? "").trim() !== "");
+      (answers.use_case !== "other" || (answers.use_case_other ?? "").trim() !== "");
     return (q1 ? 1 : 0) + (q2 ? 1 : 0) + (q3 ? 1 : 0);
   }, [answers]);
   const canContinue = answeredCount === 3;
@@ -129,11 +116,7 @@ export function StepQuestionnaire({
             mask-image gradient so content softly fades into the header /
             footer at the edges as the user scrolls, replacing the hard
             border separator. */}
-        <main
-          ref={mainRef}
-          style={fadeStyle}
-          className="min-h-0 flex-1 overflow-y-auto"
-        >
+        <main ref={mainRef} style={fadeStyle} className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
               {t(($) => $.questionnaire.eyebrow)}
@@ -162,9 +145,7 @@ export function StepQuestionnaire({
                   selected={answers.team_size === "other"}
                   onSelect={() => setTeamSize("other")}
                   otherValue={answers.team_size_other ?? ""}
-                  onOtherChange={(v) =>
-                    setAnswers((a) => ({ ...a, team_size_other: v }))
-                  }
+                  onOtherChange={(v) => setAnswers((a) => ({ ...a, team_size_other: v }))}
                   placeholder={t(($) => $.questionnaire.q1_other_placeholder)}
                 />
               </QuestionBlock>
@@ -198,9 +179,7 @@ export function StepQuestionnaire({
                   selected={answers.role === "other"}
                   onSelect={() => setRole("other")}
                   otherValue={answers.role_other ?? ""}
-                  onOtherChange={(v) =>
-                    setAnswers((a) => ({ ...a, role_other: v }))
-                  }
+                  onOtherChange={(v) => setAnswers((a) => ({ ...a, role_other: v }))}
                   placeholder={t(($) => $.questionnaire.q2_other_placeholder)}
                 />
               </QuestionBlock>
@@ -234,9 +213,7 @@ export function StepQuestionnaire({
                   selected={answers.use_case === "other"}
                   onSelect={() => setUseCase("other")}
                   otherValue={answers.use_case_other ?? ""}
-                  onOtherChange={(v) =>
-                    setAnswers((a) => ({ ...a, use_case_other: v }))
-                  }
+                  onOtherChange={(v) => setAnswers((a) => ({ ...a, use_case_other: v }))}
                   placeholder={t(($) => $.questionnaire.q3_other_placeholder)}
                 />
               </QuestionBlock>
@@ -246,17 +223,10 @@ export function StepQuestionnaire({
 
         {/* Fixed footer — progress counter + Continue */}
         <footer className="flex shrink-0 items-center justify-end gap-4 bg-background px-6 py-4 sm:px-10 md:px-14 lg:px-16">
-          <span
-            aria-live="polite"
-            className="text-xs tabular-nums text-muted-foreground"
-          >
+          <span aria-live="polite" className="text-xs tabular-nums text-muted-foreground">
             {t(($) => $.questionnaire.answered_progress, { count: answeredCount })}
           </span>
-          <Button
-            size="lg"
-            disabled={!canContinue || submitting}
-            onClick={submit}
-          >
+          <Button size="lg" disabled={!canContinue || submitting} onClick={submit}>
             {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {t(($) => $.common.continue)}
             <ArrowRight className="h-4 w-4" />
@@ -344,15 +314,7 @@ function WhyWeAsk() {
   );
 }
 
-function UnlockItem({
-  icon,
-  title,
-  body,
-}: {
-  icon: ReactNode;
-  title: string;
-  body: string;
-}) {
+function UnlockItem({ icon, title, body }: { icon: ReactNode; title: string; body: string }) {
   return (
     <div className="grid grid-cols-[22px_1fr] gap-3">
       <div
@@ -363,9 +325,7 @@ function UnlockItem({
       </div>
       <div className="flex flex-col">
         <div className="text-[13.5px] font-medium text-foreground">{title}</div>
-        <div className="mt-1 text-[12.5px] leading-[1.55] text-muted-foreground">
-          {body}
-        </div>
+        <div className="mt-1 text-[12.5px] leading-[1.55] text-muted-foreground">{body}</div>
       </div>
     </div>
   );

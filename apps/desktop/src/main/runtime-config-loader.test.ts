@@ -61,9 +61,7 @@ describe("loadRuntimeConfig", () => {
       JSON.stringify({ schemaVersion: 1, apiUrl: "https://api.example.com" }),
     );
 
-    await expect(
-      loadRuntimeConfig({ isDev: false, configPath, env: {} }),
-    ).resolves.toEqual({
+    await expect(loadRuntimeConfig({ isDev: false, configPath, env: {} })).resolves.toEqual({
       ok: true,
       config: {
         schemaVersion: 1,

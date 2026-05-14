@@ -38,12 +38,8 @@ export function ListView({
 }) {
   const sortBy = useViewStore((s) => s.sortBy);
   const sortDirection = useViewStore((s) => s.sortDirection);
-  const listCollapsedStatuses = useViewStore(
-    (s) => s.listCollapsedStatuses
-  );
-  const toggleListCollapsed = useViewStore(
-    (s) => s.toggleListCollapsed
-  );
+  const listCollapsedStatuses = useViewStore((s) => s.listCollapsedStatuses);
+  const toggleListCollapsed = useViewStore((s) => s.toggleListCollapsed);
 
   const issuesByStatus = useMemo(() => {
     const map = new Map<IssueStatus, Issue[]>();
@@ -55,11 +51,8 @@ export function ListView({
   }, [issues, visibleStatuses, sortBy, sortDirection]);
 
   const expandedStatuses = useMemo(
-    () =>
-      visibleStatuses.filter(
-        (s) => !listCollapsedStatuses.includes(s)
-      ),
-    [visibleStatuses, listCollapsedStatuses]
+    () => visibleStatuses.filter((s) => !listCollapsedStatuses.includes(s)),
+    [visibleStatuses, listCollapsedStatuses],
   );
 
   const myIssuesOpts = myIssuesScope
@@ -114,10 +107,7 @@ function StatusAccordionItem({
   const selectedIds = useIssueSelectionStore((s) => s.selectedIds);
   const select = useIssueSelectionStore((s) => s.select);
   const deselect = useIssueSelectionStore((s) => s.deselect);
-  const { loadMore, hasMore, isLoading, total } = useLoadMoreByStatus(
-    status,
-    myIssuesOpts,
-  );
+  const { loadMore, hasMore, isLoading, total } = useLoadMoreByStatus(status, myIssuesOpts);
 
   const issueIds = issues.map((i) => i.id);
   const selectedCount = issueIds.filter((id) => selectedIds.has(id)).length;
@@ -157,9 +147,10 @@ function StatusAccordionItem({
                   size="icon-sm"
                   className="rounded-full text-muted-foreground opacity-0 group-hover/header:opacity-100 transition-opacity"
                   onClick={() =>
-                    useModalStore
-                      .getState()
-                      .open("create-issue", { status, ...(projectId ? { project_id: projectId } : {}) })
+                    useModalStore.getState().open("create-issue", {
+                      status,
+                      ...(projectId ? { project_id: projectId } : {}),
+                    })
                   }
                 />
               }
@@ -174,11 +165,13 @@ function StatusAccordionItem({
         {issues.length > 0 ? (
           <>
             {issues.map((issue) => (
-              <ListRow key={issue.id} issue={issue} childProgress={childProgressMap.get(issue.id)} />
+              <ListRow
+                key={issue.id}
+                issue={issue}
+                childProgress={childProgressMap.get(issue.id)}
+              />
             ))}
-            {hasMore && (
-              <InfiniteScrollSentinel onVisible={loadMore} loading={isLoading} />
-            )}
+            {hasMore && <InfiniteScrollSentinel onVisible={loadMore} loading={isLoading} />}
           </>
         ) : (
           <p className="py-6 text-center text-xs text-muted-foreground">

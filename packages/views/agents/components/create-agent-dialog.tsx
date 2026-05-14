@@ -21,18 +21,12 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@multica/ui/components/ui/dialog";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@multica/ui/components/ui/popover";
+import { Popover, PopoverTrigger, PopoverContent } from "@multica/ui/components/ui/popover";
 import { Button } from "@multica/ui/components/ui/button";
 import { Input } from "@multica/ui/components/ui/input";
 import { Label } from "@multica/ui/components/ui/label";
 import { toast } from "sonner";
-import {
-  AGENT_DESCRIPTION_MAX_LENGTH,
-} from "@multica/core/agents";
+import { AGENT_DESCRIPTION_MAX_LENGTH } from "@multica/core/agents";
 import { CharCounter } from "./char-counter";
 import { useT } from "../../i18n";
 
@@ -68,9 +62,7 @@ export function CreateAgentDialog({
     template ? `${template.name}${t(($) => $.create_dialog.duplicate_copy_suffix)}` : "",
   );
   const [description, setDescription] = useState(template?.description ?? "");
-  const [visibility, setVisibility] = useState<AgentVisibility>(
-    template?.visibility ?? "private",
-  );
+  const [visibility, setVisibility] = useState<AgentVisibility>(template?.visibility ?? "private");
   const [model, setModel] = useState(template?.model ?? "");
   const [creating, setCreating] = useState(false);
   const [runtimeOpen, setRuntimeOpen] = useState(false);
@@ -95,9 +87,10 @@ export function CreateAgentDialog({
   };
 
   const filteredRuntimes = useMemo(() => {
-    const filtered = runtimeFilter === "mine" && currentUserId
-      ? runtimes.filter((r) => r.owner_id === currentUserId)
-      : runtimes;
+    const filtered =
+      runtimeFilter === "mine" && currentUserId
+        ? runtimes.filter((r) => r.owner_id === currentUserId)
+        : runtimes;
     return [...filtered].sort((a, b) => {
       // Caller's own runtimes first; among the rest, usable (public) ones
       // come before unusable (private) ones so the picker doesn't lead
@@ -130,14 +123,12 @@ export function CreateAgentDialog({
   const initialRuntime =
     templateRuntime && !isRuntimeDisabledForUser(templateRuntime)
       ? templateRuntime.id
-      : filteredRuntimes.find((r) => !isRuntimeDisabledForUser(r))?.id ?? "";
+      : (filteredRuntimes.find((r) => !isRuntimeDisabledForUser(r))?.id ?? "");
   const [selectedRuntimeId, setSelectedRuntimeId] = useState(initialRuntime);
 
   useEffect(() => {
     if (!selectedRuntimeId) {
-      const firstUsable = filteredRuntimes.find(
-        (r) => !isRuntimeDisabledForUser(r),
-      );
+      const firstUsable = filteredRuntimes.find((r) => !isRuntimeDisabledForUser(r));
       if (firstUsable) setSelectedRuntimeId(firstUsable.id);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,10 +163,7 @@ export function CreateAgentDialog({
         if (template.custom_args.length) data.custom_args = template.custom_args;
         // Skip env when the template's values are redacted from the API
         // response — copying placeholders would create a broken clone.
-        if (
-          !template.custom_env_redacted &&
-          Object.keys(template.custom_env).length > 0
-        ) {
+        if (!template.custom_env_redacted && Object.keys(template.custom_env).length > 0) {
           data.custom_env = template.custom_env;
         }
         if (template.max_concurrent_tasks) {
@@ -185,17 +173,26 @@ export function CreateAgentDialog({
       await onCreate(data);
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : t(($) => $.create_dialog.create_failed_toast));
+      toast.error(
+        err instanceof Error ? err.message : t(($) => $.create_dialog.create_failed_toast),
+      );
       setCreating(false);
     }
   };
 
   return (
-    <Dialog open onOpenChange={(v) => { if (!v) onClose(); }}>
+    <Dialog
+      open
+      onOpenChange={(v) => {
+        if (!v) onClose();
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>
-            {isDuplicate ? t(($) => $.create_dialog.title_duplicate) : t(($) => $.create_dialog.title_create)}
+            {isDuplicate
+              ? t(($) => $.create_dialog.title_duplicate)
+              : t(($) => $.create_dialog.title_create)}
           </DialogTitle>
           <DialogDescription>
             {isDuplicate
@@ -206,7 +203,9 @@ export function CreateAgentDialog({
 
         <div className="space-y-4 min-w-0">
           <div>
-            <Label className="text-xs text-muted-foreground">{t(($) => $.create_dialog.name_label)}</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t(($) => $.create_dialog.name_label)}
+            </Label>
             <Input
               autoFocus
               type="text"
@@ -222,7 +221,9 @@ export function CreateAgentDialog({
           </div>
 
           <div>
-            <Label className="text-xs text-muted-foreground">{t(($) => $.create_dialog.description_label)}</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t(($) => $.create_dialog.description_label)}
+            </Label>
             <Input
               type="text"
               value={description}
@@ -232,15 +233,14 @@ export function CreateAgentDialog({
               className="mt-1"
             />
             <div className="mt-1">
-              <CharCounter
-                length={[...description].length}
-                max={AGENT_DESCRIPTION_MAX_LENGTH}
-              />
+              <CharCounter length={[...description].length} max={AGENT_DESCRIPTION_MAX_LENGTH} />
             </div>
           </div>
 
           <div>
-            <Label className="text-xs text-muted-foreground">{t(($) => $.create_dialog.visibility_label)}</Label>
+            <Label className="text-xs text-muted-foreground">
+              {t(($) => $.create_dialog.visibility_label)}
+            </Label>
             <div className="mt-1.5 flex gap-2">
               <button
                 type="button"
@@ -285,12 +285,17 @@ export function CreateAgentDialog({
 
           <div className="min-w-0">
             <div className="flex items-center justify-between">
-              <Label className="text-xs text-muted-foreground">{t(($) => $.create_dialog.runtime_label)}</Label>
+              <Label className="text-xs text-muted-foreground">
+                {t(($) => $.create_dialog.runtime_label)}
+              </Label>
               {hasOtherRuntimes && (
                 <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
                   <button
                     type="button"
-                    onClick={() => { setRuntimeFilter("mine"); setSelectedRuntimeId(""); }}
+                    onClick={() => {
+                      setRuntimeFilter("mine");
+                      setSelectedRuntimeId("");
+                    }}
                     className={`rounded px-2 py-0.5 text-xs font-medium transition-colors ${
                       runtimeFilter === "mine"
                         ? "bg-background text-foreground shadow-sm"
@@ -301,7 +306,10 @@ export function CreateAgentDialog({
                   </button>
                   <button
                     type="button"
-                    onClick={() => { setRuntimeFilter("all"); setSelectedRuntimeId(""); }}
+                    onClick={() => {
+                      setRuntimeFilter("all");
+                      setSelectedRuntimeId("");
+                    }}
                     className={`rounded px-2 py-0.5 text-xs font-medium transition-colors ${
                       runtimeFilter === "all"
                         ? "bg-background text-foreground shadow-sm"
@@ -328,7 +336,9 @@ export function CreateAgentDialog({
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <span className="truncate font-medium">
-                      {runtimesLoading ? t(($) => $.create_dialog.runtime_loading) : (selectedRuntime?.name ?? t(($) => $.create_dialog.runtime_none))}
+                      {runtimesLoading
+                        ? t(($) => $.create_dialog.runtime_loading)
+                        : (selectedRuntime?.name ?? t(($) => $.create_dialog.runtime_none))}
                     </span>
                     {selectedRuntime?.runtime_mode === "cloud" && (
                       <span className="shrink-0 rounded bg-info/10 px-1.5 py-0.5 text-xs font-medium text-info">
@@ -338,13 +348,19 @@ export function CreateAgentDialog({
                   </div>
                   <div className="truncate text-xs text-muted-foreground">
                     {selectedRuntime
-                      ? (getOwnerMember(selectedRuntime.owner_id)?.name ?? selectedRuntime.device_info)
+                      ? (getOwnerMember(selectedRuntime.owner_id)?.name ??
+                        selectedRuntime.device_info)
                       : t(($) => $.create_dialog.runtime_register_first)}
                   </div>
                 </div>
-                <ChevronDown className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${runtimeOpen ? "rotate-180" : ""}`} />
+                <ChevronDown
+                  className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${runtimeOpen ? "rotate-180" : ""}`}
+                />
               </PopoverTrigger>
-              <PopoverContent align="start" className="w-[var(--anchor-width)] p-1 max-h-60 overflow-y-auto">
+              <PopoverContent
+                align="start"
+                className="w-[var(--anchor-width)] p-1 max-h-60 overflow-y-auto"
+              >
                 {filteredRuntimes.map((device) => {
                   const ownerMember = getOwnerMember(device.owner_id);
                   const disabled = isRuntimeDisabledForUser(device);
@@ -395,7 +411,11 @@ export function CreateAgentDialog({
                         <div className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
                           {ownerMember ? (
                             <>
-                              <ActorAvatar actorType="member" actorId={ownerMember.user_id} size={14} />
+                              <ActorAvatar
+                                actorType="member"
+                                actorId={ownerMember.user_id}
+                                size={14}
+                              />
                               <span className="truncate">{ownerMember.name}</span>
                             </>
                           ) : (
@@ -430,9 +450,7 @@ export function CreateAgentDialog({
           </Button>
           <Button
             onClick={handleSubmit}
-            disabled={
-              creating || !name.trim() || !selectedRuntime || selectedRuntimeLocked
-            }
+            disabled={creating || !name.trim() || !selectedRuntime || selectedRuntimeLocked}
             title={
               selectedRuntimeLocked
                 ? t(($) => $.create_dialog.runtime_private_locked_tooltip)

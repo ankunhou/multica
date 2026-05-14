@@ -18,15 +18,8 @@ import {
   closestCenter,
   type DragEndEvent,
 } from "@dnd-kit/core";
-import {
-  SortableContext,
-  horizontalListSortingStrategy,
-  useSortable,
-} from "@dnd-kit/sortable";
-import {
-  restrictToHorizontalAxis,
-  restrictToParentElement,
-} from "@dnd-kit/modifiers";
+import { SortableContext, horizontalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { restrictToHorizontalAxis, restrictToParentElement } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@multica/ui/lib/utils";
 import { useTabStore, useActiveGroup, resolveRouteIcon, type Tab } from "@/stores/tab-store";
@@ -43,19 +36,22 @@ const TAB_ICONS: Record<string, LucideIcon> = {
   Settings,
 };
 
-function SortableTabItem({ tab, isActive, isOnly }: { tab: Tab; isActive: boolean; isOnly: boolean }) {
+function SortableTabItem({
+  tab,
+  isActive,
+  isOnly,
+}: {
+  tab: Tab;
+  isActive: boolean;
+  isOnly: boolean;
+}) {
   const { t } = useT("desktop");
   const setActiveTab = useTabStore((s) => s.setActiveTab);
   const closeTab = useTabStore((s) => s.closeTab);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: tab.id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: tab.id,
+  });
 
   const Icon = TAB_ICONS[tab.icon];
 
@@ -131,7 +127,11 @@ function NewTabButton() {
     const activeSlug = useTabStore.getState().activeWorkspaceSlug;
     if (!activeSlug) return;
     const path = paths.workspace(activeSlug).issues();
-    const tabId = addTab(path, t(($) => $.routes.issues), resolveRouteIcon(path));
+    const tabId = addTab(
+      path,
+      t(($) => $.routes.issues),
+      resolveRouteIcon(path),
+    );
     if (tabId) setActiveTab(tabId);
   };
 

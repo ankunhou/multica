@@ -80,9 +80,7 @@ export interface EditorExtensionsOptions {
   placeholder?: string;
   queryClient?: import("@tanstack/react-query").QueryClient;
   onSubmitRef?: RefObject<(() => void) | undefined>;
-  onUploadFileRef?: RefObject<
-    ((file: File) => Promise<UploadResult | null>) | undefined
-  >;
+  onUploadFileRef?: RefObject<((file: File) => Promise<UploadResult | null>) | undefined>;
   /** When true, bare Enter also submits (chat-style). Default false. */
   submitOnEnter?: boolean;
   /**
@@ -95,9 +93,7 @@ export interface EditorExtensionsOptions {
   disableMentions?: boolean;
 }
 
-export function createEditorExtensions(
-  options: EditorExtensionsOptions,
-): AnyExtension[] {
+export function createEditorExtensions(options: EditorExtensionsOptions): AnyExtension[] {
   const { placeholder: placeholderText } = options;
 
   return [

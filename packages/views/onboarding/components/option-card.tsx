@@ -37,9 +37,7 @@ export function OptionCard({
       )}
     >
       <RadioMark selected={selected} />
-      <span className="text-[14.5px] font-normal leading-tight text-foreground">
-        {label}
-      </span>
+      <span className="text-[14.5px] font-normal leading-tight text-foreground">{label}</span>
     </button>
   );
 }
@@ -114,9 +112,7 @@ export function RadioMark({ selected }: { selected: boolean }) {
         selected ? "border-foreground" : "border-border",
       )}
     >
-      {selected && (
-        <span className="absolute inset-[3px] rounded-full bg-foreground" />
-      )}
+      {selected && <span className="absolute inset-[3px] rounded-full bg-foreground" />}
     </span>
   );
 }

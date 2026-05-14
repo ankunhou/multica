@@ -198,10 +198,7 @@ function LinkHoverCard({
       onMouseEnter={onCardEnter}
       onMouseLeave={onCardLeave}
     >
-      <span
-        className="min-w-0 flex-1 truncate text-xs text-muted-foreground px-1"
-        title={href}
-      >
+      <span className="min-w-0 flex-1 truncate text-xs text-muted-foreground px-1" title={href}>
         {truncateUrl(href)}
       </span>
       <Button

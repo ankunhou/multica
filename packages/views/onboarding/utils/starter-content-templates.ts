@@ -1,8 +1,5 @@
 import type { QuestionnaireAnswers } from "@multica/core/onboarding";
-import type {
-  ImportStarterContentPayload,
-  ImportStarterIssuePayload,
-} from "@multica/core/api";
+import type { ImportStarterContentPayload, ImportStarterIssuePayload } from "@multica/core/api";
 import * as en from "./starter-content-content-en";
 import * as zh from "./starter-content-content-zh";
 
@@ -31,9 +28,7 @@ export type StarterContentLocale = "en" | "zh-Hans";
 
 // Prefix titles with 1. 2. 3. … AFTER the full list is assembled so
 // conditional items (invite team / connect repo) don't break numbering.
-function numberTitles(
-  issues: ImportStarterIssuePayload[],
-): ImportStarterIssuePayload[] {
+function numberTitles(issues: ImportStarterIssuePayload[]): ImportStarterIssuePayload[] {
   return issues.map((s, i) => ({ ...s, title: `${i + 1}. ${s.title}` }));
 }
 
@@ -73,11 +68,7 @@ export function buildImportPayload({
       description: welcome.description,
       priority: "high",
     },
-    agent_guided_sub_issues: numberTitles(
-      content.buildAgentGuidedSubIssues(questionnaire),
-    ),
-    self_serve_sub_issues: numberTitles(
-      content.buildSelfServeSubIssues(questionnaire),
-    ),
+    agent_guided_sub_issues: numberTitles(content.buildAgentGuidedSubIssues(questionnaire)),
+    self_serve_sub_issues: numberTitles(content.buildSelfServeSubIssues(questionnaire)),
   };
 }

@@ -61,12 +61,14 @@ describe("ApiClient", () => {
   });
 
   it("uses the expected HTTP contract for autopilot endpoints", async () => {
-    const fetchMock = vi.fn().mockImplementation(() => Promise.resolve(
-      new Response(JSON.stringify({ autopilots: [], runs: [], total: 0 }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    ));
+    const fetchMock = vi.fn().mockImplementation(() =>
+      Promise.resolve(
+        new Response(JSON.stringify({ autopilots: [], runs: [], total: 0 }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     const client = new ApiClient("https://api.example.test");
@@ -115,7 +117,10 @@ describe("ApiClient", () => {
       },
       { url: "https://api.example.test/api/autopilots/ap-1", method: "DELETE" },
       { url: "https://api.example.test/api/autopilots/ap-1/trigger", method: "POST" },
-      { url: "https://api.example.test/api/autopilots/ap-1/runs?limit=10&offset=20", method: "GET" },
+      {
+        url: "https://api.example.test/api/autopilots/ap-1/runs?limit=10&offset=20",
+        method: "GET",
+      },
       {
         url: "https://api.example.test/api/autopilots/ap-1/triggers",
         method: "POST",

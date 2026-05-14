@@ -21,46 +21,32 @@ describe("canEditSkill", () => {
   const skill = makeSkill("user-alice");
 
   it("allows workspace owners to edit any skill", () => {
-    expect(
-      canEditSkill(skill, { userId: "user-bob", role: "owner" }),
-    ).toBe(true);
+    expect(canEditSkill(skill, { userId: "user-bob", role: "owner" })).toBe(true);
   });
 
   it("allows workspace admins to edit any skill", () => {
-    expect(
-      canEditSkill(skill, { userId: "user-bob", role: "admin" }),
-    ).toBe(true);
+    expect(canEditSkill(skill, { userId: "user-bob", role: "admin" })).toBe(true);
   });
 
   it("allows the creator to edit their own skill", () => {
-    expect(
-      canEditSkill(skill, { userId: "user-alice", role: "member" }),
-    ).toBe(true);
+    expect(canEditSkill(skill, { userId: "user-alice", role: "member" })).toBe(true);
   });
 
   it("denies non-creator members", () => {
-    expect(
-      canEditSkill(skill, { userId: "user-bob", role: "member" }),
-    ).toBe(false);
+    expect(canEditSkill(skill, { userId: "user-bob", role: "member" })).toBe(false);
   });
 
   it("denies unknown-role users even if they match created_by", () => {
     // role=null models a member list that hasn't loaded yet or a user who
     // isn't a member at all; we still honor created_by identity.
-    expect(
-      canEditSkill(skill, { userId: "user-alice", role: null }),
-    ).toBe(true);
+    expect(canEditSkill(skill, { userId: "user-alice", role: null })).toBe(true);
   });
 
   it("denies when created_by is null (legacy / system-created)", () => {
-    expect(
-      canEditSkill(makeSkill(null), { userId: "user-alice", role: "member" }),
-    ).toBe(false);
+    expect(canEditSkill(makeSkill(null), { userId: "user-alice", role: "member" })).toBe(false);
   });
 
   it("denies when userId is null (logged-out edge case)", () => {
-    expect(
-      canEditSkill(skill, { userId: null, role: "member" }),
-    ).toBe(false);
+    expect(canEditSkill(skill, { userId: null, role: "member" })).toBe(false);
   });
 });

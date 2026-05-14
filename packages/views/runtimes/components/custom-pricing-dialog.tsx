@@ -42,16 +42,11 @@ function toDraft(p: CustomModelPricing | undefined): DraftRow {
 }
 
 function parseRow(draft: DraftRow): CustomModelPricing | null {
-  const values = [draft.input, draft.output, draft.cacheRead, draft.cacheWrite].map(
-    (s) => Number(s.trim()),
+  const values = [draft.input, draft.output, draft.cacheRead, draft.cacheWrite].map((s) =>
+    Number(s.trim()),
   );
   if (values.some((n) => !Number.isFinite(n) || n < 0)) return null;
-  const [input, output, cacheRead, cacheWrite] = values as [
-    number,
-    number,
-    number,
-    number,
-  ];
+  const [input, output, cacheRead, cacheWrite] = values as [number, number, number, number];
   return { input, output, cacheRead, cacheWrite };
 }
 
@@ -74,9 +69,7 @@ export function CustomPricingDialog({ open, onOpenChange, unmappedModels }: Prop
   // Show every unmapped model plus everything already in the store, so a
   // user revisiting the dialog after saving can still see / tweak / remove
   // their prior entries.
-  const rows = Array.from(
-    new Set([...unmappedModels, ...Object.keys(pricings)]),
-  ).sort();
+  const rows = Array.from(new Set([...unmappedModels, ...Object.keys(pricings)])).sort();
 
   const [drafts, setDrafts] = useState<Record<string, DraftRow>>({});
 
@@ -127,9 +120,7 @@ export function CustomPricingDialog({ open, onOpenChange, unmappedModels }: Prop
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{t(($) => $.usage.custom_pricing.title)}</DialogTitle>
-          <DialogDescription>
-            {t(($) => $.usage.custom_pricing.description)}
-          </DialogDescription>
+          <DialogDescription>{t(($) => $.usage.custom_pricing.description)}</DialogDescription>
         </DialogHeader>
 
         <div className="max-h-[60vh] space-y-4 overflow-y-auto">
@@ -193,9 +184,7 @@ export function CustomPricingDialog({ open, onOpenChange, unmappedModels }: Prop
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t(($) => $.usage.custom_pricing.cancel)}
           </Button>
-          <Button onClick={handleSave}>
-            {t(($) => $.usage.custom_pricing.save)}
-          </Button>
+          <Button onClick={handleSave}>{t(($) => $.usage.custom_pricing.save)}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

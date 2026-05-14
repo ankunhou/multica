@@ -235,10 +235,8 @@ export class ApiClient {
 
   private readCsrfToken(): string | null {
     if (typeof document === "undefined") return null;
-    const match = document.cookie
-      .split("; ")
-      .find((c) => c.startsWith("multica_csrf="));
-    return match ? match.split("=")[1] ?? null : null;
+    const match = document.cookie.split("; ").find((c) => c.startsWith("multica_csrf="));
+    return match ? (match.split("=")[1] ?? null) : null;
   }
 
   private authHeaders(): Record<string, string> {
@@ -266,7 +264,7 @@ export class ApiClient {
 
   private async parseErrorMessage(res: Response, fallback: string): Promise<string> {
     try {
-      const data = await res.json() as { error?: string };
+      const data = (await res.json()) as { error?: string };
       if (typeof data.error === "string" && data.error) return data.error;
     } catch {
       // Ignore non-JSON error bodies.
@@ -277,9 +275,12 @@ export class ApiClient {
   // Reads the response body once for both human-readable error message and
   // structured fields. The Response stream can only be consumed once, so
   // both pieces have to come from a single read.
-  private async parseErrorBody(res: Response, fallback: string): Promise<{ message: string; body: unknown }> {
+  private async parseErrorBody(
+    res: Response,
+    fallback: string,
+  ): Promise<{ message: string; body: unknown }> {
     try {
-      const data = await res.json() as { error?: string };
+      const data = (await res.json()) as { error?: string };
       const message = typeof data.error === "string" && data.error ? data.error : fallback;
       return { message, body: data };
     } catch {
@@ -309,10 +310,17 @@ export class ApiClient {
 
     if (!res.ok) {
       if (res.status === 401) this.handleUnauthorized();
-      const { message, body } = await this.parseErrorBody(res, `API error: ${res.status} ${res.statusText}`);
+      const { message, body } = await this.parseErrorBody(
+        res,
+        `API error: ${res.status} ${res.statusText}`,
+      );
       if (!options?.suppressErrorLog) {
         const logLevel = res.status === 404 ? "warn" : "error";
-        this.logger[logLevel](`← ${res.status} ${path}`, { rid, duration: `${Date.now() - start}ms`, error: message });
+        this.logger[logLevel](`← ${res.status} ${path}`, {
+          rid,
+          duration: `${Date.now() - start}ms`,
+          error: message,
+        });
       }
       throw new ApiError(message, res.status, res.statusText, body);
     }
@@ -372,19 +380,14 @@ export class ApiClient {
     });
   }
 
-  async joinCloudWaitlist(payload: {
-    email: string;
-    reason?: string;
-  }): Promise<User> {
+  async joinCloudWaitlist(payload: { email: string; reason?: string }): Promise<User> {
     return this.fetch("/api/me/onboarding/cloud-waitlist", {
       method: "POST",
       body: JSON.stringify(payload),
     });
   }
 
-  async patchOnboarding(payload: {
-    questionnaire?: Record<string, unknown>;
-  }): Promise<User> {
+  async patchOnboarding(payload: { questionnaire?: Record<string, unknown> }): Promise<User> {
     return this.fetch("/api/me/onboarding", {
       method: "PATCH",
       body: JSON.stringify(payload),
@@ -410,9 +413,7 @@ export class ApiClient {
     });
   }
 
-  async dismissStarterContent(payload?: {
-    workspace_id?: string;
-  }): Promise<User> {
+  async dismissStarterContent(payload?: { workspace_id?: string }): Promise<User> {
     return this.fetch("/api/me/starter-content/dismiss", {
       method: "POST",
       body: payload ? JSON.stringify(payload) : undefined,
@@ -446,20 +447,38 @@ export class ApiClient {
     });
   }
 
-  async searchIssues(params: { q: string; limit?: number; offset?: number; include_closed?: boolean; signal?: AbortSignal }): Promise<SearchIssuesResponse> {
+  async searchIssues(params: {
+    q: string;
+    limit?: number;
+    offset?: number;
+    include_closed?: boolean;
+    signal?: AbortSignal;
+  }): Promise<SearchIssuesResponse> {
     const search = new URLSearchParams({ q: params.q });
     if (params.limit !== undefined) search.set("limit", String(params.limit));
     if (params.offset !== undefined) search.set("offset", String(params.offset));
     if (params.include_closed) search.set("include_closed", "true");
-    return this.fetch(`/api/issues/search?${search}`, params.signal ? { signal: params.signal } : undefined);
+    return this.fetch(
+      `/api/issues/search?${search}`,
+      params.signal ? { signal: params.signal } : undefined,
+    );
   }
 
-  async searchProjects(params: { q: string; limit?: number; offset?: number; include_closed?: boolean; signal?: AbortSignal }): Promise<SearchProjectsResponse> {
+  async searchProjects(params: {
+    q: string;
+    limit?: number;
+    offset?: number;
+    include_closed?: boolean;
+    signal?: AbortSignal;
+  }): Promise<SearchProjectsResponse> {
     const search = new URLSearchParams({ q: params.q });
     if (params.limit !== undefined) search.set("limit", String(params.limit));
     if (params.offset !== undefined) search.set("offset", String(params.offset));
     if (params.include_closed) search.set("include_closed", "true");
-    return this.fetch(`/api/projects/search?${search}`, params.signal ? { signal: params.signal } : undefined);
+    return this.fetch(
+      `/api/projects/search?${search}`,
+      params.signal ? { signal: params.signal } : undefined,
+    );
   }
 
   async getIssue(id: string): Promise<Issue> {
@@ -473,7 +492,11 @@ export class ApiClient {
     });
   }
 
-  async quickCreateIssue(data: { agent_id: string; prompt: string; project_id?: string | null }): Promise<{ task_id: string }> {
+  async quickCreateIssue(data: {
+    agent_id: string;
+    prompt: string;
+    project_id?: string | null;
+  }): Promise<{ task_id: string }> {
     return this.fetch("/api/issues/quick-create", {
       method: "POST",
       body: JSON.stringify(data),
@@ -500,12 +523,19 @@ export class ApiClient {
 
   async listChildIssues(id: string): Promise<{ issues: Issue[] }> {
     const raw = await this.fetch<unknown>(`/api/issues/${id}/children`);
-    return parseWithFallback(raw, ChildIssuesResponseSchema, { issues: [] }, {
-      endpoint: "GET /api/issues/:id/children",
-    });
+    return parseWithFallback(
+      raw,
+      ChildIssuesResponseSchema,
+      { issues: [] },
+      {
+        endpoint: "GET /api/issues/:id/children",
+      },
+    );
   }
 
-  async getChildIssueProgress(): Promise<{ progress: { parent_issue_id: string; total: number; done: number }[] }> {
+  async getChildIssueProgress(): Promise<{
+    progress: { parent_issue_id: string; total: number; done: number }[];
+  }> {
     return this.fetch("/api/issues/child-progress");
   }
 
@@ -513,7 +543,10 @@ export class ApiClient {
     await this.fetch(`/api/issues/${id}`, { method: "DELETE" });
   }
 
-  async batchUpdateIssues(issueIds: string[], updates: UpdateIssueRequest): Promise<{ updated: number }> {
+  async batchUpdateIssues(
+    issueIds: string[],
+    updates: UpdateIssueRequest,
+  ): Promise<{ updated: number }> {
     return this.fetch("/api/issues/batch-update", {
       method: "POST",
       body: JSON.stringify({ issue_ids: issueIds, updates }),
@@ -535,7 +568,13 @@ export class ApiClient {
     });
   }
 
-  async createComment(issueId: string, content: string, type?: string, parentId?: string, attachmentIds?: string[]): Promise<Comment> {
+  async createComment(
+    issueId: string,
+    content: string,
+    type?: string,
+    parentId?: string,
+    attachmentIds?: string[],
+  ): Promise<Comment> {
     return this.fetch(`/api/issues/${issueId}/comments`, {
       method: "POST",
       body: JSON.stringify({
@@ -548,9 +587,7 @@ export class ApiClient {
   }
 
   async listTimeline(issueId: string): Promise<TimelineEntry[]> {
-    const raw = await this.fetch<unknown>(
-      `/api/issues/${issueId}/timeline`,
-    );
+    const raw = await this.fetch<unknown>(`/api/issues/${issueId}/timeline`);
     return parseWithFallback(raw, TimelineEntriesSchema, EMPTY_TIMELINE_ENTRIES, {
       endpoint: "GET /api/issues/:id/timeline",
     });
@@ -636,7 +673,10 @@ export class ApiClient {
   }
 
   // Agents
-  async listAgents(params?: { workspace_id?: string; include_archived?: boolean }): Promise<Agent[]> {
+  async listAgents(params?: {
+    workspace_id?: string;
+    include_archived?: boolean;
+  }): Promise<Agent[]> {
     const search = new URLSearchParams();
     if (params?.workspace_id) search.set("workspace_id", params.workspace_id);
     if (params?.include_archived) search.set("include_archived", "true");
@@ -736,20 +776,14 @@ export class ApiClient {
     return this.fetch(`/api/runtimes/${runtimeId}/usage/by-hour?${search}`);
   }
 
-  async initiateUpdate(
-    runtimeId: string,
-    targetVersion: string,
-  ): Promise<RuntimeUpdate> {
+  async initiateUpdate(runtimeId: string, targetVersion: string): Promise<RuntimeUpdate> {
     return this.fetch(`/api/runtimes/${runtimeId}/update`, {
       method: "POST",
       body: JSON.stringify({ target_version: targetVersion }),
     });
   }
 
-  async getUpdateResult(
-    runtimeId: string,
-    updateId: string,
-  ): Promise<RuntimeUpdate> {
+  async getUpdateResult(runtimeId: string, updateId: string): Promise<RuntimeUpdate> {
     return this.fetch(`/api/runtimes/${runtimeId}/update/${updateId}`);
   }
 
@@ -764,9 +798,7 @@ export class ApiClient {
     return this.fetch(`/api/runtimes/${runtimeId}/models/${requestId}`);
   }
 
-  async initiateListLocalSkills(
-    runtimeId: string,
-  ): Promise<RuntimeLocalSkillListRequest> {
+  async initiateListLocalSkills(runtimeId: string): Promise<RuntimeLocalSkillListRequest> {
     return this.fetch(`/api/runtimes/${runtimeId}/local-skills`, {
       method: "POST",
     });
@@ -888,7 +920,9 @@ export class ApiClient {
     return this.fetch("/api/notification-preferences");
   }
 
-  async updateNotificationPreferences(preferences: NotificationPreferences): Promise<NotificationPreferenceResponse> {
+  async updateNotificationPreferences(
+    preferences: NotificationPreferences,
+  ): Promise<NotificationPreferenceResponse> {
     return this.fetch("/api/notification-preferences", {
       method: "PUT",
       body: JSON.stringify({ preferences }),
@@ -916,14 +950,30 @@ export class ApiClient {
     return this.fetch(`/api/workspaces/${id}`);
   }
 
-  async createWorkspace(data: { name: string; slug: string; description?: string; context?: string; logo_url?: string }): Promise<Workspace> {
+  async createWorkspace(data: {
+    name: string;
+    slug: string;
+    description?: string;
+    context?: string;
+    logo_url?: string;
+  }): Promise<Workspace> {
     return this.fetch("/api/workspaces", {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async updateWorkspace(id: string, data: { name?: string; description?: string; context?: string; logo_url?: string; settings?: Record<string, unknown>; repos?: WorkspaceRepo[] }): Promise<Workspace> {
+  async updateWorkspace(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      context?: string;
+      logo_url?: string;
+      settings?: Record<string, unknown>;
+      repos?: WorkspaceRepo[];
+    },
+  ): Promise<Workspace> {
     return this.fetch(`/api/workspaces/${id}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -942,7 +992,11 @@ export class ApiClient {
     });
   }
 
-  async updateMember(workspaceId: string, memberId: string, data: UpdateMemberRequest): Promise<MemberWithUser> {
+  async updateMember(
+    workspaceId: string,
+    memberId: string,
+    data: UpdateMemberRequest,
+  ): Promise<MemberWithUser> {
     return this.fetch(`/api/workspaces/${workspaceId}/members/${memberId}`, {
       method: "PATCH",
       body: JSON.stringify(data),
@@ -1048,7 +1102,9 @@ export class ApiClient {
     return this.fetch("/api/tokens");
   }
 
-  async createPersonalAccessToken(data: CreatePersonalAccessTokenRequest): Promise<CreatePersonalAccessTokenResponse> {
+  async createPersonalAccessToken(
+    data: CreatePersonalAccessTokenRequest,
+  ): Promise<CreatePersonalAccessTokenResponse> {
     return this.fetch("/api/tokens", {
       method: "POST",
       body: JSON.stringify(data),
@@ -1084,11 +1140,18 @@ export class ApiClient {
     if (!res.ok) {
       if (res.status === 401) this.handleUnauthorized();
       const message = await this.parseErrorMessage(res, `Upload failed: ${res.status}`);
-      this.logger.error(`← ${res.status} /api/upload-file`, { rid, duration: `${Date.now() - start}ms`, error: message });
+      this.logger.error(`← ${res.status} /api/upload-file`, {
+        rid,
+        duration: `${Date.now() - start}ms`,
+        error: message,
+      });
       throw new Error(message);
     }
 
-    this.logger.info(`← ${res.status} /api/upload-file`, { rid, duration: `${Date.now() - start}ms` });
+    this.logger.info(`← ${res.status} /api/upload-file`, {
+      rid,
+      duration: `${Date.now() - start}ms`,
+    });
     const raw = this.normalizeResponseUrls(await res.json());
     return parseWithFallback(raw, AttachmentResponseSchema, EMPTY_ATTACHMENT, {
       endpoint: "POST /api/upload-file",
@@ -1200,9 +1263,7 @@ export class ApiClient {
   }
 
   // Project resources
-  async listProjectResources(
-    projectId: string,
-  ): Promise<ListProjectResourcesResponse> {
+  async listProjectResources(projectId: string): Promise<ListProjectResourcesResponse> {
     return this.fetch(`/api/projects/${projectId}/resources`);
   }
 
@@ -1216,10 +1277,7 @@ export class ApiClient {
     });
   }
 
-  async deleteProjectResource(
-    projectId: string,
-    resourceId: string,
-  ): Promise<void> {
+  async deleteProjectResource(projectId: string, resourceId: string): Promise<void> {
     await this.fetch(`/api/projects/${projectId}/resources/${resourceId}`, {
       method: "DELETE",
     });
@@ -1325,21 +1383,31 @@ export class ApiClient {
     return this.fetch(`/api/autopilots/${id}/trigger`, { method: "POST" });
   }
 
-  async listAutopilotRuns(id: string, params?: { limit?: number; offset?: number }): Promise<ListAutopilotRunsResponse> {
+  async listAutopilotRuns(
+    id: string,
+    params?: { limit?: number; offset?: number },
+  ): Promise<ListAutopilotRunsResponse> {
     const search = new URLSearchParams();
     if (params?.limit) search.set("limit", params.limit.toString());
     if (params?.offset) search.set("offset", params.offset.toString());
     return this.fetch(`/api/autopilots/${id}/runs?${search}`);
   }
 
-  async createAutopilotTrigger(autopilotId: string, data: CreateAutopilotTriggerRequest): Promise<AutopilotTrigger> {
+  async createAutopilotTrigger(
+    autopilotId: string,
+    data: CreateAutopilotTriggerRequest,
+  ): Promise<AutopilotTrigger> {
     return this.fetch(`/api/autopilots/${autopilotId}/triggers`, {
       method: "POST",
       body: JSON.stringify(data),
     });
   }
 
-  async updateAutopilotTrigger(autopilotId: string, triggerId: string, data: UpdateAutopilotTriggerRequest): Promise<AutopilotTrigger> {
+  async updateAutopilotTrigger(
+    autopilotId: string,
+    triggerId: string,
+    data: UpdateAutopilotTriggerRequest,
+  ): Promise<AutopilotTrigger> {
     return this.fetch(`/api/autopilots/${autopilotId}/triggers/${triggerId}`, {
       method: "PATCH",
       body: JSON.stringify(data),

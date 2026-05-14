@@ -40,9 +40,7 @@ vi.mock("sonner", () => ({
 // heavy queries below.
 vi.mock("@tanstack/react-query", async () => {
   const actual =
-    await vi.importActual<typeof import("@tanstack/react-query")>(
-      "@tanstack/react-query",
-    );
+    await vi.importActual<typeof import("@tanstack/react-query")>("@tanstack/react-query");
   return {
     ...actual,
     useQuery: vi.fn(() => ({ data: [], isLoading: false })),
@@ -50,8 +48,7 @@ vi.mock("@tanstack/react-query", async () => {
 });
 
 vi.mock("@multica/core/auth", () => ({
-  useAuthStore: (sel: (s: { user: { id: string } }) => unknown) =>
-    sel({ user: { id: "user-me" } }),
+  useAuthStore: (sel: (s: { user: { id: string } }) => unknown) => sel({ user: { id: "user-me" } }),
 }));
 
 vi.mock("@multica/core/runtimes", () => ({

@@ -55,13 +55,10 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
   );
   useWSEvent("daemon:register", handleDaemonRegister);
 
-  const copyToClipboard = useCallback(
-    (text: string, key: string) => {
-      navigator.clipboard.writeText(text);
-      setCopied(key);
-    },
-    [],
-  );
+  const copyToClipboard = useCallback((text: string, key: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(key);
+  }, []);
 
   useEffect(() => {
     if (!copied) return;
@@ -79,9 +76,7 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
   const handleGoToRuntime = () => {
     onClose();
     if (slug && newRuntimeIdRef.current) {
-      navigation.push(
-        paths.workspace(slug).runtimeDetail(newRuntimeIdRef.current),
-      );
+      navigation.push(paths.workspace(slug).runtimeDetail(newRuntimeIdRef.current));
     }
   };
 
@@ -96,15 +91,11 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
             onClose={onClose}
           />
         )}
-        {step === "waiting" && (
-          <WaitingStep onBack={() => setStep("instructions")} />
-        )}
+        {step === "waiting" && <WaitingStep onBack={() => setStep("instructions")} />}
         {step === "success" && (
           <SuccessStep
             onGoToAgents={handleGoToAgents}
-            onGoToRuntime={
-              newRuntimeIdRef.current ? handleGoToRuntime : undefined
-            }
+            onGoToRuntime={newRuntimeIdRef.current ? handleGoToRuntime : undefined}
           />
         )}
       </DialogContent>
@@ -116,7 +107,8 @@ export function ConnectRemoteDialog({ onClose }: { onClose: () => void }) {
 // Step 1: Installation instructions
 // ---------------------------------------------------------------------------
 
-const INSTALL_CMD = "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
+const INSTALL_CMD =
+  "curl -fsSL https://raw.githubusercontent.com/multica-ai/multica/main/scripts/install.sh | bash";
 
 const CONFIGURE_CMD = `multica config set server_url https://api.multica.ai
 multica config set app_url https://multica.ai`;
@@ -148,11 +140,7 @@ function CodeBlock({
         onClick={() => onCopy(code, copyKey)}
         className="absolute top-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded border bg-background text-muted-foreground transition-colors hover:text-foreground"
       >
-        {isCopied ? (
-          <Check className="h-3 w-3 text-success" />
-        ) : (
-          <Copy className="h-3 w-3" />
-        )}
+        {isCopied ? <Check className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
       </button>
     </div>
   );
@@ -174,9 +162,7 @@ function InstructionsStep({
     <>
       <DialogHeader>
         <DialogTitle>{t(($) => $.connect.title)}</DialogTitle>
-        <DialogDescription>
-          {t(($) => $.connect.description)}
-        </DialogDescription>
+        <DialogDescription>{t(($) => $.connect.description)}</DialogDescription>
       </DialogHeader>
 
       <div className="-mx-4 min-h-0 flex-1 overflow-y-auto px-4">
@@ -186,12 +172,7 @@ function InstructionsStep({
               <Terminal className="h-3.5 w-3.5" />
               {t(($) => $.connect.step1)}
             </div>
-            <CodeBlock
-              code={INSTALL_CMD}
-              copyKey="install"
-              copied={copied}
-              onCopy={onCopy}
-            />
+            <CodeBlock code={INSTALL_CMD} copyKey="install" copied={copied} onCopy={onCopy} />
           </div>
 
           <div>
@@ -199,24 +180,14 @@ function InstructionsStep({
               <Server className="h-3.5 w-3.5" />
               {t(($) => $.connect.step2)}
             </div>
-            <CodeBlock
-              code={CONFIGURE_CMD}
-              copyKey="config"
-              copied={copied}
-              onCopy={onCopy}
-            />
+            <CodeBlock code={CONFIGURE_CMD} copyKey="config" copied={copied} onCopy={onCopy} />
           </div>
 
           <div>
             <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
               {t(($) => $.connect.step3)}
             </div>
-            <CodeBlock
-              code={LOGIN_CMD}
-              copyKey="login"
-              copied={copied}
-              onCopy={onCopy}
-            />
+            <CodeBlock code={LOGIN_CMD} copyKey="login" copied={copied} onCopy={onCopy} />
             <p className="mt-1 text-[11px] text-muted-foreground">
               {t(($) => $.connect.step3_hint_prefix)}
               <span className="font-medium text-foreground">
@@ -230,19 +201,16 @@ function InstructionsStep({
             <div className="mb-1 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
               {t(($) => $.connect.step4)}
             </div>
-            <CodeBlock
-              code={START_CMD}
-              copyKey="start"
-              copied={copied}
-              onCopy={onCopy}
-            />
+            <CodeBlock code={START_CMD} copyKey="start" copied={copied} onCopy={onCopy} />
           </div>
 
           <div className="rounded-md border border-warning/30 bg-warning/5 p-2.5">
             <div className="flex items-start gap-2">
               <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
               <div className="text-[11px] leading-relaxed text-muted-foreground">
-                <span className="font-medium text-foreground">{t(($) => $.connect.security_label)}</span>
+                <span className="font-medium text-foreground">
+                  {t(($) => $.connect.security_label)}
+                </span>
                 {t(($) => $.connect.security_body)}
                 <code className="rounded bg-muted px-1 py-0.5 font-mono text-[10px]">
                   {"custom_env"}
@@ -312,9 +280,7 @@ function WaitingStep({ onBack }: { onBack: () => void }) {
     <>
       <DialogHeader>
         <DialogTitle>{t(($) => $.connect.waiting_title)}</DialogTitle>
-        <DialogDescription>
-          {t(($) => $.connect.waiting_description)}
-        </DialogDescription>
+        <DialogDescription>{t(($) => $.connect.waiting_description)}</DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col items-center gap-3 py-8">
@@ -353,9 +319,7 @@ function SuccessStep({
     <>
       <DialogHeader>
         <DialogTitle>{t(($) => $.connect.success_title)}</DialogTitle>
-        <DialogDescription>
-          {t(($) => $.connect.success_description)}
-        </DialogDescription>
+        <DialogDescription>{t(($) => $.connect.success_description)}</DialogDescription>
       </DialogHeader>
 
       <div className="flex flex-col items-center gap-3 py-6">

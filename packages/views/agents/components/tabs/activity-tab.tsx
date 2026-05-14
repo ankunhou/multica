@@ -2,27 +2,11 @@
 
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
-import {
-  ArrowUpRight,
-  CircleHelp,
-  Hash,
-  MessageSquare,
-  Workflow,
-  X,
-} from "lucide-react";
+import { ArrowUpRight, CircleHelp, Hash, MessageSquare, Workflow, X } from "lucide-react";
 import { toast } from "sonner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@multica/ui/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@multica/ui/components/ui/tooltip";
 import { useQueries, useQuery } from "@tanstack/react-query";
-import type {
-  Agent,
-  AgentTask,
-  Issue,
-  TaskFailureReason,
-} from "@multica/core/types";
+import type { Agent, AgentTask, Issue, TaskFailureReason } from "@multica/core/types";
 import {
   type AgentActivity,
   agentTaskSnapshotOptions,
@@ -88,9 +72,7 @@ export function ActivityTab({ agent }: ActivityTabProps) {
       (t) =>
         t.agent_id === agent.id &&
         isWorkflowTask(t) &&
-        (t.status === "running" ||
-          t.status === "queued" ||
-          t.status === "dispatched"),
+        (t.status === "running" || t.status === "queued" || t.status === "dispatched"),
     );
   }, [snapshot, agent.id]);
 
@@ -103,15 +85,9 @@ export function ActivityTab({ agent }: ActivityTabProps) {
         (t) =>
           isWorkflowTask(t) &&
           !!t.completed_at &&
-          (t.status === "completed" ||
-            t.status === "failed" ||
-            t.status === "cancelled"),
+          (t.status === "completed" || t.status === "failed" || t.status === "cancelled"),
       )
-      .sort(
-        (a, b) =>
-          new Date(b.completed_at!).getTime() -
-          new Date(a.completed_at!).getTime(),
-      );
+      .sort((a, b) => new Date(b.completed_at!).getTime() - new Date(a.completed_at!).getTime());
   }, [agentTasks]);
 
   const recentTasks = useMemo(
@@ -133,10 +109,7 @@ export function ActivityTab({ agent }: ActivityTabProps) {
     [activeTasks, recentTasks],
   );
   const issueIds = useMemo(
-    () =>
-      Array.from(
-        new Set(displayedTasks.map((t) => t.issue_id).filter((id) => id !== "")),
-      ),
+    () => Array.from(new Set(displayedTasks.map((t) => t.issue_id).filter((id) => id !== ""))),
     [displayedTasks],
   );
   const issueQueries = useQueries({
@@ -159,9 +132,7 @@ export function ActivityTab({ agent }: ActivityTabProps) {
         tasks={recentTasks}
         totalCount={recentTasksAll.length}
         hasMore={hasMoreRecent}
-        onShowMore={() =>
-          setRecentDisplayLimit((n) => n + RECENT_PAGE)
-        }
+        onShowMore={() => setRecentDisplayLimit((n) => n + RECENT_PAGE)}
         issueMap={issueMap}
         agent={agent}
       />
@@ -191,12 +162,7 @@ function NowSection({
       {tasks.length === 0 ? (
         <EmptyText>{t(($) => $.tab_body.activity.empty_now)}</EmptyText>
       ) : (
-        <TaskList
-          tasks={tasks}
-          issueMap={issueMap}
-          timeMode="active"
-          agent={agent}
-        />
+        <TaskList tasks={tasks} issueMap={issueMap} timeMode="active" agent={agent} />
       )}
     </Section>
   );
@@ -213,21 +179,20 @@ function Last30dSection({
   const summary = summarizeActivityWindow(activity, 30);
   const { totalRuns, totalFailed } = summary;
   const successPct =
-    totalRuns > 0
-      ? Math.round(((totalRuns - totalFailed) / totalRuns) * 100)
-      : 100;
+    totalRuns > 0 ? Math.round(((totalRuns - totalFailed) / totalRuns) * 100) : 100;
 
   return (
-    <Section title={t(($) => $.tab_body.activity.section_last_30d)} subtitle={t(($) => $.tab_body.activity.subtitle_performance)}>
+    <Section
+      title={t(($) => $.tab_body.activity.section_last_30d)}
+      subtitle={t(($) => $.tab_body.activity.subtitle_performance)}
+    >
       {totalRuns === 0 ? (
         <EmptyText>{t(($) => $.tab_body.activity.empty_30d)}</EmptyText>
       ) : (
         <div className="flex items-end justify-between gap-5">
           <div className="flex min-w-0 flex-col gap-1">
             <div className="flex items-baseline gap-1.5">
-              <span className="text-3xl font-bold leading-none tabular-nums">
-                {totalRuns}
-              </span>
+              <span className="text-3xl font-bold leading-none tabular-nums">{totalRuns}</span>
               <span className="text-sm text-muted-foreground">
                 {t(($) => $.tab_body.activity.runs, { count: totalRuns })}
               </span>
@@ -237,7 +202,11 @@ function Last30dSection({
               {avgDurationMs > 0 && (
                 <>
                   <Sep />
-                  <span>{t(($) => $.tab_body.activity.avg_duration, { value: formatDurationMs(avgDurationMs) })}</span>
+                  <span>
+                    {t(($) => $.tab_body.activity.avg_duration, {
+                      value: formatDurationMs(avgDurationMs),
+                    })}
+                  </span>
                 </>
               )}
               {totalFailed > 0 && (
@@ -254,12 +223,7 @@ function Last30dSection({
               doesn't read as visually broken. Bottom-aligned with the
               number so the dense end of the bars sits on the same
               baseline as the digits. */}
-          <Sparkline
-            buckets={summary.buckets}
-            width={120}
-            height={32}
-            className="shrink-0"
-          />
+          <Sparkline buckets={summary.buckets} width={120} height={32} className="shrink-0" />
         </div>
       )}
     </Section>
@@ -286,7 +250,10 @@ function RecentWorkSection({
     tasks.length === 0
       ? t(($) => $.tab_body.activity.subtitle_no_recent)
       : totalCount > tasks.length
-        ? t(($) => $.tab_body.activity.subtitle_recent_progress, { shown: tasks.length, total: totalCount })
+        ? t(($) => $.tab_body.activity.subtitle_recent_progress, {
+            shown: tasks.length,
+            total: totalCount,
+          })
         : t(($) => $.tab_body.activity.subtitle_recent_latest, { count: tasks.length });
   return (
     <Section title={t(($) => $.tab_body.activity.section_recent)} subtitle={subtitle}>
@@ -294,12 +261,7 @@ function RecentWorkSection({
         <EmptyText>{t(($) => $.tab_body.activity.empty_recent)}</EmptyText>
       ) : (
         <>
-          <TaskList
-            tasks={tasks}
-            issueMap={issueMap}
-            timeMode="completed"
-            agent={agent}
-          />
+          <TaskList tasks={tasks} issueMap={issueMap} timeMode="completed" agent={agent} />
           {hasMore && (
             <button
               type="button"
@@ -329,13 +291,7 @@ function TaskList({
   return (
     <div className="space-y-1.5">
       {tasks.map((task) => (
-        <TaskRow
-          key={task.id}
-          task={task}
-          issueMap={issueMap}
-          timeMode={timeMode}
-          agent={agent}
-        />
+        <TaskRow key={task.id} task={task} issueMap={issueMap} timeMode={timeMode} agent={agent} />
       ))}
     </div>
   );
@@ -369,9 +325,7 @@ function TaskRow({
   // (completed / failed / cancelled) hide the button entirely.
   const showCancel =
     timeMode === "active" &&
-    (task.status === "queued" ||
-      task.status === "dispatched" ||
-      task.status === "running");
+    (task.status === "queued" || task.status === "dispatched" || task.status === "running");
 
   const handleCancel = async () => {
     if (cancelling) return;
@@ -382,15 +336,15 @@ function TaskRow({
       // through useRealtimeSync's `task:` prefix path which already
       // invalidates snapshot + per-agent + per-issue task lists.
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : t(($) => $.tab_body.activity.cancel_failed_toast));
+      toast.error(
+        e instanceof Error ? e.message : t(($) => $.tab_body.activity.cancel_failed_toast),
+      );
       setCancelling(false);
     }
   };
 
   const isTerminalStatus =
-    task.status === "completed" ||
-    task.status === "failed" ||
-    task.status === "cancelled";
+    task.status === "completed" || task.status === "failed" || task.status === "cancelled";
   const sourceFallback = !hasIssue
     ? task.kind === "quick_create"
       ? isTerminalStatus
@@ -438,9 +392,7 @@ function TaskRow({
   // second time bubble next to it just clutters the line.
   let durationText: string | null = null;
   if (timeMode === "completed" && task.started_at && task.completed_at) {
-    const dur =
-      new Date(task.completed_at).getTime() -
-      new Date(task.started_at).getTime();
+    const dur = new Date(task.completed_at).getTime() - new Date(task.started_at).getTime();
     if (dur > 0) durationText = formatDurationMs(dur);
   }
 
@@ -450,11 +402,7 @@ function TaskRow({
 
   return (
     <div className={rowClass}>
-      <Icon
-        className={`h-4 w-4 shrink-0 ${cfg.color} ${
-          isRunning ? "animate-spin" : ""
-        }`}
-      />
+      <Icon className={`h-4 w-4 shrink-0 ${cfg.color} ${isRunning ? "animate-spin" : ""}`} />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">
           <SourceIcon
@@ -478,7 +426,9 @@ function TaskRow({
                   <span className="truncate text-sm">
                     {issue?.title ??
                       (hasIssue
-                        ? t(($) => $.tab_body.activity.issue_short_fallback, { prefix: task.issue_id.slice(0, 8) })
+                        ? t(($) => $.tab_body.activity.issue_short_fallback, {
+                            prefix: task.issue_id.slice(0, 8),
+                          })
                         : (sourceFallback ?? t(($) => $.tab_body.activity.source_untracked)))}
                   </span>
                 }
@@ -487,16 +437,16 @@ function TaskRow({
                 <div className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground/80">
                   {t(($) => $.tab_body.activity.triggered_by)}
                 </div>
-                <div className="mt-0.5 whitespace-pre-wrap text-xs">
-                  {task.trigger_summary}
-                </div>
+                <div className="mt-0.5 whitespace-pre-wrap text-xs">{task.trigger_summary}</div>
               </TooltipContent>
             </Tooltip>
           ) : (
             <span className="truncate text-sm">
               {issue?.title ??
                 (hasIssue
-                  ? t(($) => $.tab_body.activity.issue_short_fallback, { prefix: task.issue_id.slice(0, 8) })
+                  ? t(($) => $.tab_body.activity.issue_short_fallback, {
+                      prefix: task.issue_id.slice(0, 8),
+                    })
                   : (sourceFallback ?? t(($) => $.tab_body.activity.source_untracked)))}
             </span>
           )}
@@ -559,7 +509,9 @@ function TaskRow({
               <X className="h-3.5 w-3.5" />
             </TooltipTrigger>
             <TooltipContent>
-              {cancelling ? t(($) => $.tab_body.activity.cancelling_tooltip) : t(($) => $.tab_body.activity.cancel_task_tooltip)}
+              {cancelling
+                ? t(($) => $.tab_body.activity.cancelling_tooltip)
+                : t(($) => $.tab_body.activity.cancel_task_tooltip)}
             </TooltipContent>
           </Tooltip>
         )}
@@ -612,7 +564,9 @@ function activeTaskTimeText(
     return t(($) => $.tab_body.activity.started_prefix, { when: relativeTime(task.started_at) });
   }
   if (task.status === "dispatched" && task.dispatched_at) {
-    return t(($) => $.tab_body.activity.dispatched_prefix, { when: relativeTime(task.dispatched_at) });
+    return t(($) => $.tab_body.activity.dispatched_prefix, {
+      when: relativeTime(task.dispatched_at),
+    });
   }
   return t(($) => $.tab_body.activity.queued_prefix, { when: relativeTime(task.created_at) });
 }
@@ -622,10 +576,7 @@ function activeTaskTimeText(
  * lands in the last 30 days. Pure function so callers can pass a
  * deterministic `now` in tests.
  */
-export function deriveAvgDurationLast30d(
-  tasks: readonly AgentTask[],
-  now: number,
-): number {
+export function deriveAvgDurationLast30d(tasks: readonly AgentTask[], now: number): number {
   let sum = 0;
   let count = 0;
   for (const t of tasks) {

@@ -9,7 +9,7 @@ import { type RefObject, type CSSProperties, useEffect, useState, useCallback } 
  */
 export function useScrollFade(
   ref: RefObject<HTMLElement | null>,
-  fadeSize = 32
+  fadeSize = 32,
 ): CSSProperties | undefined {
   const [fade, setFade] = useState<"none" | "top" | "bottom" | "both">("none");
 
@@ -53,7 +53,8 @@ export function useScrollFade(
 
   if (fade === "none") return undefined;
 
-  const top = fade === "top" || fade === "both" ? `transparent 0%, black ${fadeSize}px` : "black 0%";
+  const top =
+    fade === "top" || fade === "both" ? `transparent 0%, black ${fadeSize}px` : "black 0%";
   const bottom =
     fade === "bottom" || fade === "both"
       ? `black calc(100% - ${fadeSize}px), transparent 100%`

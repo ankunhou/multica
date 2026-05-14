@@ -62,7 +62,10 @@ function issuePrefix(slug: string): string {
   // Mirrors the server's default prefix derivation — first 4 chars of
   // the slug, uppercased. Falls back to "WS" when the slug is empty so
   // the preview line never collapses to a single dangling "-".
-  const head = slug.trim().replace(/[^a-z0-9]/g, "").slice(0, 4);
+  const head = slug
+    .trim()
+    .replace(/[^a-z0-9]/g, "")
+    .slice(0, 4);
   return (head || "ws").toUpperCase();
 }
 
@@ -85,10 +88,8 @@ export function StepWorkspace({
   // second click on the same card deselects it. No-existing path
   // ignores this state entirely.
   const [mode, setMode] = useState<"existing" | "create" | null>(null);
-  const pickExisting = () =>
-    setMode((m) => (m === "existing" ? null : "existing"));
-  const pickCreate = () =>
-    setMode((m) => (m === "create" ? null : "create"));
+  const pickExisting = () => setMode((m) => (m === "existing" ? null : "existing"));
+  const pickCreate = () => setMode((m) => (m === "create" ? null : "create"));
 
   // Form state for the create path. Mirrors CreateWorkspaceForm's
   // internals: slug auto-fills from name until the user manually edits
@@ -104,12 +105,9 @@ export function StepWorkspace({
       ? t(($) => $.step_workspace.slug_format_error)
       : null;
   const slugReservedError =
-    slug.length > 0 && isReservedSlug(slug)
-      ? t(($) => $.step_workspace.slug_reserved_error)
-      : null;
+    slug.length > 0 && isReservedSlug(slug) ? t(($) => $.step_workspace.slug_reserved_error) : null;
   const slugError = slugValidationError ?? slugReservedError ?? slugServerError;
-  const canCreate =
-    name.trim().length > 0 && slug.trim().length > 0 && !slugError;
+  const canCreate = name.trim().length > 0 && slug.trim().length > 0 && !slugError;
 
   const handleNameChange = (value: string) => {
     setName(value);
@@ -192,10 +190,7 @@ export function StepWorkspace({
   const createFields = (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <Label
-          htmlFor="ws-name"
-          className="text-xs font-medium text-muted-foreground"
-        >
+        <Label htmlFor="ws-name" className="text-xs font-medium text-muted-foreground">
           {t(($) => $.step_workspace.name_label)}
         </Label>
         <Input
@@ -212,10 +207,7 @@ export function StepWorkspace({
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label
-          htmlFor="ws-slug"
-          className="text-xs font-medium text-muted-foreground"
-        >
+        <Label htmlFor="ws-slug" className="text-xs font-medium text-muted-foreground">
           {t(($) => $.step_workspace.url_label)}
         </Label>
         <div className="flex h-9 items-center overflow-hidden rounded-xl border border-input bg-background/70 transition-colors focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50">
@@ -243,9 +235,7 @@ export function StepWorkspace({
         </div>
         <div className="text-sm leading-[1.55] text-muted-foreground">
           {t(($) => $.step_workspace.issue_prefix_prefix)}
-          <span className="font-mono text-foreground">
-            {issuePrefix(slug)}-123
-          </span>
+          <span className="font-mono text-foreground">{issuePrefix(slug)}-123</span>
           {t(($) => $.step_workspace.issue_prefix_suffix)}
         </div>
       </div>
@@ -276,11 +266,7 @@ export function StepWorkspace({
           </div>
         </header>
 
-        <main
-          ref={mainRef}
-          style={fadeStyle}
-          className="min-h-0 flex-1 overflow-y-auto"
-        >
+        <main ref={mainRef} style={fadeStyle} className="min-h-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[620px] px-6 py-10 sm:px-10 md:px-14 lg:px-0 lg:py-14">
             <div className="mb-2 text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground">
               {reusing
@@ -306,10 +292,7 @@ export function StepWorkspace({
                     selected={mode === "existing"}
                     onSelect={pickExisting}
                   />
-                  <CreateNewWorkspaceCard
-                    selected={mode === "create"}
-                    onSelect={pickCreate}
-                  >
+                  <CreateNewWorkspaceCard selected={mode === "create"} onSelect={pickCreate}>
                     {createFields}
                   </CreateNewWorkspaceCard>
                 </div>
@@ -375,9 +358,7 @@ function ExistingWorkspaceCard({
     >
       <WorkspaceAvatar name={workspace.name} logoUrl={workspace.logo_url} size="lg" />
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="truncate text-[14.5px] font-medium text-foreground">
-          {workspace.name}
-        </div>
+        <div className="truncate text-[14.5px] font-medium text-foreground">{workspace.name}</div>
         <div className="truncate font-mono text-xs text-muted-foreground">
           {`multica.ai/${workspace.slug}`}
         </div>
@@ -498,30 +479,19 @@ function ExistingWorkspaceSide({ workspace }: { workspace: Workspace }) {
  * Settings to a first-class row because it's the most intuitive way
  * to express "workspaces are multi-player."
  */
-function WorkspacePreviewCard({
-  name,
-  slug,
-}: {
-  name: string;
-  slug: string;
-}) {
+function WorkspacePreviewCard({ name, slug }: { name: string; slug: string }) {
   const { t } = useT("onboarding");
   return (
     <div className="overflow-hidden rounded-xl border bg-card shadow-xs">
       <div className="flex items-center gap-3 border-b px-4 py-3.5">
         <WorkspaceAvatar name={name} size="md" />
         <div className="flex min-w-0 flex-1 flex-col">
-          <div className="truncate text-[14px] font-medium text-foreground">
-            {name}
-          </div>
+          <div className="truncate text-[14px] font-medium text-foreground">{name}</div>
           <div className="truncate font-mono text-[11.5px] text-muted-foreground">
             {`multica.ai/${slug}`}
           </div>
         </div>
-        <Lock
-          aria-hidden
-          className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60"
-        />
+        <Lock aria-hidden className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
       </div>
       <div className="flex flex-col">
         <EntityRow
@@ -586,18 +556,12 @@ function EntityRow({
     <div className="flex items-center gap-3 px-4 py-2.5 [&:not(:last-child)]:border-b">
       <span
         aria-hidden
-        className={cn(
-          "shrink-0",
-          dim ? "text-muted-foreground/60" : "text-muted-foreground",
-        )}
+        className={cn("shrink-0", dim ? "text-muted-foreground/60" : "text-muted-foreground")}
       >
         {icon}
       </span>
       <span
-        className={cn(
-          "flex-1 text-[13.5px]",
-          dim ? "text-muted-foreground" : "text-foreground",
-        )}
+        className={cn("flex-1 text-[13.5px]", dim ? "text-muted-foreground" : "text-foreground")}
       >
         {label}
       </span>
@@ -616,13 +580,8 @@ function EntityRow({
 function PerkRow({ children }: { children: ReactNode }) {
   return (
     <div className="grid grid-cols-[18px_1fr] items-start gap-3">
-      <span
-        aria-hidden
-        className="mt-[11px] h-px w-3 shrink-0 bg-muted-foreground/40"
-      />
-      <div className="text-[13.5px] leading-[1.55] text-foreground/85">
-        {children}
-      </div>
+      <span aria-hidden className="mt-[11px] h-px w-3 shrink-0 bg-muted-foreground/40" />
+      <div className="text-[13.5px] leading-[1.55] text-foreground/85">{children}</div>
     </div>
   );
 }

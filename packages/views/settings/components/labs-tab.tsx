@@ -36,9 +36,7 @@ export function LabsTab() {
         old?.map((ws) => (ws.id === updated.id ? updated : ws)),
       );
     } catch (e) {
-      toast.error(
-        e instanceof Error ? e.message : t(($) => $.labs.toast_failed),
-      );
+      toast.error(e instanceof Error ? e.message : t(($) => $.labs.toast_failed));
     } finally {
       setSaving(false);
     }
@@ -59,10 +57,7 @@ export function LabsTab() {
                   <GitCommitHorizontal className="h-4 w-4" />
                 </div>
                 <div className="space-y-1">
-                  <Label
-                    htmlFor="co-authored-by"
-                    className="text-sm font-medium"
-                  >
+                  <Label htmlFor="co-authored-by" className="text-sm font-medium">
                     {t(($) => $.labs.co_authored_by_label)}
                   </Label>
                   <p className="text-sm text-muted-foreground">

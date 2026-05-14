@@ -50,82 +50,80 @@ interface SegmentInputProps {
   ariaLabel: string;
 }
 
-const SegmentInput = React.forwardRef<HTMLInputElement, SegmentInputProps>(
-  function SegmentInput(
-    { seg, value, onValueChange, onLeftFocus, onRightFocus, disabled, ariaLabel },
-    ref,
-  ) {
-    // Two-digit typing window: first digit pads with leading 0; second digit within
-    // 2s replaces the leading 0, clamped to segment max. After 2s, reset.
-    const [pendingSecond, setPendingSecond] = React.useState(false);
+const SegmentInput = React.forwardRef<HTMLInputElement, SegmentInputProps>(function SegmentInput(
+  { seg, value, onValueChange, onLeftFocus, onRightFocus, disabled, ariaLabel },
+  ref,
+) {
+  // Two-digit typing window: first digit pads with leading 0; second digit within
+  // 2s replaces the leading 0, clamped to segment max. After 2s, reset.
+  const [pendingSecond, setPendingSecond] = React.useState(false);
 
-    React.useEffect(() => {
-      if (!pendingSecond) return;
-      const t = setTimeout(() => setPendingSecond(false), 2000);
-      return () => clearTimeout(t);
-    }, [pendingSecond]);
+  React.useEffect(() => {
+    if (!pendingSecond) return;
+    const t = setTimeout(() => setPendingSecond(false), 2000);
+    return () => clearTimeout(t);
+  }, [pendingSecond]);
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Tab") return;
-      if (e.key === "ArrowRight") {
-        e.preventDefault();
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Tab") return;
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      onRightFocus?.();
+      return;
+    }
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      onLeftFocus?.();
+      return;
+    }
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const step = e.key === "ArrowUp" ? 1 : -1;
+      onValueChange(arrowValue(value, step, seg));
+      setPendingSecond(false);
+      return;
+    }
+    if (e.key >= "0" && e.key <= "9") {
+      e.preventDefault();
+      const next = pendingSecond
+        ? getValidNumber(value.slice(1) + e.key, {
+            max: seg === "hours" ? 23 : 59,
+          })
+        : "0" + e.key;
+      onValueChange(next);
+      if (pendingSecond) {
+        setPendingSecond(false);
         onRightFocus?.();
-        return;
+      } else {
+        setPendingSecond(true);
       }
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        onLeftFocus?.();
-        return;
-      }
-      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-        e.preventDefault();
-        const step = e.key === "ArrowUp" ? 1 : -1;
-        onValueChange(arrowValue(value, step, seg));
-        setPendingSecond(false);
-        return;
-      }
-      if (e.key >= "0" && e.key <= "9") {
-        e.preventDefault();
-        const next = pendingSecond
-          ? getValidNumber(value.slice(1) + e.key, {
-              max: seg === "hours" ? 23 : 59,
-            })
-          : "0" + e.key;
-        onValueChange(next);
-        if (pendingSecond) {
-          setPendingSecond(false);
-          onRightFocus?.();
-        } else {
-          setPendingSecond(true);
-        }
-        return;
-      }
-      if (e.key === "Backspace" || e.key === "Delete") {
-        e.preventDefault();
-        onValueChange("00");
-        setPendingSecond(false);
-      }
-    };
+      return;
+    }
+    if (e.key === "Backspace" || e.key === "Delete") {
+      e.preventDefault();
+      onValueChange("00");
+      setPendingSecond(false);
+    }
+  };
 
-    return (
-      <input
-        ref={ref}
-        type="text"
-        inputMode="numeric"
-        maxLength={2}
-        value={value}
-        disabled={disabled}
-        aria-label={ariaLabel}
-        onChange={() => {
-          // Fully controlled by keydown; ignore native onChange.
-        }}
-        onKeyDown={handleKeyDown}
-        onFocus={(e) => e.currentTarget.select()}
-        className="w-7 bg-transparent text-center text-sm tabular-nums outline-none caret-transparent focus:text-foreground"
-      />
-    );
-  },
-);
+  return (
+    <input
+      ref={ref}
+      type="text"
+      inputMode="numeric"
+      maxLength={2}
+      value={value}
+      disabled={disabled}
+      aria-label={ariaLabel}
+      onChange={() => {
+        // Fully controlled by keydown; ignore native onChange.
+      }}
+      onKeyDown={handleKeyDown}
+      onFocus={(e) => e.currentTarget.select()}
+      className="w-7 bg-transparent text-center text-sm tabular-nums outline-none caret-transparent focus:text-foreground"
+    />
+  );
+});
 
 export interface TimeInputProps {
   value: string;
@@ -150,8 +148,7 @@ export function TimeInput({
   const minuteRef = React.useRef<HTMLInputElement>(null);
 
   const setHour = (next: string) => onChange(`${next}:${mm}`);
-  const setMinute = (next: string) =>
-    onChange(`${minuteOnly ? "00" : hh}:${next}`);
+  const setMinute = (next: string) => onChange(`${minuteOnly ? "00" : hh}:${next}`);
 
   return (
     <div
@@ -174,9 +171,7 @@ export function TimeInput({
           {showIcon && (
             <Clock className="pointer-events-none size-3.5 shrink-0 text-muted-foreground" />
           )}
-          <span className="pointer-events-none select-none text-muted-foreground">
-            at&nbsp;:
-          </span>
+          <span className="pointer-events-none select-none text-muted-foreground">at&nbsp;:</span>
           <SegmentInput
             ref={minuteRef}
             seg="minutes"
@@ -200,9 +195,7 @@ export function TimeInput({
             disabled={disabled}
             ariaLabel="Hour"
           />
-          <span className="pointer-events-none select-none text-muted-foreground">
-            :
-          </span>
+          <span className="pointer-events-none select-none text-muted-foreground">:</span>
           <SegmentInput
             ref={minuteRef}
             seg="minutes"

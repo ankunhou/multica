@@ -71,10 +71,7 @@ function fakeQc(data: {
     const bucket = (data.issues ?? []).filter((i) => i.status === status);
     byStatus[status as IssueStatus] = { issues: bucket as never, total: bucket.length };
   }
-  map.set(
-    JSON.stringify(issueKeys.list("ws-1")),
-    { byStatus } satisfies ListIssuesCache,
-  );
+  map.set(JSON.stringify(issueKeys.list("ws-1")), { byStatus } satisfies ListIssuesCache);
   return {
     getQueryData: (key: readonly unknown[]) => map.get(JSON.stringify(key)),
   } as unknown as QueryClient;
@@ -124,7 +121,11 @@ describe("createMentionSuggestion", () => {
       total: 1,
     });
 
-    render(<I18nWrapper><MentionList items={[]} query="协作" command={vi.fn()} /></I18nWrapper>);
+    render(
+      <I18nWrapper>
+        <MentionList items={[]} query="协作" command={vi.fn()} />
+      </I18nWrapper>,
+    );
 
     expect(screen.getByText("Searching...")).toBeInTheDocument();
 
@@ -142,7 +143,11 @@ describe("createMentionSuggestion", () => {
   });
 
   it("does not call searchIssues for an empty query", () => {
-    render(<I18nWrapper><MentionList items={[]} query="" command={vi.fn()} /></I18nWrapper>);
+    render(
+      <I18nWrapper>
+        <MentionList items={[]} query="" command={vi.fn()} />
+      </I18nWrapper>,
+    );
 
     expect(searchIssuesMock).not.toHaveBeenCalled();
   });
@@ -150,11 +155,15 @@ describe("createMentionSuggestion", () => {
   it("captures Enter while the popup has no selectable items", () => {
     const ref = createRef<MentionListRef>();
 
-    render(<I18nWrapper><MentionList ref={ref} items={[]} query="协作" command={vi.fn()} /></I18nWrapper>);
+    render(
+      <I18nWrapper>
+        <MentionList ref={ref} items={[]} query="协作" command={vi.fn()} />
+      </I18nWrapper>,
+    );
 
-    expect(
-      ref.current?.onKeyDown({ event: new KeyboardEvent("keydown", { key: "Enter" }) }),
-    ).toBe(true);
+    expect(ref.current?.onKeyDown({ event: new KeyboardEvent("keydown", { key: "Enter" }) })).toBe(
+      true,
+    );
   });
 
   it("hides personal agents owned by someone else from a regular member", () => {

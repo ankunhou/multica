@@ -13,9 +13,7 @@ function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
 }
 
-export function useChatResize(
-  windowRef: React.RefObject<HTMLDivElement | null>,
-) {
+export function useChatResize(windowRef: React.RefObject<HTMLDivElement | null>) {
   const chatWidth = useChatStore((s) => s.chatWidth);
   const chatHeight = useChatStore((s) => s.chatHeight);
   const isExpanded = useChatStore((s) => s.isExpanded);
@@ -102,13 +100,9 @@ export function useChatResize(
         const { maxW: mw, maxH: mh } = boundsRef.current;
 
         const rawW =
-          dir === "left" || dir === "corner"
-            ? d.startW - (ev.clientX - d.startX)
-            : d.startW;
+          dir === "left" || dir === "corner" ? d.startW - (ev.clientX - d.startX) : d.startW;
         const rawH =
-          dir === "top" || dir === "corner"
-            ? d.startH - (ev.clientY - d.startY)
-            : d.startH;
+          dir === "top" || dir === "corner" ? d.startH - (ev.clientY - d.startY) : d.startH;
 
         setChatSize(clamp(rawW, CHAT_MIN_W, mw), clamp(rawH, CHAT_MIN_H, mh));
       };

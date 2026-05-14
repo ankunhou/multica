@@ -1,11 +1,7 @@
 import { useState, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
-import {
-  issueKeys,
-  ISSUE_PAGE_SIZE,
-  type MyIssuesFilter,
-} from "./queries";
+import { issueKeys, ISSUE_PAGE_SIZE, type MyIssuesFilter } from "./queries";
 import {
   addIssueToBuckets,
   findIssueLocation,
@@ -17,11 +13,7 @@ import {
 import { useWorkspaceId } from "../hooks";
 import { useRecentIssuesStore } from "./stores";
 import type { Issue, IssueReaction, IssueStatus } from "../types";
-import type {
-  CreateIssueRequest,
-  UpdateIssueRequest,
-  ListIssuesCache,
-} from "../types";
+import type { CreateIssueRequest, UpdateIssueRequest, ListIssuesCache } from "../types";
 import type { TimelineEntry, IssueSubscriber, Reaction } from "../types";
 
 // ---------------------------------------------------------------------------
@@ -126,8 +118,7 @@ export function useUpdateIssue() {
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   return useMutation({
-    mutationFn: ({ id, ...data }: { id: string } & UpdateIssueRequest) =>
-      api.updateIssue(id, data),
+    mutationFn: ({ id, ...data }: { id: string } & UpdateIssueRequest) => api.updateIssue(id, data),
     onMutate: ({ id, ...data }) => {
       // Fire-and-forget cancelQueries — keeps onMutate synchronous so the
       // cache update happens in the same tick as mutate(). Awaiting would
@@ -170,23 +161,17 @@ export function useUpdateIssue() {
         old ? { ...old, ...data } : old,
       );
       if (parentId) {
-        qc.setQueryData<Issue[]>(
-          issueKeys.children(wsId, parentId),
-          (old) =>
-            old?.map((c) => (c.id === id ? { ...c, ...data } : c)),
+        qc.setQueryData<Issue[]>(issueKeys.children(wsId, parentId), (old) =>
+          old?.map((c) => (c.id === id ? { ...c, ...data } : c)),
         );
       }
       return { prevList, prevDetail, prevChildren, parentId, id };
     },
     onError: (_err, _vars, ctx) => {
       if (ctx?.prevList) qc.setQueryData(issueKeys.list(wsId), ctx.prevList);
-      if (ctx?.prevDetail)
-        qc.setQueryData(issueKeys.detail(wsId, ctx.id), ctx.prevDetail);
+      if (ctx?.prevDetail) qc.setQueryData(issueKeys.detail(wsId, ctx.id), ctx.prevDetail);
       if (ctx?.parentId && ctx.prevChildren !== undefined) {
-        qc.setQueryData(
-          issueKeys.children(wsId, ctx.parentId),
-          ctx.prevChildren,
-        );
+        qc.setQueryData(issueKeys.children(wsId, ctx.parentId), ctx.prevChildren);
       }
     },
     onSettled: (_data, _err, vars, ctx) => {
@@ -243,13 +228,8 @@ export function useBatchUpdateIssues() {
   const qc = useQueryClient();
   const wsId = useWorkspaceId();
   return useMutation({
-    mutationFn: ({
-      ids,
-      updates,
-    }: {
-      ids: string[];
-      updates: UpdateIssueRequest;
-    }) => api.batchUpdateIssues(ids, updates),
+    mutationFn: ({ ids, updates }: { ids: string[]; updates: UpdateIssueRequest }) =>
+      api.batchUpdateIssues(ids, updates),
     onMutate: async ({ ids, updates }) => {
       await qc.cancelQueries({ queryKey: issueKeys.list(wsId) });
       const prevList = qc.getQueryData<ListIssuesCache>(issueKeys.list(wsId));
@@ -457,11 +437,7 @@ export function useDeleteComment(issueId: string) {
         while (changed) {
           changed = false;
           for (const e of prev) {
-            if (
-              e.parent_id &&
-              toRemove.has(e.parent_id) &&
-              !toRemove.has(e.id)
-            ) {
+            if (e.parent_id && toRemove.has(e.parent_id) && !toRemove.has(e.id)) {
               toRemove.add(e.id);
               changed = true;
             }
@@ -499,8 +475,8 @@ export function useResolveComment(issueId: string) {
             ? {
                 ...e,
                 resolved_at: resolved ? new Date().toISOString() : null,
-                resolved_by_type: resolved ? e.resolved_by_type ?? null : null,
-                resolved_by_id: resolved ? e.resolved_by_id ?? null : null,
+                resolved_by_type: resolved ? (e.resolved_by_type ?? null) : null,
+                resolved_by_id: resolved ? (e.resolved_by_id ?? null) : null,
               }
             : e,
         ),
@@ -522,11 +498,7 @@ export function useToggleCommentReaction(issueId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationKey: ["toggleCommentReaction", issueId] as const,
-    mutationFn: async ({
-      commentId,
-      emoji,
-      existing,
-    }: ToggleCommentReactionVars) => {
+    mutationFn: async ({ commentId, emoji, existing }: ToggleCommentReactionVars) => {
       if (existing) {
         await api.removeReaction(commentId, emoji);
         return null;
@@ -547,10 +519,7 @@ export function useToggleIssueReaction(issueId: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationKey: ["toggleIssueReaction", issueId] as const,
-    mutationFn: async ({
-      emoji,
-      existing,
-    }: ToggleIssueReactionVars) => {
+    mutationFn: async ({ emoji, existing }: ToggleIssueReactionVars) => {
       if (existing) {
         await api.removeIssueReaction(issueId, emoji);
         return null;
@@ -587,17 +556,11 @@ export function useToggleIssueSubscriber(issueId: string) {
     },
     onMutate: async ({ userId, userType, subscribed }) => {
       await qc.cancelQueries({ queryKey: issueKeys.subscribers(issueId) });
-      const prev = qc.getQueryData<IssueSubscriber[]>(
-        issueKeys.subscribers(issueId),
-      );
+      const prev = qc.getQueryData<IssueSubscriber[]>(issueKeys.subscribers(issueId));
 
       if (subscribed) {
-        qc.setQueryData<IssueSubscriber[]>(
-          issueKeys.subscribers(issueId),
-          (old) =>
-            old?.filter(
-              (s) => !(s.user_id === userId && s.user_type === userType),
-            ),
+        qc.setQueryData<IssueSubscriber[]>(issueKeys.subscribers(issueId), (old) =>
+          old?.filter((s) => !(s.user_id === userId && s.user_type === userType)),
         );
       } else {
         const temp: IssueSubscriber = {
@@ -607,24 +570,15 @@ export function useToggleIssueSubscriber(issueId: string) {
           reason: "manual",
           created_at: new Date().toISOString(),
         };
-        qc.setQueryData<IssueSubscriber[]>(
-          issueKeys.subscribers(issueId),
-          (old) => {
-            if (
-              old?.some(
-                (s) => s.user_id === userId && s.user_type === userType,
-              )
-            )
-              return old;
-            return [...(old ?? []), temp];
-          },
-        );
+        qc.setQueryData<IssueSubscriber[]>(issueKeys.subscribers(issueId), (old) => {
+          if (old?.some((s) => s.user_id === userId && s.user_type === userType)) return old;
+          return [...(old ?? []), temp];
+        });
       }
       return { prev };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.prev)
-        qc.setQueryData(issueKeys.subscribers(issueId), ctx.prev);
+      if (ctx?.prev) qc.setQueryData(issueKeys.subscribers(issueId), ctx.prev);
     },
     onSettled: () => {
       qc.invalidateQueries({ queryKey: issueKeys.subscribers(issueId) });

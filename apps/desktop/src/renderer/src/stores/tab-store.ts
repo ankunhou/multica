@@ -499,8 +499,7 @@ export const useTabStore = create<TabStore>()(
             {
               activeTabId: group.activeTabId,
               tabs: group.tabs.map(
-                ({ router: _router, historyIndex: _hi, historyLength: _hl, ...rest }) =>
-                  rest,
+                ({ router: _router, historyIndex: _hi, historyLength: _hl, ...rest }) => rest,
               ),
             },
           ]),
@@ -607,9 +606,7 @@ export function migrateV1ToV2(v1: Partial<V1Persisted>): V2Persisted {
   for (const slug of Object.keys(byWorkspace)) {
     const group = byWorkspace[slug];
     const hasOldActive = group.tabs.some((t) => t.id === v1.activeTabId);
-    group.activeTabId = hasOldActive
-      ? (v1.activeTabId as string)
-      : group.tabs[0].id;
+    group.activeTabId = hasOldActive ? (v1.activeTabId as string) : group.tabs[0].id;
   }
 
   // Active workspace: whichever group inherited the v1 activeTab, falling
@@ -673,9 +670,7 @@ export function useActiveGroup(): WorkspaceTabGroup | null {
 export function useActiveTabIdentity(): { slug: string | null; tabId: string | null } {
   const slug = useTabStore((s) => s.activeWorkspaceSlug);
   const tabId = useTabStore((s) =>
-    s.activeWorkspaceSlug
-      ? (s.byWorkspace[s.activeWorkspaceSlug]?.activeTabId ?? null)
-      : null,
+    s.activeWorkspaceSlug ? (s.byWorkspace[s.activeWorkspaceSlug]?.activeTabId ?? null) : null,
   );
   return { slug, tabId };
 }

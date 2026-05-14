@@ -17,10 +17,7 @@ import { memberListOptions } from "@multica/core/workspace/queries";
  * the scope of the permission check is always obvious to the caller. Matches
  * the repo rule for workspace-aware hooks.
  */
-export function useCanEditSkill(
-  skill: SkillSummary | null | undefined,
-  wsId: string,
-): boolean {
+export function useCanEditSkill(skill: SkillSummary | null | undefined, wsId: string): boolean {
   const userId = useAuthStore((s) => s.user?.id ?? null);
   const { data: members = [] } = useQuery(memberListOptions(wsId));
 

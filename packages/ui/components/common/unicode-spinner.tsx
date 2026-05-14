@@ -22,10 +22,7 @@ export function UnicodeSpinner({ name = "braille", className, paused }: Props) {
   useEffect(() => {
     if (paused) return;
     setFrame(0);
-    const timer = setInterval(
-      () => setFrame((f) => (f + 1) % spec.frames.length),
-      spec.interval,
-    );
+    const timer = setInterval(() => setFrame((f) => (f + 1) % spec.frames.length), spec.interval);
     return () => clearInterval(timer);
   }, [name, paused, spec]);
 

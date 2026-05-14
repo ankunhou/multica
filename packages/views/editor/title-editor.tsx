@@ -42,9 +42,7 @@ const SingleLineDocument = Document.extend({
 // Keyboard shortcuts: Enter → submit, Escape → blur
 // ---------------------------------------------------------------------------
 
-function createTitleKeymap(opts: {
-  onSubmitRef: React.RefObject<(() => void) | undefined>;
-}) {
+function createTitleKeymap(opts: { onSubmitRef: React.RefObject<(() => void) | undefined> }) {
   return Extension.create({
     name: "titleKeymap",
     addKeyboardShortcuts() {
@@ -68,81 +66,82 @@ function createTitleKeymap(opts: {
 // Component
 // ---------------------------------------------------------------------------
 
-const TitleEditor = forwardRef<TitleEditorRef, TitleEditorProps>(
-  function TitleEditor(
-    {
-      defaultValue = "",
-      placeholder: placeholderText = "",
-      className,
-      autoFocus = false,
-      onSubmit,
-      onBlur,
-      onChange,
-    },
-    ref,
-  ) {
-    const { t } = useT("editor");
-    const onSubmitRef = useRef(onSubmit);
-    const onBlurRef = useRef(onBlur);
-    const onChangeRef = useRef(onChange);
-
-    onSubmitRef.current = onSubmit;
-    onBlurRef.current = onBlur;
-    onChangeRef.current = onChange;
-
-    const editor = useEditor({
-      immediatelyRender: false,
-      content: defaultValue
-        ? { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: defaultValue }] }] }
-        : "",
-      extensions: [
-        SingleLineDocument,
-        Paragraph,
-        Text,
-        Placeholder.configure({
-          placeholder: placeholderText,
-          showOnlyCurrent: false,
-        }),
-        createTitleKeymap({ onSubmitRef }),
-      ],
-      editorProps: {
-        attributes: {
-          class: cn("title-editor outline-none", className),
-          role: "textbox",
-          "aria-multiline": "false",
-          "aria-label": placeholderText || t(($) => $.title_editor.title_aria_label),
-        },
-      },
-      onUpdate: ({ editor: ed }) => {
-        onChangeRef.current?.(ed.getText());
-      },
-      onBlur: ({ editor: ed }) => {
-        onBlurRef.current?.(ed.getText());
-      },
-    });
-
-    // Auto-focus after mount — delay to wait for Dialog open animation
-    useEffect(() => {
-      if (autoFocus && editor) {
-        const timer = setTimeout(() => {
-          editor.commands.focus("end");
-        }, 50);
-        return () => clearTimeout(timer);
-      }
-      return undefined;
-    }, [autoFocus, editor]);
-
-    useImperativeHandle(ref, () => ({
-      getText: () => editor?.getText() ?? "",
-      focus: () => {
-        editor?.commands.focus("end");
-      },
-    }));
-
-    if (!editor) return null;
-
-    return <EditorContent editor={editor} />;
+const TitleEditor = forwardRef<TitleEditorRef, TitleEditorProps>(function TitleEditor(
+  {
+    defaultValue = "",
+    placeholder: placeholderText = "",
+    className,
+    autoFocus = false,
+    onSubmit,
+    onBlur,
+    onChange,
   },
-);
+  ref,
+) {
+  const { t } = useT("editor");
+  const onSubmitRef = useRef(onSubmit);
+  const onBlurRef = useRef(onBlur);
+  const onChangeRef = useRef(onChange);
+
+  onSubmitRef.current = onSubmit;
+  onBlurRef.current = onBlur;
+  onChangeRef.current = onChange;
+
+  const editor = useEditor({
+    immediatelyRender: false,
+    content: defaultValue
+      ? {
+          type: "doc",
+          content: [{ type: "paragraph", content: [{ type: "text", text: defaultValue }] }],
+        }
+      : "",
+    extensions: [
+      SingleLineDocument,
+      Paragraph,
+      Text,
+      Placeholder.configure({
+        placeholder: placeholderText,
+        showOnlyCurrent: false,
+      }),
+      createTitleKeymap({ onSubmitRef }),
+    ],
+    editorProps: {
+      attributes: {
+        class: cn("title-editor outline-none", className),
+        role: "textbox",
+        "aria-multiline": "false",
+        "aria-label": placeholderText || t(($) => $.title_editor.title_aria_label),
+      },
+    },
+    onUpdate: ({ editor: ed }) => {
+      onChangeRef.current?.(ed.getText());
+    },
+    onBlur: ({ editor: ed }) => {
+      onBlurRef.current?.(ed.getText());
+    },
+  });
+
+  // Auto-focus after mount — delay to wait for Dialog open animation
+  useEffect(() => {
+    if (autoFocus && editor) {
+      const timer = setTimeout(() => {
+        editor.commands.focus("end");
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [autoFocus, editor]);
+
+  useImperativeHandle(ref, () => ({
+    getText: () => editor?.getText() ?? "",
+    focus: () => {
+      editor?.commands.focus("end");
+    },
+  }));
+
+  if (!editor) return null;
+
+  return <EditorContent editor={editor} />;
+});
 
 export { TitleEditor, type TitleEditorProps, type TitleEditorRef };
